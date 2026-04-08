@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext'
 import { usePricingEngine } from '../../hooks/usePricingEngine'
 import type { MarketState } from '../../lib/pricing'
 import { midPctToAsk } from '../../lib/pricing'
+import { supabase } from '../../lib/supabase'
 
 interface EntryFlowProps {
   event: Event
@@ -96,14 +97,40 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
 
   useEffect(() => {
     if (!isOpen || !side || amountNum <= 0) { setOptionPreview(null); return }
-    const label = compositeLabel(side)
-    const dir = compositeDir(side)
     let cancelled = false
-    previewOptionPurchase(event.id, label, dir, amountNum).then((px) => {
-      if (!cancelled) setOptionPreview(px)
-    })
-    return () => { cancelled = true }
-  }, [isOpen, event.id, side, amountNum, previewOptionPurchase])
+    // Use preview_purchase with composite side (e.g. "España::yes") — same as desktop panel
+    const compositeSide = side.includes('::') ? side : `${side}::yes`
+    const t = setTimeout(async () => {
+      const { data, error: rpcErr } = await supabase.rpc('preview_purchase', {
+        p_event_id: event.id,
+        p_side: compositeSide,
+        p_gross: amountNum,
+      })
+      if (cancelled) return
+      if (rpcErr || !data || !data.valid) { setOptionPreview(null); return }
+      setOptionPreview({
+        grossAmount: amountNum,
+        fee:            Number(data.fee) || 0,
+        feeRate:        Number(data.fee_rate) || 0,
+        net:            Number(data.net) || 0,
+        price:          Number(data.price) || 0,
+        midPrice:       Number(data.mid_price) || 0,
+        spreadRate:     Number(data.spread_rate) || 0,
+        spreadCaptured: 0,
+        contracts:      Number(data.contracts) || 0,
+        payoutIfWin:    Number(data.payout_if_win || data.est_payout) || 0,
+        yesLiaAfter:    0,
+        noLiaAfter:     0,
+        poolAfter: {
+          committed: Number(data.pool_committed) || 0,
+          remaining: Number(data.pool_remaining) || 0,
+          pctUsed:   Number(data.pool_total) > 0 ? (Number(data.pool_committed) / Number(data.pool_total)) : 0,
+        },
+        valid: true,
+      })
+    }, 300)
+    return () => { cancelled = true; clearTimeout(t) }
+  }, [isOpen, event.id, side, amountNum])
 
   // For binary: use RPC preview (dynamic fees)
   const [binaryPreview, setBinaryPreview] = useState<import('../../lib/pricing').PurchasePreview | null>(null)

@@ -292,7 +292,7 @@ function EventDetailInner({ event }: { event: AppEvent }) {
   const [panelSide, setPanelSide] = useState<'yes' | 'no'>('yes')
   const [panelOption, setPanelOption] = useState<string | null>(null) // for open events: "El Salvador", "Honduras", etc.
   const [panelAmount, setPanelAmount] = useState('')
-  const [panelPreview, setPanelPreview] = useState<{ fee: number; net: number; payout: number; feeRate: number; price: number } | null>(null)
+  const [panelPreview, setPanelPreview] = useState<{ fee: number; net: number; payout: number; feeRate: number; price: number; contracts: number } | null>(null)
   const [panelSubmitting, setPanelSubmitting] = useState(false)
   const [panelError, setPanelError] = useState<string | null>(null)
   const [userBalance, setUserBalance] = useState(0)
@@ -352,6 +352,7 @@ function EventDetailInner({ event }: { event: AppEvent }) {
           payout: Number(data.payout_if_win || data.est_payout),
           feeRate: Number(data.fee_rate || 0) * 100,
           price: Number(data.price),
+          contracts: Number(data.contracts || data.payout_if_win || data.est_payout),
         })
       }
     }, 300)
@@ -924,7 +925,7 @@ function EventDetailInner({ event }: { event: AppEvent }) {
                       })()}
 
                       {/* Balance */}
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                         <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)' }}>Saldo</span>
                         <span style={{ fontFamily: F, fontSize: '13px', fontWeight: 700, color: 'var(--b1n0-text-1)' }}>
                           {event.currency}{userBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -932,21 +933,52 @@ function EventDetailInner({ event }: { event: AppEvent }) {
                       </div>
 
                       {/* Divider */}
-                      <div style={{ borderTop: '1px solid var(--b1n0-border)', margin: '0 0 12px' }} />
+                      <div style={{ borderTop: '1px solid var(--b1n0-border)', margin: '0 0 8px' }} />
 
-                      {/* Total */}
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                        <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)' }}>Total</span>
-                        <span style={{ fontFamily: F, fontSize: '13px', fontWeight: 700, color: 'var(--b1n0-text-1)' }}>
-                          {event.currency}{panelAmount || '0'}
-                        </span>
+                      {/* Full breakdown */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', marginBottom: '8px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)' }}>Tu entrada</span>
+                          <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 700, color: 'var(--b1n0-text-1)' }}>
+                            {event.currency}{panelAmount || '0'}
+                          </span>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)' }}>
+                            Comisión ({panelPreview ? `${panelPreview.feeRate.toFixed(1)}%` : '—'})
+                          </span>
+                          <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)' }}>
+                            {panelPreview ? `−${event.currency}${panelPreview.fee.toFixed(2)}` : '—'}
+                          </span>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)' }}>Neto al pool</span>
+                          <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 700, color: 'var(--b1n0-text-1)' }}>
+                            {panelPreview ? `${event.currency}${panelPreview.net.toFixed(2)}` : '—'}
+                          </span>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)' }}>Precio</span>
+                          <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-text-1)' }}>
+                            {panelPreview ? panelPreview.price.toFixed(2) : '—'}
+                          </span>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)' }}>Contratos</span>
+                          <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-text-1)' }}>
+                            {panelPreview ? panelPreview.contracts.toFixed(2) : '—'}
+                          </span>
+                        </div>
                       </div>
 
-                      {/* To Win */}
+                      {/* Divider */}
+                      <div style={{ borderTop: '1px solid var(--b1n0-border)', margin: '0 0 8px' }} />
+
+                      {/* Cobro estimado */}
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '14px' }}>
-                        <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)' }}>Cobro estimado</span>
-                        <span style={{ fontFamily: F, fontSize: '14px', fontWeight: 800, color: panelPreview ? 'var(--b1n0-si)' : 'var(--b1n0-muted)' }}>
-                          {panelPreview ? `${event.currency}${panelPreview.payout.toFixed(2)}` : '—'}
+                        <span style={{ fontFamily: F, fontSize: '13px', fontWeight: 600, color: 'var(--b1n0-text-1)' }}>Cobro estimado</span>
+                        <span style={{ fontFamily: F, fontSize: '15px', fontWeight: 800, color: panelPreview ? 'var(--b1n0-si)' : 'var(--b1n0-muted)' }}>
+                          {panelPreview ? `~${event.currency}${panelPreview.payout.toFixed(2)}` : '—'}
                           {panelPreview && parseFloat(panelAmount) > 0 && (
                             <span style={{ fontSize: '11px', fontWeight: 600, marginLeft: '4px' }}>
                               (+{((panelPreview.payout / parseFloat(panelAmount) - 1) * 100).toFixed(0)}%)
@@ -1001,13 +1033,7 @@ function EventDetailInner({ event }: { event: AppEvent }) {
                         {panelSubmitting ? 'Procesando...' : `Comprar ${panelOption ? panelOption + ' ' : ''}${panelSide === 'yes' ? 'SÍ' : 'NO'} — ${event.currency}${panelAmount || '0'}`}
                       </button>
 
-                      {/* Est. Fee */}
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px' }}>
-                        <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>Comisión</span>
-                        <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>
-                          {panelPreview ? `${event.currency}${panelPreview.fee.toFixed(2)} (${(panelPreview.feeRate * 100).toFixed(1)}%)` : '— (—%)'}
-                        </span>
-                      </div>
+                      {/* Commission now shown in breakdown above */}
 
                       {/* Error message */}
                       {panelError && (
