@@ -174,7 +174,6 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
   }
 
   const isDeposit = tab === 'depositar'
-  const accent = isDeposit ? 'var(--b1n0-surface)' : 'var(--b1n0-surface)'
 
   return (
     <BottomSheet open={open} onClose={handleClose} title="Billetera">
@@ -202,7 +201,7 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
                     background: tab === t ? 'var(--b1n0-card)' : 'transparent',
                     boxShadow: tab === t ? '0 1px 3px var(--b1n0-border)' : 'none',
                     cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '13px',
-                    color: tab === t ? 'var(--b1n0-surface)' : 'var(--b1n0-muted)',
+                    color: tab === t ? 'var(--b1n0-text-1)' : 'var(--b1n0-muted)',
                     transition: 'all 0.15s',
                   }}
                 >
@@ -307,9 +306,9 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
               disabled={!validDepositAmount || loading}
               style={{
                 width: '100%', padding: '14px', borderRadius: '12px', border: 'none',
-                background: validDepositAmount && !loading ? 'var(--b1n0-surface)' : 'rgba(255,255,255,0.08)',
+                background: validDepositAmount && !loading ? '#4ade80' : 'rgba(255,255,255,0.08)',
                 cursor: validDepositAmount && !loading ? 'pointer' : 'default',
-                fontFamily: F, fontWeight: 600, fontSize: '14px', color: '#fff',
+                fontFamily: F, fontWeight: 700, fontSize: '14px', color: validDepositAmount && !loading ? '#0d0d0d' : 'var(--b1n0-muted)',
               }}
             >
               {loading ? 'Procesando...' : depositMethod === 'tarjeta' ? 'Continuar →' : 'Confirmar depósito →'}
@@ -366,9 +365,9 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
               disabled={!cardValid || loading}
               style={{
                 width: '100%', padding: '14px', borderRadius: '12px', border: 'none',
-                background: cardValid && !loading ? 'var(--b1n0-surface)' : 'rgba(255,255,255,0.08)',
+                background: cardValid && !loading ? '#4ade80' : 'rgba(255,255,255,0.08)',
                 cursor: cardValid && !loading ? 'pointer' : 'default',
-                fontFamily: F, fontWeight: 600, fontSize: '14px', color: '#fff',
+                fontFamily: F, fontWeight: 700, fontSize: '14px', color: cardValid && !loading ? '#0d0d0d' : 'var(--b1n0-muted)',
               }}
             >
               {loading ? 'Procesando...' : `Depositar Q${amountNum.toLocaleString()} →`}
@@ -422,9 +421,9 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
                   style={{
                     padding: '8px 14px', borderRadius: '10px',
                     border: '1px solid var(--b1n0-border)',
-                    background: amountNum === q ? 'var(--b1n0-text-1)' : 'var(--b1n0-surface)',
+                    background: amountNum === q ? 'var(--b1n0-text-1)' : 'var(--b1n0-card)',
                     cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px',
-                    color: amountNum === q ? '#fff' : 'var(--b1n0-surface)',
+                    color: amountNum === q ? '#0d0d0d' : 'var(--b1n0-text-1)',
                   }}
                 >
                   Q{q}
@@ -449,9 +448,9 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
               disabled={!validRetiroAmount || loading}
               style={{
                 width: '100%', padding: '14px', borderRadius: '12px', border: 'none',
-                background: validRetiroAmount && !loading ? 'var(--b1n0-surface)' : 'rgba(255,255,255,0.08)',
+                background: validRetiroAmount && !loading ? '#4ade80' : 'rgba(255,255,255,0.08)',
                 cursor: validRetiroAmount && !loading ? 'pointer' : 'default',
-                fontFamily: F, fontWeight: 600, fontSize: '14px', color: '#fff',
+                fontFamily: F, fontWeight: 700, fontSize: '14px', color: validRetiroAmount && !loading ? '#0d0d0d' : 'var(--b1n0-muted)',
               }}
             >
               {loading ? 'Procesando...' : retiroMethod === 'transferencia' ? 'Continuar →' : 'Confirmar retiro →'}
@@ -490,9 +489,9 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
               disabled={!bankValid || loading}
               style={{
                 width: '100%', padding: '14px', borderRadius: '12px', border: 'none',
-                background: bankValid && !loading ? 'var(--b1n0-surface)' : 'rgba(255,255,255,0.08)',
+                background: bankValid && !loading ? '#4ade80' : 'rgba(255,255,255,0.08)',
                 cursor: bankValid && !loading ? 'pointer' : 'default',
-                fontFamily: F, fontWeight: 600, fontSize: '14px', color: '#fff',
+                fontFamily: F, fontWeight: 700, fontSize: '14px', color: bankValid && !loading ? '#0d0d0d' : 'var(--b1n0-muted)',
               }}
             >
               {loading ? 'Procesando...' : `Retirar Q${amountNum.toLocaleString()} →`}
@@ -507,7 +506,7 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
         {step === 'done' && (
           <div style={{ textAlign: 'center', padding: '32px 0' }}>
             <div style={{ width: 56, height: 56, borderRadius: '50%', background: doneType === 'deposit' ? 'var(--b1n0-si-bg)' : 'rgba(255,212,116,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--b1n0-text-1)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={doneType === 'deposit' ? '#4ade80' : '#FFD474'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
             </div>
@@ -522,7 +521,7 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
             </p>
             <button
               onClick={handleClose}
-              style={{ width: '100%', padding: '14px', borderRadius: '12px', border: 'none', background: 'var(--b1n0-text-1)', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '14px', color: '#fff' }}
+              style={{ width: '100%', padding: '14px', borderRadius: '12px', border: 'none', background: '#4ade80', cursor: 'pointer', fontFamily: F, fontWeight: 700, fontSize: '14px', color: '#0d0d0d' }}
             >
               Cerrar
             </button>
