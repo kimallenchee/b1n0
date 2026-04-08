@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 
 const F = '"DM Sans", sans-serif'
@@ -123,6 +123,17 @@ function validateSignup(f: SignupForm): Record<string, string> {
 export function AuthPage() {
   const { signIn, signUp, resetPassword } = useAuth()
   const [tab, setTab] = useState<'login' | 'signup'>('login')
+  const [confirmed, setConfirmed] = useState(false)
+
+  // Detect email confirmation redirect
+  useEffect(() => {
+    const hash = window.location.hash
+    if (hash.includes('type=signup') || hash.includes('type=email')) {
+      setConfirmed(true)
+      setTab('login')
+      window.history.replaceState(null, '', '/auth')
+    }
+  }, [])
 
   // Login state
   const [loginEmail, setLoginEmail] = useState('')
@@ -318,6 +329,9 @@ export function AuthPage() {
           <p style={{ fontFamily: F, fontSize: '14px', color: 'var(--b1n0-muted)', lineHeight: 1.6 }}>
             Enviamos un link a <strong style={{ color: 'var(--b1n0-text-1)' }}>{form.email}</strong>. Confirmá y volvé acá para entrar.
           </p>
+          <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)', lineHeight: 1.5, marginTop: '8px', opacity: 0.7 }}>
+            ¿No lo ves? Revisá tu carpeta de spam o correo no deseado.
+          </p>
           <button
             onClick={() => { setSignupDone(false); setTab('login') }}
             style={{ marginTop: '24px', fontFamily: F, fontSize: '13px', fontWeight: 600, color: 'var(--b1n0-text-1)', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
@@ -429,6 +443,13 @@ export function AuthPage() {
           {/* ─── LOGIN FORM ─── */}
           {tab === 'login' && (
             <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {confirmed && (
+                <div style={{ background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.25)', borderRadius: '10px', padding: '12px 16px', textAlign: 'center', marginBottom: '4px' }}>
+                  <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 600, color: '#4ade80', margin: 0 }}>
+                    Cuenta confirmada — iniciá sesión
+                  </p>
+                </div>
+              )}
               <input type="email" placeholder="Correo electrónico" value={loginEmail} onChange={e => setLoginEmail(e.target.value)} required style={inputStyle} />
               <input type="password" placeholder="Contraseña" value={loginPw} onChange={e => setLoginPw(e.target.value)} required minLength={6} style={inputStyle} />
               {error && <p style={{ fontFamily: F, fontSize: '12px', color: '#f87171', textAlign: 'center', padding: '0 4px' }}>{error}</p>}
