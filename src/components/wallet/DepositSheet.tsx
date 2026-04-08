@@ -20,7 +20,7 @@ const methods: { id: Method; label: string; sub: string; icon: React.ReactNode }
     label: 'Tarjeta de débito / crédito',
     sub: 'Acreditación inmediata · sin comisión',
     icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--b1n0-surface)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--b1n0-text-1)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
         <line x1="1" y1="10" x2="23" y2="10"/>
       </svg>
@@ -31,7 +31,7 @@ const methods: { id: Method; label: string; sub: string; icon: React.ReactNode }
     label: 'Transferencia bancaria',
     sub: 'Depósitos mayores · 1–2 días hábiles',
     icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--b1n0-surface)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--b1n0-text-1)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
       </svg>
     ),
@@ -41,7 +41,7 @@ const methods: { id: Method; label: string; sub: string; icon: React.ReactNode }
     label: 'Depósito en efectivo',
     sub: 'Puntos autorizados · acreditación en 24h',
     icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--b1n0-surface)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--b1n0-text-1)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <rect x="2" y="6" width="20" height="12" rx="2"/>
         <circle cx="12" cy="12" r="3"/>
         <path d="M2 10h2m16 0h2M2 14h2m16 0h2"/>
@@ -156,7 +156,7 @@ export function DepositSheet({ open, onClose }: DepositSheetProps) {
                 onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'rgba(0,0,0,0.25)')}
                 onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)')}
               >
-                <div style={{ width: 40, height: 40, borderRadius: '10px', background: 'var(--b1n0-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <div style={{ width: 40, height: 40, borderRadius: '10px', background: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   {m.icon}
                 </div>
                 <div>
@@ -247,9 +247,9 @@ export function DepositSheet({ open, onClose }: DepositSheetProps) {
               disabled={!validAmount || loading}
               style={{
                 width: '100%', padding: '14px', borderRadius: '12px', border: 'none',
-                background: validAmount && !loading ? 'var(--b1n0-surface)' : 'rgba(255,255,255,0.08)',
+                background: validAmount && !loading ? '#4ade80' : 'rgba(255,255,255,0.08)',
                 cursor: validAmount && !loading ? 'pointer' : 'default',
-                fontFamily: F, fontWeight: 600, fontSize: '14px', color: '#fff',
+                fontFamily: F, fontWeight: 700, fontSize: '14px', color: validAmount && !loading ? '#0d0d0d' : 'var(--b1n0-muted)',
                 transition: 'background 0.15s',
               }}
             >
@@ -343,9 +343,9 @@ export function DepositSheet({ open, onClose }: DepositSheetProps) {
               disabled={!cardValid || loading}
               style={{
                 width: '100%', padding: '14px', borderRadius: '12px', border: 'none',
-                background: cardValid && !loading ? 'var(--b1n0-surface)' : 'rgba(255,255,255,0.08)',
+                background: cardValid && !loading ? '#4ade80' : 'rgba(255,255,255,0.08)',
                 cursor: cardValid && !loading ? 'pointer' : 'default',
-                fontFamily: F, fontWeight: 600, fontSize: '14px', color: '#fff',
+                fontFamily: F, fontWeight: 700, fontSize: '14px', color: cardValid && !loading ? '#0d0d0d' : 'var(--b1n0-muted)',
               }}
             >
               {loading ? 'Procesando...' : `Depositar Q${amountNum.toLocaleString()} →`}
@@ -360,8 +360,8 @@ export function DepositSheet({ open, onClose }: DepositSheetProps) {
         {/* ── Step 4: Success ── */}
         {step === 'done' && (
           <div style={{ textAlign: 'center', padding: '32px 0' }}>
-            <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'var(--b1n0-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--b1n0-surface)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(74,222,128,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
             </div>
@@ -371,7 +371,7 @@ export function DepositSheet({ open, onClose }: DepositSheetProps) {
             </p>
             <button
               onClick={handleClose}
-              style={{ width: '100%', padding: '14px', borderRadius: '12px', border: 'none', background: 'var(--b1n0-text-1)', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '14px', color: '#fff' }}
+              style={{ width: '100%', padding: '14px', borderRadius: '12px', border: 'none', background: '#4ade80', cursor: 'pointer', fontFamily: F, fontWeight: 700, fontSize: '14px', color: '#0d0d0d' }}
             >
               Cerrar
             </button>

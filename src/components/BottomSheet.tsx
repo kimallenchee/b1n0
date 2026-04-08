@@ -18,7 +18,7 @@ export function BottomSheet({ open, onClose, children, title }: BottomSheetProps
       {/* Backdrop */}
       <div
         onClick={onClose}
-        style={{ position: 'fixed', inset: 0, background: 'rgba(255,255,255,0.15)', zIndex: 200 }}
+        style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 200 }}
       />
 
       {/* Sheet */}
@@ -34,7 +34,7 @@ export function BottomSheet({ open, onClose, children, title }: BottomSheetProps
           maxHeight: '88vh',
           display: 'flex',
           flexDirection: 'column',
-          boxShadow: '0 -4px 24px rgba(255,255,255,0.08)',
+          boxShadow: '0 -4px 24px rgba(0,0,0,0.4)',
           maxWidth: '660px',
           margin: '0 auto',
         }}

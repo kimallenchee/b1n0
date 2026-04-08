@@ -39,7 +39,7 @@ export function AccountDrawer({ onClose }: AccountDrawerProps) {
       {/* Backdrop */}
       <div
         onClick={onClose}
-        style={{ position: 'fixed', inset: 0, zIndex: 90, background: 'rgba(255,255,255,0.12)' }}
+        style={{ position: 'fixed', inset: 0, zIndex: 90, background: 'rgba(0,0,0,0.6)' }}
       />
 
       {/* Drawer panel */}
@@ -98,7 +98,7 @@ export function AccountDrawer({ onClose }: AccountDrawerProps) {
                 <div style={{ height: '12px' }} />
                 <button
                   onClick={() => setDepositOpen(true)}
-                  style={{ width: '100%', padding: '12px', borderRadius: '10px', border: 'none', background: 'var(--b1n0-text-1)', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '13px', color: '#fff' }}
+                  style={{ width: '100%', padding: '12px', borderRadius: '10px', border: 'none', background: '#4ade80', cursor: 'pointer', fontFamily: F, fontWeight: 700, fontSize: '13px', color: '#0d0d0d' }}
                 >
                   Depositar
                 </button>

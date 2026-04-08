@@ -54,7 +54,7 @@ export function RightPanel() {
           Q{balance.toLocaleString()}
         </p>
         <div style={{ display: 'flex', gap: '8px' }}>
-          <button onClick={() => setDepositOpen(true)} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: 'none', background: 'var(--b1n0-text-1)', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: '#fff' }}>
+          <button onClick={() => setDepositOpen(true)} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: 'none', background: '#4ade80', cursor: 'pointer', fontFamily: F, fontWeight: 700, fontSize: '12px', color: '#0d0d0d' }}>
             Depositar
           </button>
           <button onClick={() => setRetiroOpen(true)} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.08)', background: 'transparent', cursor: 'pointer', fontFamily: F, fontWeight: 500, fontSize: '12px', color: 'var(--b1n0-text-1)' }}>
@@ -121,7 +121,7 @@ export function RightPanel() {
           </p>
           <button
             onClick={() => setKycOpen(true)}
-            style={{ width: '100%', padding: '10px', borderRadius: '10px', border: 'none', background: 'var(--b1n0-text-1)', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: '#fff' }}
+            style={{ width: '100%', padding: '10px', borderRadius: '10px', border: 'none', background: '#4ade80', cursor: 'pointer', fontFamily: F, fontWeight: 700, fontSize: '12px', color: '#0d0d0d' }}
           >
             Verificar →
           </button>
