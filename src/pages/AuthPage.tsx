@@ -194,7 +194,7 @@ export function AuthPage() {
   function Field({ name, label, required, children }: { name: string; label: string; required?: boolean; children: React.ReactNode }) {
     const showErr = touched[name] && errors[name]
     return (
-      <div style={{ marginBottom: '12px' }}>
+      <div data-field={name} style={{ marginBottom: '12px' }}>
         <label style={labelStyle}>{label}{required && <span style={{ color: '#f87171' }}> *</span>}</label>
         {children}
         {showErr && <p style={errorTextStyle}>{errors[name]}</p>}
@@ -218,7 +218,15 @@ export function AuthPage() {
     const allTouched: Record<string, boolean> = {}
     Object.keys(form).forEach(k => { allTouched[k] = true })
     setTouched(allTouched)
-    if (!isValid) return
+    if (!isValid) {
+      // Scroll to first error field
+      const firstErrorKey = Object.keys(errors)[0]
+      if (firstErrorKey) {
+        const el = document.querySelector(`[data-field="${firstErrorKey}"]`)
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+      return
+    }
 
     setError(null); setLoading(true)
     const err = await signUp(form.email, form.password, {

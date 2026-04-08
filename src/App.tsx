@@ -20,7 +20,7 @@ import { setPricingRates } from './lib/pricing'
 import { supabase } from './lib/supabase'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { ProtectedRoute } from './components/ProtectedRoute'
-import { ToastProvider } from './components/Toast'
+import { ToastProvider, useToast } from './components/Toast'
 
 // ── Lazy-loaded routes (code splitting) ──────────────────────
 // These are heavy pages that most users don't visit on every session.
@@ -165,6 +165,16 @@ function ForceChangePassword() {
 function AppContent() {
   const { session, profile, loading } = useAuth()
   const isDesktop = useIsDesktop()
+  const { showSuccess } = useToast()
+
+  // Show welcome toast when arriving from email confirmation
+  useEffect(() => {
+    const hash = window.location.hash
+    if (session && (hash.includes('type=signup') || hash.includes('type=email'))) {
+      showSuccess('¡Cuenta confirmada! Bienvenid@ a b1n0')
+      window.history.replaceState(null, '', window.location.pathname)
+    }
+  }, [session]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Load platform rates on mount to sync client-side pricing with DB config
   useEffect(() => {
