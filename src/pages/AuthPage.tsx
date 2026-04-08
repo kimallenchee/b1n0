@@ -288,7 +288,7 @@ export function AuthPage() {
           )}
           <button
             onClick={() => { setTempPassword(null); setForgotMode(false); setTab('login'); setError(null); setLoginPw('') }}
-            style={{ width: '100%', padding: '13px', borderRadius: '12px', border: 'none', background: 'var(--b1n0-text-1)', color: '#fff', fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: 'pointer' }}
+            style={{ width: '100%', padding: '13px', borderRadius: '12px', border: 'none', background: '#4ade80', color: '#0d0d0d', fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: 'pointer' }}
           >
             Iniciar sesión
           </button>
@@ -313,7 +313,7 @@ export function AuthPage() {
             <form onSubmit={handleReset} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <input type="email" placeholder="Correo electrónico" value={loginEmail} onChange={e => setLoginEmail(e.target.value)} required style={inputStyle} />
               {error && <p style={{ fontFamily: F, fontSize: '12px', color: '#f87171', textAlign: 'center' }}>{error}</p>}
-              <button type="submit" disabled={loading} style={{ width: '100%', padding: '13px', borderRadius: '12px', border: 'none', background: loading ? 'rgba(255,255,255,0.12)' : 'var(--b1n0-surface)', color: '#fff', fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: loading ? 'default' : 'pointer', marginTop: '4px' }}>
+              <button type="submit" disabled={loading} style={{ width: '100%', padding: '13px', borderRadius: '12px', border: 'none', background: loading ? 'rgba(255,255,255,0.12)' : '#4ade80', color: '#0d0d0d', fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: loading ? 'default' : 'pointer', marginTop: '4px' }}>
                 {loading ? 'Generando...' : 'Generar contraseña'}
               </button>
             </form>
@@ -440,8 +440,8 @@ export function AuthPage() {
               <button key={t} onClick={() => { setTab(t); setError(null) }} style={{
                 flex: 1, padding: '9px', borderRadius: '9px', border: 'none', cursor: 'pointer',
                 fontFamily: F, fontWeight: 600, fontSize: '13px',
-                background: tab === t ? 'var(--b1n0-surface)' : 'transparent',
-                color: tab === t ? '#fff' : 'var(--b1n0-muted)', transition: 'all 0.15s',
+                background: tab === t ? '#4ade80' : 'transparent',
+                color: tab === t ? '#0d0d0d' : 'var(--b1n0-muted)', transition: 'all 0.15s',
               }}>
                 {t === 'login' ? 'Entrar' : 'Crear cuenta'}
               </button>
@@ -463,7 +463,7 @@ export function AuthPage() {
               {error && <p style={{ fontFamily: F, fontSize: '12px', color: '#f87171', textAlign: 'center', padding: '0 4px' }}>{error}</p>}
               <button type="submit" disabled={loading} style={{
                 width: '100%', padding: '13px', borderRadius: '12px', border: 'none',
-                background: loading ? 'rgba(255,255,255,0.12)' : 'var(--b1n0-surface)', color: '#fff',
+                background: loading ? 'rgba(255,255,255,0.12)' : '#4ade80', color: '#0d0d0d',
                 fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: loading ? 'default' : 'pointer', marginTop: '4px',
               }}>
                 {loading ? 'Cargando...' : 'Entrar'}
@@ -572,7 +572,7 @@ export function AuthPage() {
               {/* Submit */}
               <button type="submit" disabled={loading} style={{
                 width: '100%', padding: '14px', borderRadius: '12px', border: 'none',
-                background: loading ? 'rgba(255,255,255,0.12)' : 'var(--b1n0-surface)', color: '#fff',
+                background: loading ? 'rgba(255,255,255,0.12)' : '#4ade80', color: '#0d0d0d',
                 fontFamily: F, fontWeight: 600, fontSize: '14px',
                 cursor: loading ? 'default' : 'pointer', marginTop: '8px',
               }}>

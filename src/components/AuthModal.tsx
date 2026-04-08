@@ -113,7 +113,7 @@ export function AuthModal() {
       <div onClick={closeAuth} style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }} />
 
       {/* Modal */}
-      <div style={{ position: 'relative', maxWidth: 420, width: '90%', maxHeight: '90dvh', overflowY: 'auto', background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '20px', padding: '28px 24px', boxShadow: '0 20px 60px rgba(255,255,255,0.12)' }}>
+      <div style={{ position: 'relative', maxWidth: 420, width: '90%', maxHeight: '90dvh', overflowY: 'auto', background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '20px', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.5)' }}>
 
         {/* Close button */}
         <button onClick={closeAuth} style={{ position: 'absolute', top: '12px', right: '12px', background: 'none', border: 'none', fontSize: '20px', color: 'var(--b1n0-muted)', cursor: 'pointer', padding: '4px 8px' }}>×</button>
@@ -130,8 +130,8 @@ export function AuthModal() {
             <button key={t} onClick={() => { setTab(t); setError(null) }} style={{
               flex: 1, padding: '9px', borderRadius: '9px', border: 'none', cursor: 'pointer',
               fontFamily: F, fontWeight: 600, fontSize: '13px',
-              background: tab === t ? 'var(--b1n0-text-1)' : 'transparent',
-              color: tab === t ? '#fff' : 'var(--b1n0-muted)', transition: 'all 0.15s',
+              background: tab === t ? '#4ade80' : 'transparent',
+              color: tab === t ? '#0d0d0d' : 'var(--b1n0-muted)', transition: 'all 0.15s',
             }}>
               {t === 'login' ? 'Entrar' : 'Crear cuenta'}
             </button>
@@ -144,7 +144,7 @@ export function AuthModal() {
             <input type="email" placeholder="Correo electrónico" value={loginEmail} onChange={e => setLoginEmail(e.target.value)} required style={inputStyle} />
             <input type="password" placeholder="Contraseña" value={loginPw} onChange={e => setLoginPw(e.target.value)} required minLength={6} style={inputStyle} />
             {error && <p style={{ fontFamily: F, fontSize: '12px', color: '#f87171', textAlign: 'center' }}>{error}</p>}
-            <button type="submit" disabled={loading} style={{ width: '100%', padding: '13px', borderRadius: '12px', border: 'none', background: loading ? 'rgba(255,255,255,0.12)' : 'var(--b1n0-text-1)', color: '#fff', fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: loading ? 'default' : 'pointer' }}>
+            <button type="submit" disabled={loading} style={{ width: '100%', padding: '13px', borderRadius: '12px', border: 'none', background: loading ? 'rgba(255,255,255,0.12)' : '#4ade80', color: '#0d0d0d', fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: loading ? 'default' : 'pointer' }}>
               {loading ? 'Cargando...' : 'Entrar'}
             </button>
           </form>
@@ -183,7 +183,7 @@ export function AuthModal() {
                 {Object.values(errors).slice(0, 3).join(' · ')}
               </p>
             )}
-            <button type="submit" disabled={loading} style={{ width: '100%', padding: '13px', borderRadius: '12px', border: 'none', background: loading ? 'rgba(255,255,255,0.12)' : 'var(--b1n0-text-1)', color: '#fff', fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: loading ? 'default' : 'pointer' }}>
+            <button type="submit" disabled={loading} style={{ width: '100%', padding: '13px', borderRadius: '12px', border: 'none', background: loading ? 'rgba(255,255,255,0.12)' : '#4ade80', color: '#0d0d0d', fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: loading ? 'default' : 'pointer' }}>
               {loading ? 'Creando cuenta...' : 'Crear cuenta'}
             </button>
           </form>
