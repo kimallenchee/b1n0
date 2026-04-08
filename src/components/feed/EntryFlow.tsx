@@ -217,7 +217,7 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
 
   return (
     <div
-      style={{ background: 'var(--b1n0-surface)', borderRadius: '14px', padding: '18px', marginTop: '12px', border: '1px solid rgba(0,0,0,0.07)' }}
+      style={{ background: 'var(--b1n0-surface)', borderRadius: '14px', padding: '18px', marginTop: '12px', border: '1px solid rgba(255,255,255,0.06)' }}
       onClick={(e) => e.stopPropagation()}
     >
       {/* ── Tier locked ── */}
@@ -461,7 +461,7 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
       {/* ── Step 3: Confirm ── */}
       {!tierLocked && step === 3 && (
         <div>
-          <div style={{ background: 'var(--b1n0-card)', borderRadius: '12px', padding: '16px', marginBottom: '16px', border: '1px solid rgba(0,0,0,0.07)' }}>
+          <div style={{ background: 'var(--b1n0-card)', borderRadius: '12px', padding: '16px', marginBottom: '16px', border: '1px solid rgba(255,255,255,0.06)' }}>
             <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 600, color: 'var(--b1n0-muted)', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Resumen de tu voto</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>

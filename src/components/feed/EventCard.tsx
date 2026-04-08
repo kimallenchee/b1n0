@@ -86,6 +86,7 @@ function getUrgency(endsAt: string | undefined, now: number): 'critical' | 'soon
 function formatCountdown(endsAt: string | undefined, now: number, fallback: string): string {
   if (!endsAt) return fallback
   const diff = new Date(endsAt).getTime() - now
+  if (isNaN(diff)) return fallback
   if (diff <= 0) return 'Cerrado'
   const h = Math.floor(diff / 3600000)
   const m = Math.floor((diff % 3600000) / 60000)

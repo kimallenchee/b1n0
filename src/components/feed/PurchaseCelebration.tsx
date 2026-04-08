@@ -139,7 +139,7 @@ export function PurchaseCelebration({ side, amount, cobro, currency, onDone }: P
           <div
             style={{
               position: 'absolute', inset: -8,
-              borderRadius: '50%', border: '2px solid #1C1917',
+              borderRadius: '50%', border: '2px solid var(--b1n0-border)',
               animation: 'celebPulseRing 1s 0.2s ease-out forwards',
               opacity: 0,
             }}

@@ -860,7 +860,7 @@ export function Portafolio() {
             {active.length > 0 ? `Q${totalPotentialReturn.toFixed(0)}` : '—'}
           </p>
           <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginTop: '2px' }}>
-            {active.length > 0 ? `+${((totalPotentialReturn / totalInvested - 1) * 100).toFixed(0)}% retorno parimutuel` : 'Sin posiciones'}
+            {active.length > 0 && totalInvested > 0 ? `+${((totalPotentialReturn / totalInvested - 1) * 100).toFixed(0)}% retorno parimutuel` : active.length > 0 ? 'Retorno parimutuel' : 'Sin posiciones'}
           </p>
         </div>
 

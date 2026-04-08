@@ -144,16 +144,18 @@ export function Perfil() {
   }
 
   const [avatarUploading, setAvatarUploading] = useState(false)
+  const [avatarUploadError, setAvatarUploadError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file || !userId) return
     setAvatarUploading(true)
+    setAvatarUploadError(null)
     const ext = file.name.split('.').pop() || 'jpg'
     const path = `${userId}/avatar.${ext}`
     const { error: uploadErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true })
-    if (uploadErr) { console.error('Upload failed:', uploadErr.message); setAvatarUploading(false); return }
+    if (uploadErr) { setAvatarUploadError('Error al subir la imagen. Intentá de nuevo.'); setAvatarUploading(false); return }
     const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(path)
     const publicUrl = urlData.publicUrl + '?t=' + Date.now()
     await supabase.from('profiles').update({ avatar_url: publicUrl }).eq('id', userId)
@@ -300,6 +302,9 @@ export function Perfil() {
           {profile?.username ? `@${profile.username}` : ''}
         </p>
         <p style={{ fontFamily: F, fontWeight: 800, fontSize: '22px', color: 'var(--color-text)', letterSpacing: '-0.5px' }}>{user.name}</p>
+        {avatarUploadError && (
+          <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', marginTop: '6px' }}>{avatarUploadError}</p>
+        )}
       </div>
 
       {/* Quick stats */}

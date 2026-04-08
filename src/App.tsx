@@ -35,7 +35,7 @@ const PrivacyPage = lazy(() => import('./pages/Legal').then(m => ({ default: m.P
 function LazyFallback() {
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '200px' }}>
-      <p style={{ fontFamily: '"DM Sans", sans-serif', color: '#78716C', fontSize: '14px' }}>Cargando...</p>
+      <p style={{ fontFamily: '"DM Sans", sans-serif', color: 'var(--b1n0-muted)', fontSize: '14px' }}>Cargando...</p>
     </div>
   )
 }
@@ -123,28 +123,28 @@ function ForceChangePassword() {
 
   const inputStyle: React.CSSProperties = {
     width: '100%', padding: '13px 16px', borderRadius: '12px',
-    border: '1px solid rgba(0,0,0,0.1)', background: '#F0EDE6',
-    color: '#1C1917', fontFamily: F, fontSize: '14px', outline: 'none', boxSizing: 'border-box',
+    border: '1px solid var(--b1n0-border)', background: 'var(--b1n0-surface)',
+    color: 'var(--b1n0-text-1)', fontFamily: F, fontSize: '14px', outline: 'none', boxSizing: 'border-box',
   }
 
   return (
-    <div style={{ minHeight: '100dvh', background: 'var(--color-bg)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+    <div style={{ minHeight: '100dvh', background: 'var(--b1n0-bg)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
       <div style={{ maxWidth: 380, width: '100%' }}>
         <div style={{ textAlign: 'center', marginBottom: '36px' }}>
-          <p style={{ fontFamily: D, fontWeight: 800, fontSize: '38px', color: '#1C1917', letterSpacing: '-1px', marginBottom: '6px' }}>b1n0</p>
-          <p style={{ fontFamily: F, fontSize: '13px', color: '#78716C' }}>Cambiá tu contraseña</p>
+          <p style={{ fontFamily: D, fontWeight: 800, fontSize: '38px', color: 'var(--b1n0-text-1)', letterSpacing: '-1px', marginBottom: '6px' }}>b1n0</p>
+          <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)' }}>Cambiá tu contraseña</p>
         </div>
-        <div style={{ background: '#FFFFFF', border: '1px solid rgba(0,0,0,0.08)', borderRadius: '20px', padding: '28px 24px' }}>
-          <p style={{ fontFamily: F, fontSize: '13px', color: '#78716C', marginBottom: '16px', lineHeight: 1.5 }}>
+        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '20px', padding: '28px 24px' }}>
+          <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)', marginBottom: '16px', lineHeight: 1.5 }}>
             Tu cuenta requiere una nueva contraseña antes de continuar.
           </p>
           <form onSubmit={handleChange} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <input type="password" placeholder="Nueva contraseña" value={pw} onChange={(e) => setPw(e.target.value)} required minLength={6} style={inputStyle} />
             <input type="password" placeholder="Confirmar contraseña" value={pw2} onChange={(e) => setPw2(e.target.value)} required minLength={6} style={inputStyle} />
-            {error && <p style={{ fontFamily: F, fontSize: '12px', color: '#b91c1c', textAlign: 'center' }}>{error}</p>}
+            {error && <p style={{ fontFamily: F, fontSize: '12px', color: '#f87171', textAlign: 'center' }}>{error}</p>}
             <button type="submit" disabled={loading} style={{
               width: '100%', padding: '13px', borderRadius: '12px', border: 'none',
-              background: loading ? 'rgba(0,0,0,0.3)' : '#1C1917', color: '#fff',
+              background: loading ? 'rgba(255,255,255,0.12)' : '#4ade80', color: '#0d0d0d',
               fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: loading ? 'default' : 'pointer', marginTop: '4px',
             }}>
               {loading ? 'Guardando...' : 'Guardar contraseña'}
@@ -152,7 +152,7 @@ function ForceChangePassword() {
           </form>
           <button
             onClick={() => signOut()}
-            style={{ marginTop: '16px', width: '100%', fontFamily: F, fontSize: '13px', fontWeight: 600, color: '#78716C', background: 'none', border: 'none', cursor: 'pointer' }}
+            style={{ marginTop: '16px', width: '100%', fontFamily: F, fontSize: '13px', fontWeight: 600, color: 'var(--b1n0-muted)', background: 'none', border: 'none', cursor: 'pointer' }}
           >
             Cerrar sesión
           </button>
@@ -197,7 +197,7 @@ function AppContent() {
   if (loading) {
     return (
       <div style={{ height: '100dvh', background: 'var(--color-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ fontFamily: '"DM Sans", sans-serif', color: '#78716C', fontSize: '14px' }}>
+        <p style={{ fontFamily: '"DM Sans", sans-serif', color: 'var(--b1n0-muted)', fontSize: '14px' }}>
           Cargando...
         </p>
       </div>

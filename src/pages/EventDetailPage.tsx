@@ -70,20 +70,23 @@ function buildRealChartData(
   positions: { side: string; price_at_purchase: number; created_at: string }[],
   initYes: number, currentYes: number, eventCreatedAt: string,
 ): ChartPt[] {
-  if (positions.length === 0) return synthChartData([currentYes, 100 - currentYes])
-  const sorted = [...positions].sort((a, b) => a.created_at.localeCompare(b.created_at))
+  if (!positions || positions.length === 0) return synthChartData([currentYes, 100 - currentYes])
+  const sorted = [...positions].sort((a, b) => (a.created_at ?? '').localeCompare(b.created_at ?? ''))
   const pts: ChartPt[] = []
   const start = new Date(eventCreatedAt).getTime()
+  if (isNaN(start)) return synthChartData([currentYes, 100 - currentYes])
   const now = Date.now()
   const span = Math.max(now - start, 1)
   pts.push({ t: 0, vals: [initYes, 100 - initYes] })
   let lastYes = initYes
   for (const pos of sorted) {
+    if (!pos.price_at_purchase || !pos.created_at) continue
     const yesPct = pos.side === 'yes'
       ? Math.round(pos.price_at_purchase * 100)
       : Math.round((1 - pos.price_at_purchase) * 100)
-    lastYes = Math.max(1, Math.min(99, yesPct))
+    lastYes = Math.max(1, Math.min(99, isNaN(yesPct) ? 50 : yesPct))
     const elapsed = new Date(pos.created_at).getTime() - start
+    if (isNaN(elapsed)) continue
     const t = Math.max(0.01, Math.min(0.99, elapsed / span))
     pts.push({ t, vals: [lastYes, 100 - lastYes] })
   }
@@ -262,13 +265,28 @@ function displaySide(s: string): string {
 export function EventDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const { getEvent } = useEvents()
+  const { getEvent, loading } = useEvents()
   const event = getEvent(id ?? '')
 
   if (!event) {
+    // If still loading, show spinner; otherwise show 404
+    if (loading) {
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '40px 24px', textAlign: 'center' }}>
+          <p style={{ fontFamily: F, fontWeight: 600, fontSize: '14px', color: 'var(--b1n0-muted)' }}>Cargando evento...</p>
+        </div>
+      )
+    }
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '40px 24px', textAlign: 'center' }}>
-        <p style={{ fontFamily: F, fontWeight: 600, fontSize: '14px', color: 'var(--b1n0-muted)' }}>Cargando evento...</p>
+        <p style={{ fontFamily: D, fontWeight: 800, fontSize: '20px', color: 'var(--b1n0-text-1)', marginBottom: '8px' }}>Evento no encontrado</p>
+        <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)', marginBottom: '20px' }}>Este evento no existe o ya no está disponible.</p>
+        <button
+          onClick={() => navigate('/')}
+          style={{ padding: '10px 24px', borderRadius: '10px', border: 'none', cursor: 'pointer', background: 'var(--b1n0-surface)', color: 'var(--b1n0-text-1)', fontFamily: F, fontWeight: 600, fontSize: '13px' }}
+        >
+          Volver al inicio
+        </button>
       </div>
     )
   }

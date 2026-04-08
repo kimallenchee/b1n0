@@ -1102,7 +1102,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                       navigator.clipboard.writeText(url)
                       setEditSuccess('Enlace copiado: ' + url)
                     }}
-                    style={{ width: '100%', padding: '10px', borderRadius: '10px', border: '1px solid #7c3aed', background: 'rgba(196,181,253,0.12)', color: '#C4B5FD', fontFamily: F, fontWeight: 600, fontSize: '12px', cursor: 'pointer', marginBottom: '8px' }}
+                    style={{ width: '100%', padding: '10px', borderRadius: '10px', border: '1px solid #C4B5FD', background: 'rgba(196,181,253,0.12)', color: '#C4B5FD', fontFamily: F, fontWeight: 600, fontSize: '12px', cursor: 'pointer', marginBottom: '8px' }}
                   >
                     Copiar enlace para LPs
                   </button>

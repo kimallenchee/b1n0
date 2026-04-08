@@ -3,12 +3,12 @@ export const F = '"DM Sans", sans-serif'
 export const D = '"DM Sans", sans-serif'
 
 export const colors = {
-  text: '#1C1917',
-  muted: '#78716C',
-  subtle: '#A8A29E',
-  surface: '#FFFFFF',
-  surface2: '#F0EDE6',
-  bg: '#F7F4EF',
-  border: 'rgba(0,0,0,0.08)',
-  borderLight: 'rgba(0,0,0,0.06)',
+  text: 'var(--b1n0-text-1)',
+  muted: 'var(--b1n0-muted)',
+  subtle: 'var(--b1n0-text-2)',
+  surface: 'var(--b1n0-surface)',
+  surface2: 'var(--b1n0-card)',
+  bg: 'var(--b1n0-bg)',
+  border: 'var(--b1n0-border)',
+  borderLight: 'rgba(255,255,255,0.04)',
 }

@@ -83,7 +83,7 @@ export function EnVivo() {
               </button>
             ))}
         </div>
-        <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 44, background: 'linear-gradient(to right, transparent, #F7F4EF)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 44, background: 'linear-gradient(to right, transparent, var(--b1n0-bg))', pointerEvents: 'none' }} />
       </div>
 
       {/* Feed */}

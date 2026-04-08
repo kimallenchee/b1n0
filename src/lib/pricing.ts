@@ -204,7 +204,7 @@ export function previewPurchase(
   const payoutIfWin = round2(contracts)   // 1 contract = Q1 payout
 
   // Spread captured = contracts at mid - contracts at ask (in Q)
-  const contractsAtMid = round4(net / midPrice)
+  const contractsAtMid = midPrice > 0 ? round4(net / midPrice) : contracts
   const spreadCaptured = round2(Math.max(contractsAtMid - contracts, 0))
 
   const yesLiaAfter = side === 'yes'
