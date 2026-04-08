@@ -71,7 +71,7 @@ function VoteCard({ p }: { p: UserPrediction }) {
           <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginBottom: '2px' }}>
             {isWon ? 'Cobrado' : isSold ? 'Recibido' : isActive ? 'Potencial' : 'Fondos'}
           </p>
-          <p style={{ fontFamily: D, fontWeight: 700, fontSize: '14px', color: isSold ? '#C4B5FD' : 'var(--b1n0-surface)', letterSpacing: '-0.3px' }}>
+          <p style={{ fontFamily: D, fontWeight: 700, fontSize: '14px', color: isSold ? '#C4B5FD' : isWon ? '#4ade80' : isActive ? '#FFD474' : 'var(--b1n0-muted)', letterSpacing: '-0.3px' }}>
             {isWon ? `Q${p.potentialCobro.toFixed(2)}` : isSold ? `Q${p.potentialCobro.toFixed(2)}` : isActive ? `Q${p.potentialCobro.toFixed(2)}` : `-Q${p.amount.toFixed(2)}`}
           </p>
         </div>
