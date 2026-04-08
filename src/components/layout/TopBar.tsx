@@ -111,7 +111,7 @@ export function TopBar({ user }: TopBarProps) {
           ) : (
             <button
               onClick={() => openAuth('login')}
-              style={{ padding: '8px 16px', borderRadius: '20px', border: 'none', background: 'var(--b1n0-text-1)', color: '#fff', fontFamily: F, fontWeight: 600, fontSize: '12px', cursor: 'pointer' }}
+              style={{ padding: '8px 16px', borderRadius: '20px', border: 'none', background: '#4ade80', color: '#0d0d0d', fontFamily: F, fontWeight: 600, fontSize: '12px', cursor: 'pointer' }}
             >
               Entrar
             </button>
