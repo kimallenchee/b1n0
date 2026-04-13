@@ -27,6 +27,7 @@ export function RatesPanel() {
     fee_ceiling_pct: 5,
     sell_fee_pct: 2,
     depth_threshold: 50000,
+    resolution_skim_pct: 5,
   }
 
   const [platformRates, setPlatformRates] = useState(defaultRates)
@@ -52,6 +53,7 @@ export function RatesPanel() {
           fee_ceiling_pct: map.fee_ceiling_pct ?? 5,
           sell_fee_pct: map.sell_fee_pct ?? 2,
           depth_threshold: map.depth_threshold ?? 50000,
+          resolution_skim_pct: map.resolution_skim_pct ?? 5,
         }
         setPlatformRates(merged)
         setRatesDraft(merged)
@@ -294,6 +296,61 @@ export function RatesPanel() {
               </p>
             )}
           </div>
+
+          {/* ── Resolution Skim ── */}
+          {(() => {
+            const key = 'resolution_skim_pct'
+            const exPool = 50000
+            const exSkim = exPool * ((ratesDraft[key] ?? 5) / 100)
+            return (
+              <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '16px', padding: '20px', marginBottom: '12px' }}>
+                <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 700, color: '#14b8a6', letterSpacing: '1.2px', textTransform: 'uppercase', marginBottom: '6px' }}>
+                  Comisión de resolución
+                </p>
+                <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)', marginBottom: '14px', lineHeight: 1.6 }}>
+                  Porcentaje que se descuenta del cobro de los ganadores al resolver un evento. Se acredita automáticamente a la tesorería. Los perdedores no son afectados.
+                </p>
+                <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-end' }}>
+                  <div style={{ flex: 1 }}>
+                    <label style={labelStyle}>Tasa (%)</label>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <input
+                        type="number" min={0} max={25} step={0.5}
+                        value={ratesDraft[key] ?? 5}
+                        onChange={(e) => setRatesDraft((d) => ({ ...d, [key]: parseFloat(e.target.value) || 0 }))}
+                        style={{ ...inputStyle, width: '90px', fontFamily: D, fontSize: '18px', fontWeight: 700, textAlign: 'center' }}
+                      />
+                      <span style={{ fontFamily: D, fontSize: '18px', fontWeight: 700, color: 'var(--b1n0-text-1)' }}>%</span>
+                    </div>
+                    {ratesDraft[key] !== platformRates[key] && (
+                      <p style={{ fontFamily: F, fontSize: '11px', color: '#FFD474', marginTop: '4px' }}>
+                        Actual en DB: {platformRates[key]}%
+                      </p>
+                    )}
+                  </div>
+                  <div style={{ flexShrink: 0 }}>
+                    <button
+                      onClick={() => saveRate(key, ratesDraft[key] ?? 5)}
+                      disabled={ratesSaving[key] || ratesDraft[key] === platformRates[key]}
+                      style={{ padding: '10px 20px', borderRadius: '10px', border: 'none', background: ratesSaved[key] ? '#4ade80' : (ratesSaving[key] || ratesDraft[key] === platformRates[key]) ? 'rgba(255,255,255,0.08)' : '#4ade80', color: '#0d0d0d', fontFamily: F, fontWeight: 600, fontSize: '12px', cursor: 'pointer', transition: 'background 0.2s' }}
+                    >
+                      {ratesSaved[key] ? '✓ Guardado' : ratesSaving[key] ? 'Guardando...' : 'Guardar →'}
+                    </button>
+                  </div>
+                </div>
+                <div style={{ marginTop: '12px', background: 'var(--b1n0-surface)', borderRadius: '8px', padding: '10px 12px' }}>
+                  <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', marginBottom: '4px', fontWeight: 600 }}>Ejemplo en pool Q{(exPool / 1000).toFixed(0)}K:</p>
+                  <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)' }}>
+                    Cobro bruto Q1,000 → descuento <span style={{ color: '#14b8a6', fontWeight: 700 }}>Q{((ratesDraft[key] ?? 5) * 10).toFixed(0)}</span>
+                    {' · '}usuario recibe <span style={{ color: 'var(--b1n0-text-1)', fontWeight: 700 }}>Q{(1000 - (ratesDraft[key] ?? 5) * 10).toFixed(0)}</span>
+                  </p>
+                  <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)', marginTop: '4px' }}>
+                    Ingreso estimado por evento → <span style={{ color: '#14b8a6', fontWeight: 700 }}>Q{exSkim.toLocaleString()}</span> a tesorería
+                  </p>
+                </div>
+              </div>
+            )
+          })()}
         </>
       )}
     </div>

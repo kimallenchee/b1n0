@@ -69,6 +69,7 @@ function RevenuePanel() {
   const [lpDepositsAll, setLpDepositsAll] = useState<{ event_id: string; user_id: string; amount: number; return_pct: number; status: string; fees_at_deposit: number; created_at: string }[]>([])
   const [lpExpanded, setLpExpanded] = useState(false)
   const [lpRowExpanded, setLpRowExpanded] = useState<string | null>(null)
+  const [skimTotal, setSkimTotal] = useState(0)
   const [rates, setRates] = useState({ sponsor_margin_pct: 15, tx_fee_pct: 2.5, spread_low_pct: 4, spread_high_pct: 8, fee_floor_pct: 1, fee_ceiling_pct: 5, sell_fee_pct: 2, depth_threshold: 50000 })
 
   useEffect(() => {
@@ -124,6 +125,13 @@ function RevenuePanel() {
     if (posRes.data) setPositions(posRes.data as unknown as PositionRow[])
     if (marketRes.data) setMarkets(marketRes.data as MarketRow[])
     if (lpRes.data) setLpDepositsAll(lpRes.data as any[])
+    // Load resolution skim total from treasury ledger
+    const { data: skimRows } = await supabase
+      .from('balance_ledger')
+      .select('amount')
+      .eq('user_id', '00000000-0000-0000-0000-000000000001')
+      .eq('type', 'skim')
+    if (skimRows) setSkimTotal(skimRows.reduce((s, r) => s + (Number(r.amount) || 0), 0))
     setLoading(false)
   }
 
@@ -258,7 +266,7 @@ function RevenuePanel() {
     })),
   }))
 
-  const totalRevenue = cut2Total + cut3Est - lpCommissionTotal
+  const totalRevenue = cut2Total + cut3Est + skimTotal - lpCommissionTotal
 
   // Build sale tx lookup: position_id → sale TxRow
   const saleTxByPosition: Record<string, TxRow> = {}
@@ -348,7 +356,8 @@ function RevenuePanel() {
             { label: 'Ventas', val: String(saleTxs.length), color: '#C4B5FD' },
             { label: 'Pagado a usuarios', val: `Q${fmtQ(totalPaidOut)}` },
             { label: 'Neto', val: `Q${fmtQ(totalRevenue - totalPaidOut)}`, color: totalRevenue > totalPaidOut ? '#4ade80' : '#f87171' },
-            { label: 'Neto (sin margen)', val: `Q${fmtQ(cut2Total + cut3Est)}`, color: '#C4B5FD' },
+            { label: 'Resolución', val: `Q${fmtQ(skimTotal)}`, color: '#14b8a6' },
+            { label: 'Neto (sin margen)', val: `Q${fmtQ(cut2Total + cut3Est + skimTotal)}`, color: '#C4B5FD' },
           ].map(({ label, val, color }) => (
             <div key={label}>
               <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.3px', marginBottom: '2px' }}>{label}</p>
@@ -495,6 +504,36 @@ function RevenuePanel() {
               : 'Estimado — ejecutá el SQL de spread dinámico para datos reales.'}
           </p>
         </div>
+      </div>
+
+      {/* ── CUT 4 — RESOLUTION SKIM ── */}
+      <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '14px', padding: '16px', marginBottom: '16px' }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '6px' }}>
+          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 700, color: '#14b8a6', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
+            CUT 4 — COMISIÓN DE RESOLUCIÓN
+          </p>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', marginBottom: '12px' }}>
+          <span style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)' }}>Q</span>
+          <span style={{ fontFamily: D, fontSize: '32px', fontWeight: 700, color: '#14b8a6', letterSpacing: '-1px' }}>{fmtQ(skimTotal)}</span>
+        </div>
+        <div style={{ background: 'var(--b1n0-surface)', borderRadius: '10px', padding: '12px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+            <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>Eventos resueltos</span>
+            <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-text-1)' }}>{resolvedCount}</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+            <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>Promedio por evento</span>
+            <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: '#14b8a6' }}>Q{resolvedCount > 0 ? fmtQ(skimTotal / resolvedCount) : '0'}</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>Destino</span>
+            <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: '#4ade80' }}>Tesorería</span>
+          </div>
+        </div>
+        <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', lineHeight: 1.5, marginTop: '8px' }}>
+          Se descuenta del cobro de ganadores al resolver. Configurable en Tarifas.
+        </p>
       </div>
 
       {/* ── Volume breakdown ── */}
