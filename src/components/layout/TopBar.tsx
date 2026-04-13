@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import type { User } from '../../types'
 import { NotificationDrawer } from './NotificationDrawer'
 import { WalletSheet } from '../wallet/WalletSheet'
+import { HowItWorks } from '../HowItWorks'
 import { useVotes } from '../../context/VoteContext'
 import { useNotifications } from '../../context/NotificationContext'
 import { useAuth } from '../../context/AuthContext'
@@ -20,6 +21,7 @@ export function TopBar({ user }: TopBarProps) {
   const location = useLocation()
   const [walletOpen, setWalletOpen] = useState(false)
   const [notifOpen, setNotifOpen] = useState(false)
+  const [howOpen, setHowOpen] = useState(false)
   const { balance } = useVotes()
   const { unreadCount } = useNotifications()
   const { session } = useAuth()
@@ -52,6 +54,41 @@ export function TopBar({ user }: TopBarProps) {
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
         >
           <img src="/b1n0-logo.png" alt="B1N0" style={{ height: '24px', objectFit: 'contain' }} />
+        </button>
+
+        {/* How it works trigger */}
+        <button
+          onClick={() => setHowOpen(true)}
+          style={{
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            padding: '4px 8px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '4px',
+          }}
+        >
+          <span style={{
+            width: '16px',
+            height: '16px',
+            borderRadius: '50%',
+            border: '1.5px solid #14b8a6',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontFamily: F,
+            fontWeight: 700,
+            fontSize: '10px',
+            color: '#14b8a6',
+            lineHeight: 1,
+          }}>?</span>
+          <span style={{
+            fontFamily: F,
+            fontSize: '11px',
+            fontWeight: 600,
+            color: '#14b8a6',
+          }}>Cómo funciona</span>
         </button>
 
         {/* Right side */}
@@ -121,6 +158,7 @@ export function TopBar({ user }: TopBarProps) {
 
       <WalletSheet open={walletOpen} onClose={() => setWalletOpen(false)} />
       {notifOpen && <NotificationDrawer onClose={() => setNotifOpen(false)} />}
+      <HowItWorks open={howOpen} onClose={() => setHowOpen(false)} />
     </>
   )
 }
