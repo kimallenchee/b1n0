@@ -93,7 +93,7 @@ export function RatesPanel() {
           {/* ── Dynamic Buy Fee ── */}
           <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '16px', padding: '20px', marginBottom: '12px' }}>
             <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 700, color: '#C4B5FD', letterSpacing: '1.2px', textTransform: 'uppercase', marginBottom: '6px' }}>
-              Comisión dinámica (compras)
+              Cut 2 — Comisión dinámica (compras)
             </p>
             <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)', marginBottom: '14px', lineHeight: 1.6 }}>
               La comisión se ajusta automáticamente: <strong>alta</strong> cuando el mercado es incierto (50/50) y el pool es bajo, <strong>baja</strong> cuando hay un favorito claro y el pool es profundo.
@@ -158,7 +158,7 @@ export function RatesPanel() {
             return (
               <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '16px', padding: '20px', marginBottom: '12px' }}>
                 <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 700, color: '#f87171', letterSpacing: '1.2px', textTransform: 'uppercase', marginBottom: '6px' }}>
-                  Comisión de venta (fija)
+                  Cut 2b — Comisión de venta (fija)
                 </p>
                 <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)', marginBottom: '14px', lineHeight: 1.6 }}>
                   Tasa fija que se cobra cuando un usuario vende sus contratos antes de la resolución.
@@ -201,7 +201,7 @@ export function RatesPanel() {
             return (
               <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '16px', padding: '20px', marginBottom: '12px' }}>
                 <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 700, color: '#4ade80', letterSpacing: '1.2px', textTransform: 'uppercase', marginBottom: '6px' }}>
-                  Umbral de profundidad
+                  Cut 3b — Umbral de profundidad
                 </p>
                 <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)', marginBottom: '14px', lineHeight: 1.6 }}>
                   Pool mínimo para considerar un mercado "maduro". Debajo de este umbral, la comisión sube para compensar la baja liquidez.
@@ -247,7 +247,7 @@ export function RatesPanel() {
           {/* ── Spread ── */}
           <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '16px', padding: '20px', marginBottom: '12px' }}>
             <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 700, color: '#FFD474', letterSpacing: '1.2px', textTransform: 'uppercase', marginBottom: '6px' }}>
-              Spread del mercado (AMM)
+              Cut 3 — Spread del mercado (AMM)
             </p>
             <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)', marginBottom: '14px', lineHeight: 1.6 }}>
               Rango bid/ask. Bajo en 50/50, sube en mercados desequilibrados. La diferencia entre ask y mid es el spread capturado.
@@ -305,7 +305,7 @@ export function RatesPanel() {
             return (
               <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '16px', padding: '20px', marginBottom: '12px' }}>
                 <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 700, color: '#14b8a6', letterSpacing: '1.2px', textTransform: 'uppercase', marginBottom: '6px' }}>
-                  Comisión de resolución
+                  Cut 4 — Comisión de resolución
                 </p>
                 <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)', marginBottom: '14px', lineHeight: 1.6 }}>
                   Porcentaje que se descuenta del cobro de los ganadores al resolver un evento. Se acredita automáticamente a la tesorería. Los perdedores no son afectados.
