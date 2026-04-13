@@ -13,20 +13,21 @@ const steps = [
     number: 1,
     title: 'Elegí tu llamado',
     description: 'Explorá las preguntas del momento — deportes, política, economía. Elegí un lado: SÍ o NO. Tu opinión es tu posición.',
-    accent: '#14b8a6',
+    accent: 'var(--b1n0-si)',
+    accentBg: 'var(--b1n0-si-bg)',
     illustration: (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '16px 20px', background: 'rgba(255,255,255,0.04)', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.06)' }}>
-        <p style={{ fontFamily: D, fontWeight: 800, fontSize: '15px', color: '#fff', lineHeight: 1.3 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '16px 20px', background: 'var(--b1n0-card)', borderRadius: '14px', border: '1px solid var(--b1n0-border)' }}>
+        <p style={{ fontFamily: D, fontWeight: 800, fontSize: '15px', color: 'var(--b1n0-text-1)', lineHeight: 1.3 }}>
           ¿Trump impone aranceles a CA?
         </p>
         <div style={{ display: 'flex', gap: '8px' }}>
-          <div style={{ flex: 1, padding: '10px', borderRadius: '10px', background: 'rgba(20,184,166,0.15)', border: '2px solid #14b8a6', textAlign: 'center', cursor: 'default' }}>
-            <span style={{ fontFamily: D, fontWeight: 700, fontSize: '16px', color: '#14b8a6' }}>SÍ</span>
-            <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)', marginLeft: '6px' }}>0.32</span>
+          <div style={{ flex: 1, padding: '10px', borderRadius: '10px', background: 'var(--b1n0-si-bg)', border: '2px solid var(--b1n0-si)', textAlign: 'center', cursor: 'default' }}>
+            <span style={{ fontFamily: D, fontWeight: 700, fontSize: '16px', color: 'var(--b1n0-si)' }}>SÍ</span>
+            <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-text-2)', marginLeft: '6px' }}>0.32</span>
           </div>
-          <div style={{ flex: 1, padding: '10px', borderRadius: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', textAlign: 'center', cursor: 'default' }}>
-            <span style={{ fontFamily: D, fontWeight: 700, fontSize: '16px', color: 'var(--b1n0-muted)' }}>NO</span>
-            <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)', marginLeft: '6px' }}>0.70</span>
+          <div style={{ flex: 1, padding: '10px', borderRadius: '10px', background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', textAlign: 'center', cursor: 'default' }}>
+            <span style={{ fontFamily: D, fontWeight: 700, fontSize: '16px', color: 'var(--b1n0-text-2)' }}>NO</span>
+            <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-text-2)', marginLeft: '6px' }}>0.70</span>
           </div>
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -40,23 +41,24 @@ const steps = [
     number: 2,
     title: 'Participá',
     description: 'Elegí cuánto querés poner — desde Q10. Vas a ver exactamente cuánto colectás si tenés razón. Sin sorpresas.',
-    accent: '#f59e0b',
+    accent: 'var(--b1n0-gold)',
+    accentBg: 'rgba(255,212,116,0.12)',
     illustration: (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '16px 20px', background: 'rgba(255,255,255,0.04)', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.06)' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '16px 20px', background: 'var(--b1n0-card)', borderRadius: '14px', border: '1px solid var(--b1n0-border)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Tu entrada</span>
-          <span style={{ fontFamily: F, fontSize: '11px', color: '#14b8a6', fontWeight: 600 }}>SÍ seleccionado</span>
+          <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-text-2)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Tu entrada</span>
+          <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-si)', fontWeight: 600 }}>SÍ seleccionado</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', justifyContent: 'center', padding: '8px 0' }}>
-          <span style={{ fontFamily: F, fontSize: '18px', color: 'var(--b1n0-muted)' }}>Q</span>
-          <span style={{ fontFamily: D, fontWeight: 800, fontSize: '42px', color: '#fff', letterSpacing: '-2px' }}>50</span>
+          <span style={{ fontFamily: F, fontSize: '18px', color: 'var(--b1n0-text-2)' }}>Q</span>
+          <span style={{ fontFamily: D, fontWeight: 800, fontSize: '42px', color: 'var(--b1n0-text-1)', letterSpacing: '-2px' }}>50</span>
         </div>
-        <div style={{ background: 'rgba(20,184,166,0.1)', borderRadius: '10px', padding: '10px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)' }}>Si tenés razón, colectás</span>
-          <span style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: '#14b8a6' }}>Q156.25</span>
+        <div style={{ background: 'var(--b1n0-si-bg)', borderRadius: '10px', padding: '10px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-text-2)' }}>Si tenés razón, colectás</span>
+          <span style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: 'var(--b1n0-si)' }}>Q156.25</span>
         </div>
-        <div style={{ padding: '10px', borderRadius: '10px', background: '#14b8a6', textAlign: 'center', cursor: 'default' }}>
-          <span style={{ fontFamily: F, fontWeight: 700, fontSize: '13px', color: '#0d0d0d' }}>Confirmar llamado →</span>
+        <div style={{ padding: '10px', borderRadius: '10px', background: 'var(--b1n0-si)', textAlign: 'center', cursor: 'default' }}>
+          <span style={{ fontFamily: F, fontWeight: 700, fontSize: '13px', color: 'var(--b1n0-bg)' }}>Confirmar llamado →</span>
         </div>
       </div>
     ),
@@ -65,25 +67,26 @@ const steps = [
     number: 3,
     title: 'Cobrá',
     description: 'Cuando se resuelve el evento, si acertaste colectás automáticamente. Si no fue, seguís participando — siempre hay otro llamado.',
-    accent: '#4ade80',
+    accent: 'var(--b1n0-si)',
+    accentBg: 'var(--b1n0-si-bg)',
     illustration: (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '16px 20px', background: 'rgba(255,255,255,0.04)', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.06)' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '16px 20px', background: 'var(--b1n0-card)', borderRadius: '14px', border: '1px solid var(--b1n0-border)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-          <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#4ade80' }} />
-          <span style={{ fontFamily: F, fontSize: '11px', color: '#4ade80', fontWeight: 600 }}>Resuelto — ¡Lo sabías!</span>
+          <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--b1n0-si)' }} />
+          <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-si)', fontWeight: 600 }}>Resuelto — ¡Lo sabías!</span>
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0' }}>
           <div>
-            <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginBottom: '2px' }}>Tu llamado: SÍ</p>
-            <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)' }}>Entrada: Q50</p>
+            <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-text-2)', marginBottom: '2px' }}>Tu llamado: SÍ</p>
+            <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-text-2)' }}>Entrada: Q50</p>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginBottom: '2px' }}>Colectás</p>
-            <p style={{ fontFamily: D, fontWeight: 800, fontSize: '28px', color: '#4ade80', letterSpacing: '-1px' }}>Q156.25</p>
+            <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-text-2)', marginBottom: '2px' }}>Colectás</p>
+            <p style={{ fontFamily: D, fontWeight: 800, fontSize: '28px', color: 'var(--b1n0-si)', letterSpacing: '-1px' }}>Q156.25</p>
           </div>
         </div>
-        <div style={{ background: 'rgba(74,222,128,0.1)', borderRadius: '8px', padding: '8px 12px', textAlign: 'center' }}>
-          <span style={{ fontFamily: F, fontSize: '11px', color: '#4ade80', fontWeight: 600 }}>Acreditado a tu saldo automáticamente</span>
+        <div style={{ background: 'var(--b1n0-si-bg)', borderRadius: '8px', padding: '8px 12px', textAlign: 'center' }}>
+          <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-si)', fontWeight: 600 }}>Acreditado a tu saldo automáticamente</span>
         </div>
       </div>
     ),
@@ -122,8 +125,8 @@ export function HowItWorks({ open, onClose }: HowItWorksProps) {
           zIndex: 1000,
           width: '100%',
           maxWidth: '380px',
-          background: 'var(--b1n0-surface, #111318)',
-          border: '1px solid rgba(255,255,255,0.08)',
+          background: 'var(--b1n0-surface)',
+          border: '1px solid var(--b1n0-border)',
           borderRadius: '20px',
           overflow: 'hidden',
           boxShadow: '0 24px 80px rgba(0,0,0,0.5)',
@@ -136,8 +139,8 @@ export function HowItWorks({ open, onClose }: HowItWorksProps) {
             position: 'absolute',
             top: '12px',
             right: '12px',
-            background: 'rgba(255,255,255,0.06)',
-            border: 'none',
+            background: 'var(--b1n0-card)',
+            border: '1px solid var(--b1n0-border)',
             borderRadius: '50%',
             width: '28px',
             height: '28px',
@@ -145,7 +148,7 @@ export function HowItWorks({ open, onClose }: HowItWorksProps) {
             alignItems: 'center',
             justifyContent: 'center',
             cursor: 'pointer',
-            color: 'var(--b1n0-muted)',
+            color: 'var(--b1n0-text-2)',
             fontSize: '16px',
             zIndex: 2,
           }}
@@ -162,7 +165,7 @@ export function HowItWorks({ open, onClose }: HowItWorksProps) {
                 width: i === step ? '20px' : '6px',
                 height: '6px',
                 borderRadius: '3px',
-                background: i === step ? current.accent : 'rgba(255,255,255,0.12)',
+                background: i === step ? current.accent : 'var(--b1n0-border)',
                 transition: 'all 0.3s ease',
               }}
             />
@@ -183,7 +186,7 @@ export function HowItWorks({ open, onClose }: HowItWorksProps) {
               fontWeight: 800,
               fontSize: '14px',
               color: current.accent,
-              background: current.accent + '15',
+              background: current.accentBg,
               width: '26px',
               height: '26px',
               borderRadius: '50%',
@@ -193,13 +196,13 @@ export function HowItWorks({ open, onClose }: HowItWorksProps) {
             }}>
               {current.number}
             </span>
-            <h3 style={{ fontFamily: D, fontWeight: 800, fontSize: '20px', color: '#fff', margin: 0 }}>
+            <h3 style={{ fontFamily: D, fontWeight: 800, fontSize: '20px', color: 'var(--b1n0-text-1)', margin: 0 }}>
               {current.title}
             </h3>
           </div>
 
           {/* Description */}
-          <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)', lineHeight: 1.6, marginBottom: '20px' }}>
+          <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-text-2)', lineHeight: 1.6, marginBottom: '20px' }}>
             {current.description}
           </p>
 
@@ -219,7 +222,7 @@ export function HowItWorks({ open, onClose }: HowItWorksProps) {
               borderRadius: '12px',
               border: 'none',
               background: current.accent,
-              color: '#0d0d0d',
+              color: 'var(--b1n0-bg)',
               fontFamily: F,
               fontWeight: 700,
               fontSize: '14px',
@@ -239,7 +242,7 @@ export function HowItWorks({ open, onClose }: HowItWorksProps) {
                 padding: '8px',
                 background: 'none',
                 border: 'none',
-                color: 'var(--b1n0-muted)',
+                color: 'var(--b1n0-text-2)',
                 fontFamily: F,
                 fontSize: '12px',
                 cursor: 'pointer',
