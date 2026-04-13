@@ -104,37 +104,37 @@ export function TreasuryPanel() {
   }
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '16px' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
       {/* Left column */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         {/* Balance card */}
-        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '16px', padding: '20px' }}>
-          <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 700, color: 'var(--b1n0-muted)', letterSpacing: '1.2px', textTransform: 'uppercase', marginBottom: '8px' }}>Saldo de tesorería</p>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', marginBottom: '16px' }}>
-            <span style={{ fontFamily: F, fontSize: '16px', color: 'var(--b1n0-muted)' }}>Q</span>
-            <span style={{ fontFamily: D, fontSize: '48px', fontWeight: 700, color: treasuryBalance >= 0 ? 'var(--b1n0-text-1)' : '#f87171', letterSpacing: '-2px' }}>
+        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '10px', padding: '14px' }}>
+          <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: 'var(--b1n0-muted)', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '4px' }}>Saldo</p>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: '3px', marginBottom: '12px' }}>
+            <span style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)' }}>Q</span>
+            <span style={{ fontFamily: D, fontSize: '36px', fontWeight: 700, color: treasuryBalance >= 0 ? 'var(--b1n0-text-1)' : '#f87171', letterSpacing: '-1.5px' }}>
               {treasuryLoading ? '...' : fmtQ2(treasuryBalance)}
             </span>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
-            <div style={{ background: 'var(--b1n0-surface)', borderRadius: '10px', padding: '12px' }}>
-              <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', marginBottom: '4px' }}>Ingresos</p>
-              <p style={{ fontFamily: D, fontSize: '18px', fontWeight: 700, color: '#4ade80' }}>+Q{fmtQ2(totalIn)}</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+            <div style={{ background: 'var(--b1n0-surface)', borderRadius: '8px', padding: '8px' }}>
+              <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', marginBottom: '2px' }}>Ingresos</p>
+              <p style={{ fontFamily: D, fontSize: '14px', fontWeight: 700, color: '#4ade80' }}>+Q{fmtQ2(totalIn)}</p>
             </div>
-            <div style={{ background: 'var(--b1n0-surface)', borderRadius: '10px', padding: '12px' }}>
-              <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', marginBottom: '4px' }}>Egresos</p>
-              <p style={{ fontFamily: D, fontSize: '18px', fontWeight: 700, color: '#f87171' }}>−Q{fmtQ2(totalOut)}</p>
+            <div style={{ background: 'var(--b1n0-surface)', borderRadius: '8px', padding: '8px' }}>
+              <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', marginBottom: '2px' }}>Egresos</p>
+              <p style={{ fontFamily: D, fontSize: '14px', fontWeight: 700, color: '#f87171' }}>−Q{fmtQ2(totalOut)}</p>
             </div>
-            <div style={{ background: 'var(--b1n0-surface)', borderRadius: '10px', padding: '12px' }}>
-              <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', marginBottom: '4px' }}>Transacciones</p>
-              <p style={{ fontFamily: D, fontSize: '18px', fontWeight: 700, color: 'var(--b1n0-text-1)' }}>{treasuryLedger.length}</p>
+            <div style={{ background: 'var(--b1n0-surface)', borderRadius: '8px', padding: '8px' }}>
+              <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', marginBottom: '2px' }}>Txs</p>
+              <p style={{ fontFamily: D, fontSize: '14px', fontWeight: 700, color: 'var(--b1n0-text-1)' }}>{treasuryLedger.length}</p>
             </div>
           </div>
         </div>
 
         {/* Withdrawal form */}
-        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '16px', padding: '20px' }}>
-          <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 700, color: 'var(--b1n0-muted)', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '12px' }}>Retiro de fondos</p>
+        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '10px', padding: '14px' }}>
+          <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: 'var(--b1n0-muted)', letterSpacing: '0.8px', textTransform: 'uppercase', marginBottom: '8px' }}>Retiro</p>
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
             <span style={{ fontFamily: D, fontSize: '14px', fontWeight: 700 }}>Q</span>
             <input
@@ -173,8 +173,8 @@ export function TreasuryPanel() {
         </div>
 
         {/* Sweep / Sync button */}
-        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '16px', padding: '20px' }}>
-          <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 700, color: 'var(--b1n0-muted)', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '12px' }}>Sincronización</p>
+        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '10px', padding: '14px' }}>
+          <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: 'var(--b1n0-muted)', letterSpacing: '0.8px', textTransform: 'uppercase', marginBottom: '8px' }}>Sync</p>
           <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', marginBottom: '12px', lineHeight: '1.5' }}>
             Acredita fees y spread no sincronizados de todas las transacciones a la tesorería.
           </p>
@@ -210,9 +210,9 @@ export function TreasuryPanel() {
       </div>
 
       {/* Right column - Transaction history */}
-      <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '16px', padding: '20px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-          <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 700, color: 'var(--b1n0-muted)', letterSpacing: '1px', textTransform: 'uppercase' }}>Historial ({treasuryLedger.length})</p>
+      <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '10px', padding: '14px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+          <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: 'var(--b1n0-muted)', letterSpacing: '0.8px', textTransform: 'uppercase' }}>Historial ({treasuryLedger.length})</p>
           <button
             onClick={loadTreasuryData}
             style={{

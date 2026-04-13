@@ -128,14 +128,14 @@ export function UsersPanel() {
   }
 
   return (
-    <div style={{ maxWidth: '1200px' }}>
-      <div style={{ marginBottom: '16px' }}>
+    <div>
+      <div style={{ marginBottom: '10px' }}>
         <input
           type="text"
           placeholder="Buscar por nombre o email..."
           value={usersSearch}
           onChange={(e) => setUsersSearch(e.target.value)}
-          style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--b1n0-border)', fontFamily: F, fontSize: '14px', background: 'var(--b1n0-card)', outline: 'none' }}
+          style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--b1n0-border)', fontFamily: F, fontSize: '12px', background: 'var(--b1n0-card)', outline: 'none' }}
         />
       </div>
 
@@ -155,10 +155,10 @@ export function UsersPanel() {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           {/* Filter buttons */}
-          <div style={{ display: 'flex', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '4px', marginBottom: '8px', flexWrap: 'wrap' }}>
             {[
               { label: 'Total', val: adminUsers.length, color: 'var(--b1n0-text-1)', filter: null as string | null },
-              { label: 'Market Makers', val: adminUsers.filter((u) => u.role === 'market_maker').length, color: '#C4B5FD', filter: 'market_maker' },
+              { label: 'MM', val: adminUsers.filter((u) => u.role === 'market_maker').length, color: '#C4B5FD', filter: 'market_maker' },
               { label: 'LPs', val: adminUsers.filter((u) => u.role === 'lp').length, color: '#4ade80', filter: 'lp' },
               { label: 'Sponsors', val: adminUsers.filter((u) => u.role === 'sponsor').length, color: '#FFD474', filter: 'sponsor' },
               { label: 'Admins', val: adminUsers.filter((u) => u.is_admin).length, color: '#f87171', filter: 'admin' },
@@ -170,28 +170,30 @@ export function UsersPanel() {
                   onClick={() => setRoleFilter(isActive ? null : s.filter)}
                   style={{
                     background: isActive ? s.color + '15' : 'var(--b1n0-card)',
-                    border: isActive ? `2px solid ${s.color}` : '1px solid var(--b1n0-border)',
-                    borderRadius: '10px',
-                    padding: '10px 16px',
-                    minWidth: '100px',
+                    border: isActive ? `1.5px solid ${s.color}` : '1px solid var(--b1n0-border)',
+                    borderRadius: '7px',
+                    padding: '6px 12px',
                     cursor: 'pointer',
                     textAlign: 'left',
                     transition: 'all 0.15s',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
                   }}
                 >
-                  <p style={{ fontFamily: F, fontSize: '10px', color: isActive ? s.color : 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  <span style={{ fontFamily: F, fontSize: '9px', color: isActive ? s.color : 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.3px' }}>
                     {s.label}
-                  </p>
-                  <p style={{ fontFamily: D, fontSize: '20px', fontWeight: 800, color: s.color }}>
+                  </span>
+                  <span style={{ fontFamily: D, fontSize: '14px', fontWeight: 800, color: s.color }}>
                     {s.val}
-                  </p>
+                  </span>
                 </button>
               )
             })}
           </div>
 
           {/* Sortable header row */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 90px 90px 70px 70px 60px 90px', gap: '8px', padding: '8px 16px', background: 'var(--b1n0-surface)', borderRadius: '10px', marginBottom: '4px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 80px 80px 60px 60px 50px 80px', gap: '4px', padding: '5px 12px', background: 'var(--b1n0-surface)', borderRadius: '7px', marginBottom: '4px' }}>
             {[
               { key: 'name', label: 'Usuario' },
               { key: 'balance', label: 'Saldo' },
@@ -265,29 +267,29 @@ export function UsersPanel() {
                   style={{
                     background: 'var(--b1n0-card)',
                     border: '1px solid var(--b1n0-border)',
-                    borderRadius: '12px',
+                    borderRadius: '8px',
                     overflow: 'hidden',
                     transition: 'box-shadow 0.15s',
-                    boxShadow: isEditing ? '0 0 0 2px #6366f1' : 'none',
+                    boxShadow: isEditing ? '0 0 0 1.5px #6366f1' : 'none',
                   }}
                 >
                   {/* Main row */}
                   <div
                     style={{
                       display: 'grid',
-                      gridTemplateColumns: '1fr 90px 90px 70px 70px 60px 90px',
-                      gap: '8px',
-                      padding: '14px 16px',
+                      gridTemplateColumns: '1fr 80px 80px 60px 60px 50px 80px',
+                      gap: '4px',
+                      padding: '8px 12px',
                       cursor: 'pointer',
                       alignItems: 'center',
                     }}
                     onClick={() => setEditingUser(isEditing ? null : user)}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
                       <div
                         style={{
-                          width: '36px',
-                          height: '36px',
+                          width: '28px',
+                          height: '28px',
                           borderRadius: '50%',
                           background: role.color + '20',
                           display: 'flex',
@@ -296,20 +298,20 @@ export function UsersPanel() {
                           flexShrink: 0,
                         }}
                       >
-                        <span style={{ fontFamily: D, fontSize: '14px', fontWeight: 700, color: role.color }}>
+                        <span style={{ fontFamily: D, fontSize: '11px', fontWeight: 700, color: role.color }}>
                           {(user.name || user.username || '?')[0].toUpperCase()}
                         </span>
                       </div>
                       <div style={{ minWidth: 0 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 600, color: 'var(--b1n0-text-1)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                          <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 600, color: 'var(--b1n0-text-1)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                             {user.name || 'Sin nombre'}
                           </p>
-                          <span style={{ padding: '2px 7px', borderRadius: '4px', fontSize: '9px', fontFamily: F, fontWeight: 700, background: role.color + '15', color: role.color, whiteSpace: 'nowrap' }}>
+                          <span style={{ padding: '1px 5px', borderRadius: '3px', fontSize: '8px', fontFamily: F, fontWeight: 700, background: role.color + '15', color: role.color, whiteSpace: 'nowrap' }}>
                             {role.label}
                           </span>
                         </div>
-                        <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)' }}>@{user.username || user.id.slice(0, 8)}</p>
+                        <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)' }}>@{user.username || user.id.slice(0, 8)}</p>
                       </div>
                     </div>
                     <span style={{ fontFamily: D, fontSize: '13px', fontWeight: 700, color: 'var(--b1n0-text-1)' }}>
@@ -674,9 +676,10 @@ export function UsersPanel() {
                     </div>
                   )}
 
-                  {/* Deduct balance row */}
-                  <div style={{ display: 'flex', gap: '6px', alignItems: 'center', marginTop: '12px', paddingLeft: '16px', paddingRight: '16px', paddingBottom: '16px', borderTop: '1px solid var(--b1n0-border)' }}>
-                    <span style={{ fontFamily: F, fontSize: '11px', color: '#f87171', fontWeight: 600 }}>Deducir:</span>
+                  {/* Deduct balance row — only visible when editing */}
+                  {isEditing && (
+                  <div style={{ display: 'flex', gap: '4px', alignItems: 'center', padding: '8px 12px', borderTop: '1px solid var(--b1n0-border)' }}>
+                    <span style={{ fontFamily: F, fontSize: '10px', color: '#f87171', fontWeight: 600 }}>Deducir:</span>
                     {[50, 100, 500, 1000].map((amt) => (
                       <button
                         key={amt}
@@ -689,12 +692,12 @@ export function UsersPanel() {
                         }}
                         disabled={userSaving}
                         style={{
-                          padding: '4px 8px',
-                          borderRadius: '6px',
+                          padding: '3px 6px',
+                          borderRadius: '4px',
                           border: '1px solid #fecaca',
                           background: 'rgba(248,113,113,0.08)',
                           fontFamily: F,
-                          fontSize: '10px',
+                          fontSize: '9px',
                           fontWeight: 600,
                           cursor: 'pointer',
                           color: '#f87171',
@@ -708,7 +711,7 @@ export function UsersPanel() {
                       placeholder="Monto"
                       value={customBalanceAmt[user.id + '_deduct'] || ''}
                       onChange={(e) => setCustomBalanceAmt((prev) => ({ ...prev, [user.id + '_deduct']: e.target.value }))}
-                      style={{ width: '100px', padding: '4px 8px', borderRadius: '6px', border: '1px solid #fecaca', fontFamily: F, fontSize: '11px', outline: 'none' }}
+                      style={{ width: '80px', padding: '3px 6px', borderRadius: '4px', border: '1px solid #fecaca', fontFamily: F, fontSize: '10px', outline: 'none' }}
                     />
                     <button
                       onClick={() => {
@@ -723,13 +726,13 @@ export function UsersPanel() {
                       }}
                       disabled={userSaving || !customBalanceAmt[user.id + '_deduct']}
                       style={{
-                        padding: '4px 10px',
-                        borderRadius: '6px',
+                        padding: '3px 8px',
+                        borderRadius: '4px',
                         border: 'none',
                         background: '#f87171',
                         color: '#fff',
                         fontFamily: F,
-                        fontSize: '10px',
+                        fontSize: '9px',
                         fontWeight: 600,
                         cursor: 'pointer',
                       }}
@@ -737,6 +740,7 @@ export function UsersPanel() {
                       - Deducir
                     </button>
                   </div>
+                  )}
                 </div>
               )
             })}

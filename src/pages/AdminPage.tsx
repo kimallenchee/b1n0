@@ -92,66 +92,62 @@ export function AdminPage() {
   }
 
   return (
-    <div style={{ height: '100%', overflow: 'auto', padding: '20px 24px 60px', maxWidth: '100%' }}>
+    <div style={{ height: '100%', overflow: 'auto', padding: '12px 20px 60px', maxWidth: '100%' }}>
 
-      {/* Header + tab switcher + date filter */}
-      <div style={{ marginBottom: '20px' }}>
-        <p style={{ fontFamily: D, fontWeight: 800, fontSize: '22px', color: 'var(--b1n0-text-1)', marginBottom: '12px' }}>
-          Admin
-        </p>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
-          <div style={{ display: 'inline-flex', background: 'var(--b1n0-surface)', borderRadius: '10px', padding: '3px' }}>
-            {([['manage', 'Gestionar'], ['revenue', 'Ingresos'], ['rates', 'Tarifas'], ['users', 'Usuarios'], ['treasury', 'Tesorería']] as const).map(([v, label]) => (
-              <button
-                key={v}
-                onClick={() => { setView(v) }}
-                style={{
-                  padding: '8px 18px', borderRadius: '7px', border: 'none', cursor: 'pointer',
-                  fontFamily: F, fontWeight: 600, fontSize: '13px',
-                  background: view === v ? 'var(--b1n0-surface)' : 'transparent',
-                  color: view === v ? '#fff' : 'var(--b1n0-muted)',
-                  transition: 'all 0.15s',
-                }}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-          {/* Date range filter — visible on Ingresos + Tesorería */}
-          {(view === 'revenue' || view === 'treasury') && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <input
-                type="date"
-                value={dateFrom}
-                onChange={(e) => setDateFrom(e.target.value)}
-                style={{
-                  padding: '7px 10px', borderRadius: '8px', border: '1px solid var(--b1n0-border)',
-                  background: 'var(--b1n0-surface)', color: 'var(--b1n0-text-1)',
-                  fontFamily: F, fontSize: '12px', outline: 'none',
-                }}
-              />
-              <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)' }}>→</span>
-              <input
-                type="date"
-                value={dateTo}
-                onChange={(e) => setDateTo(e.target.value)}
-                style={{
-                  padding: '7px 10px', borderRadius: '8px', border: '1px solid var(--b1n0-border)',
-                  background: 'var(--b1n0-surface)', color: 'var(--b1n0-text-1)',
-                  fontFamily: F, fontSize: '12px', outline: 'none',
-                }}
-              />
-              {(dateFrom || dateTo) && (
-                <button
-                  onClick={() => { setDateFrom(''); setDateTo('') }}
-                  style={{ padding: '6px 10px', borderRadius: '6px', border: 'none', background: 'rgba(255,255,255,0.08)', color: 'var(--b1n0-muted)', fontFamily: F, fontSize: '11px', cursor: 'pointer' }}
-                >
-                  Limpiar
-                </button>
-              )}
-            </div>
-          )}
+      {/* Compact header: tabs left, date filter right */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', marginBottom: '14px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'inline-flex', background: 'rgba(255,255,255,0.04)', borderRadius: '8px', padding: '2px', gap: '1px' }}>
+          {([['manage', 'Gestionar'], ['revenue', 'Ingresos'], ['rates', 'Tarifas'], ['users', 'Usuarios'], ['treasury', 'Tesorería']] as const).map(([v, label]) => (
+            <button
+              key={v}
+              onClick={() => { setView(v) }}
+              style={{
+                padding: '6px 14px', borderRadius: '6px', border: 'none', cursor: 'pointer',
+                fontFamily: F, fontWeight: 600, fontSize: '12px',
+                background: view === v ? 'rgba(255,255,255,0.1)' : 'transparent',
+                color: view === v ? '#fff' : 'rgba(255,255,255,0.35)',
+                transition: 'all 0.15s',
+                ...(view === v ? { boxShadow: '0 1px 3px rgba(0,0,0,0.3)' } : {}),
+              }}
+            >
+              {label}
+            </button>
+          ))}
         </div>
+        {/* Date range filter — visible on Ingresos + Tesorería */}
+        {(view === 'revenue' || view === 'treasury') && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <input
+              type="date"
+              value={dateFrom}
+              onChange={(e) => setDateFrom(e.target.value)}
+              style={{
+                padding: '5px 8px', borderRadius: '6px', border: '1px solid var(--b1n0-border)',
+                background: 'var(--b1n0-surface)', color: 'var(--b1n0-text-1)',
+                fontFamily: F, fontSize: '11px', outline: 'none',
+              }}
+            />
+            <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>→</span>
+            <input
+              type="date"
+              value={dateTo}
+              onChange={(e) => setDateTo(e.target.value)}
+              style={{
+                padding: '5px 8px', borderRadius: '6px', border: '1px solid var(--b1n0-border)',
+                background: 'var(--b1n0-surface)', color: 'var(--b1n0-text-1)',
+                fontFamily: F, fontSize: '11px', outline: 'none',
+              }}
+            />
+            {(dateFrom || dateTo) && (
+              <button
+                onClick={() => { setDateFrom(''); setDateTo('') }}
+                style={{ padding: '4px 8px', borderRadius: '5px', border: 'none', background: 'rgba(255,255,255,0.08)', color: 'var(--b1n0-muted)', fontFamily: F, fontSize: '10px', cursor: 'pointer' }}
+              >
+                ✕
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       {/* ═══════════════ EVENT MANAGER (Gestionar view) ═══════════════ */}
