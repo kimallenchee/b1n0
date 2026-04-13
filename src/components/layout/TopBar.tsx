@@ -56,45 +56,24 @@ export function TopBar({ user }: TopBarProps) {
           <img src="/b1n0-logo.png" alt="B1N0" style={{ height: '24px', objectFit: 'contain' }} />
         </button>
 
-        {/* How it works trigger */}
-        <button
-          onClick={() => setHowOpen(true)}
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: '4px 8px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '4px',
-          }}
-        >
-          <span style={{
-            width: '16px',
-            height: '16px',
-            borderRadius: '50%',
-            border: '1.5px solid #14b8a6',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontFamily: F,
-            fontWeight: 700,
-            fontSize: '10px',
-            color: '#14b8a6',
-            lineHeight: 1,
-          }}>?</span>
-          <span style={{
-            fontFamily: F,
-            fontSize: '11px',
-            fontWeight: 600,
-            color: '#14b8a6',
-          }}>Cómo funciona</span>
-        </button>
-
         {/* Right side */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           {isLoggedIn ? (
             <>
+              {/* How it works — subtle ? icon */}
+              <button
+                onClick={() => setHowOpen(true)}
+                title="¿Cómo funciona?"
+                aria-label="¿Cómo funciona?"
+                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--b1n0-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                  <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+              </button>
+
               {/* Notification bell */}
               <button
                 onClick={() => setNotifOpen(true)}
@@ -146,12 +125,26 @@ export function TopBar({ user }: TopBarProps) {
               </button>
             </>
           ) : (
-            <button
-              onClick={() => openAuth('login')}
-              style={{ padding: '8px 16px', borderRadius: '20px', border: 'none', background: '#4ade80', color: '#0d0d0d', fontFamily: F, fontWeight: 600, fontSize: '12px', cursor: 'pointer' }}
-            >
-              Entrar
-            </button>
+            <>
+              <button
+                onClick={() => setHowOpen(true)}
+                title="¿Cómo funciona?"
+                aria-label="¿Cómo funciona?"
+                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--b1n0-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                  <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+              </button>
+              <button
+                onClick={() => openAuth('login')}
+                style={{ padding: '8px 16px', borderRadius: '20px', border: 'none', background: '#4ade80', color: '#0d0d0d', fontFamily: F, fontWeight: 600, fontSize: '12px', cursor: 'pointer' }}
+              >
+                Entrar
+              </button>
+            </>
           )}
         </div>
       </div>
