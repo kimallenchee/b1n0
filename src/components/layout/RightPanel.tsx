@@ -45,7 +45,7 @@ export function RightPanel() {
     .slice(0, 3)
 
   return (
-    <div style={{ width: 280, height: '100dvh', overflowY: 'auto', padding: '16px 16px 32px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '12px', borderLeft: '1px solid rgba(255,255,255,0.04)', scrollbarWidth: 'none' }}>
+    <div style={{ width: 280, height: '100dvh', overflowY: 'auto', padding: '16px 16px 32px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '12px', borderLeft: '1px solid var(--b1n0-border)', scrollbarWidth: 'none' }}>
 
       {/* Balance */}
       <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '16px', padding: '18px' }}>
@@ -54,10 +54,10 @@ export function RightPanel() {
           Q{balance.toLocaleString()}
         </p>
         <div style={{ display: 'flex', gap: '8px' }}>
-          <button onClick={() => setDepositOpen(true)} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: 'none', background: '#4ade80', cursor: 'pointer', fontFamily: F, fontWeight: 700, fontSize: '12px', color: '#0d0d0d' }}>
+          <button onClick={() => setDepositOpen(true)} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: 'none', background: 'var(--b1n0-si)', cursor: 'pointer', fontFamily: F, fontWeight: 700, fontSize: '12px', color: 'var(--b1n0-on-accent)' }}>
             Depositar
           </button>
-          <button onClick={() => setRetiroOpen(true)} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.08)', background: 'transparent', cursor: 'pointer', fontFamily: F, fontWeight: 500, fontSize: '12px', color: 'var(--b1n0-text-1)' }}>
+          <button onClick={() => setRetiroOpen(true)} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: '1px solid var(--b1n0-border)', background: 'transparent', cursor: 'pointer', fontFamily: F, fontWeight: 500, fontSize: '12px', color: 'var(--b1n0-text-1)' }}>
             Retirar
           </button>
         </div>
@@ -74,7 +74,7 @@ export function RightPanel() {
           { label: 'En juego', value: totalAtRisk > 0 ? `Q${totalAtRisk.toFixed(2)}` : '—' },
           { label: 'P/L histórico', value: resolved.length > 0 ? `${historicalPL >= 0 ? '+' : ''}Q${Math.abs(historicalPL).toFixed(2)}` : '—' },
         ].map(({ label, value }, i) => (
-          <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderTop: i > 0 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}>
+          <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderTop: i > 0 ? '1px solid var(--b1n0-border)' : 'none' }}>
             <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)' }}>{label}</span>
             <span style={{ fontFamily: D, fontWeight: 700, fontSize: '14px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.3px' }}>{value}</span>
           </div>
@@ -94,7 +94,7 @@ export function RightPanel() {
               ? `${Math.floor((diff % 3600000) / 60000)}m`
               : `${Math.floor(diff / 3600000)}h`
             return (
-              <div key={e.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '9px 0', borderTop: i > 0 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}>
+              <div key={e.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '9px 0', borderTop: i > 0 ? '1px solid var(--b1n0-border)' : 'none' }}>
                 <span style={{ fontFamily: F, fontSize: '9px', fontWeight: 600, color: 'var(--b1n0-muted)', background: 'var(--b1n0-surface)', borderRadius: '4px', padding: '2px 5px', textTransform: 'uppercase', flexShrink: 0 }}>
                   {categoryShort[e.category] || 'EVT'}
                 </span>
@@ -121,7 +121,7 @@ export function RightPanel() {
           </p>
           <button
             onClick={() => setKycOpen(true)}
-            style={{ width: '100%', padding: '10px', borderRadius: '10px', border: 'none', background: '#4ade80', cursor: 'pointer', fontFamily: F, fontWeight: 700, fontSize: '12px', color: '#0d0d0d' }}
+            style={{ width: '100%', padding: '10px', borderRadius: '10px', border: 'none', background: 'var(--b1n0-si)', cursor: 'pointer', fontFamily: F, fontWeight: 700, fontSize: '12px', color: 'var(--b1n0-on-accent)' }}
           >
             Verificar →
           </button>
