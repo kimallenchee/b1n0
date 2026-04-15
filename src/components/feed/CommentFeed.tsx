@@ -10,7 +10,7 @@ interface CommentFeedProps {
 
 const F = '"DM Sans", sans-serif'
 
-const tierColors: Record<number, string> = { 1: 'rgba(255,255,255,0.08)', 2: 'rgba(255,255,255,0.12)', 3: 'var(--b1n0-surface)' }
+const tierColors: Record<number, string> = { 1: 'var(--b1n0-disabled-bg)', 2: 'var(--b1n0-disabled-bg)', 3: 'var(--b1n0-surface)' }
 const avatarBg = ['var(--b1n0-surface)', '#2a2724', 'var(--b1n0-muted)', '#2a2724', '#2a2724', 'var(--b1n0-muted)']
 
 function getAvatarColor(username: string): string {
@@ -164,7 +164,7 @@ export function CommentFeed({ comments: initialComments, eventId }: CommentFeedP
     avatarUrl ? (
       <img src={avatarUrl} alt="" style={{ width: size, height: size, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
     ) : (
-      <div style={{ width: size, height: size, borderRadius: '50%', background: getAvatarColor(username), display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F, fontWeight: 700, fontSize: Math.round(size * 0.38), color: '#fff', flexShrink: 0 }}>
+      <div style={{ width: size, height: size, borderRadius: '50%', background: getAvatarColor(username), display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F, fontWeight: 700, fontSize: Math.round(size * 0.38), color: 'var(--b1n0-text-1)', flexShrink: 0 }}>
         {username.charAt(0).toUpperCase()}
       </div>
     )
@@ -184,9 +184,9 @@ export function CommentFeed({ comments: initialComments, eventId }: CommentFeedP
               if (e.key === 'Escape') { setEditingId(null); setEditDraft('') }
             }}
             autoFocus
-            style={{ flex: 1, background: 'var(--b1n0-surface)', border: '1.5px solid rgba(255,255,255,0.08)', borderRadius: small ? '14px' : '16px', padding: small ? '7px 12px' : '9px 14px', fontFamily: F, fontSize: small ? '12px' : '13px', color: 'var(--b1n0-text-1)', outline: 'none' }}
+            style={{ flex: 1, background: 'var(--b1n0-surface)', border: '1.5px solid var(--b1n0-disabled-bg)', borderRadius: small ? '14px' : '16px', padding: small ? '7px 12px' : '9px 14px', fontFamily: F, fontSize: small ? '12px' : '13px', color: 'var(--b1n0-text-1)', outline: 'none' }}
           />
-          <button onClick={() => handleEdit(c.id, parentId)} disabled={sending || !editDraft.trim()} style={{ padding: '6px 12px', borderRadius: '8px', border: 'none', background: 'var(--b1n0-text-1)', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '11px', color: '#fff', opacity: (sending || !editDraft.trim()) ? 0.4 : 1 }}>
+          <button onClick={() => handleEdit(c.id, parentId)} disabled={sending || !editDraft.trim()} style={{ padding: '6px 12px', borderRadius: '8px', border: 'none', background: 'var(--b1n0-text-1)', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '11px', color: 'var(--b1n0-bg)', opacity: (sending || !editDraft.trim()) ? 0.4 : 1 }}>
             Guardar
           </button>
           <button onClick={() => { setEditingId(null); setEditDraft('') }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-muted)', padding: '6px 4px' }}>
@@ -205,7 +205,7 @@ export function CommentFeed({ comments: initialComments, eventId }: CommentFeedP
             </span>
             <span style={{ width: 4, height: 4, borderRadius: '50%', background: tierColors[c.tier], display: 'inline-block', flexShrink: 0 }} />
             {c.side && (
-              <span style={{ padding: '1px 6px', borderRadius: '8px', fontFamily: F, fontWeight: 700, fontSize: '10px', background: c.side === 'yes' ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.04)', color: c.side === 'yes' ? 'var(--b1n0-surface)' : 'var(--b1n0-muted)' }}>
+              <span style={{ padding: '1px 6px', borderRadius: '8px', fontFamily: F, fontWeight: 700, fontSize: '10px', background: c.side === 'yes' ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-border)', color: c.side === 'yes' ? 'var(--b1n0-surface)' : 'var(--b1n0-muted)' }}>
                 {c.side === 'yes' ? 'SÍ' : 'NO'}
               </span>
             )}
@@ -236,7 +236,7 @@ export function CommentFeed({ comments: initialComments, eventId }: CommentFeedP
             </button>
             <button
               onClick={() => handleDelete(c.id, parentId)}
-              style={{ display: 'block', width: '100%', padding: '10px 14px', background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 500, color: '#f87171', textAlign: 'left' }}
+              style={{ display: 'block', width: '100%', padding: '10px 14px', background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 500, color: 'var(--b1n0-no)', textAlign: 'left' }}
             >
               Eliminar
             </button>
@@ -254,7 +254,7 @@ export function CommentFeed({ comments: initialComments, eventId }: CommentFeedP
         <button onClick={() => handleVote(c.id, 'up', parentId)} style={{ display: 'flex', alignItems: 'center', gap: '3px', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontSize: '13px', color: myVote === 'up' ? 'var(--b1n0-surface)' : 'var(--b1n0-text-2)' }}>
           👍{(c.likes ?? 0) > 0 && <span style={{ fontFamily: F, fontSize: '11px', fontWeight: myVote === 'up' ? 700 : 400 }}>{c.likes}</span>}
         </button>
-        <button onClick={() => handleVote(c.id, 'down', parentId)} style={{ display: 'flex', alignItems: 'center', gap: '3px', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontSize: '13px', color: myVote === 'down' ? '#f87171' : 'var(--b1n0-text-2)' }}>
+        <button onClick={() => handleVote(c.id, 'down', parentId)} style={{ display: 'flex', alignItems: 'center', gap: '3px', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontSize: '13px', color: myVote === 'down' ? 'var(--b1n0-no)' : 'var(--b1n0-text-2)' }}>
           👎{(c.dislikes ?? 0) > 0 && <span style={{ fontFamily: F, fontSize: '11px', fontWeight: myVote === 'down' ? 700 : 400 }}>{c.dislikes}</span>}
         </button>
         {!parentId && (
@@ -278,7 +278,7 @@ export function CommentFeed({ comments: initialComments, eventId }: CommentFeedP
         </p>
         <div style={{ display: 'flex', background: 'var(--b1n0-surface)', borderRadius: '8px', padding: '2px' }}>
           {(['reciente', 'popular'] as const).map((s) => (
-            <button key={s} onClick={() => setSort(s)} style={{ padding: '5px 12px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '11px', background: sort === s ? 'var(--b1n0-surface)' : 'transparent', color: sort === s ? '#fff' : 'var(--b1n0-muted)', transition: 'background 0.15s' }}>
+            <button key={s} onClick={() => setSort(s)} style={{ padding: '5px 12px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '11px', background: sort === s ? 'var(--b1n0-surface)' : 'transparent', color: sort === s ? 'var(--b1n0-text-1)' : 'var(--b1n0-muted)', transition: 'background 0.15s' }}>
               {s === 'reciente' ? 'Reciente' : 'Popular'}
             </button>
           ))}
@@ -295,10 +295,10 @@ export function CommentFeed({ comments: initialComments, eventId }: CommentFeedP
               onChange={(e) => setDraft(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend() } }}
               placeholder="Di lo que pensás..."
-              style={{ flex: 1, background: 'var(--b1n0-surface)', border: '1.5px solid rgba(255,255,255,0.06)', borderRadius: '22px', padding: '10px 16px', fontFamily: F, fontSize: '13px', color: 'var(--b1n0-text-1)', outline: 'none' }}
+              style={{ flex: 1, background: 'var(--b1n0-surface)', border: '1.5px solid var(--b1n0-border)', borderRadius: '22px', padding: '10px 16px', fontFamily: F, fontSize: '13px', color: 'var(--b1n0-text-1)', outline: 'none' }}
             />
             {draft.trim() && (
-              <button onClick={handleSend} disabled={sending} style={{ width: 36, height: 36, borderRadius: '50%', border: 'none', background: 'var(--b1n0-text-1)', cursor: sending ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F, fontWeight: 700, fontSize: '14px', color: '#fff', flexShrink: 0, opacity: sending ? 0.5 : 1 }}>↑</button>
+              <button onClick={handleSend} disabled={sending} style={{ width: 36, height: 36, borderRadius: '50%', border: 'none', background: 'var(--b1n0-text-1)', cursor: sending ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F, fontWeight: 700, fontSize: '14px', color: 'var(--b1n0-bg)', flexShrink: 0, opacity: sending ? 0.5 : 1 }}>↑</button>
             )}
           </div>
         </div>
@@ -360,7 +360,7 @@ export function CommentFeed({ comments: initialComments, eventId }: CommentFeedP
                   style={{ flex: 1, background: 'var(--b1n0-surface)', border: '1.5px solid var(--b1n0-border)', borderRadius: '18px', padding: '8px 14px', fontFamily: F, fontSize: '12px', color: 'var(--b1n0-text-1)', outline: 'none' }}
                 />
                 {replyDraft.trim() && (
-                  <button onClick={() => handleReply(c.id)} disabled={sending} style={{ width: 30, height: 30, borderRadius: '50%', border: 'none', background: 'var(--b1n0-text-1)', cursor: sending ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F, fontWeight: 700, fontSize: '12px', color: '#fff', flexShrink: 0, opacity: sending ? 0.5 : 1 }}>↑</button>
+                  <button onClick={() => handleReply(c.id)} disabled={sending} style={{ width: 30, height: 30, borderRadius: '50%', border: 'none', background: 'var(--b1n0-text-1)', cursor: sending ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F, fontWeight: 700, fontSize: '12px', color: 'var(--b1n0-bg)', flexShrink: 0, opacity: sending ? 0.5 : 1 }}>↑</button>
                 )}
               </div>
             )}

@@ -231,7 +231,7 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
           </p>
           <a
             href="/perfil"
-            style={{ display: 'inline-block', padding: '11px 24px', borderRadius: '10px', background: 'var(--b1n0-text-1)', color: '#fff', fontFamily: F, fontWeight: 600, fontSize: '13px', textDecoration: 'none' }}
+            style={{ display: 'inline-block', padding: '11px 24px', borderRadius: '10px', background: 'var(--b1n0-text-1)', color: 'var(--b1n0-bg)', fontFamily: F, fontWeight: 600, fontSize: '13px', textDecoration: 'none' }}
           >
             Subir a Nivel {event.tierRequired} →
           </a>
@@ -353,7 +353,7 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
               <button
                 key={q}
                 onClick={() => setAmount(String(q))}
-                style={{ flex: 1, padding: '8px 4px', borderRadius: '8px', border: `1px solid ${amount === String(q) ? 'var(--b1n0-surface)' : 'var(--b1n0-border)'}`, background: amount === String(q) ? 'rgba(255,255,255,0.04)' : '#fff', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 500, color: amount === String(q) ? 'var(--b1n0-surface)' : 'var(--b1n0-muted)' }}
+                style={{ flex: 1, padding: '8px 4px', borderRadius: '8px', border: `1px solid ${amount === String(q) ? 'var(--b1n0-text-1)' : 'var(--b1n0-border)'}`, background: amount === String(q) ? 'var(--b1n0-card)' : 'var(--b1n0-surface)', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 500, color: amount === String(q) ? 'var(--b1n0-text-1)' : 'var(--b1n0-muted)' }}
               >
                 {event.currency}{q}
               </button>
@@ -427,7 +427,7 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
           )}
 
           {poolFull && (
-            <p style={{ fontFamily: F, fontSize: '12px', color: '#f87171', marginBottom: '10px', padding: '8px 10px', background: 'rgba(248,113,113,0.1)', borderRadius: '8px' }}>
+            <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', marginBottom: '10px', padding: '8px 10px', background: 'var(--b1n0-no-bg)', borderRadius: '8px' }}>
               Pool lleno — reducí el monto
             </p>
           )}
@@ -441,7 +441,7 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
             disabled={!amountValid || confirming}
             style={{
               width: '100%', padding: '14px', borderRadius: '12px', border: 'none',
-              background: !amountValid || confirming ? 'rgba(255,255,255,0.06)' : (side === 'no' || side?.endsWith('::no')) ? 'var(--b1n0-no)' : 'var(--b1n0-si)',
+              background: !amountValid || confirming ? 'var(--b1n0-border)' : (side === 'no' || side?.endsWith('::no')) ? 'var(--b1n0-no)' : 'var(--b1n0-si)',
               cursor: amountValid && !confirming ? 'pointer' : 'not-allowed',
               fontFamily: F, fontWeight: 700, fontSize: '14px', color: amountValid && !confirming ? '#fff' : 'var(--b1n0-muted)', marginBottom: '8px',
               transition: 'all 0.15s',
@@ -450,7 +450,7 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
             {confirming ? 'Procesando...' : `Comprar ${side ? displaySide(side) : ''} — ${event.currency}${amount || '0'}`}
           </button>
           {confirmError && (
-            <p style={{ fontFamily: F, fontSize: '11px', color: '#f87171', textAlign: 'center', marginBottom: '6px' }}>{confirmError}</p>
+            <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-no)', textAlign: 'center', marginBottom: '6px' }}>{confirmError}</p>
           )}
           <button onClick={onClose} style={{ width: '100%', padding: '10px', background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)' }}>
             Cerrar
@@ -515,7 +515,7 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
           </div>
 
           {confirmError && (
-            <p style={{ fontFamily: F, fontSize: '12px', color: '#f87171', marginBottom: '12px', padding: '8px 10px', background: 'rgba(248,113,113,0.1)', borderRadius: '8px' }}>
+            <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', marginBottom: '12px', padding: '8px 10px', background: 'var(--b1n0-no-bg)', borderRadius: '8px' }}>
               {confirmError}
             </p>
           )}
@@ -523,7 +523,7 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
           <button
             onClick={handleConfirm}
             disabled={confirming}
-            style={{ width: '100%', padding: '16px', borderRadius: '12px', border: 'none', background: confirming ? 'rgba(255,255,255,0.12)' : 'var(--b1n0-surface)', cursor: confirming ? 'default' : 'pointer', fontFamily: F, fontWeight: 600, fontSize: '14px', color: '#fff', letterSpacing: '0.8px', marginBottom: '8px' }}
+            style={{ width: '100%', padding: '16px', borderRadius: '12px', border: 'none', background: confirming ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-surface)', cursor: confirming ? 'default' : 'pointer', fontFamily: F, fontWeight: 600, fontSize: '14px', color: 'var(--b1n0-text-1)', letterSpacing: '0.8px', marginBottom: '8px' }}
           >
             {confirming ? 'Registrando...' : 'CONFIRMAR VOTO'}
           </button>

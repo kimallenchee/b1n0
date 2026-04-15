@@ -2,12 +2,12 @@
 
 /* ═══════════════════════════════════════════════════════════════
    b1n0 Design System — CSS Custom Properties
-   Light mode default. Dark via .dark class, data-theme="dark",
-   or prefers-color-scheme: dark.
+   Dark is the default (works without JS).
+   Light mode opt-in via [data-theme="light"] on <html>.
    ═══════════════════════════════════════════════════════════════ */
 
 :root {
-  /* ── Brand Accent Colors ── */
+  /* ── Brand Accent Colors (identical in both themes) ── */
   --b1n0-mint:     #4ade80;
   --b1n0-gold:     #FFD474;
   --b1n0-teal-50:  #E8F5F0;
@@ -23,7 +23,7 @@
   --b1n0-orange-700: #C45A0A;
   --b1n0-orange-900: #6B300A;
 
-  /* ── Position Colors ── */
+  /* ── Position Colors (core stays same across themes) ── */
   --b1n0-si:       #4ade80;
   --b1n0-si-bright:#4ade80;
   --b1n0-si-bg:    rgba(74,222,128,0.12);
@@ -34,7 +34,10 @@
   --b1n0-no-dark:  #f87171;
   --b1n0-no-hover: #e05555;
 
-  /* ── Semantic surfaces — dark-first ── */
+  /* ── Text that sits ON accent buttons (constant across themes) ── */
+  --b1n0-on-accent: #0d0d0d;
+
+  /* ── Semantic surfaces — dark-first defaults ── */
   --b1n0-bg:       #0d0d0d;
   --b1n0-surface:  #1c1c1c;
   --b1n0-card:     #141414;
@@ -42,6 +45,11 @@
   --b1n0-muted:    #5e5a54;
   --b1n0-text-2:   #a09a90;
   --b1n0-text-1:   #f2efea;
+
+  /* ── Hover / elevation tints ── */
+  --b1n0-hover-overlay:  rgba(255,255,255,0.04);
+  --b1n0-card-hover-border: #5e5a54;
+  --b1n0-shadow-modal:   0 24px 80px rgba(0,0,0,0.5);
 
   /* ── Sidebar ── */
   --b1n0-sidebar-bg:        #0d0d0d;
@@ -90,6 +98,17 @@
 
   --b1n0-scrollbar-thumb: #2a2724;
 
+  /* ── TOW (tug-of-war) bar hover tints ── */
+  --b1n0-si-bg-hover:  rgba(74,222,128,0.20);
+  --b1n0-no-bg-hover:  rgba(248,113,113,0.18);
+
+  /* ── Translucent accent borders ── */
+  --b1n0-si-border:   rgba(74,222,128,0.25);
+  --b1n0-no-border:   rgba(248,113,113,0.25);
+
+  /* ── Disabled button bg ── */
+  --b1n0-disabled-bg: rgba(255,255,255,0.12);
+
   /* ── Legacy compat ── */
   --color-cat-deportes-bg: var(--badge-deportes-bg); --color-cat-deportes: var(--badge-deportes-text);
   --color-cat-politica-bg: var(--badge-politica-bg); --color-cat-politica: var(--badge-politica-text);
@@ -101,13 +120,90 @@
   --color-cat-otro-bg: var(--badge-otro-bg); --color-cat-otro: var(--badge-otro-text);
 }
 
-/* ══════════════ DARK MODE (default — reinforces :root) ══════════════ */
-.dark,
-[data-theme="dark"] {
-  /* Dark IS the default — these just ensure consistency */
+/* ══════════════════════════════════════════════════════════════════
+   LIGHT MODE — warm paper palette (keeps b1n0's warm aesthetic)
+   Opt in by setting data-theme="light" on <html>.
+   ══════════════════════════════════════════════════════════════════ */
+[data-theme="light"] {
+  /* Semantic surfaces — paper-based */
+  --b1n0-bg:       #f5f2ec;   /* warm paper base */
+  --b1n0-surface:  #ffffff;   /* elevated modals / sheets */
+  --b1n0-card:     #fbf9f4;   /* cards sit between bg and surface */
+  --b1n0-border:   #e5dfd4;   /* warm tan border */
+  --b1n0-muted:    #908a80;   /* lightest readable */
+  --b1n0-text-2:   #5e5a54;   /* mid text (our old muted becomes mid) */
+  --b1n0-text-1:   #1a1712;   /* deep warm near-black */
+
+  /* Hover / elevation tints — inverted for light */
+  --b1n0-hover-overlay:      rgba(0,0,0,0.04);
+  --b1n0-card-hover-border:  #b8b0a2;
+  --b1n0-shadow-modal:       0 16px 48px rgba(40,30,15,0.12);
+
+  /* Position accent backgrounds need more alpha to register on white */
+  --b1n0-si-bg:        rgba(34,160,70,0.12);
+  --b1n0-si-bg-hover:  rgba(34,160,70,0.20);
+  --b1n0-no-bg:        rgba(220,60,60,0.10);
+  --b1n0-no-bg-hover:  rgba(220,60,60,0.18);
+  --b1n0-si-border:    rgba(34,160,70,0.32);
+  --b1n0-no-border:    rgba(220,60,60,0.32);
+
+  /* Disabled button bg — needs dark tint on light */
+  --b1n0-disabled-bg: rgba(0,0,0,0.08);
+
+  /* Sidebar */
+  --b1n0-sidebar-bg:        #efeae1;
+  --b1n0-sidebar-text:      #7a7468;
+  --b1n0-sidebar-active-bg: rgba(34,160,70,0.14);
+  --b1n0-sidebar-hover-bg:  rgba(0,0,0,0.04);
+
+  /* Category badges — light-optimized (light bg, dark text) */
+  --badge-deportes-bg:    #DCE9F7; --badge-deportes-text:    #1E3A5F;
+  --badge-politica-bg:    #F7DCDC; --badge-politica-text:    #7A1E1E;
+  --badge-economia-bg:    #F7E8CC; --badge-economia-text:    #5F3A0E;
+  --badge-geopolitica-bg: #E4DCF7; --badge-geopolitica-text: #2E1065;
+  --badge-cultura-bg:     #F7DCEA; --badge-cultura-text:     #5F1039;
+  --badge-tecnologia-bg:  #D6EAF5; --badge-tecnologia-text:  #0C3A5A;
+  --badge-finanzas-bg:    #D6F0E5; --badge-finanzas-text:    #064E3B;
+  --badge-otro-bg:        #ece7dc; --badge-otro-text:        #5e5a54;
+
+  /* Status badges — deepen text, lighten bg */
+  --status-enjuego-bg:  rgba(200,140,20,0.14);  --status-enjuego-text:  #9a6b00;
+  --status-ganado-bg:   rgba(34,160,70,0.14);   --status-ganado-text:   #1a8c3a;
+  --status-perdido-bg:  rgba(220,60,60,0.12);   --status-perdido-text:  #b93030;
+  --status-vendido-bg:  #ece7dc;                --status-vendido-text:  #7a7468;
+  --status-resuelto-bg: rgba(34,160,70,0.10);   --status-resuelto-text: #1a8c3a;
+
+  /* Inputs */
+  --b1n0-input-bg:     #ffffff;
+  --b1n0-input-border: #e5dfd4;
+  --b1n0-input-focus:  #22a046;
+
+  /* Stats bar */
+  --b1n0-stats-bg:     #fbf9f4;
+  --b1n0-stats-border: #e5dfd4;
+  --b1n0-stats-label:  #908a80;
+  --b1n0-stats-value:  #1a1712;
+
+  /* Filter pills */
+  --b1n0-pill-bg:          transparent;
+  --b1n0-pill-border:      #d4cdbf;
+  --b1n0-pill-text:        #7a7468;
+  --b1n0-pill-active-bg:   #22a046;
+  --b1n0-pill-active-text: #ffffff;
+
+  /* Notifications */
+  --b1n0-notif-bg:     #ffffff;
+  --b1n0-notif-unread: #fbf5e8;
+
+  --b1n0-scrollbar-thumb: #d4cdbf;
 }
 
-/* Dark is default — no media query needed */
+/* Also support an explicit dark attribute (symmetry with light) */
+[data-theme="dark"] {
+  /* All values already set in :root — this selector exists so
+     ThemeContext can write data-theme="dark" explicitly without
+     the variables reverting. No overrides needed. */
+}
 
 /* ═══════════════════════════════════════════════════════════════
    Tailwind @theme — maps b1n0 vars into Tailwind token system
@@ -193,7 +289,7 @@ body {
 
 .tow-si {
   height: 100%;
-  background: rgba(74,222,128,0.12);
+  background: var(--b1n0-si-bg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -205,14 +301,14 @@ body {
   cursor: pointer;
   border-radius: 6px;
 }
-.tow-si:hover { background: rgba(74,222,128,0.20); }
+.tow-si:hover { background: var(--b1n0-si-bg-hover); }
 .tow-si:active { transform: scaleY(0.96); }
-.tow-si .tow-label { color: #4ade80; }
-.tow-si .tow-price { color: #4ade80; }
+.tow-si .tow-label { color: var(--b1n0-si); }
+.tow-si .tow-price { color: var(--b1n0-si); }
 
 .tow-no {
   height: 100%;
-  background: rgba(248,113,113,0.10);
+  background: var(--b1n0-no-bg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -225,10 +321,10 @@ body {
   cursor: pointer;
   border-radius: 6px;
 }
-.tow-no:hover { background: rgba(248,113,113,0.18); }
+.tow-no:hover { background: var(--b1n0-no-bg-hover); }
 .tow-no:active { transform: scaleY(0.96); }
-.tow-no .tow-label { color: #f87171; }
-.tow-no .tow-price { color: #f87171; }
+.tow-no .tow-label { color: var(--b1n0-no); }
+.tow-no .tow-price { color: var(--b1n0-no); }
 
 .tow-label {
   font-family: "DM Sans", sans-serif;
@@ -286,7 +382,7 @@ body {
 @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.85); } }
 
 .live-dot-broadcast {
-  width: 7px; height: 7px; background: #4ade80; border-radius: 50%;
+  width: 7px; height: 7px; background: var(--b1n0-si); border-radius: 50%;
   display: inline-block; flex-shrink: 0; animation: livePulse 1.6s ease-in-out infinite;
 }
 @keyframes livePulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: 0.45; } }
@@ -304,7 +400,7 @@ body {
   transition: border-color 0.18s ease, transform 0.15s ease;
   cursor: pointer;
 }
-.event-card:hover { border-color: #5e5a54; transform: translateY(-2px); }
+.event-card:hover { border-color: var(--b1n0-card-hover-border); transform: translateY(-2px); }
 .event-card:active { transform: translateY(0); }
 
 /* Card grid: 2 col mobile, 3 col desktop */
@@ -363,7 +459,7 @@ body {
    ═══════════════════════════════════════════════════════════════ */
 
 .btn-primary {
-  background: var(--b1n0-si); color: #0d0d0d;
+  background: var(--b1n0-si); color: var(--b1n0-on-accent);
   border: none; border-radius: 10px; padding: 12px 24px;
   font-family: "DM Sans", sans-serif; font-weight: 700; font-size: 14px;
   cursor: pointer; transition: background 0.15s ease, transform 0.1s ease;

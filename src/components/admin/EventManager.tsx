@@ -51,8 +51,8 @@ const COUNTRIES = [
 ] as const
 
 const categoryColors: Record<string, string> = {
-  deportes: '#93C5FD', politica: '#C4B5FD', economia: '#FFD474',
-  geopolitica: '#f87171', cultura: '#F9A8D4', tecnologia: '#7DD3FC',
+  deportes: '#93C5FD', politica: '#C4B5FD', economia: 'var(--b1n0-gold)',
+  geopolitica: 'var(--b1n0-no)', cultura: '#F9A8D4', tecnologia: '#7DD3FC',
   finanzas: '#6EE7B7', otro: 'var(--b1n0-muted)',
 }
 
@@ -243,7 +243,7 @@ function OptionRows({ options, onChange, maxPool = 0 }: {
               type="button"
               onClick={() => remove(i)}
               disabled={options.length <= 2}
-              style={{ background: 'none', border: 'none', cursor: options.length <= 2 ? 'default' : 'pointer', color: options.length <= 2 ? 'rgba(255,255,255,0.08)' : 'var(--b1n0-text-2)', fontSize: '18px', flexShrink: 0, padding: '4px 2px', lineHeight: 1 }}
+              style={{ background: 'none', border: 'none', cursor: options.length <= 2 ? 'default' : 'pointer', color: options.length <= 2 ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-text-2)', fontSize: '18px', flexShrink: 0, padding: '4px 2px', lineHeight: 1 }}
             >×</button>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '5px', paddingLeft: '2px' }}>
@@ -268,20 +268,20 @@ function OptionRows({ options, onChange, maxPool = 0 }: {
         </button>
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
           {maxPool > 0 && (
-            <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: poolOver ? '#f87171' : '#4ade80' }}>
+            <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: poolOver ? 'var(--b1n0-no)' : 'var(--b1n0-si)' }}>
               {poolOver
                 ? `Q${(totalPool - maxPool).toLocaleString()} excedido`
                 : `Q${poolRemaining.toLocaleString()} restante`}
             </span>
           )}
           <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>Q{totalPool.toLocaleString()} / Q{maxPool.toLocaleString()}</span>
-          <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: totalOk ? '#4ade80' : '#FFD474' }}>
+          <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: totalOk ? 'var(--b1n0-si)' : 'var(--b1n0-gold)' }}>
             {total}%
           </span>
         </div>
       </div>
       {poolOver && (
-        <p style={{ fontFamily: F, fontSize: '11px', color: '#f87171', marginTop: '6px', padding: '6px 8px', background: 'rgba(248,113,113,0.08)', borderRadius: '6px' }}>
+        <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-no)', marginTop: '6px', padding: '6px 8px', background: 'rgba(248,113,113,0.08)', borderRadius: '6px' }}>
           El pool de opciones excede el Pool inicial (Q{maxPool.toLocaleString()}). Reducí los montos o aumentá el pool total.
         </p>
       )}
@@ -1010,12 +1010,12 @@ export function EventManager({ platformRates }: EventManagerProps) {
                 <label style={labelStyle}>Pool parimutuel</label>
                 <div style={{ padding: '10px 12px', background: 'var(--b1n0-surface)', borderRadius: '10px', border: '1px solid rgba(0,0,0,0.07)' }}>
                   {hasActivePositions && (
-                    <p style={{ fontFamily: F, fontSize: '11px', color: '#FFD474', marginBottom: '8px', fontWeight: 600 }}>
+                    <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-gold)', marginBottom: '8px', fontWeight: 600 }}>
                       Mercado activo — pool crece con cada voto
                     </p>
                   )}
                   {[
-                    { label: 'Pool total', value: eventMarket?.pool_total ?? 0, color: '#4ade80' },
+                    { label: 'Pool total', value: eventMarket?.pool_total ?? 0, color: 'var(--b1n0-si)' },
                     { label: 'Semilla sponsor', value: editForm.sponsor_amount > 0 ? editForm.sponsor_amount : 0, color: 'var(--b1n0-text-1)' },
                     { label: 'Apuestas en pool', value: eventMarket?.bet_pool ?? 0, color: '#93C5FD' },
                     { label: 'Capital LP', value: eventMarket?.lp_capital ?? 0, color: '#C4B5FD' },
@@ -1082,11 +1082,11 @@ export function EventManager({ platformRates }: EventManagerProps) {
                 </label>
               </div>
 
-              {editError && <p style={{ fontFamily: F, fontSize: '12px', color: '#f87171', padding: '8px 10px', background: 'rgba(248,113,113,0.08)', borderRadius: '8px' }}>{editError}</p>}
-              {editSuccess && <p style={{ fontFamily: F, fontSize: '12px', color: '#4ade80', padding: '8px 10px', background: 'rgba(74,222,128,0.08)', borderRadius: '8px' }}>✓ {editSuccess}</p>}
+              {editError && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', padding: '8px 10px', background: 'rgba(248,113,113,0.08)', borderRadius: '8px' }}>{editError}</p>}
+              {editSuccess && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-si)', padding: '8px 10px', background: 'rgba(74,222,128,0.08)', borderRadius: '8px' }}>✓ {editSuccess}</p>}
 
               <button onClick={handleEditSave} disabled={editLoading}
-                style={{ width: '100%', padding: '13px', borderRadius: '12px', border: 'none', background: editLoading ? 'rgba(255,255,255,0.12)' : '#4ade80', color: '#0d0d0d', fontFamily: F, fontWeight: 600, fontSize: '13px', cursor: editLoading ? 'default' : 'pointer' }}>
+                style={{ width: '100%', padding: '13px', borderRadius: '12px', border: 'none', background: editLoading ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)', fontFamily: F, fontWeight: 600, fontSize: '13px', cursor: editLoading ? 'default' : 'pointer' }}>
                 {editLoading ? 'Guardando...' : 'Guardar cambios →'}
               </button>
 
@@ -1116,7 +1116,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                         await loadAllEvents()
                       }
                     }}
-                    style={{ width: '100%', padding: '13px', borderRadius: '12px', border: 'none', background: '#4ade80', color: '#0d0d0d', fontFamily: F, fontWeight: 700, fontSize: '13px', cursor: 'pointer', letterSpacing: '0.5px' }}
+                    style={{ width: '100%', padding: '13px', borderRadius: '12px', border: 'none', background: 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)', fontFamily: F, fontWeight: 700, fontSize: '13px', cursor: 'pointer', letterSpacing: '0.5px' }}
                   >
                     Publicar al público →
                   </button>
@@ -1142,7 +1142,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                                 Q{lp.amount.toLocaleString()} · {(lp.return_pct * 100).toFixed(0)}%
                               </span>
                             </div>
-                            <span style={{ fontFamily: F, fontSize: '10px', color: lp.status === 'active' ? '#C4B5FD' : lp.status === 'returned' ? '#4ade80' : '#f87171', fontWeight: 600, textTransform: 'uppercase' }}>
+                            <span style={{ fontFamily: F, fontSize: '10px', color: lp.status === 'active' ? '#C4B5FD' : lp.status === 'returned' ? 'var(--b1n0-si)' : 'var(--b1n0-no)', fontWeight: 600, textTransform: 'uppercase' }}>
                               {lp.status === 'active' ? 'Activo' : lp.status === 'returned' ? `Pagado Q${(lp.payout ?? 0).toLocaleString()}` : 'Pérdida parcial'}
                             </span>
                           </div>
@@ -1190,8 +1190,8 @@ export function EventManager({ platformRates }: EventManagerProps) {
                     >
                       {lpLoading ? 'Procesando...' : 'Agregar Capital LP →'}
                     </button>
-                    {lpError && <p style={{ fontFamily: F, fontSize: '11px', color: '#f87171', padding: '6px 8px', background: 'rgba(248,113,113,0.08)', borderRadius: '6px' }}>{lpError}</p>}
-                    {lpSuccess && <p style={{ fontFamily: F, fontSize: '11px', color: '#4ade80', padding: '6px 8px', background: 'rgba(74,222,128,0.08)', borderRadius: '6px' }}>✓ {lpSuccess}</p>}
+                    {lpError && <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-no)', padding: '6px 8px', background: 'rgba(248,113,113,0.08)', borderRadius: '6px' }}>{lpError}</p>}
+                    {lpSuccess && <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-si)', padding: '6px 8px', background: 'rgba(74,222,128,0.08)', borderRadius: '6px' }}>✓ {lpSuccess}</p>}
                   </div>
                 </div>
               )}
@@ -1204,14 +1204,14 @@ export function EventManager({ platformRates }: EventManagerProps) {
                       <button
                         onClick={() => handleResolve('yes')}
                         disabled={resolveLoading}
-                        style={{ flex: 1, padding: '10px', borderRadius: '10px', border: 'none', background: resolveLoading ? 'var(--b1n0-border)' : '#4ade80', cursor: resolveLoading ? 'default' : 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: '#fff' }}
+                        style={{ flex: 1, padding: '10px', borderRadius: '10px', border: 'none', background: resolveLoading ? 'var(--b1n0-border)' : 'var(--b1n0-si)', cursor: resolveLoading ? 'default' : 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: '#fff' }}
                       >
                         SÍ ganó
                       </button>
                       <button
                         onClick={() => handleResolve('no')}
                         disabled={resolveLoading}
-                        style={{ flex: 1, padding: '10px', borderRadius: '10px', border: 'none', background: resolveLoading ? 'var(--b1n0-border)' : '#f87171', cursor: resolveLoading ? 'default' : 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: '#fff' }}
+                        style={{ flex: 1, padding: '10px', borderRadius: '10px', border: 'none', background: resolveLoading ? 'var(--b1n0-border)' : 'var(--b1n0-no)', cursor: resolveLoading ? 'default' : 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: '#fff' }}
                       >
                         NO ganó
                       </button>
@@ -1223,15 +1223,15 @@ export function EventManager({ platformRates }: EventManagerProps) {
                           key={opt.label}
                           onClick={() => handleResolve(opt.label)}
                           disabled={resolveLoading}
-                          style={{ width: '100%', padding: '9px', borderRadius: '10px', border: 'none', background: resolveLoading ? 'rgba(255,255,255,0.08)' : '#4ade80', cursor: resolveLoading ? 'default' : 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: '#0d0d0d', textAlign: 'left' }}
+                          style={{ width: '100%', padding: '9px', borderRadius: '10px', border: 'none', background: resolveLoading ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-si)', cursor: resolveLoading ? 'default' : 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-on-accent)', textAlign: 'left' }}
                         >
                           {opt.label} ganó →
                         </button>
                       ))}
                     </div>
                   )}
-                  {resolveError && <p style={{ fontFamily: F, fontSize: '12px', color: '#f87171', marginTop: '8px', padding: '8px 10px', background: 'rgba(248,113,113,0.08)', borderRadius: '8px' }}>{resolveError}</p>}
-                  {resolveSuccess && <p style={{ fontFamily: F, fontSize: '12px', color: '#4ade80', marginTop: '8px', padding: '8px 10px', background: 'rgba(74,222,128,0.08)', borderRadius: '8px' }}>✓ {resolveSuccess}</p>}
+                  {resolveError && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', marginTop: '8px', padding: '8px 10px', background: 'rgba(248,113,113,0.08)', borderRadius: '8px' }}>{resolveError}</p>}
+                  {resolveSuccess && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-si)', marginTop: '8px', padding: '8px 10px', background: 'rgba(74,222,128,0.08)', borderRadius: '8px' }}>✓ {resolveSuccess}</p>}
                 </div>
               )}
 
@@ -1239,20 +1239,20 @@ export function EventManager({ platformRates }: EventManagerProps) {
                 {!deleteConfirm ? (
                   <button
                     onClick={() => setDeleteConfirm(true)}
-                    style={{ width: '100%', padding: '10px', borderRadius: '10px', border: '1px solid rgba(185,28,28,0.25)', background: 'transparent', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: '#f87171' }}
+                    style={{ width: '100%', padding: '10px', borderRadius: '10px', border: '1px solid rgba(185,28,28,0.25)', background: 'transparent', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-no)' }}
                   >
                     Eliminar evento
                   </button>
                 ) : (
                   <div style={{ background: 'rgba(248,113,113,0.08)', borderRadius: '10px', padding: '12px' }}>
-                    <p style={{ fontFamily: F, fontSize: '12px', color: '#f87171', marginBottom: '10px', fontWeight: 600 }}>
+                    <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', marginBottom: '10px', fontWeight: 600 }}>
                       ¿Archivar este evento? Desaparecerá del feed. Los votos y transacciones existentes se conservan.
                     </p>
                     <div style={{ display: 'flex', gap: '8px' }}>
                       <button
                         onClick={handleDelete}
                         disabled={deleteLoading}
-                        style={{ flex: 1, padding: '9px', borderRadius: '8px', border: 'none', background: '#f87171', cursor: deleteLoading ? 'default' : 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: '#fff' }}
+                        style={{ flex: 1, padding: '9px', borderRadius: '8px', border: 'none', background: 'var(--b1n0-no)', cursor: deleteLoading ? 'default' : 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: '#fff' }}
                       >
                         {deleteLoading ? 'Archivando...' : 'Sí, archivar'}
                       </button>
@@ -1405,8 +1405,8 @@ export function EventManager({ platformRates }: EventManagerProps) {
               onClick={() => { setShowCreateForm(!showCreateForm); setEditingId(null); if (!showCreateForm) loadLpUsers() }}
               style={{
                 width: '28px', height: '28px', borderRadius: '8px', border: 'none', cursor: 'pointer',
-                background: showCreateForm ? '#4ade80' : 'var(--b1n0-surface)',
-                color: showCreateForm ? '#0d0d0d' : 'var(--b1n0-text-1)',
+                background: showCreateForm ? 'var(--b1n0-si)' : 'var(--b1n0-surface)',
+                color: showCreateForm ? 'var(--b1n0-on-accent)' : 'var(--b1n0-text-1)',
                 fontFamily: F, fontWeight: 700, fontSize: '16px', lineHeight: 1,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}
@@ -1421,12 +1421,12 @@ export function EventManager({ platformRates }: EventManagerProps) {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: bulkResult.errors.length > 0 ? '8px' : 0 }}>
               <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-text-1)' }}>
                 <strong>{bulkResult.ok}</strong> creado{bulkResult.ok !== 1 ? 's' : ''}
-                {bulkResult.fail > 0 && <span style={{ color: '#f87171' }}> · <strong>{bulkResult.fail}</strong> fallido{bulkResult.fail !== 1 ? 's' : ''}</span>}
+                {bulkResult.fail > 0 && <span style={{ color: 'var(--b1n0-no)' }}> · <strong>{bulkResult.fail}</strong> fallido{bulkResult.fail !== 1 ? 's' : ''}</span>}
               </p>
               <button onClick={() => setBulkResult(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)' }}>✕</button>
             </div>
             {bulkResult.errors.length > 0 && (
-              <div style={{ maxHeight: '120px', overflowY: 'auto', fontSize: '11px', fontFamily: F, color: '#f87171', lineHeight: 1.5 }}>
+              <div style={{ maxHeight: '120px', overflowY: 'auto', fontSize: '11px', fontFamily: F, color: 'var(--b1n0-no)', lineHeight: 1.5 }}>
                 {bulkResult.errors.map((err, i) => <p key={i}>{err}</p>)}
               </div>
             )}
@@ -1447,11 +1447,11 @@ export function EventManager({ platformRates }: EventManagerProps) {
           const color = categoryColors[ev.category] || 'var(--b1n0-muted)'
           const isEditing = editingId === ev.id
           const isSelected = selectedIds.has(ev.id)
-          const statusColor = ev.status === 'open' ? '#4ade80' : ev.status === 'private' ? '#C4B5FD' : ev.status === 'closed' ? '#f87171' : 'var(--b1n0-muted)'
+          const statusColor = ev.status === 'open' ? 'var(--b1n0-si)' : ev.status === 'private' ? '#C4B5FD' : ev.status === 'closed' ? 'var(--b1n0-no)' : 'var(--b1n0-muted)'
           return (
             <div
               key={ev.id}
-              style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 16px', borderTop: i > 0 ? '1px solid rgba(255,255,255,0.04)' : 'none', background: isSelected ? 'var(--b1n0-surface)' : isEditing ? 'var(--b1n0-surface)' : 'transparent' }}
+              style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 16px', borderTop: i > 0 ? '1px solid var(--b1n0-border)' : 'none', background: isSelected ? 'var(--b1n0-surface)' : isEditing ? 'var(--b1n0-surface)' : 'transparent' }}
             >
               <input
                 type="checkbox"
@@ -1486,7 +1486,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
       {selectedIds.size > 0 && (
         <div style={{
           position: 'sticky', bottom: '16px', marginTop: '12px',
-          background: '#4ade80', borderRadius: '12px', padding: '12px 18px',
+          background: 'var(--b1n0-si)', borderRadius: '12px', padding: '12px 18px',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           boxShadow: '0 4px 20px rgba(255,255,255,0.08)',
         }}>
@@ -1520,7 +1520,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                 disabled={bulkDeleteLoading}
                 style={{
                   padding: '7px 14px', borderRadius: '8px', border: 'none',
-                  background: '#f87171', cursor: bulkDeleteLoading ? 'default' : 'pointer',
+                  background: 'var(--b1n0-no)', cursor: bulkDeleteLoading ? 'default' : 'pointer',
                   fontFamily: F, fontWeight: 600, fontSize: '12px', color: '#fff',
                 }}
               >
@@ -1529,7 +1529,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
               <button
                 onClick={() => setBulkDeleteConfirm(false)}
                 style={{
-                  padding: '7px 14px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.15)',
+                  padding: '7px 14px', borderRadius: '8px', border: '1px solid var(--b1n0-border)',
                   background: 'transparent', cursor: 'pointer',
                   fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-muted)',
                 }}
@@ -1664,8 +1664,8 @@ export function EventManager({ platformRates }: EventManagerProps) {
                 />
                 {form.sponsor_amount > 0 && (
                   <div style={{ marginTop: '6px', display: 'flex', justifyContent: 'space-between', padding: '7px 12px', background: 'rgba(74,222,128,0.08)', borderRadius: '8px', border: '1px solid rgba(5,150,105,0.15)' }}>
-                    <span style={{ fontFamily: F, fontSize: '12px', color: '#4ade80', fontWeight: 600 }}>100% al pool</span>
-                    <span style={{ fontFamily: D, fontWeight: 700, fontSize: '13px', color: '#4ade80' }}>
+                    <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-si)', fontWeight: 600 }}>100% al pool</span>
+                    <span style={{ fontFamily: D, fontWeight: 700, fontSize: '13px', color: 'var(--b1n0-si)' }}>
                       Q{form.sponsor_amount.toLocaleString()}
                     </span>
                   </div>
@@ -1688,7 +1688,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                             {u?.name || lp.user_id.slice(0, 8)} — Q{lp.amount.toLocaleString()} · {lp.return_pct}% de fees
                           </span>
                           <button onClick={() => setC('lp_commitments', form.lp_commitments.filter((_, j) => j !== i))}
-                            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#f87171', fontSize: '14px', padding: 0, lineHeight: 1 }}>×</button>
+                            style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--b1n0-no)', fontSize: '14px', padding: 0, lineHeight: 1 }}>×</button>
                         </div>
                       )
                     })}
@@ -1781,16 +1781,16 @@ export function EventManager({ platformRates }: EventManagerProps) {
             </div>
           </div>
 
-          {createError && <p style={{ fontFamily: F, fontSize: '12px', color: '#f87171', padding: '8px 10px', background: 'rgba(248,113,113,0.08)', borderRadius: '8px', marginTop: '12px' }}>{createError}</p>}
+          {createError && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', padding: '8px 10px', background: 'rgba(248,113,113,0.08)', borderRadius: '8px', marginTop: '12px' }}>{createError}</p>}
           {createSuccess && (
             <div style={{ padding: '10px', background: 'rgba(74,222,128,0.08)', borderRadius: '8px', marginTop: '12px' }}>
-              <p style={{ fontFamily: F, fontSize: '12px', color: '#4ade80', fontWeight: 600 }}>✓ {createSuccess}</p>
+              <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-si)', fontWeight: 600 }}>✓ {createSuccess}</p>
             </div>
           )}
 
           <div style={{ display: 'flex', gap: '10px', marginTop: '16px' }}>
             <button type="submit" disabled={createLoading}
-              style={{ flex: 1, padding: '13px', borderRadius: '12px', border: 'none', background: createLoading ? 'rgba(255,255,255,0.12)' : '#4ade80', color: '#0d0d0d', fontFamily: F, fontWeight: 600, fontSize: '13px', cursor: createLoading ? 'default' : 'pointer' }}>
+              style={{ flex: 1, padding: '13px', borderRadius: '12px', border: 'none', background: createLoading ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)', fontFamily: F, fontWeight: 600, fontSize: '13px', cursor: createLoading ? 'default' : 'pointer' }}>
               {createLoading ? 'Creando...' : 'Crear evento →'}
             </button>
             <button type="button" onClick={() => setShowCreateForm(false)}

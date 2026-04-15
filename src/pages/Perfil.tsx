@@ -7,6 +7,7 @@ import { supabase } from '../lib/supabase'
 import { KYCSheet } from '../components/wallet/KYCSheet'
 import { DepositSheet } from '../components/wallet/DepositSheet'
 import { RetiroSheet } from '../components/wallet/RetiroSheet'
+import { useTheme, type ThemeMode } from '../context/ThemeContext'
 
 const F = '"DM Sans", sans-serif'
 const D = '"DM Sans", sans-serif'
@@ -112,7 +113,9 @@ export function Perfil() {
     if (meta) meta.setAttribute('content', darkMode ? '#121210' : 'var(--b1n0-surface)')
   }, [darkMode])
   const [cuentaOpen, setCuentaOpen] = useState(false)
+  const [aparienciaOpen, setAparienciaOpen] = useState(false)
   const [soporteOpen, setSoporteOpen] = useState(false)
+  const { mode: themeMode, setMode: setThemeMode } = useTheme()
   const [notifPrefs, setNotifPrefs] = useState<Record<string, boolean>>({
     evento_resuelto: true,
     resultado: true,
@@ -616,6 +619,52 @@ export function Perfil() {
               <InfoRow label="Fecha de nacimiento" value={profile?.dob ? new Date(profile.dob).toLocaleDateString('es-GT', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'} />
               <InfoRow label="Dirección" value={profile?.city && profile?.country ? `${profile.city}, ${profile.country}` : '—'} />
             </>
+          )}
+
+          {/* Apariencia — collapsible */}
+          <button
+            onClick={() => setAparienciaOpen(o => !o)}
+            style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 0', background: 'none', border: 'none', borderBottom: '1px solid var(--b1n0-border)', cursor: 'pointer', textAlign: 'left' }}
+          >
+            <span style={{ fontFamily: F, fontSize: '14px', fontWeight: 500, color: 'var(--b1n0-text-1)' }}>Apariencia</span>
+            <span style={{ fontFamily: F, fontSize: '16px', color: 'var(--b1n0-muted)', transform: aparienciaOpen ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s' }}>›</span>
+          </button>
+          {aparienciaOpen && (
+            <div style={{ padding: '12px 0 14px' }}>
+              <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)', marginBottom: '10px', lineHeight: 1.4 }}>
+                Elegí el tema de la app. "Sistema" sigue la preferencia de tu dispositivo.
+              </p>
+              <div style={{ display: 'flex', gap: '6px', background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '10px', padding: '4px' }}>
+                {([
+                  { value: 'dark', label: 'Oscuro' },
+                  { value: 'light', label: 'Claro' },
+                  { value: 'system', label: 'Sistema' },
+                ] as { value: ThemeMode; label: string }[]).map(opt => {
+                  const active = themeMode === opt.value
+                  return (
+                    <button
+                      key={opt.value}
+                      onClick={() => setThemeMode(opt.value)}
+                      style={{
+                        flex: 1,
+                        padding: '9px 10px',
+                        borderRadius: '8px',
+                        border: 'none',
+                        background: active ? 'var(--b1n0-si)' : 'transparent',
+                        color: active ? 'var(--b1n0-on-accent)' : 'var(--b1n0-text-2)',
+                        fontFamily: F,
+                        fontWeight: active ? 700 : 500,
+                        fontSize: '13px',
+                        cursor: 'pointer',
+                        transition: 'background 0.15s, color 0.15s',
+                      }}
+                    >
+                      {opt.label}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
           )}
 
           {/* Soporte — collapsible */}

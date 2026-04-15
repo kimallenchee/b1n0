@@ -11,13 +11,14 @@ initMonitoring(import.meta.env.VITE_SENTRY_DSN)
 ;(function initTheme() {
   const saved = localStorage.getItem('b1n0-theme')
   const html = document.documentElement
-  if (saved === 'dark') {
-    html.classList.add('dark')
-    html.setAttribute('data-theme', 'dark')
-  } else if (saved === 'light') {
-    html.setAttribute('data-theme', 'light')
+  const mode = saved === 'dark' || saved === 'light' || saved === 'system' ? saved : 'dark'
+  let resolved: 'dark' | 'light' = 'dark'
+  if (mode === 'system') {
+    resolved = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
+  } else {
+    resolved = mode
   }
-  // No saved preference = @media query handles it
+  html.setAttribute('data-theme', resolved)
 })()
 
 createRoot(document.getElementById('root')!).render(

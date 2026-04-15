@@ -54,9 +54,9 @@ function pwStrength(pw: string): { label: string; color: string; pct: number } {
   if (pwLower.test(pw)) score++
   if (pwDigit.test(pw)) score++
   if (pwSpecial.test(pw)) score++
-  if (score <= 2) return { label: 'Débil', color: '#f87171', pct: 33 }
-  if (score <= 4) return { label: 'Media', color: '#FFD474', pct: 66 }
-  return { label: 'Fuerte', color: '#4ade80', pct: 100 }
+  if (score <= 2) return { label: 'Débil', color: 'var(--b1n0-no)', pct: 33 }
+  if (score <= 4) return { label: 'Media', color: 'var(--b1n0-gold)', pct: 66 }
+  return { label: 'Fuerte', color: 'var(--b1n0-si)', pct: 100 }
 }
 
 /* ── Signup form state ───────────────────────────────────────────────────── */
@@ -178,7 +178,7 @@ export function AuthPage() {
   }
 
   const inputErrorStyle: React.CSSProperties = {
-    ...inputStyle, border: '1px solid #f87171',
+    ...inputStyle, border: '1px solid var(--b1n0-no)',
   }
 
   const labelStyle: React.CSSProperties = {
@@ -187,7 +187,7 @@ export function AuthPage() {
   }
 
   const errorTextStyle: React.CSSProperties = {
-    fontFamily: F, fontSize: '11px', color: '#f87171',
+    fontFamily: F, fontSize: '11px', color: 'var(--b1n0-no)',
     marginTop: '3px', lineHeight: 1.3,
   }
 
@@ -195,7 +195,7 @@ export function AuthPage() {
     const showErr = touched[name] && errors[name]
     return (
       <div data-field={name} style={{ marginBottom: '12px' }}>
-        <label style={labelStyle}>{label}{required && <span style={{ color: '#f87171' }}> *</span>}</label>
+        <label style={labelStyle}>{label}{required && <span style={{ color: 'var(--b1n0-no)' }}> *</span>}</label>
         {children}
         {showErr && <p style={errorTextStyle}>{errors[name]}</p>}
       </div>
@@ -272,7 +272,7 @@ export function AuthPage() {
               <p style={{ fontFamily: F, fontSize: '14px', color: 'var(--b1n0-muted)', lineHeight: 1.6, marginBottom: '20px' }}>
                 Tu nueva contraseña temporal para <strong style={{ color: 'var(--b1n0-text-1)' }}>{loginEmail}</strong>:
               </p>
-              <div style={{ background: 'var(--b1n0-card)', border: '2px dashed rgba(255,255,255,0.08)', borderRadius: '14px', padding: '18px 24px', marginBottom: '20px' }}>
+              <div style={{ background: 'var(--b1n0-card)', border: '2px dashed var(--b1n0-border)', borderRadius: '14px', padding: '18px 24px', marginBottom: '20px' }}>
                 <p style={{ fontFamily: 'monospace', fontSize: '24px', fontWeight: 700, color: 'var(--b1n0-text-1)', letterSpacing: '2px', userSelect: 'all' }}>
                   {tempPassword}
                 </p>
@@ -288,7 +288,7 @@ export function AuthPage() {
           )}
           <button
             onClick={() => { setTempPassword(null); setForgotMode(false); setTab('login'); setError(null); setLoginPw('') }}
-            style={{ width: '100%', padding: '13px', borderRadius: '12px', border: 'none', background: '#4ade80', color: '#0d0d0d', fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: 'pointer' }}
+            style={{ width: '100%', padding: '13px', borderRadius: '12px', border: 'none', background: 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)', fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: 'pointer' }}
           >
             Iniciar sesión
           </button>
@@ -312,8 +312,8 @@ export function AuthPage() {
             </p>
             <form onSubmit={handleReset} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <input type="email" placeholder="Correo electrónico" value={loginEmail} onChange={e => setLoginEmail(e.target.value)} required style={inputStyle} />
-              {error && <p style={{ fontFamily: F, fontSize: '12px', color: '#f87171', textAlign: 'center' }}>{error}</p>}
-              <button type="submit" disabled={loading} style={{ width: '100%', padding: '13px', borderRadius: '12px', border: 'none', background: loading ? 'rgba(255,255,255,0.12)' : '#4ade80', color: '#0d0d0d', fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: loading ? 'default' : 'pointer', marginTop: '4px' }}>
+              {error && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', textAlign: 'center' }}>{error}</p>}
+              <button type="submit" disabled={loading} style={{ width: '100%', padding: '13px', borderRadius: '12px', border: 'none', background: loading ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)', fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: loading ? 'default' : 'pointer', marginTop: '4px' }}>
                 {loading ? 'Generando...' : 'Generar contraseña'}
               </button>
             </form>
@@ -363,15 +363,15 @@ export function AuthPage() {
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '20px' }}>
             <img src="/b1n0-logo.png" alt="B1N0" style={{ height: 'clamp(60px, 10vw, 90px)', objectFit: 'contain' }} />
             <p style={{ fontFamily: F, fontSize: 'clamp(14px, 2.5vw, 18px)', color: 'var(--b1n0-text-2)', maxWidth: '520px', lineHeight: 1.6, margin: 0 }}>
-              La plataforma de predicciones de Latinoamérica. Todo es 0 o 1 — <span style={{ color: '#4ade80', fontWeight: 600 }}>¿acertás o no?</span>
+              La plataforma de predicciones de Latinoamérica. Todo es 0 o 1 — <span style={{ color: 'var(--b1n0-si)', fontWeight: 600 }}>¿acertás o no?</span>
             </p>
             <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
               <button onClick={() => { setTab('signup'); document.getElementById('auth-section')?.scrollIntoView({ behavior: 'smooth' }) }}
-                style={{ padding: '14px 32px', borderRadius: '12px', border: 'none', background: 'linear-gradient(135deg, #4ade80 0%, #5CBFA0 100%)', color: 'var(--b1n0-surface)', fontFamily: F, fontWeight: 700, fontSize: '15px', cursor: 'pointer', transition: 'transform 0.15s' }}>
+                style={{ padding: '14px 32px', borderRadius: '12px', border: 'none', background: 'linear-gradient(135deg, #4ade80 0%, #5CBFA0 100%)', color: 'var(--b1n0-on-accent)', fontFamily: F, fontWeight: 700, fontSize: '15px', cursor: 'pointer', transition: 'transform 0.15s' }}>
                 Empezar ahora
               </button>
               <button onClick={() => document.getElementById('como-funciona')?.scrollIntoView({ behavior: 'smooth' })}
-                style={{ padding: '14px 32px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.15)', background: 'transparent', color: 'var(--b1n0-surface)', fontFamily: F, fontWeight: 600, fontSize: '15px', cursor: 'pointer' }}>
+                style={{ padding: '14px 32px', borderRadius: '12px', border: '1px solid var(--b1n0-border)', background: 'transparent', color: 'var(--b1n0-text-1)', fontFamily: F, fontWeight: 600, fontSize: '15px', cursor: 'pointer' }}>
                 ¿Cómo funciona?
               </button>
             </div>
@@ -386,13 +386,13 @@ export function AuthPage() {
           <p style={{ fontFamily: F, fontSize: '14px', color: 'var(--b1n0-muted)', marginBottom: '40px' }}>Tres pasos simples para empezar a predecir</p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
             {[
-              { step: '1', title: 'Elegí un evento', desc: 'Política, deportes, economía, cultura — eventos reales que te importan.', color: '#FFD474' },
-              { step: '2', title: 'Hacé tu llamado', desc: 'Todo es binario: sí o no, pasa o no pasa. Simple.', color: '#4ade80' },
-              { step: '3', title: 'Cobrá si acertás', desc: 'Los precios se calculan en tiempo real según las posiciones.', color: '#FFD474' },
+              { step: '1', title: 'Elegí un evento', desc: 'Política, deportes, economía, cultura — eventos reales que te importan.', color: 'var(--b1n0-gold)' },
+              { step: '2', title: 'Hacé tu llamado', desc: 'Todo es binario: sí o no, pasa o no pasa. Simple.', color: 'var(--b1n0-si)' },
+              { step: '3', title: 'Cobrá si acertás', desc: 'Los precios se calculan en tiempo real según las posiciones.', color: 'var(--b1n0-gold)' },
             ].map(s => (
               <div key={s.step} style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '16px', padding: '28px 24px', textAlign: 'left', position: 'relative' }}>
                 <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: s.color, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '14px' }}>
-                  <span style={{ fontFamily: D, fontWeight: 800, fontSize: '15px', color: 'var(--b1n0-surface)' }}>{s.step}</span>
+                  <span style={{ fontFamily: D, fontWeight: 800, fontSize: '15px', color: 'var(--b1n0-on-accent)' }}>{s.step}</span>
                 </div>
                 <p style={{ fontFamily: D, fontWeight: 700, fontSize: '17px', color: 'var(--b1n0-text-1)', marginBottom: '6px' }}>{s.title}</p>
                 <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)', lineHeight: 1.5 }}>{s.desc}</p>
@@ -440,8 +440,8 @@ export function AuthPage() {
               <button key={t} onClick={() => { setTab(t); setError(null) }} style={{
                 flex: 1, padding: '9px', borderRadius: '9px', border: 'none', cursor: 'pointer',
                 fontFamily: F, fontWeight: 600, fontSize: '13px',
-                background: tab === t ? '#4ade80' : 'transparent',
-                color: tab === t ? '#0d0d0d' : 'var(--b1n0-muted)', transition: 'all 0.15s',
+                background: tab === t ? 'var(--b1n0-si)' : 'transparent',
+                color: tab === t ? 'var(--b1n0-on-accent)' : 'var(--b1n0-muted)', transition: 'all 0.15s',
               }}>
                 {t === 'login' ? 'Entrar' : 'Crear cuenta'}
               </button>
@@ -452,18 +452,18 @@ export function AuthPage() {
           {tab === 'login' && (
             <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {confirmed && (
-                <div style={{ background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.25)', borderRadius: '10px', padding: '12px 16px', textAlign: 'center', marginBottom: '4px' }}>
-                  <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 600, color: '#4ade80', margin: 0 }}>
+                <div style={{ background: 'var(--b1n0-si-bg)', border: '1px solid var(--b1n0-si-border)', borderRadius: '10px', padding: '12px 16px', textAlign: 'center', marginBottom: '4px' }}>
+                  <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 600, color: 'var(--b1n0-si)', margin: 0 }}>
                     Cuenta confirmada — iniciá sesión
                   </p>
                 </div>
               )}
               <input type="email" placeholder="Correo electrónico" value={loginEmail} onChange={e => setLoginEmail(e.target.value)} required style={inputStyle} />
               <input type="password" placeholder="Contraseña" value={loginPw} onChange={e => setLoginPw(e.target.value)} required minLength={6} style={inputStyle} />
-              {error && <p style={{ fontFamily: F, fontSize: '12px', color: '#f87171', textAlign: 'center', padding: '0 4px' }}>{error}</p>}
+              {error && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', textAlign: 'center', padding: '0 4px' }}>{error}</p>}
               <button type="submit" disabled={loading} style={{
                 width: '100%', padding: '13px', borderRadius: '12px', border: 'none',
-                background: loading ? 'rgba(255,255,255,0.12)' : '#4ade80', color: '#0d0d0d',
+                background: loading ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)',
                 fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: loading ? 'default' : 'pointer', marginTop: '4px',
               }}>
                 {loading ? 'Cargando...' : 'Entrar'}
@@ -567,12 +567,12 @@ export function AuthPage() {
               </Field>
 
               {/* Server error */}
-              {error && <p style={{ fontFamily: F, fontSize: '12px', color: '#f87171', textAlign: 'center', padding: '4px 0' }}>{error}</p>}
+              {error && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', textAlign: 'center', padding: '4px 0' }}>{error}</p>}
 
               {/* Submit */}
               <button type="submit" disabled={loading} style={{
                 width: '100%', padding: '14px', borderRadius: '12px', border: 'none',
-                background: loading ? 'rgba(255,255,255,0.12)' : '#4ade80', color: '#0d0d0d',
+                background: loading ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)',
                 fontFamily: F, fontWeight: 600, fontSize: '14px',
                 cursor: loading ? 'default' : 'pointer', marginTop: '8px',
               }}>

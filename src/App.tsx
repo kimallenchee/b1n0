@@ -21,6 +21,7 @@ import { supabase } from './lib/supabase'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { ToastProvider, useToast } from './components/Toast'
+import { ThemeProvider } from './context/ThemeContext'
 
 // ── Lazy-loaded routes (code splitting) ──────────────────────
 // These are heavy pages that most users don't visit on every session.
@@ -141,10 +142,10 @@ function ForceChangePassword() {
           <form onSubmit={handleChange} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <input type="password" placeholder="Nueva contraseña" value={pw} onChange={(e) => setPw(e.target.value)} required minLength={6} style={inputStyle} />
             <input type="password" placeholder="Confirmar contraseña" value={pw2} onChange={(e) => setPw2(e.target.value)} required minLength={6} style={inputStyle} />
-            {error && <p style={{ fontFamily: F, fontSize: '12px', color: '#f87171', textAlign: 'center' }}>{error}</p>}
+            {error && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', textAlign: 'center' }}>{error}</p>}
             <button type="submit" disabled={loading} style={{
               width: '100%', padding: '13px', borderRadius: '12px', border: 'none',
-              background: loading ? 'rgba(255,255,255,0.12)' : '#4ade80', color: '#0d0d0d',
+              background: loading ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)',
               fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: loading ? 'default' : 'pointer', marginTop: '4px',
             }}>
               {loading ? 'Guardando...' : 'Guardar contraseña'}
@@ -212,6 +213,7 @@ function AppContent() {
 export default function App() {
   return (
     <BrowserRouter>
+      <ThemeProvider>
       <AuthProvider>
         <ToastProvider>
           <NowProvider>
@@ -228,6 +230,7 @@ export default function App() {
           </NowProvider>
         </ToastProvider>
       </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   )
 }

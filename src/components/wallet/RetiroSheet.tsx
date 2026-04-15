@@ -126,10 +126,10 @@ export function RetiroSheet({ open, onClose }: RetiroSheetProps) {
                   cursor: 'pointer', textAlign: 'left', width: '100%',
                   transition: 'border-color 0.15s',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'rgba(0,0,0,0.25)')}
-                onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)')}
+                onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--b1n0-card-hover-border)')}
+                onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--b1n0-border)')}
               >
-                <div style={{ width: 40, height: 40, borderRadius: '10px', background: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <div style={{ width: 40, height: 40, borderRadius: '10px', background: 'var(--b1n0-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   {m.icon}
                 </div>
                 <div>
@@ -180,7 +180,7 @@ export function RetiroSheet({ open, onClose }: RetiroSheetProps) {
                     padding: '9px 16px', borderRadius: '10px',
                     border: '1px solid var(--b1n0-border)', background: amountNum === q ? 'var(--b1n0-surface)' : 'var(--b1n0-card)',
                     cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '13px',
-                    color: amountNum === q ? '#fff' : 'var(--b1n0-text-1)',
+                    color: amountNum === q ? 'var(--b1n0-on-accent)' : 'var(--b1n0-text-1)',
                     transition: 'all 0.15s',
                   }}
                 >
@@ -205,7 +205,7 @@ export function RetiroSheet({ open, onClose }: RetiroSheetProps) {
             )}
 
             {error && (
-              <p style={{ fontFamily: F, fontSize: '12px', color: '#f87171', marginBottom: '12px', textAlign: 'center' }}>{error}</p>
+              <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', marginBottom: '12px', textAlign: 'center' }}>{error}</p>
             )}
 
             <button
@@ -213,9 +213,9 @@ export function RetiroSheet({ open, onClose }: RetiroSheetProps) {
               disabled={!validAmount || loading}
               style={{
                 width: '100%', padding: '14px', borderRadius: '12px', border: 'none',
-                background: validAmount && !loading ? '#4ade80' : 'rgba(255,255,255,0.08)',
+                background: validAmount && !loading ? 'var(--b1n0-si)' : 'var(--b1n0-disabled-bg)',
                 cursor: validAmount && !loading ? 'pointer' : 'default',
-                fontFamily: F, fontWeight: 700, fontSize: '14px', color: validAmount && !loading ? '#0d0d0d' : 'var(--b1n0-muted)',
+                fontFamily: F, fontWeight: 700, fontSize: '14px', color: validAmount && !loading ? 'var(--b1n0-on-accent)' : 'var(--b1n0-muted)',
               }}
             >
               {loading ? 'Procesando...' : method === 'transferencia' ? 'Continuar →' : 'Confirmar retiro →'}
@@ -252,7 +252,7 @@ export function RetiroSheet({ open, onClose }: RetiroSheetProps) {
             </div>
 
             {error && (
-              <p style={{ fontFamily: F, fontSize: '12px', color: '#f87171', marginBottom: '12px', textAlign: 'center' }}>{error}</p>
+              <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', marginBottom: '12px', textAlign: 'center' }}>{error}</p>
             )}
 
             <button
@@ -260,9 +260,9 @@ export function RetiroSheet({ open, onClose }: RetiroSheetProps) {
               disabled={!bankValid || loading}
               style={{
                 width: '100%', padding: '14px', borderRadius: '12px', border: 'none',
-                background: bankValid && !loading ? '#4ade80' : 'rgba(255,255,255,0.08)',
+                background: bankValid && !loading ? 'var(--b1n0-si)' : 'var(--b1n0-disabled-bg)',
                 cursor: bankValid && !loading ? 'pointer' : 'default',
-                fontFamily: F, fontWeight: 700, fontSize: '14px', color: bankValid && !loading ? '#0d0d0d' : 'var(--b1n0-muted)',
+                fontFamily: F, fontWeight: 700, fontSize: '14px', color: bankValid && !loading ? 'var(--b1n0-on-accent)' : 'var(--b1n0-muted)',
               }}
             >
               {loading ? 'Procesando...' : `Retirar Q${amountNum.toLocaleString()} →`}
@@ -277,7 +277,7 @@ export function RetiroSheet({ open, onClose }: RetiroSheetProps) {
         {/* ── Step 4: Success ── */}
         {step === 'done' && (
           <div style={{ textAlign: 'center', padding: '32px 0' }}>
-            <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(74,222,128,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+            <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'var(--b1n0-si-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
@@ -288,7 +288,7 @@ export function RetiroSheet({ open, onClose }: RetiroSheetProps) {
             </p>
             <button
               onClick={handleClose}
-              style={{ width: '100%', padding: '14px', borderRadius: '12px', border: 'none', background: '#4ade80', cursor: 'pointer', fontFamily: F, fontWeight: 700, fontSize: '14px', color: '#0d0d0d' }}
+              style={{ width: '100%', padding: '14px', borderRadius: '12px', border: 'none', background: 'var(--b1n0-si)', cursor: 'pointer', fontFamily: F, fontWeight: 700, fontSize: '14px', color: 'var(--b1n0-on-accent)' }}
             >
               Cerrar
             </button>

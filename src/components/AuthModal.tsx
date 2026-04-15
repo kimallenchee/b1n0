@@ -114,7 +114,7 @@ export function AuthModal() {
       <div style={{ position: 'fixed', inset: 0, zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div onClick={() => { setSignupDone(false); closeAuth() }} style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }} />
         <div style={{ position: 'relative', maxWidth: 420, width: '90%', background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '20px', padding: '36px 28px', boxShadow: '0 20px 60px rgba(0,0,0,0.5)', textAlign: 'center' }}>
-          <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'rgba(74,222,128,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', fontSize: '28px' }}>✉️</div>
+          <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'var(--b1n0-si-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', fontSize: '28px' }}>✉️</div>
           <p style={{ fontFamily: F, fontWeight: 700, fontSize: '20px', color: 'var(--b1n0-text-1)', marginBottom: '8px' }}>Revisá tu correo</p>
           <p style={{ fontFamily: F, fontSize: '14px', color: 'var(--b1n0-muted)', lineHeight: 1.6, marginBottom: '6px' }}>
             Enviamos un link a <strong style={{ color: 'var(--b1n0-text-1)' }}>{form.email}</strong>
@@ -127,7 +127,7 @@ export function AuthModal() {
           </p>
           <button
             onClick={() => { setSignupDone(false); closeAuth() }}
-            style={{ marginTop: '20px', padding: '12px 28px', borderRadius: '12px', border: 'none', background: '#4ade80', color: '#0d0d0d', fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: 'pointer' }}
+            style={{ marginTop: '20px', padding: '12px 28px', borderRadius: '12px', border: 'none', background: 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)', fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: 'pointer' }}
           >
             Entendido
           </button>
@@ -160,8 +160,8 @@ export function AuthModal() {
             <button key={t} onClick={() => { setTab(t); setError(null) }} style={{
               flex: 1, padding: '9px', borderRadius: '9px', border: 'none', cursor: 'pointer',
               fontFamily: F, fontWeight: 600, fontSize: '13px',
-              background: tab === t ? '#4ade80' : 'transparent',
-              color: tab === t ? '#0d0d0d' : 'var(--b1n0-muted)', transition: 'all 0.15s',
+              background: tab === t ? 'var(--b1n0-si)' : 'transparent',
+              color: tab === t ? 'var(--b1n0-on-accent)' : 'var(--b1n0-muted)', transition: 'all 0.15s',
             }}>
               {t === 'login' ? 'Entrar' : 'Crear cuenta'}
             </button>
@@ -173,8 +173,8 @@ export function AuthModal() {
           <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <input type="email" placeholder="Correo electrónico" value={loginEmail} onChange={e => setLoginEmail(e.target.value)} required style={inputStyle} />
             <input type="password" placeholder="Contraseña" value={loginPw} onChange={e => setLoginPw(e.target.value)} required minLength={6} style={inputStyle} />
-            {error && <p style={{ fontFamily: F, fontSize: '12px', color: '#f87171', textAlign: 'center' }}>{error}</p>}
-            <button type="submit" disabled={loading} style={{ width: '100%', padding: '13px', borderRadius: '12px', border: 'none', background: loading ? 'rgba(255,255,255,0.12)' : '#4ade80', color: '#0d0d0d', fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: loading ? 'default' : 'pointer' }}>
+            {error && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', textAlign: 'center' }}>{error}</p>}
+            <button type="submit" disabled={loading} style={{ width: '100%', padding: '13px', borderRadius: '12px', border: 'none', background: loading ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)', fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: loading ? 'default' : 'pointer' }}>
               {loading ? 'Cargando...' : 'Entrar'}
             </button>
           </form>
@@ -207,13 +207,13 @@ export function AuthModal() {
             <input type="email" placeholder="Confirmar correo *" value={form.emailConfirm} onChange={e => setField('emailConfirm', e.target.value)} style={inputStyle} />
             <input type="password" placeholder="Contraseña *" value={form.password} onChange={e => setField('password', e.target.value)} style={inputStyle} />
             <input type="password" placeholder="Confirmar contraseña *" value={form.passwordConfirm} onChange={e => setField('passwordConfirm', e.target.value)} style={inputStyle} />
-            {error && <p style={{ fontFamily: F, fontSize: '12px', color: '#f87171', textAlign: 'center' }}>{error}</p>}
+            {error && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', textAlign: 'center' }}>{error}</p>}
             {touched.firstName && Object.keys(errors).length > 0 && (
-              <p style={{ fontFamily: F, fontSize: '11px', color: '#f87171', lineHeight: 1.4 }}>
+              <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-no)', lineHeight: 1.4 }}>
                 {Object.values(errors).slice(0, 3).join(' · ')}
               </p>
             )}
-            <button type="submit" disabled={loading} style={{ width: '100%', padding: '13px', borderRadius: '12px', border: 'none', background: loading ? 'rgba(255,255,255,0.12)' : '#4ade80', color: '#0d0d0d', fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: loading ? 'default' : 'pointer' }}>
+            <button type="submit" disabled={loading} style={{ width: '100%', padding: '13px', borderRadius: '12px', border: 'none', background: loading ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)', fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: loading ? 'default' : 'pointer' }}>
               {loading ? 'Creando cuenta...' : 'Crear cuenta'}
             </button>
           </form>

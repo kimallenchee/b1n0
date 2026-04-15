@@ -50,7 +50,7 @@ export function KYCSheet({ open, onClose, targetTier }: KYCSheetProps) {
             <button
               onClick={() => dpi.length >= 8 && setStep(2)}
               disabled={dpi.length < 8}
-              style={{ width: '100%', padding: '13px', borderRadius: '12px', border: 'none', background: dpi.length >= 8 ? 'var(--b1n0-surface)' : 'rgba(255,255,255,0.08)', cursor: dpi.length >= 8 ? 'pointer' : 'default', fontFamily: F, fontWeight: 600, fontSize: '13px', color: '#fff', transition: 'background 0.15s' }}
+              style={{ width: '100%', padding: '13px', borderRadius: '12px', border: 'none', background: dpi.length >= 8 ? 'var(--b1n0-surface)' : 'var(--b1n0-disabled-bg)', cursor: dpi.length >= 8 ? 'pointer' : 'default', fontFamily: F, fontWeight: 600, fontSize: '13px', color: 'var(--b1n0-text-1)', transition: 'background 0.15s' }}
             >
               Continuar →
             </button>
@@ -67,7 +67,7 @@ export function KYCSheet({ open, onClose, targetTier }: KYCSheetProps) {
             </p>
             <div
               onClick={() => setPhotoReady(!photoReady)}
-              style={{ border: `2px dashed ${photoReady ? 'var(--b1n0-surface)' : 'rgba(255,255,255,0.1)'}`, borderRadius: '14px', padding: '32px 20px', textAlign: 'center', cursor: 'pointer', marginBottom: '12px', background: photoReady ? 'rgba(0,0,0,0.03)' : 'transparent', transition: 'all 0.2s' }}
+              style={{ border: `2px dashed ${photoReady ? 'var(--b1n0-surface)' : 'var(--b1n0-border)'}`, borderRadius: '14px', padding: '32px 20px', textAlign: 'center', cursor: 'pointer', marginBottom: '12px', background: photoReady ? 'var(--b1n0-card)' : 'transparent', transition: 'all 0.2s' }}
             >
               <p style={{ fontFamily: D, fontWeight: 800, fontSize: '28px', color: photoReady ? 'var(--b1n0-surface)' : 'var(--b1n0-text-2)', marginBottom: '6px' }}>
                 {photoReady ? '✓' : '+'}
@@ -82,7 +82,7 @@ export function KYCSheet({ open, onClose, targetTier }: KYCSheetProps) {
             <button
               onClick={() => photoReady && setStep(3)}
               disabled={!photoReady}
-              style={{ width: '100%', padding: '13px', borderRadius: '12px', border: 'none', background: photoReady ? 'var(--b1n0-surface)' : 'rgba(255,255,255,0.08)', cursor: photoReady ? 'pointer' : 'default', fontFamily: F, fontWeight: 600, fontSize: '13px', color: '#fff', transition: 'background 0.15s' }}
+              style={{ width: '100%', padding: '13px', borderRadius: '12px', border: 'none', background: photoReady ? 'var(--b1n0-surface)' : 'var(--b1n0-disabled-bg)', cursor: photoReady ? 'pointer' : 'default', fontFamily: F, fontWeight: 600, fontSize: '13px', color: 'var(--b1n0-text-1)', transition: 'background 0.15s' }}
             >
               Enviar verificación →
             </button>
@@ -100,7 +100,7 @@ export function KYCSheet({ open, onClose, targetTier }: KYCSheetProps) {
             </p>
             <button
               onClick={handleClose}
-              style={{ width: '100%', padding: '13px', borderRadius: '12px', border: 'none', background: 'var(--b1n0-text-1)', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '13px', color: '#fff' }}
+              style={{ width: '100%', padding: '13px', borderRadius: '12px', border: 'none', background: 'var(--b1n0-text-1)', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '13px', color: 'var(--b1n0-bg)' }}
             >
               Cerrar
             </button>
