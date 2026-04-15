@@ -11,7 +11,7 @@ interface CommentFeedProps {
 const F = '"DM Sans", sans-serif'
 
 const tierColors: Record<number, string> = { 1: 'var(--b1n0-disabled-bg)', 2: 'var(--b1n0-disabled-bg)', 3: 'var(--b1n0-surface)' }
-const avatarBg = ['var(--b1n0-surface)', '#2a2724', 'var(--b1n0-muted)', '#2a2724', '#2a2724', 'var(--b1n0-muted)']
+const avatarBg = ['var(--b1n0-surface)', 'var(--b1n0-card)', 'var(--b1n0-muted)', 'var(--b1n0-card)', 'var(--b1n0-card)', 'var(--b1n0-muted)']
 
 function getAvatarColor(username: string): string {
   if (username === 'Tú') return 'var(--b1n0-surface)'

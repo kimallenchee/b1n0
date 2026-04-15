@@ -75,7 +75,7 @@ export function SideNav() {
   const isLoggedIn = !!session
 
   return (
-    <div style={{ width: 64, height: '100dvh', background: 'var(--color-surface)', borderRight: '1px solid var(--color-border)', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px 0 24px', flexShrink: 0, position: 'sticky', top: 0 }}>
+    <div style={{ width: 64, height: '100dvh', background: 'var(--b1n0-surface)', borderRight: '1px solid var(--b1n0-border)', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px 0 24px', flexShrink: 0, position: 'sticky', top: 0 }}>
       {/* Logo */}
       <button
         onClick={() => { navigate('/inicio'); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
