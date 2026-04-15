@@ -248,6 +248,53 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   Runtime --color-* aliases
+   ───────────────────────────────────────────────────────────────
+   @theme above resolves var() refs at COMPILE time, so anything
+   using var(--color-X) in inline styles gets frozen to the
+   dark-mode value. Re-declaring the aliases here in :root makes
+   them resolve at RUNTIME, so they track [data-theme="light"]
+   overrides of the underlying --b1n0-* tokens.
+
+   Rule: if the token appears in an inline style anywhere in
+   .tsx, it needs to live in this block (not just @theme).
+   ═══════════════════════════════════════════════════════════════ */
+:root {
+  --color-bg:       var(--b1n0-bg);
+  --color-surface:  var(--b1n0-surface);
+  --color-card:     var(--b1n0-card);
+  --color-border:   var(--b1n0-border);
+  --color-muted:    var(--b1n0-muted);
+  --color-text-2:   var(--b1n0-text-2);
+  --color-text:     var(--b1n0-text-1);
+
+  --color-teal-50:  var(--b1n0-teal-50);
+  --color-teal-100: var(--b1n0-teal-100);
+  --color-teal-300: var(--b1n0-teal-300);
+  --color-teal-500: var(--b1n0-teal-500);
+  --color-teal-700: var(--b1n0-teal-700);
+  --color-teal-900: var(--b1n0-teal-900);
+
+  --color-orange-50:  var(--b1n0-orange-50);
+  --color-orange-500: var(--b1n0-orange-500);
+
+  --color-si:       var(--b1n0-si);
+  --color-si-bg:    var(--b1n0-si-bg);
+  --color-si-dark:  var(--b1n0-si-dark);
+  --color-si-hover: var(--b1n0-si-hover);
+  --color-no:       var(--b1n0-no);
+  --color-no-bg:    var(--b1n0-no-bg);
+  --color-no-dark:  var(--b1n0-no-dark);
+  --color-no-hover: var(--b1n0-no-hover);
+
+  --color-teal:      var(--b1n0-teal-500);
+  --color-teal-dark: var(--b1n0-teal-700);
+  --color-amber:     var(--b1n0-orange-500);
+  --color-red:       var(--b1n0-no);
+  --color-surface2:  var(--b1n0-surface);
+}
+
+/* ═══════════════════════════════════════════════════════════════
    Base Styles
    ═══════════════════════════════════════════════════════════════ */
 
