@@ -96,7 +96,7 @@ export function AdminPage() {
 
       {/* Compact header: tabs left, date filter right */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', marginBottom: '14px', flexWrap: 'wrap' }}>
-        <div style={{ display: 'inline-flex', background: 'rgba(255,255,255,0.04)', borderRadius: '8px', padding: '2px', gap: '1px' }}>
+        <div style={{ display: 'inline-flex', background: 'var(--b1n0-card)', borderRadius: '8px', padding: '2px', gap: '1px' }}>
           {([['manage', 'Gestionar'], ['revenue', 'Ingresos'], ['rates', 'Tarifas'], ['users', 'Usuarios'], ['treasury', 'Tesorería']] as const).map(([v, label]) => (
             <button
               key={v}
@@ -104,10 +104,10 @@ export function AdminPage() {
               style={{
                 padding: '6px 14px', borderRadius: '6px', border: 'none', cursor: 'pointer',
                 fontFamily: F, fontWeight: 600, fontSize: '12px',
-                background: view === v ? 'rgba(255,255,255,0.1)' : 'transparent',
-                color: view === v ? '#fff' : 'rgba(255,255,255,0.35)',
+                background: view === v ? 'var(--b1n0-text-1)' : 'transparent',
+                color: view === v ? 'var(--b1n0-bg)' : 'var(--b1n0-muted)',
                 transition: 'all 0.15s',
-                ...(view === v ? { boxShadow: '0 1px 3px rgba(0,0,0,0.3)' } : {}),
+                ...(view === v ? { boxShadow: '0 1px 3px var(--b1n0-border)' } : {}),
               }}
             >
               {label}

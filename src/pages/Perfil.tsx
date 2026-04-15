@@ -398,7 +398,7 @@ export function Perfil() {
                         <button
                           onClick={() => sendFriendRequest(r.id)}
                           disabled={friendActionLoading === r.id}
-                          style={{ padding: '6px 14px', borderRadius: '8px', border: 'none', background: 'var(--b1n0-text-1)', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '13px', color: '#fff', flexShrink: 0, opacity: friendActionLoading === r.id ? 0.5 : 1 }}
+                          style={{ padding: '6px 14px', borderRadius: '8px', border: 'none', background: 'var(--b1n0-text-1)', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '13px', color: 'var(--b1n0-bg)', flexShrink: 0, opacity: friendActionLoading === r.id ? 0.5 : 1 }}
                         >
                           +
                         </button>
@@ -412,12 +412,12 @@ export function Perfil() {
         </div>
 
         {/* Friends tabs: Amigos / Solicitudes */}
-        <div style={{ display: 'flex', marginBottom: '12px', background: 'var(--b1n0-surface)', borderRadius: '10px', padding: '3px' }}>
+        <div style={{ display: 'flex', marginBottom: '12px', background: 'var(--b1n0-card)', borderRadius: '10px', padding: '3px' }}>
           {(['amigos', 'solicitudes'] as const).map((t) => (
             <button key={t} onClick={() => setFriendsTab(t)} style={{
               flex: 1, padding: '8px', borderRadius: '7px', border: 'none', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px',
-              background: friendsTab === t ? 'var(--b1n0-surface)' : 'transparent',
-              color: friendsTab === t ? '#fff' : 'var(--b1n0-muted)',
+              background: friendsTab === t ? 'var(--b1n0-text-1)' : 'transparent',
+              color: friendsTab === t ? 'var(--b1n0-bg)' : 'var(--b1n0-muted)',
               position: 'relative',
             }}>
               {t === 'amigos' ? 'Amigos' : 'Solicitudes'}
@@ -476,7 +476,7 @@ export function Perfil() {
                       <button
                         onClick={() => acceptRequest(f.id)}
                         disabled={friendActionLoading === f.id}
-                        style={{ padding: '6px 12px', borderRadius: '8px', border: 'none', background: 'var(--b1n0-text-1)', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: '#fff', opacity: friendActionLoading === f.id ? 0.5 : 1 }}
+                        style={{ padding: '6px 12px', borderRadius: '8px', border: 'none', background: 'var(--b1n0-text-1)', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-bg)', opacity: friendActionLoading === f.id ? 0.5 : 1 }}
                       >
                         Aceptar
                       </button>

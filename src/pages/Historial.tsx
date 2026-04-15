@@ -160,12 +160,12 @@ export function Historial() {
       </div>
 
       {/* Tab switcher */}
-      <div style={{ display: 'flex', background: 'var(--b1n0-surface)', borderRadius: '12px', padding: '3px', marginBottom: '12px' }}>
+      <div style={{ display: 'flex', background: 'var(--b1n0-card)', borderRadius: '12px', padding: '3px', marginBottom: '12px' }}>
         {(['votos', 'movimientos'] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
-            style={{ flex: 1, padding: '9px', borderRadius: '9px', border: 'none', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '13px', background: tab === t ? 'var(--b1n0-surface)' : 'transparent', color: tab === t ? '#fff' : 'var(--b1n0-muted)' }}
+            style={{ flex: 1, padding: '9px', borderRadius: '9px', border: 'none', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '13px', background: tab === t ? 'var(--b1n0-text-1)' : 'transparent', color: tab === t ? 'var(--b1n0-bg)' : 'var(--b1n0-muted)' }}
           >
             {t === 'votos' ? 'Mis Votos' : 'Movimientos'}
           </button>
@@ -180,7 +180,7 @@ export function Historial() {
               <button
                 key={f}
                 onClick={() => setVoteFilter(f)}
-                style={{ padding: '5px 11px', borderRadius: '20px', border: voteFilter === f ? 'none' : '1px solid var(--b1n0-border)', background: voteFilter === f ? 'var(--b1n0-surface)' : 'var(--b1n0-card)', color: voteFilter === f ? '#fff' : 'var(--b1n0-muted)', fontFamily: F, fontWeight: 600, fontSize: '11px', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0 }}
+                style={{ padding: '5px 11px', borderRadius: '20px', border: voteFilter === f ? 'none' : '1px solid var(--b1n0-border)', background: voteFilter === f ? 'var(--b1n0-text-1)' : 'var(--b1n0-card)', color: voteFilter === f ? 'var(--b1n0-bg)' : 'var(--b1n0-muted)', fontFamily: F, fontWeight: 600, fontSize: '11px', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0 }}
               >
                 {label}
               </button>

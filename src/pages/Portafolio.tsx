@@ -282,8 +282,8 @@ function PositionCard({
                 disabled={selling}
                 style={{
                   flex: 1, padding: '10px', borderRadius: '10px',
-                  border: 'none', background: selling ? 'rgba(255,255,255,0.12)' : 'var(--b1n0-surface)',
-                  fontFamily: F, fontWeight: 600, fontSize: '12px', color: '#fff',
+                  border: 'none', background: selling ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-text-1)',
+                  fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-bg)',
                   cursor: selling ? 'default' : 'pointer',
                 }}
               >
@@ -378,8 +378,8 @@ function PositionCard({
                   disabled={selling}
                   style={{
                     flex: 1, padding: '11px', borderRadius: '10px',
-                    border: 'none', background: selling ? 'rgba(255,255,255,0.12)' : 'var(--b1n0-surface)',
-                    fontFamily: F, fontWeight: 600, fontSize: '12px', color: '#fff',
+                    border: 'none', background: selling ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-text-1)',
+                    fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-bg)',
                     cursor: selling ? 'default' : 'pointer',
                   }}
                 >
@@ -980,7 +980,7 @@ export function Portafolio() {
           {tab === 'active' && (
             <button
               onClick={() => navigate('/inicio')}
-              style={{ padding: '11px 24px', borderRadius: '10px', border: 'none', background: 'var(--b1n0-text-1)', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '13px', color: '#fff' }}
+              style={{ padding: '11px 24px', borderRadius: '10px', border: 'none', background: 'var(--b1n0-text-1)', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '13px', color: 'var(--b1n0-bg)' }}
             >
               Explorar eventos →
             </button>
