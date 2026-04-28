@@ -23,6 +23,7 @@ interface EventRow {
 }
 
 interface ActivePositionRow {
+  user_id: string
   gross_amount: number | null
   fee_paid: number | null
   status: string | null
@@ -160,10 +161,11 @@ export function HealthPanel() {
         await Promise.all([
           supabase.from('profiles').select('id, balance, is_admin').eq('id', treasuryId).maybeSingle(),
           supabase.from('profiles').select('id, balance, is_admin'),
-          // Active positions — the user-funded portion currently in markets.
+          // Active positions — we'll filter out treasury-owned positions
+          // client-side so we measure user-funded liability only.
           supabase
             .from('positions')
-            .select('gross_amount, fee_paid, status')
+            .select('user_id, gross_amount, fee_paid, status')
             .eq('status', 'active'),
           // All deposit/withdraw entries from balance_ledger so we can
           // compute net deposits across the platform.
@@ -224,11 +226,18 @@ export function HealthPanel() {
       // the money users actually put into the markets that has neither
       // been paid out nor refunded yet — the part of "unresolved
       // liability" that is backed by user funds.
+      //
+      // We exclude positions owned by the treasury account because
+      // some markets seed positions with sponsor margin or private
+      // allocation; those positions sit in the table but were not
+      // funded by user deposits.
       const positionRows = (positionsRes.data ?? []) as ActivePositionRow[]
-      const positionNet = positionRows.reduce(
-        (s, p) => s + ((Number(p.gross_amount) || 0) - (Number(p.fee_paid) || 0)),
-        0
-      )
+      const positionNet = positionRows
+        .filter((p) => p.user_id !== treasuryId)
+        .reduce(
+          (s, p) => s + ((Number(p.gross_amount) || 0) - (Number(p.fee_paid) || 0)),
+          0
+        )
       setActivePositionNet(Math.round(positionNet * 100) / 100)
 
       // Net deposits = sum(deposit) - sum(withdraw) from balance_ledger.
