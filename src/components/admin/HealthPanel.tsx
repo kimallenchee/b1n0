@@ -107,8 +107,15 @@ export function HealthPanel() {
   // ── Reconciliation ─────────────────────────────
   const [treasuryBalance, setTreasuryBalance] = useState(0)
   const [userBalanceTotal, setUserBalanceTotal] = useState(0)
-  const [activePositionNet, setActivePositionNet] = useState(0)
   const [netDeposits, setNetDeposits] = useState(0)
+  // Sum of every entry in balance_ledger across all types and accounts.
+  // Should equal sum(profile.balance) over the same accounts — this is
+  // the fundamental ledger-consistency invariant.
+  const [ledgerTotal, setLedgerTotal] = useState(0)
+  // Informational: gross - fee from the positions table (overstates
+  // user-funded liability by spread_captured, so we don't use it for
+  // the OK badge).
+  const [positionTableNet, setPositionTableNet] = useState(0)
 
   // ── Stale events ───────────────────────────────
   const [staleEvents, setStaleEvents] = useState<EventRow[]>([])
@@ -127,26 +134,37 @@ export function HealthPanel() {
   const [settling, setSettling] = useState<string | null>(null)
   const [actionMsg, setActionMsg] = useState<string | null>(null)
 
-  // Reconciliation invariant:
-  //   netDeposits  = deposits - withdrawals (money users have put into the platform, net)
-  //   totalLiquid  = treasury + non-treasury user balances + active-position user contributions
+  // Reconciliation invariants:
   //
-  // These should match. The "active-position user contribution" is
-  // sum(gross_amount - fee_paid) across active positions — the money
-  // users staked that hasn't paid out yet. We deliberately do NOT use
-  // event_markets.pool_committed because that is the worst-case payout
-  // (often inflated by sponsor margin and LP capital), not user money.
-  const totalLiquid = useMemo(
-    () => treasuryBalance + userBalanceTotal + activePositionNet,
-    [treasuryBalance, userBalanceTotal, activePositionNet]
+  // 1. Fundamental ledger consistency:
+  //      sum(balance_ledger.amount) === sum(profile.balance)
+  //    Every credit or debit to a profile balance is recorded in
+  //    balance_ledger. If these diverge, the ledger has drifted.
+  //
+  // 2. Money in active markets (implicit):
+  //      net_deposits − sum(profile.balance) === money_in_active_markets
+  //    Anything users deposited that isn't in an account balance
+  //    must be sitting in an active position pool. We can't compute
+  //    this directly from `positions.gross − fee_paid` because the
+  //    AMM also captures spread (the difference between ask and mid
+  //    prices) which is credited to the treasury but not subtracted
+  //    from `positions.fee_paid`. So we derive it implicitly.
+  const totalAccountBalances = useMemo(
+    () => treasuryBalance + userBalanceTotal,
+    [treasuryBalance, userBalanceTotal]
   )
 
-  const reconcileDelta = useMemo(
-    () => Math.round((netDeposits - totalLiquid) * 100) / 100,
-    [netDeposits, totalLiquid]
+  const moneyInPositions = useMemo(
+    () => Math.round((netDeposits - totalAccountBalances) * 100) / 100,
+    [netDeposits, totalAccountBalances]
   )
 
-  const reconcileOk = useMemo(() => Math.abs(reconcileDelta) < 0.5, [reconcileDelta])
+  const ledgerDelta = useMemo(
+    () => Math.round((ledgerTotal - totalAccountBalances) * 100) / 100,
+    [ledgerTotal, totalAccountBalances]
+  )
+
+  const reconcileOk = useMemo(() => Math.abs(ledgerDelta) < 0.5, [ledgerDelta])
 
   const loadAll = useCallback(async () => {
     if (!treasuryId) return
@@ -157,19 +175,21 @@ export function HealthPanel() {
     const since24h = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
 
     try {
-      const [treasuryRes, profilesRes, positionsRes, ledgerRes, eventsRes, withdrawRes, rateRes] =
+      const [treasuryRes, profilesRes, positionsRes, ledgerRes, fullLedgerRes, eventsRes, withdrawRes, rateRes] =
         await Promise.all([
           supabase.from('profiles').select('id, balance, is_admin').eq('id', treasuryId).maybeSingle(),
           supabase.from('profiles').select('id, balance, is_admin'),
-          // Active positions — we'll filter out treasury-owned positions
-          // client-side so we measure user-funded liability only.
+          // Active positions — informational only. gross - fee
+          // overstates user-funded liability by spread_captured.
           supabase
             .from('positions')
             .select('user_id, gross_amount, fee_paid, status')
             .eq('status', 'active'),
-          // All deposit/withdraw entries from balance_ledger so we can
-          // compute net deposits across the platform.
+          // Deposits and withdrawals only — drives net_deposits.
           supabase.from('balance_ledger').select('type, amount').in('type', ['deposit', 'withdraw']),
+          // Full ledger for the consistency invariant. We sum amount
+          // across every entry; this should equal sum(profile.balance).
+          supabase.from('balance_ledger').select('amount'),
           supabase.from('events').select('id, question, status, ends_at'),
           // balance_ledger entries that look like queued withdrawals.
           // Once PSP is wired, this can move to a dedicated table.
@@ -201,6 +221,12 @@ export function HealthPanel() {
         logger.error('HealthPanel: balance_ledger load failed', { error: ledgerRes.error.message })
         throw new Error(ledgerRes.error.message)
       }
+      if (fullLedgerRes.error) {
+        logger.error('HealthPanel: full balance_ledger load failed', {
+          error: fullLedgerRes.error.message,
+        })
+        throw new Error(fullLedgerRes.error.message)
+      }
       if (eventsRes.error) {
         logger.error('HealthPanel: events load failed', { error: eventsRes.error.message })
         throw new Error(eventsRes.error.message)
@@ -222,23 +248,16 @@ export function HealthPanel() {
         .reduce((s, p) => s + (Number(p.balance) || 0), 0)
       setUserBalanceTotal(userTotal)
 
-      // Active-position user contributions = sum(gross - fee). This is
-      // the money users actually put into the markets that has neither
-      // been paid out nor refunded yet — the part of "unresolved
-      // liability" that is backed by user funds.
-      //
-      // We exclude positions owned by the treasury account because
-      // some markets seed positions with sponsor margin or private
-      // allocation; those positions sit in the table but were not
-      // funded by user deposits.
+      // Position table net (gross - fee) — informational only.
+      // Overstates the real user-funded pool contribution because the
+      // AMM also captures spread, which is credited to the treasury
+      // but not subtracted from positions.fee_paid.
       const positionRows = (positionsRes.data ?? []) as ActivePositionRow[]
-      const positionNet = positionRows
-        .filter((p) => p.user_id !== treasuryId)
-        .reduce(
-          (s, p) => s + ((Number(p.gross_amount) || 0) - (Number(p.fee_paid) || 0)),
-          0
-        )
-      setActivePositionNet(Math.round(positionNet * 100) / 100)
+      const positionNet = positionRows.reduce(
+        (s, p) => s + ((Number(p.gross_amount) || 0) - (Number(p.fee_paid) || 0)),
+        0
+      )
+      setPositionTableNet(Math.round(positionNet * 100) / 100)
 
       // Net deposits = sum(deposit) - sum(withdraw) from balance_ledger.
       const ledgerRows = (ledgerRes.data ?? []) as BalanceLedgerSumRow[]
@@ -251,6 +270,15 @@ export function HealthPanel() {
       // withdraw amounts are stored negative in balance_ledger, so
       // adding them gives net deposits without flipping the sign.
       setNetDeposits(Math.round((deposits + withdrawals) * 100) / 100)
+
+      // Full ledger sum across every entry of every type. Should
+      // equal sum(profile.balance) exactly.
+      const fullLedgerRows = (fullLedgerRes.data ?? []) as { amount: number }[]
+      const ledgerSum = fullLedgerRows.reduce(
+        (s, r) => s + (Number(r.amount) || 0),
+        0
+      )
+      setLedgerTotal(Math.round(ledgerSum * 100) / 100)
 
       // Stale = open/closed events past ends_at, not resolved.
       const eventRows = (eventsRes.data ?? []) as EventRow[]
@@ -387,14 +415,14 @@ export function HealthPanel() {
               color: reconcileOk ? '#4ade80' : '#f87171',
             }}
           >
-            {reconcileOk ? 'OK' : 'Δ Q' + fmtQ(reconcileDelta)}
+            {reconcileOk ? 'OK' : 'Δ Q' + fmtQ(ledgerDelta)}
           </span>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
           {[
             { label: 'Saldo tesorería', val: `Q${fmtQ(treasuryBalance)}`, color: 'var(--b1n0-text-1)' },
             { label: 'Saldo usuarios', val: `Q${fmtQ(userBalanceTotal)}`, color: 'var(--b1n0-text-1)' },
-            { label: 'Posiciones activas', val: `Q${fmtQ(activePositionNet)}`, color: '#FFD474' },
+            { label: 'En posiciones', val: `Q${fmtQ(moneyInPositions)}`, color: '#FFD474' },
           ].map(({ label, val, color }) => (
             <div key={label} style={{ background: 'var(--b1n0-surface)', borderRadius: '8px', padding: '10px' }}>
               <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '4px' }}>{label}</p>
@@ -402,14 +430,19 @@ export function HealthPanel() {
             </div>
           ))}
         </div>
-        <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', margin: 0 }}>
+        <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', margin: 0, lineHeight: 1.6 }}>
           Depósitos netos: <strong style={{ color: 'var(--b1n0-text-1)' }}>Q{fmtQ(netDeposits)}</strong>
-          {' '}· Total en sistema:{' '}
-          <strong style={{ color: 'var(--b1n0-text-1)' }}>Q{fmtQ(totalLiquid)}</strong>
+          {' · '}Saldos totales:{' '}
+          <strong style={{ color: 'var(--b1n0-text-1)' }}>Q{fmtQ(totalAccountBalances)}</strong>
+          {' · '}Sum balance_ledger:{' '}
+          <strong style={{ color: 'var(--b1n0-text-1)' }}>Q{fmtQ(ledgerTotal)}</strong>
+          <br />
+          Posiciones activas (libro): <strong style={{ color: 'var(--b1n0-muted)' }}>Q{fmtQ(positionTableNet)}</strong>
+          {' '}— gross − fee del positions table; difiere de "En posiciones" por el spread capturado por el AMM.
         </p>
         {!reconcileOk && (
           <p style={{ fontFamily: F, fontSize: '11px', color: '#f87171', margin: 0 }}>
-            Discrepancia &gt; Q0.50 entre depósitos netos y total en sistema — revisá entradas recientes en balance_ledger antes de mover fondos.
+            Δ Q{fmtQ(ledgerDelta)} entre <code>sum(balance_ledger)</code> y <code>sum(profile.balance)</code>. El ledger no concuerda con los saldos — revisá entradas recientes antes de mover fondos.
           </p>
         )}
       </div>
