@@ -446,9 +446,17 @@ export function Portafolio() {
     if (evRes.data) for (const e of evRes.data) evMap[e.id] = { question: e.question, status: e.status }
     const feesMap: Record<string, number> = {}
     const spreadMap: Record<string, number> = {}
-    if (mktRes.data) for (const m of mktRes.data as any[]) {
-      feesMap[m.event_id] = Number(m.fees_collected) || 0
-      spreadMap[m.event_id] = Number(m.spread_collected) || 0
+    // event_markets.spread_collected is not in the curated Database type
+    // (it lives in a more recent migration); read it as Json-compatible.
+    if (mktRes.data) {
+      for (const m of mktRes.data as Array<{
+        event_id: string
+        fees_collected: number | null
+        spread_collected?: number | null
+      }>) {
+        feesMap[m.event_id] = Number(m.fees_collected) || 0
+        spreadMap[m.event_id] = Number(m.spread_collected) || 0
+      }
     }
 
     setLpPositions(deposits.map(d => ({

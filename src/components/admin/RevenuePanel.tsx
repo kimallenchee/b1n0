@@ -1,8 +1,21 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
+import { logger } from '../../lib/logger'
+import { useTreasuryId } from '../../hooks/useTreasuryId'
 
 const F = '"DM Sans", sans-serif'
 const D = '"DM Sans", sans-serif'
+
+interface LpDepositRow {
+  event_id: string
+  user_id: string
+  amount: number
+  return_pct: number
+  status: string
+  fees_at_deposit: number | null
+  payout: number | null
+  created_at: string
+}
 
 interface PredictionRow {
   id: string
@@ -54,6 +67,7 @@ interface MarketRow {
 
 
 function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string } = {}) {
+  const { treasuryId } = useTreasuryId()
   const [predictions, setPredictions] = useState<PredictionRow[]>([])
   const [transactions, setTransactions] = useState<TxRow[]>([])
   const [positions, setPositions] = useState<PositionRow[]>([])
@@ -63,25 +77,42 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
   const [resolvedCount, setResolvedCount] = useState(0)
   const [totalEvents, setTotalEvents] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState<string | null>(null)
   const [filter, setFilter] = useState<'all' | 'active' | 'won' | 'lost' | 'sold'>('all')
   const [txView, setTxView] = useState<'purchases' | 'sales'>('purchases')
   const [limit, setLimit] = useState(50)
-  const [lpDepositsAll, setLpDepositsAll] = useState<{ event_id: string; user_id: string; amount: number; return_pct: number; status: string; fees_at_deposit: number; created_at: string }[]>([])
+  const [lpDepositsAll, setLpDepositsAll] = useState<LpDepositRow[]>([])
   const [lpExpanded, setLpExpanded] = useState(false)
   const [lpRowExpanded, setLpRowExpanded] = useState<string | null>(null)
   const [skimTotal, setSkimTotal] = useState(0)
   const [rates, setRates] = useState({ sponsor_margin_pct: 15, tx_fee_pct: 2.5, spread_low_pct: 4, spread_high_pct: 8, fee_floor_pct: 1, fee_ceiling_pct: 5, sell_fee_pct: 2, depth_threshold: 50000 })
 
   useEffect(() => {
-    loadData()
-  }, [dateFrom, dateTo])
+    if (!treasuryId) return
+    loadData(treasuryId).catch((err: unknown) => {
+      logger.error('RevenuePanel: loadData failed', { error: err })
+      setLoadError('Error cargando datos de ingresos')
+      setLoading(false)
+    })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dateFrom, dateTo, treasuryId])
 
   useEffect(() => {
     // Load platform rates for accurate spread/fee display
-    supabase.from('platform_config').select('key, value').then(({ data }) => {
-      if (data) {
+    let cancelled = false
+    supabase
+      .from('platform_config')
+      .select('key, value')
+      .then(({ data, error }) => {
+        if (error) {
+          logger.error('RevenuePanel: load platform_config failed', { error: error.message })
+          return
+        }
+        if (cancelled || !data) return
         const map: Record<string, number> = {}
-        for (const row of data) map[row.key] = Number(row.value)
+        for (const row of data) {
+          if (row.value !== null) map[row.key] = Number(row.value)
+        }
         setRates({
           sponsor_margin_pct: map.sponsor_margin_pct ?? 15,
           tx_fee_pct: map.tx_fee_pct ?? 2.5,
@@ -92,15 +123,27 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
           sell_fee_pct: map.sell_fee_pct ?? 2,
           depth_threshold: map.depth_threshold ?? 50000,
         })
-      }
-    })
+      })
+    return () => {
+      cancelled = true
+    }
   }, [])
 
-  async function loadData() {
+  async function loadData(treasuryAccountId: string) {
     setLoading(true)
+    setLoadError(null)
     // Build date filter helpers
     const fromISO = dateFrom ? `${dateFrom}T00:00:00` : undefined
     const toISO = dateTo ? `${dateTo}T23:59:59` : undefined
+
+    // Helper that logs and rethrows so Promise.all surfaces the cause.
+    const logAndThrow = (label: string) => (err: { message?: string } | null) => {
+      if (err) {
+        logger.error(`RevenuePanel: ${label} failed`, { error: err.message ?? String(err) })
+        throw new Error(err.message ?? label)
+      }
+    }
+
     const [predRes, eventsRes, allEventsRes, txRes, posRes, marketRes, profilesRes, eventsFullRes, lpRes] = await Promise.all([
       supabase
         .from('predictions')
@@ -120,32 +163,53 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
       supabase.from('profiles').select('id, name'),
       supabase.from('events').select('id, question, category, event_type'),
       supabase.from('lp_deposits').select('event_id, user_id, amount, return_pct, status, fees_at_deposit, payout, created_at'),
-    ]) as [any, any, any, any, any, any, any, any, any]
+    ])
+
+    // Surface any individual query error as a load error so the user sees something.
+    logAndThrow('predictions')(predRes.error)
+    logAndThrow('events resolved')(eventsRes.error)
+    logAndThrow('events all')(allEventsRes.error)
+    logAndThrow('market_transactions')(txRes.error)
+    logAndThrow('positions')(posRes.error)
+    logAndThrow('event_markets')(marketRes.error)
+    logAndThrow('profiles')(profilesRes.error)
+    logAndThrow('events full')(eventsFullRes.error)
+    logAndThrow('lp_deposits')(lpRes.error)
+
     // Build lookup maps for positions (no FK joins on positions table)
     const pMap: Record<string, string> = {}
     if (profilesRes.data) for (const p of profilesRes.data) pMap[p.id] = p.name || '—'
     setProfileMap(pMap)
     const eMap: Record<string, { question: string; category: string; event_type: string }> = {}
-    if (eventsFullRes.data) for (const e of eventsFullRes.data) eMap[e.id] = { question: e.question, category: e.category, event_type: e.event_type }
+    if (eventsFullRes.data) {
+      for (const e of eventsFullRes.data) {
+        eMap[e.id] = { question: e.question, category: e.category, event_type: e.event_type as string }
+      }
+    }
     setEventMap(eMap)
 
     if (predRes.data) setPredictions(predRes.data as unknown as PredictionRow[])
     if (eventsRes.data) setResolvedCount(eventsRes.data.length)
     if (allEventsRes.data) setTotalEvents(allEventsRes.data.length)
-    if (txRes.data) setTransactions(txRes.data as TxRow[])
+    if (txRes.data) setTransactions(txRes.data as unknown as TxRow[])
     if (posRes.data) setPositions(posRes.data as unknown as PositionRow[])
-    if (marketRes.data) setMarkets(marketRes.data as MarketRow[])
-    if (lpRes.data) setLpDepositsAll(lpRes.data as any[])
+    if (marketRes.data) setMarkets(marketRes.data as unknown as MarketRow[])
+    if (lpRes.data) setLpDepositsAll(lpRes.data as unknown as LpDepositRow[])
+
     // Load resolution skim total from treasury ledger
     let skimQuery = supabase
       .from('balance_ledger')
       .select('amount')
-      .eq('user_id', '00000000-0000-0000-0000-000000000001')
+      .eq('user_id', treasuryAccountId)
       .eq('type', 'skim')
     if (fromISO) skimQuery = skimQuery.gte('created_at', fromISO)
     if (toISO) skimQuery = skimQuery.lte('created_at', toISO)
-    const { data: skimRows } = await skimQuery
-    if (skimRows) setSkimTotal(skimRows.reduce((s, r) => s + (Number(r.amount) || 0), 0))
+    const { data: skimRows, error: skimErr } = await skimQuery
+    if (skimErr) {
+      logger.error('RevenuePanel: skim total query failed', { error: skimErr.message })
+    } else if (skimRows) {
+      setSkimTotal(skimRows.reduce((s, r) => s + (Number(r.amount) || 0), 0))
+    }
     setLoading(false)
   }
 
@@ -183,7 +247,9 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
   const buyVolume = positions.reduce((s, p) => s + (p.gross_amount || 0), 0)
   const wonPayout = positions.filter((p) => p.status === 'won').reduce((s, p) => s + (p.payout_if_win || 0), 0)
   const lostVolume = positions.filter((p) => p.status === 'lost').reduce((s, p) => s + (p.gross_amount || 0), 0)
-  const lpReturned = lpDepositsAll.filter(lp => lp.status === 'returned' || lp.status === 'partial_loss').reduce((s, lp) => s + (Number((lp as any).payout) || 0), 0)
+  const lpReturned = lpDepositsAll
+    .filter((lp) => lp.status === 'returned' || lp.status === 'partial_loss')
+    .reduce((s, lp) => s + (Number(lp.payout) || 0), 0)
   const totalPaidOut = wonPayout + lpReturned
 
   // ── Totals ──
@@ -353,6 +419,21 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
 
   return (
     <div>
+      {loadError && (
+        <p
+          style={{
+            fontFamily: F,
+            fontSize: '12px',
+            color: '#f87171',
+            background: 'rgba(248,113,113,0.08)',
+            padding: '8px 12px',
+            borderRadius: '8px',
+            marginBottom: '10px',
+          }}
+        >
+          {loadError}
+        </p>
+      )}
       {/* ── Compact revenue hero ── */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '20px', background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '12px', padding: '14px 18px', marginBottom: '10px', flexWrap: 'wrap' }}>
         <div style={{ marginRight: '8px' }}>

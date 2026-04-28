@@ -1,8 +1,8 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 import type { Session } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase'
-import { setMonitoringUser } from '../lib/logger'
+import { logger, setMonitoringUser } from '../lib/logger'
 
 export interface Profile {
   id: string
@@ -42,6 +42,19 @@ interface AuthContextValue {
   session: Session | null
   profile: Profile | null
   loading: boolean
+  /**
+   * Server-verified admin status. `null` = not yet checked. The cached
+   * value reflects the most recent `verifyAdminStatus()` call. Always
+   * call `verifyAdminStatus()` before gating sensitive UI — the cached
+   * value can be stale if a separate session changed the flag.
+   */
+  isAdminVerified: boolean | null
+  /**
+   * Re-check admin status against the server. Returns the fresh value
+   * and updates the cache. Calls `check_admin_status` RPC which is
+   * SECURITY DEFINER and reads the live `profiles.is_admin` row.
+   */
+  verifyAdminStatus: () => Promise<boolean>
   signIn: (email: string, password: string) => Promise<string | null>
   signUp: (email: string, password: string, meta: SignupMeta) => Promise<string | null>
   signOut: () => Promise<void>
@@ -82,19 +95,50 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
+  const [isAdminVerified, setIsAdminVerified] = useState<boolean | null>(null)
 
   async function fetchProfile(userId: string) {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', userId)
       .single()
-    if (data) setProfile(rowToProfile(data as Record<string, unknown>))
+    if (error) {
+      logger.error('AuthContext: fetchProfile failed', { user_id: userId, error: error.message })
+      return
+    }
+    if (data) setProfile(rowToProfile(data as unknown as Record<string, unknown>))
   }
 
   async function refreshProfile() {
     if (session?.user?.id) await fetchProfile(session.user.id)
   }
+
+  // Server-verified admin check. The cached value avoids spamming the RPC
+  // on every render, but ProtectedRoute re-runs this on every admin-route
+  // mount so a flipped flag kicks the user out on next navigation.
+  const verifyAdminStatus = useCallback(async (): Promise<boolean> => {
+    if (!session?.user?.id) {
+      setIsAdminVerified(false)
+      return false
+    }
+    try {
+      const { data, error } = await supabase.rpc('check_admin_status')
+      if (error) {
+        logger.error('check_admin_status RPC failed', { error: error.message })
+        setIsAdminVerified(false)
+        return false
+      }
+      const result = (data ?? {}) as { is_admin?: boolean; authenticated?: boolean }
+      const verified = Boolean(result.is_admin && result.authenticated)
+      setIsAdminVerified(verified)
+      return verified
+    } catch (err) {
+      logger.error('check_admin_status threw', { error: err })
+      setIsAdminVerified(false)
+      return false
+    }
+  }, [session?.user?.id])
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session: s } }) => {
@@ -110,6 +154,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setMonitoringUser({ id: s.user.id, email: s.user.email })
       } else {
         setProfile(null)
+        setIsAdminVerified(null)
         setMonitoringUser(null)
       }
     })
@@ -193,7 +238,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ session, profile, loading, signIn, signUp, signOut, refreshProfile, resetPassword, changePassword }}>
+    <AuthContext.Provider
+      value={{
+        session,
+        profile,
+        loading,
+        isAdminVerified,
+        verifyAdminStatus,
+        signIn,
+        signUp,
+        signOut,
+        refreshProfile,
+        resetPassword,
+        changePassword,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )

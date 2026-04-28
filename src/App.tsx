@@ -211,26 +211,31 @@ function AppContent() {
 }
 
 export default function App() {
+  // Root-level ErrorBoundary catches anything outside the route tree
+  // (provider init crashes, theme bootstrap, etc.). Per-layout
+  // boundaries below catch route render crashes so the chrome stays.
   return (
-    <BrowserRouter>
-      <ThemeProvider>
-      <AuthProvider>
-        <ToastProvider>
-          <NowProvider>
-            <EventsProvider>
-              <VoteProvider>
-                <NotificationProvider>
-                  <AuthModalProvider>
-                    <AppContent />
-                    <AuthModal />
-                  </AuthModalProvider>
-                </NotificationProvider>
-              </VoteProvider>
-            </EventsProvider>
-          </NowProvider>
-        </ToastProvider>
-      </AuthProvider>
-      </ThemeProvider>
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <ThemeProvider>
+        <AuthProvider>
+          <ToastProvider>
+            <NowProvider>
+              <EventsProvider>
+                <VoteProvider>
+                  <NotificationProvider>
+                    <AuthModalProvider>
+                      <AppContent />
+                      <AuthModal />
+                    </AuthModalProvider>
+                  </NotificationProvider>
+                </VoteProvider>
+              </EventsProvider>
+            </NowProvider>
+          </ToastProvider>
+        </AuthProvider>
+        </ThemeProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
   )
 }

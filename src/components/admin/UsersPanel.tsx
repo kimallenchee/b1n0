@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
+import { logger } from '../../lib/logger'
+import { callRpc } from '../../lib/rpc'
 
 const F = '"DM Sans", sans-serif'
 const D = '"DM Sans", sans-serif'
@@ -67,26 +69,30 @@ export function UsersPanel() {
       .select('id, name, username, balance, role, is_admin, created_at, total_predictions, correct_predictions, total_cobrado')
       .order('created_at', { ascending: false })
     if (error) {
-      console.error('loadUsers error:', error)
+      logger.error('UsersPanel: loadUsers failed', { error: error.message })
       setUserError('Error cargando usuarios: ' + error.message)
     }
-    setAdminUsers((data || []) as AdminUser[])
+    setAdminUsers(((data ?? []) as unknown) as AdminUser[])
     setUsersLoading(false)
   }
 
   async function loadAllEvents() {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('events')
       .select('id, question')
       .order('created_at', { ascending: false })
-    setAllEvents((data || []) as typeof allEvents)
+    if (error) {
+      logger.error('UsersPanel: loadAllEvents failed', { error: error.message })
+      return
+    }
+    setAllEvents((data ?? []) as typeof allEvents)
   }
 
   async function adjustBalance(user: AdminUser, amount: number, reason?: string) {
     setUserSaving(true)
     setUserError(null)
     setUserSuccess(null)
-    const { data, error } = await supabase.rpc('admin_adjust_balance', {
+    const { data, error } = await callRpc('admin_adjust_balance', {
       p_user_id: user.id,
       p_amount: amount,
       p_reason: reason || (amount >= 0 ? `Admin +Q${Math.abs(amount)}` : `Admin -Q${Math.abs(amount)}`),
@@ -94,7 +100,7 @@ export function UsersPanel() {
     if (error) {
       setUserError(error.message)
     } else {
-      const result = data as { ok?: boolean; error?: string; new_balance?: number } | null
+      const result = data
       if (result?.error) {
         setUserError(result.error)
       } else {
@@ -118,6 +124,7 @@ export function UsersPanel() {
     setUserSuccess(null)
     const { error } = await supabase.from('profiles').update(updates).eq('id', user.id)
     if (error) {
+      logger.error('UsersPanel: profile update failed', { user_id: user.id, error: error.message })
       setUserError(error.message)
     } else {
       setUserSuccess('Guardado')
@@ -485,13 +492,22 @@ export function UsersPanel() {
                                 }
                                 setUserPosLoading(true)
                                 setUserPortfolio(user.id)
-                                const { data } = await supabase
+                                const { data, error } = await supabase
                                   .from('positions')
                                   .select('id, event_id, side, contracts, price_at_purchase, payout_if_win, fee_paid, gross_amount, status, created_at')
                                   .eq('user_id', user.id)
                                   .order('created_at', { ascending: false })
                                   .limit(20)
-                                setUserPositions((data || []) as UserPosition[])
+                                if (error) {
+                                  logger.error('UsersPanel: load positions failed', {
+                                    user_id: user.id,
+                                    error: error.message,
+                                  })
+                                  setUserError('No se pudieron cargar posiciones: ' + error.message)
+                                  setUserPositions([])
+                                } else {
+                                  setUserPositions((data ?? []) as UserPosition[])
+                                }
                                 setUserPosLoading(false)
                               }}
                               style={{
@@ -517,13 +533,15 @@ export function UsersPanel() {
                                   setUserError('Contraseña debe tener al menos 6 caracteres')
                                   return
                                 }
-                                const { data, error } = await supabase.rpc('admin_reset_password', { p_user_id: user.id, p_new_password: newPw })
+                                const { data, error } = await callRpc('admin_reset_password', {
+                                  p_user_id: user.id,
+                                  p_new_password: newPw,
+                                })
                                 if (error) {
                                   setUserError('Error: ' + error.message)
                                   return
                                 }
-                                const result = data as { ok?: boolean; error?: string } | null
-                                if (result?.error) setUserError(result.error)
+                                if (data?.error) setUserError(data.error)
                                 else setUserSuccess('Contraseña actualizada para ' + (user.name || user.username))
                               }}
                               style={{

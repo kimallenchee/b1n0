@@ -3,11 +3,13 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useEvents } from '../context/EventsContext'
 import { supabase } from '../lib/supabase'
+import { logger } from '../lib/logger'
 import { RevenuePanel } from '../components/admin/RevenuePanel'
 import { RatesPanel } from '../components/admin/RatesPanel'
 import { UsersPanel } from '../components/admin/UsersPanel'
 import { TreasuryPanel } from '../components/admin/TreasuryPanel'
 import { EventManager } from '../components/admin/EventManager'
+import { HealthPanel } from '../components/admin/HealthPanel'
 
 const F = '"DM Sans", sans-serif'
 const D = '"DM Sans", sans-serif'
@@ -44,9 +46,14 @@ export function AdminPage() {
   const { refetch } = useEvents()
   const navigate = useNavigate()
 
-  const [view, setView] = useState<'manage' | 'revenue' | 'rates' | 'users' | 'treasury'>('manage')
+  const [view, setView] = useState<'manage' | 'revenue' | 'rates' | 'users' | 'treasury' | 'health'>('manage')
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
+  // Hidden Sentry-trigger button — surfaces only in dev or with the
+  // ?debug=sentry URL flag so we can verify monitoring receives errors.
+  const showSentryTrigger =
+    import.meta.env.DEV ||
+    (typeof window !== 'undefined' && window.location.search.includes('debug=sentry'))
 
 
 
@@ -80,6 +87,10 @@ export function AdminPage() {
   }, [])
 
 
+  // ProtectedRoute already gates this route with a server-verified
+  // is_admin check via check_admin_status RPC. We keep this client-side
+  // check as a defense-in-depth backstop — the page should not render
+  // anything sensitive if both flags fail.
   if (!profile?.isAdmin) {
     return (
       <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '12px' }}>
@@ -97,7 +108,7 @@ export function AdminPage() {
       {/* Compact header: tabs left, date filter right */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', marginBottom: '14px', flexWrap: 'wrap' }}>
         <div style={{ display: 'inline-flex', background: 'var(--b1n0-card)', borderRadius: '8px', padding: '2px', gap: '1px' }}>
-          {([['manage', 'Gestionar'], ['revenue', 'Ingresos'], ['rates', 'Tarifas'], ['users', 'Usuarios'], ['treasury', 'Tesorería']] as const).map(([v, label]) => (
+          {([['manage', 'Gestionar'], ['revenue', 'Ingresos'], ['rates', 'Tarifas'], ['users', 'Usuarios'], ['treasury', 'Tesorería'], ['health', 'Salud']] as const).map(([v, label]) => (
             <button
               key={v}
               onClick={() => { setView(v) }}
@@ -169,6 +180,67 @@ export function AdminPage() {
 
       {/* ════════ TESORERÍA ════════ */}
       {view === 'treasury' && <TreasuryPanel />}
+
+      {/* ════════ PLATFORM HEALTH ════════ */}
+      {view === 'health' && <HealthPanel />}
+
+      {/* ── Hidden Sentry verification trigger (dev / ?debug=sentry) ── */}
+      {showSentryTrigger && (
+        <div
+          style={{
+            marginTop: '32px',
+            padding: '12px',
+            border: '1px dashed var(--b1n0-border)',
+            borderRadius: '8px',
+            background: 'rgba(248,113,113,0.04)',
+          }}
+        >
+          <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', marginBottom: '8px' }}>
+            Debug — sólo visible en desarrollo o con <code>?debug=sentry</code>
+          </p>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button
+              onClick={() => {
+                logger.error('Sentry verification trigger (logger.error)', {
+                  source: 'AdminPage debug trigger',
+                  triggered_at: new Date().toISOString(),
+                })
+              }}
+              style={{
+                padding: '6px 12px',
+                borderRadius: '6px',
+                border: '1px solid var(--b1n0-border)',
+                background: 'var(--b1n0-surface)',
+                fontFamily: F,
+                fontSize: '11px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                color: '#FFD474',
+              }}
+            >
+              logger.error → Sentry
+            </button>
+            <button
+              onClick={() => {
+                throw new Error('Sentry verification trigger (uncaught throw)')
+              }}
+              style={{
+                padding: '6px 12px',
+                borderRadius: '6px',
+                border: '1px solid #fecaca',
+                background: 'rgba(248,113,113,0.08)',
+                fontFamily: F,
+                fontSize: '11px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                color: '#f87171',
+              }}
+            >
+              throw → ErrorBoundary
+            </button>
+          </div>
+        </div>
+      )}
 
     </div>
   )

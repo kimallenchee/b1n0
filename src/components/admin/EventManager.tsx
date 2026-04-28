@@ -3,6 +3,7 @@ import { useEvents } from '../../context/EventsContext'
 import { useAuth } from '../../context/AuthContext'
 import { useVotes } from '../../context/VoteContext'
 import { supabase } from '../../lib/supabase'
+import { logger } from '../../lib/logger'
 import ExcelJS from 'exceljs'
 import { ImageCropper } from '../ImageCropper'
 
@@ -869,17 +870,32 @@ export function EventManager({ platformRates }: EventManagerProps) {
   }
 
   async function loadLpDeposits(eventId: string) {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('lp_deposits')
       .select('id, user_id, amount, return_pct, status, payout, created_at')
       .eq('event_id', eventId)
       .order('created_at', { ascending: false })
-    setLpDeposits((data as any[]) ?? [])
+    if (error) {
+      logger.error('EventManager: loadLpDeposits failed', { event_id: eventId, error: error.message })
+      setLpDeposits([])
+      return
+    }
+    setLpDeposits((data ?? []) as typeof lpDeposits)
   }
 
   async function loadLpUsers() {
-    const { data } = await supabase.from('profiles').select('id, name, balance')
-    setLpUsers((data as any[]) ?? [])
+    const { data, error } = await supabase.from('profiles').select('id, name, balance')
+    if (error) {
+      logger.error('EventManager: loadLpUsers failed', { error: error.message })
+      setLpUsers([])
+      return
+    }
+    // Filter out rows with null name to satisfy the typed state shape.
+    const rows = (data ?? []).filter(
+      (r): r is { id: string; name: string; balance: number } =>
+        typeof r.name === 'string' && r.name.length > 0
+    )
+    setLpUsers(rows)
   }
 
   async function handleLpDeposit() {

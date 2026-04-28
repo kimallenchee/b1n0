@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
+import { logger } from '../../lib/logger'
+import { callRpc } from '../../lib/rpc'
 
 const F = '"DM Sans", sans-serif'
 const D = '"DM Sans", sans-serif'
@@ -35,15 +37,25 @@ export function RatesPanel() {
   const [ratesLoading, setRatesLoading] = useState(false)
   const [ratesSaving, setRatesSaving] = useState<Record<string, boolean>>({})
   const [ratesSaved, setRatesSaved] = useState<Record<string, boolean>>({})
+  const [ratesError, setRatesError] = useState<string | null>(null)
 
   useEffect(() => {
     let isMounted = true
     const loadRates = async () => {
       setRatesLoading(true)
-      const { data } = await supabase.from('platform_config').select('key, value')
-      if (isMounted && data) {
+      const { data, error } = await supabase.from('platform_config').select('key, value')
+      if (!isMounted) return
+      if (error) {
+        logger.error('RatesPanel: load platform_config failed', { error: error.message })
+        setRatesError('No se pudieron cargar las tarifas: ' + error.message)
+        setRatesLoading(false)
+        return
+      }
+      if (data) {
         const map: Record<string, number> = {}
-        for (const row of data) map[row.key] = Number(row.value)
+        for (const row of data) {
+          if (row.value !== null) map[row.key] = Number(row.value)
+        }
         const merged = {
           sponsor_margin_pct: map.sponsor_margin_pct ?? 15,
           tx_fee_pct: map.tx_fee_pct ?? 2.5,
@@ -58,17 +70,20 @@ export function RatesPanel() {
         setPlatformRates(merged)
         setRatesDraft(merged)
       }
-      if (isMounted) setRatesLoading(false)
+      setRatesLoading(false)
     }
-    loadRates()
+    loadRates().catch((err: unknown) => {
+      logger.error('RatesPanel: loadRates threw', { error: err })
+    })
     return () => { isMounted = false }
   }, [])
 
   async function saveRate(key: string, value: number) {
     setRatesSaving((s) => ({ ...s, [key]: true }))
-    const { error } = await supabase.rpc('update_platform_config', { p_key: key, p_value: value })
+    setRatesError(null)
+    const { error } = await callRpc('update_platform_config', { p_key: key, p_value: value })
     if (error) {
-      // Silent error handling
+      setRatesError(`No se pudo guardar ${key}: ${error.message}`)
     } else {
       setPlatformRates((r) => ({ ...r, [key]: value }))
       setRatesSaved((s) => ({ ...s, [key]: true }))
@@ -92,6 +107,21 @@ export function RatesPanel() {
       <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginBottom: '10px' }}>
         Los cambios toman efecto inmediatamente.
       </p>
+      {ratesError && (
+        <p
+          style={{
+            fontFamily: F,
+            fontSize: '12px',
+            color: '#f87171',
+            background: 'rgba(248,113,113,0.08)',
+            padding: '8px 12px',
+            borderRadius: '8px',
+            marginBottom: '10px',
+          }}
+        >
+          {ratesError}
+        </p>
+      )}
 
       {ratesLoading ? (
         <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)' }}>Cargando...</p>

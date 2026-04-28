@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
+import { logger } from '../../lib/logger'
+import { callRpc } from '../../lib/rpc'
+import { useTreasuryId } from '../../hooks/useTreasuryId'
 
 const F = '"DM Sans", sans-serif'
 const D = '"DM Sans", sans-serif'
-
-const TREASURY_ID = '00000000-0000-0000-0000-000000000001'
 
 interface TreasuryEntry {
   type: string
@@ -15,51 +16,76 @@ interface TreasuryEntry {
 }
 
 export function TreasuryPanel() {
+  const { treasuryId } = useTreasuryId()
   const [treasuryBalance, setTreasuryBalance] = useState(0)
   const [treasuryLedger, setTreasuryLedger] = useState<TreasuryEntry[]>([])
   const [treasuryLoading, setTreasuryLoading] = useState(false)
   const [sweeping, setSweeping] = useState(false)
   const [sweepResult, setSweepResult] = useState<{ swept_total: number; tx_count: number } | null>(null)
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
-  // Load treasury data on mount
+  // Load treasury data on mount (or once treasuryId is known)
   useEffect(() => {
-    if (treasuryLedger.length === 0 && treasuryBalance === 0) {
-      loadTreasuryData()
-    }
-  }, [])
+    if (!treasuryId) return
+    loadTreasuryData(treasuryId).catch((err: unknown) => {
+      logger.error('TreasuryPanel: initial load failed', { error: err })
+      setErrorMsg('Error cargando datos de tesorería')
+    })
+  }, [treasuryId])
 
-  const loadTreasuryData = async () => {
+  const loadTreasuryData = async (id: string) => {
     setTreasuryLoading(true)
+    setErrorMsg(null)
     try {
       const [balRes, ledRes] = await Promise.all([
-        supabase.from('profiles').select('balance').eq('id', TREASURY_ID).single(),
-        supabase.from('balance_ledger').select('type, amount, balance_after, label, created_at').eq('user_id', TREASURY_ID).order('created_at', { ascending: false }).limit(50),
+        supabase.from('profiles').select('balance').eq('id', id).single(),
+        supabase
+          .from('balance_ledger')
+          .select('type, amount, balance_after, label, created_at')
+          .eq('user_id', id)
+          .order('created_at', { ascending: false })
+          .limit(50),
       ])
 
-      if (balRes.data) setTreasuryBalance(Number(balRes.data.balance) || 0)
-      if (ledRes.data) setTreasuryLedger(ledRes.data as TreasuryEntry[])
+      if (balRes.error) {
+        logger.error('TreasuryPanel: balance load failed', { error: balRes.error.message })
+        setErrorMsg('No se pudo cargar saldo: ' + balRes.error.message)
+      } else if (balRes.data) {
+        setTreasuryBalance(Number(balRes.data.balance) || 0)
+      }
+
+      if (ledRes.error) {
+        logger.error('TreasuryPanel: ledger load failed', { error: ledRes.error.message })
+        setErrorMsg('No se pudo cargar historial: ' + ledRes.error.message)
+      } else if (ledRes.data) {
+        setTreasuryLedger(ledRes.data as TreasuryEntry[])
+      }
     } finally {
       setTreasuryLoading(false)
     }
   }
 
   const handleSweep = async () => {
+    if (!treasuryId) return
     if (!confirm('¿Sincronizar fees no acreditados a la tesorería?')) return
     setSweeping(true)
     setSweepResult(null)
+    setErrorMsg(null)
     try {
-      const { data, error } = await supabase.rpc('sweep_to_treasury')
+      const { data, error } = await callRpc('sweep_to_treasury')
       if (error) {
-        alert('Error: ' + error.message)
+        setErrorMsg('Error: ' + error.message)
         return
       }
       if (data?.error) {
-        alert(data.error)
+        setErrorMsg(data.error)
         return
       }
-      setSweepResult({ swept_total: data.swept_total, tx_count: data.tx_count })
+      setSweepResult({ swept_total: data?.swept_total ?? 0, tx_count: data?.tx_count ?? 0 })
       // Reload treasury data to reflect new entries
-      loadTreasuryData()
+      await loadTreasuryData(treasuryId).catch((err: unknown) => {
+        logger.error('TreasuryPanel: reload after sweep failed', { error: err })
+      })
     } finally {
       setSweeping(false)
     }
@@ -70,22 +96,24 @@ export function TreasuryPanel() {
   const fmtQ2 = (v: number) => v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
   const handleWithdraw = async () => {
+    if (!treasuryId) return
     const input = document.getElementById('treasury-withdraw-amt') as HTMLInputElement
     const amt = parseFloat(input?.value || '0')
     if (amt <= 0) return
     if (amt > treasuryBalance) {
-      alert('Saldo insuficiente')
+      setErrorMsg('Saldo insuficiente')
       return
     }
+    setErrorMsg(null)
 
-    const { error } = await supabase.rpc('admin_adjust_balance', {
-      p_user_id: TREASURY_ID,
+    const { error } = await callRpc('admin_adjust_balance', {
+      p_user_id: treasuryId,
       p_amount: -amt,
       p_reason: 'Retiro tesorería',
     })
 
     if (error) {
-      alert(error.message)
+      setErrorMsg(error.message)
       return
     }
 
@@ -105,6 +133,23 @@ export function TreasuryPanel() {
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+      {/* Inline error banner — replaces alert() popups */}
+      {errorMsg && (
+        <p
+          style={{
+            gridColumn: '1 / -1',
+            fontFamily: F,
+            fontSize: '12px',
+            color: '#f87171',
+            background: 'rgba(248,113,113,0.08)',
+            padding: '8px 12px',
+            borderRadius: '8px',
+            margin: 0,
+          }}
+        >
+          {errorMsg}
+        </p>
+      )}
       {/* Left column */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         {/* Balance card */}
@@ -214,7 +259,13 @@ export function TreasuryPanel() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
           <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: 'var(--b1n0-muted)', letterSpacing: '0.8px', textTransform: 'uppercase' }}>Historial ({treasuryLedger.length})</p>
           <button
-            onClick={loadTreasuryData}
+            onClick={() => {
+              if (!treasuryId) return
+              loadTreasuryData(treasuryId).catch((err: unknown) => {
+                logger.error('TreasuryPanel: manual refresh failed', { error: err })
+                setErrorMsg('Error al actualizar')
+              })
+            }}
             style={{
               padding: '6px 12px',
               borderRadius: '8px',
