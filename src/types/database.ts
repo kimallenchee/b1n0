@@ -208,6 +208,21 @@ export interface FriendshipRow {
   created_at: string
 }
 
+export interface ReconciliationLogRow {
+  id: string
+  run_at: string
+  ledger_sum: number
+  balance_sum: number
+  ledger_balance_delta: number
+  deposits_net: number
+  treasury_balance: number
+  user_balances_total: number
+  money_in_positions: number
+  conservation_delta: number
+  status: 'ok' | 'warning' | 'critical'
+  notes: string | null
+}
+
 // ── RPC shapes ────────────────────────────────────────────────
 
 export interface CheckAdminStatusReturn {
@@ -278,12 +293,17 @@ export interface Database {
       comments: Table<CommentRow>
       notifications: Table<NotificationRow>
       friendships: Table<FriendshipRow>
+      reconciliation_log: Table<ReconciliationLogRow>
     }
     Views: Record<string, never>
     Functions: {
       check_admin_status: {
         Args: NoArgs
         Returns: CheckAdminStatusReturn
+      }
+      run_reconciliation: {
+        Args: NoArgs
+        Returns: ReconciliationLogRow
       }
       is_admin: {
         Args: { user_id: string }

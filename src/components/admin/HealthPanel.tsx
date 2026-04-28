@@ -58,6 +58,16 @@ interface ErrorLogRow {
   created_at: string
 }
 
+interface ReconciliationLogEntry {
+  id: string
+  run_at: string
+  ledger_balance_delta: number | null
+  conservation_delta: number | null
+  money_in_positions: number | null
+  status: 'ok' | 'warning' | 'critical'
+  notes: string | null
+}
+
 const fmtQ = (n: number) =>
   n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
@@ -79,6 +89,82 @@ const sectionHead: React.CSSProperties = {
   color: 'var(--b1n0-muted)',
   letterSpacing: '0.8px',
   textTransform: 'uppercase',
+}
+
+const STATUS_COLOR: Record<ReconciliationLogEntry['status'], string> = {
+  ok: '#4ade80',
+  warning: '#FFD474',
+  critical: '#f87171',
+}
+
+/**
+ * Inline SVG sparkline. Plots up to 14 days of |conservation_delta|
+ * as a small line chart with a baseline at 0. We do this with raw
+ * SVG instead of recharts to avoid pulling in a chart library for
+ * one tiny graph — the cost would be ~150KB of bundle.
+ */
+function Sparkline({
+  points,
+  width = 220,
+  height = 40,
+  color = 'var(--b1n0-text-1)',
+}: {
+  points: { value: number; status: ReconciliationLogEntry['status']; run_at: string }[]
+  width?: number
+  height?: number
+  color?: string
+}) {
+  if (points.length === 0) {
+    return (
+      <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>
+        Sin datos suficientes — la línea aparece tras la primera corrida nocturna.
+      </span>
+    )
+  }
+
+  const maxVal = Math.max(0.5, ...points.map((p) => Math.abs(p.value)))
+  const stepX = points.length > 1 ? width / (points.length - 1) : width
+  const midY = height / 2
+
+  const path = points
+    .map((p, i) => {
+      const x = i * stepX
+      // Center the line at midY; +delta goes up, -delta goes down.
+      const y = midY - (p.value / maxVal) * (midY - 4)
+      return `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`
+    })
+    .join(' ')
+
+  return (
+    <svg width={width} height={height} role="img" aria-label="7-day reconciliation delta sparkline">
+      <line
+        x1={0}
+        y1={midY}
+        x2={width}
+        y2={midY}
+        stroke="var(--b1n0-border)"
+        strokeDasharray="2 3"
+      />
+      <path d={path} fill="none" stroke={color} strokeWidth={1.5} strokeLinejoin="round" />
+      {points.map((p, i) => {
+        const x = i * stepX
+        const y = midY - (p.value / maxVal) * (midY - 4)
+        return (
+          <circle
+            key={p.run_at}
+            cx={x}
+            cy={y}
+            r={2.5}
+            fill={STATUS_COLOR[p.status]}
+            stroke="var(--b1n0-card)"
+            strokeWidth={1}
+          >
+            <title>{`${new Date(p.run_at).toLocaleDateString('es-GT')} — Δ Q${p.value.toFixed(2)} (${p.status})`}</title>
+          </circle>
+        )
+      })}
+    </svg>
+  )
 }
 
 /**
@@ -133,6 +219,10 @@ export function HealthPanel() {
   // ── Settle-now state ───────────────────────────
   const [settling, setSettling] = useState<string | null>(null)
   const [actionMsg, setActionMsg] = useState<string | null>(null)
+
+  // ── Reconciliation runs (last 7 days) ──────────
+  const [reconRuns, setReconRuns] = useState<ReconciliationLogEntry[]>([])
+  const [reconRunning, setReconRunning] = useState(false)
 
   // Reconciliation invariants:
   //
@@ -307,6 +397,25 @@ export function HealthPanel() {
       }
       setRateLimitHits(rateCounts)
 
+      // Reconciliation log — last 14 entries. We display the last 7
+      // days of distinct days as the sparkline; pulling 14 gives us a
+      // bit of buffer in case the cron ran twice in a day.
+      const reconRes = await supabase
+        .from('reconciliation_log')
+        .select('id, run_at, ledger_balance_delta, conservation_delta, money_in_positions, status, notes')
+        .order('run_at', { ascending: false })
+        .limit(14)
+
+      if (reconRes.error) {
+        // Soft-fail — table may not be migrated on older deploys.
+        logger.warn('HealthPanel: reconciliation_log unavailable', {
+          error: reconRes.error.message,
+        })
+        setReconRuns([])
+      } else {
+        setReconRuns(((reconRes.data ?? []) as unknown) as ReconciliationLogEntry[])
+      }
+
       // Errors live in the (newly added) error_log table. If the table
       // isn't there yet (older deploy), fall back gracefully.
       const errorsRes = await supabase
@@ -339,6 +448,25 @@ export function HealthPanel() {
       logger.error('HealthPanel: loadAll threw', { error: err })
     })
   }, [loadAll])
+
+  async function runReconciliationNow() {
+    setReconRunning(true)
+    setActionMsg(null)
+    const { data, error } = await callRpc('run_reconciliation')
+    setReconRunning(false)
+    if (error) {
+      setActionMsg(`Reconciliación falló: ${error.message}`)
+      return
+    }
+    if (data) {
+      setActionMsg(
+        `Reconciliación: ${data.status.toUpperCase()} · Δ ledger Q${Number(
+          data.ledger_balance_delta ?? 0
+        ).toFixed(2)} · Δ conservación Q${Number(data.conservation_delta ?? 0).toFixed(2)}`
+      )
+    }
+    await loadAll()
+  }
 
   async function settleNow(eventId: string, fallbackResult: 'yes' | 'no' = 'yes') {
     if (!confirm(`Resolver evento ${eventId.slice(0, 8)} con resultado "${fallbackResult.toUpperCase()}"?`)) {
@@ -445,6 +573,106 @@ export function HealthPanel() {
             Δ Q{fmtQ(ledgerDelta)} entre <code>sum(balance_ledger)</code> y <code>sum(profile.balance)</code>. El ledger no concuerda con los saldos — revisá entradas recientes antes de mover fondos.
           </p>
         )}
+      </div>
+
+      {/* ─── 1b. Reconciliation runs ───────────────────────────────── */}
+      <div style={card}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: '8px' }}>
+          <p style={sectionHead}>Reconciliación nocturna</p>
+          {reconRuns[0] ? (
+            <span
+              style={{
+                fontFamily: F,
+                fontSize: '11px',
+                fontWeight: 700,
+                padding: '3px 8px',
+                borderRadius: '12px',
+                background: STATUS_COLOR[reconRuns[0].status] + '22',
+                color: STATUS_COLOR[reconRuns[0].status],
+              }}
+            >
+              {reconRuns[0].status.toUpperCase()}
+            </span>
+          ) : (
+            <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>
+              Sin corridas registradas
+            </span>
+          )}
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', minWidth: '220px' }}>
+            <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', margin: 0 }}>
+              Última corrida:{' '}
+              <strong style={{ color: 'var(--b1n0-text-1)' }}>
+                {reconRuns[0]
+                  ? new Date(reconRuns[0].run_at).toLocaleString('es-GT', {
+                      day: '2-digit',
+                      month: 'short',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })
+                  : '—'}
+              </strong>
+            </p>
+            {reconRuns[0] && (
+              <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', margin: 0 }}>
+                Δ ledger:{' '}
+                <strong style={{ color: 'var(--b1n0-text-1)' }}>
+                  Q{fmtQ(Number(reconRuns[0].ledger_balance_delta ?? 0))}
+                </strong>
+                {' · '}Δ conservación:{' '}
+                <strong style={{ color: 'var(--b1n0-text-1)' }}>
+                  Q{fmtQ(Number(reconRuns[0].conservation_delta ?? 0))}
+                </strong>
+              </p>
+            )}
+            {reconRuns[0]?.notes && (
+              <p style={{ fontFamily: F, fontSize: '10px', color: '#f87171', margin: 0 }}>
+                {reconRuns[0].notes}
+              </p>
+            )}
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', margin: 0, textTransform: 'uppercase', letterSpacing: '0.4px' }}>
+              7 días — Δ conservación
+            </p>
+            <Sparkline
+              points={reconRuns
+                .slice(0, 7)
+                .reverse()
+                .map((r) => ({
+                  value: Math.abs(Number(r.conservation_delta ?? 0)),
+                  status: r.status,
+                  run_at: r.run_at,
+                }))}
+            />
+          </div>
+          <div style={{ marginLeft: 'auto' }}>
+            <button
+              onClick={() => {
+                runReconciliationNow().catch((err: unknown) => {
+                  logger.error('HealthPanel: runReconciliationNow threw', { error: err })
+                  setActionMsg('Reconciliación falló inesperadamente')
+                })
+              }}
+              disabled={reconRunning}
+              style={{
+                padding: '8px 14px',
+                borderRadius: '8px',
+                border: '1px solid var(--b1n0-border)',
+                background: reconRunning ? 'var(--b1n0-surface)' : '#14b8a6',
+                color: reconRunning ? 'var(--b1n0-muted)' : '#0d0d0d',
+                fontFamily: F,
+                fontSize: '12px',
+                fontWeight: 600,
+                cursor: reconRunning ? 'not-allowed' : 'pointer',
+                opacity: reconRunning ? 0.6 : 1,
+              }}
+            >
+              {reconRunning ? 'Ejecutando…' : 'Ejecutar reconciliación'}
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* ─── 2. Stale events ───────────────────────────────────────── */}
