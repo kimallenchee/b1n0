@@ -19,7 +19,7 @@ interface EventRow {
   id: string
   question: string | null
   status: string | null
-  resolution_time: string | null
+  ends_at: string | null
 }
 
 interface MarketRow {
@@ -85,7 +85,7 @@ const sectionHead: React.CSSProperties = {
  *
  *   1. Treasury reconciliation: treasury balance vs. user balances
  *      vs. unresolved-event liability.
- *   2. Stale events: closed events past resolution_time but not yet
+ *   2. Stale events: closed events past ends_at but not yet
  *      settled, with a "settle now" jump.
  *   3. Pending withdrawals: schema check (real PSP wiring is post-
  *      this-pass; we surface what's queryable now).
@@ -142,7 +142,7 @@ export function HealthPanel() {
           supabase.from('profiles').select('id, balance, is_admin').eq('id', treasuryId).maybeSingle(),
           supabase.from('profiles').select('id, balance, is_admin'),
           supabase.from('event_markets').select('event_id, pool_committed, pool_total, status'),
-          supabase.from('events').select('id, question, status, resolution_time'),
+          supabase.from('events').select('id, question, status, ends_at'),
           // balance_ledger entries that look like queued withdrawals.
           // Once PSP is wired, this can move to a dedicated table.
           supabase
@@ -197,7 +197,7 @@ export function HealthPanel() {
         .reduce((s, m) => s + (Number(m.pool_committed) || 0), 0)
       setUnresolvedLiability(liability)
 
-      // Stale = open/closed events past resolution_time, not resolved.
+      // Stale = open/closed events past ends_at, not resolved.
       const eventRows = (eventsRes.data ?? []) as EventRow[]
       const now = Date.now()
       const stale = eventRows
@@ -205,12 +205,12 @@ export function HealthPanel() {
           (e) =>
             e.status !== 'resolved' &&
             e.status !== 'draft' &&
-            e.resolution_time != null &&
-            new Date(e.resolution_time).getTime() < now
+            e.ends_at != null &&
+            new Date(e.ends_at).getTime() < now
         )
         .sort((a, b) => {
-          const ta = a.resolution_time ? new Date(a.resolution_time).getTime() : 0
-          const tb = b.resolution_time ? new Date(b.resolution_time).getTime() : 0
+          const ta = a.ends_at ? new Date(a.ends_at).getTime() : 0
+          const tb = b.ends_at ? new Date(b.ends_at).getTime() : 0
           return ta - tb
         })
       setStaleEvents(stale)
@@ -410,7 +410,7 @@ export function HealthPanel() {
                     {e.question || e.id.slice(0, 8)}
                   </p>
                   <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)' }}>
-                    Vence: {e.resolution_time ? new Date(e.resolution_time).toLocaleString('es-GT') : '—'} · Estado: {e.status || '—'}
+                    Vence: {e.ends_at ? new Date(e.ends_at).toLocaleString('es-GT') : '—'} · Estado: {e.status || '—'}
                   </p>
                 </div>
                 <div style={{ display: 'flex', gap: '4px' }}>

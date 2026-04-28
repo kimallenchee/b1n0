@@ -61,7 +61,7 @@ export interface EventRow {
   event_type: 'binary' | 'open'
   status: 'draft' | 'open' | 'closed' | 'resolved' | string
   created_at: string
-  resolution_time: string | null
+  ends_at: string | null
   resolved_at: string | null
   resolved_outcome: string | null
   sponsor_amount: number | null
