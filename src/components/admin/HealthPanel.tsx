@@ -22,11 +22,15 @@ interface EventRow {
   ends_at: string | null
 }
 
-interface MarketRow {
-  event_id: string
-  pool_committed: number | null
-  pool_total: number | null
+interface ActivePositionRow {
+  gross_amount: number | null
+  fee_paid: number | null
   status: string | null
+}
+
+interface BalanceLedgerSumRow {
+  type: string
+  amount: number
 }
 
 interface BalanceLedgerEntry {
@@ -102,7 +106,8 @@ export function HealthPanel() {
   // ── Reconciliation ─────────────────────────────
   const [treasuryBalance, setTreasuryBalance] = useState(0)
   const [userBalanceTotal, setUserBalanceTotal] = useState(0)
-  const [unresolvedLiability, setUnresolvedLiability] = useState(0)
+  const [activePositionNet, setActivePositionNet] = useState(0)
+  const [netDeposits, setNetDeposits] = useState(0)
 
   // ── Stale events ───────────────────────────────
   const [staleEvents, setStaleEvents] = useState<EventRow[]>([])
@@ -121,9 +126,23 @@ export function HealthPanel() {
   const [settling, setSettling] = useState<string | null>(null)
   const [actionMsg, setActionMsg] = useState<string | null>(null)
 
+  // Reconciliation invariant:
+  //   netDeposits  = deposits - withdrawals (money users have put into the platform, net)
+  //   totalLiquid  = treasury + non-treasury user balances + active-position user contributions
+  //
+  // These should match. The "active-position user contribution" is
+  // sum(gross_amount - fee_paid) across active positions — the money
+  // users staked that hasn't paid out yet. We deliberately do NOT use
+  // event_markets.pool_committed because that is the worst-case payout
+  // (often inflated by sponsor margin and LP capital), not user money.
+  const totalLiquid = useMemo(
+    () => treasuryBalance + userBalanceTotal + activePositionNet,
+    [treasuryBalance, userBalanceTotal, activePositionNet]
+  )
+
   const reconcileDelta = useMemo(
-    () => Math.round((treasuryBalance + userBalanceTotal - unresolvedLiability) * 100) / 100,
-    [treasuryBalance, userBalanceTotal, unresolvedLiability]
+    () => Math.round((netDeposits - totalLiquid) * 100) / 100,
+    [netDeposits, totalLiquid]
   )
 
   const reconcileOk = useMemo(() => Math.abs(reconcileDelta) < 0.5, [reconcileDelta])
@@ -137,11 +156,18 @@ export function HealthPanel() {
     const since24h = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
 
     try {
-      const [treasuryRes, profilesRes, marketsRes, eventsRes, withdrawRes, rateRes] =
+      const [treasuryRes, profilesRes, positionsRes, ledgerRes, eventsRes, withdrawRes, rateRes] =
         await Promise.all([
           supabase.from('profiles').select('id, balance, is_admin').eq('id', treasuryId).maybeSingle(),
           supabase.from('profiles').select('id, balance, is_admin'),
-          supabase.from('event_markets').select('event_id, pool_committed, pool_total, status'),
+          // Active positions — the user-funded portion currently in markets.
+          supabase
+            .from('positions')
+            .select('gross_amount, fee_paid, status')
+            .eq('status', 'active'),
+          // All deposit/withdraw entries from balance_ledger so we can
+          // compute net deposits across the platform.
+          supabase.from('balance_ledger').select('type, amount').in('type', ['deposit', 'withdraw']),
           supabase.from('events').select('id, question, status, ends_at'),
           // balance_ledger entries that look like queued withdrawals.
           // Once PSP is wired, this can move to a dedicated table.
@@ -165,9 +191,13 @@ export function HealthPanel() {
         logger.error('HealthPanel: profiles load failed', { error: profilesRes.error.message })
         throw new Error(profilesRes.error.message)
       }
-      if (marketsRes.error) {
-        logger.error('HealthPanel: markets load failed', { error: marketsRes.error.message })
-        throw new Error(marketsRes.error.message)
+      if (positionsRes.error) {
+        logger.error('HealthPanel: positions load failed', { error: positionsRes.error.message })
+        throw new Error(positionsRes.error.message)
+      }
+      if (ledgerRes.error) {
+        logger.error('HealthPanel: balance_ledger load failed', { error: ledgerRes.error.message })
+        throw new Error(ledgerRes.error.message)
       }
       if (eventsRes.error) {
         logger.error('HealthPanel: events load failed', { error: eventsRes.error.message })
@@ -190,12 +220,28 @@ export function HealthPanel() {
         .reduce((s, p) => s + (Number(p.balance) || 0), 0)
       setUserBalanceTotal(userTotal)
 
-      // Unresolved liability = sum of pool_committed across open markets.
-      const marketRows = (marketsRes.data ?? []) as MarketRow[]
-      const liability = marketRows
-        .filter((m) => m.status !== 'resolved')
-        .reduce((s, m) => s + (Number(m.pool_committed) || 0), 0)
-      setUnresolvedLiability(liability)
+      // Active-position user contributions = sum(gross - fee). This is
+      // the money users actually put into the markets that has neither
+      // been paid out nor refunded yet — the part of "unresolved
+      // liability" that is backed by user funds.
+      const positionRows = (positionsRes.data ?? []) as ActivePositionRow[]
+      const positionNet = positionRows.reduce(
+        (s, p) => s + ((Number(p.gross_amount) || 0) - (Number(p.fee_paid) || 0)),
+        0
+      )
+      setActivePositionNet(Math.round(positionNet * 100) / 100)
+
+      // Net deposits = sum(deposit) - sum(withdraw) from balance_ledger.
+      const ledgerRows = (ledgerRes.data ?? []) as BalanceLedgerSumRow[]
+      const deposits = ledgerRows
+        .filter((r) => r.type === 'deposit')
+        .reduce((s, r) => s + (Number(r.amount) || 0), 0)
+      const withdrawals = ledgerRows
+        .filter((r) => r.type === 'withdraw')
+        .reduce((s, r) => s + (Number(r.amount) || 0), 0)
+      // withdraw amounts are stored negative in balance_ledger, so
+      // adding them gives net deposits without flipping the sign.
+      setNetDeposits(Math.round((deposits + withdrawals) * 100) / 100)
 
       // Stale = open/closed events past ends_at, not resolved.
       const eventRows = (eventsRes.data ?? []) as EventRow[]
@@ -339,7 +385,7 @@ export function HealthPanel() {
           {[
             { label: 'Saldo tesorería', val: `Q${fmtQ(treasuryBalance)}`, color: 'var(--b1n0-text-1)' },
             { label: 'Saldo usuarios', val: `Q${fmtQ(userBalanceTotal)}`, color: 'var(--b1n0-text-1)' },
-            { label: 'Liability abierta', val: `Q${fmtQ(unresolvedLiability)}`, color: '#FFD474' },
+            { label: 'Posiciones activas', val: `Q${fmtQ(activePositionNet)}`, color: '#FFD474' },
           ].map(({ label, val, color }) => (
             <div key={label} style={{ background: 'var(--b1n0-surface)', borderRadius: '8px', padding: '10px' }}>
               <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '4px' }}>{label}</p>
@@ -347,9 +393,14 @@ export function HealthPanel() {
             </div>
           ))}
         </div>
+        <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', margin: 0 }}>
+          Depósitos netos: <strong style={{ color: 'var(--b1n0-text-1)' }}>Q{fmtQ(netDeposits)}</strong>
+          {' '}· Total en sistema:{' '}
+          <strong style={{ color: 'var(--b1n0-text-1)' }}>Q{fmtQ(totalLiquid)}</strong>
+        </p>
         {!reconcileOk && (
-          <p style={{ fontFamily: F, fontSize: '11px', color: '#f87171' }}>
-            Discrepancia &gt; Q0.50 — revisá entradas recientes en balance_ledger antes de mover fondos.
+          <p style={{ fontFamily: F, fontSize: '11px', color: '#f87171', margin: 0 }}>
+            Discrepancia &gt; Q0.50 entre depósitos netos y total en sistema — revisá entradas recientes en balance_ledger antes de mover fondos.
           </p>
         )}
       </div>
