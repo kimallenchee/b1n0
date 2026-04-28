@@ -60,6 +60,10 @@ async function shipToSentry(dsn: string, body: AlertBody): Promise<{ ok: boolean
   const parsed = parseDsn(dsn)
   if (!parsed) return { ok: false, status: 400 }
 
+  // Sentry accepts auth via EITHER X-Sentry-Auth header OR query
+  // string — not both ("multiple authorization payloads detected"
+  // is the rejection). Keep query string only; it's also the form
+  // the official browser SDK uses.
   const endpoint = `https://${parsed.host}/api/${parsed.projectId}/store/?sentry_version=7&sentry_key=${parsed.publicKey}&sentry_client=b1n0-recon-alert/1.0`
 
   const event = {
@@ -78,10 +82,7 @@ async function shipToSentry(dsn: string, body: AlertBody): Promise<{ ok: boolean
 
   const res = await fetch(endpoint, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Sentry-Auth': `Sentry sentry_version=7, sentry_key=${parsed.publicKey}, sentry_client=b1n0-recon-alert/1.0`,
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(event),
   })
 
