@@ -192,20 +192,20 @@ SELECT
 ## Invariant 4 — Per-event solvency
 
 **Statement.** No active market can have committed more payout than
-its backing capital. Backing comes from sponsor margin (the 85% of
-sponsor money that lands in `pool_total` after the platform takes its
-15%) plus all active LP deposits for that event.
+its backing capital. Backing comes from the sponsor pool seed (100%
+of `sponsor_amount` lands in `pool_total` — the platform takes
+nothing from sponsor money by design) plus all active LP deposits
+for that event.
 
 ```
 pool_committed ≤ pool_total + sum(active lp_deposits.amount)
 ```
 
-Or, expanded with the canonical 15% margin from `platform_config`:
-
-```
-pool_committed ≤ sponsor_amount × (1 − sponsor_margin_pct/100)
-                 + sum(active lp_deposits.amount)
-```
+Where `pool_total = sponsor_amount` for sponsored events. The
+`sponsor_margin_pct` config key exists for historical reasons but
+should remain at 0 — any non-zero value means the platform is
+skimming sponsor money before it reaches the pool, which violates
+the design.
 
 **Why it matters.** If a market's worst-case payout exceeds its
 backing, the platform takes a loss to make winners whole. The

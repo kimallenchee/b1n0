@@ -219,6 +219,12 @@ export interface ReconciliationLogRow {
   user_balances_total: number
   money_in_positions: number
   conservation_delta: number
+  /**
+   * Sum of (sponsor_amount − platform_margin) across every event with a
+   * sponsor. Added in 20260428_reconciliation_sponsor_aware.sql so the
+   * conservation invariant correctly accounts for sponsor inflows.
+   */
+  sponsor_pool_seeded: number
   status: 'ok' | 'warning' | 'critical'
   notes: string | null
 }

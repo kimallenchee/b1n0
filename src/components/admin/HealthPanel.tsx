@@ -64,6 +64,7 @@ interface ReconciliationLogEntry {
   ledger_balance_delta: number | null
   conservation_delta: number | null
   money_in_positions: number | null
+  sponsor_pool_seeded: number | null
   status: 'ok' | 'warning' | 'critical'
   notes: string | null
 }
@@ -230,23 +231,33 @@ export function HealthPanel() {
   //      sum(balance_ledger.amount) === sum(profile.balance)
   //    Every credit or debit to a profile balance is recorded in
   //    balance_ledger. If these diverge, the ledger has drifted.
+  //    This is the ONLY invariant that gates the OK badge — when
+  //    Δ ledger holds, the books balance.
   //
-  // 2. Money in active markets (implicit):
-  //      net_deposits − sum(profile.balance) === money_in_active_markets
-  //    Anything users deposited that isn't in an account balance
-  //    must be sitting in an active position pool. We can't compute
-  //    this directly from `positions.gross − fee_paid` because the
-  //    AMM also captures spread (the difference between ask and mid
-  //    prices) which is credited to the treasury but not subtracted
-  //    from `positions.fee_paid`. So we derive it implicitly.
+  // 2. Money still in active pools (informational):
+  //      net_deposits + sponsor_seeded − sum(profile.balance)
+  //    Sponsored events seed event_markets.pool_total directly, so
+  //    sum(profile.balance) − net_deposits can grow positive when
+  //    winners extract from sponsor pools. Including sponsor_seeded
+  //    on the inflow side makes this number meaningful.
   const totalAccountBalances = useMemo(
     () => treasuryBalance + userBalanceTotal,
     [treasuryBalance, userBalanceTotal]
   )
 
-  const moneyInPositions = useMemo(
-    () => Math.round((netDeposits - totalAccountBalances) * 100) / 100,
-    [netDeposits, totalAccountBalances]
+  // Sponsor pool seed comes from the latest reconciliation_log row.
+  // The HealthPanel doesn't have access to the events table directly
+  // (that would mean another query), so we trust the reconciliation
+  // function as the source of truth.
+  const sponsorPoolSeeded = useMemo(
+    () => Number(reconRuns[0]?.sponsor_pool_seeded ?? 0),
+    [reconRuns]
+  )
+
+  const moneyInPools = useMemo(
+    () =>
+      Math.round((netDeposits + sponsorPoolSeeded - totalAccountBalances) * 100) / 100,
+    [netDeposits, sponsorPoolSeeded, totalAccountBalances]
   )
 
   const ledgerDelta = useMemo(
@@ -402,7 +413,7 @@ export function HealthPanel() {
       // bit of buffer in case the cron ran twice in a day.
       const reconRes = await supabase
         .from('reconciliation_log')
-        .select('id, run_at, ledger_balance_delta, conservation_delta, money_in_positions, status, notes')
+        .select('id, run_at, ledger_balance_delta, conservation_delta, money_in_positions, sponsor_pool_seeded, status, notes')
         .order('run_at', { ascending: false })
         .limit(14)
 
@@ -546,11 +557,12 @@ export function HealthPanel() {
             {reconcileOk ? 'OK' : 'Δ Q' + fmtQ(ledgerDelta)}
           </span>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }}>
           {[
             { label: 'Saldo tesorería', val: `Q${fmtQ(treasuryBalance)}`, color: 'var(--b1n0-text-1)' },
             { label: 'Saldo usuarios', val: `Q${fmtQ(userBalanceTotal)}`, color: 'var(--b1n0-text-1)' },
-            { label: 'En posiciones', val: `Q${fmtQ(moneyInPositions)}`, color: '#FFD474' },
+            { label: 'Pool patrocinado', val: `Q${fmtQ(sponsorPoolSeeded)}`, color: '#C4B5FD' },
+            { label: 'En pools (residual)', val: `Q${fmtQ(moneyInPools)}`, color: '#FFD474' },
           ].map(({ label, val, color }) => (
             <div key={label} style={{ background: 'var(--b1n0-surface)', borderRadius: '8px', padding: '10px' }}>
               <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '4px' }}>{label}</p>
@@ -566,7 +578,14 @@ export function HealthPanel() {
           <strong style={{ color: 'var(--b1n0-text-1)' }}>Q{fmtQ(ledgerTotal)}</strong>
           <br />
           Posiciones activas (libro): <strong style={{ color: 'var(--b1n0-muted)' }}>Q{fmtQ(positionTableNet)}</strong>
-          {' '}— gross − fee del positions table; difiere de "En posiciones" por el spread capturado por el AMM.
+          {' '}— gross − fee del positions table; difiere del residual por el spread capturado por el AMM.
+          <br />
+          <span style={{ color: 'var(--b1n0-muted)' }}>
+            Conservación:{' '}
+            <code>depósitos + pool patrocinado − saldos = en pools</code>{' '}
+            (Q{fmtQ(netDeposits)} + Q{fmtQ(sponsorPoolSeeded)} − Q{fmtQ(totalAccountBalances)} = Q{fmtQ(moneyInPools)}).
+            El residual puede ser negativo si los premios se pagaron con dinero patrocinado y el evento todavía cuenta como sponsored.
+          </span>
         </p>
         {!reconcileOk && (
           <p style={{ fontFamily: F, fontSize: '11px', color: '#f87171', margin: 0 }}>
