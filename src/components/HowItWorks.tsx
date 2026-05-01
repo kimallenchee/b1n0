@@ -112,7 +112,7 @@ export function HowItWorks({ open, onClose }: HowItWorksProps) {
           background: 'rgba(0,0,0,0.92)',
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
-          zIndex: 999,
+          zIndex: 9998,
         }}
       />
 
@@ -123,7 +123,7 @@ export function HowItWorks({ open, onClose }: HowItWorksProps) {
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          zIndex: 1000,
+          zIndex: 9999,
           width: '100%',
           maxWidth: '380px',
           background: 'var(--b1n0-surface)',
