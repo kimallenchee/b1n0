@@ -1,6 +1,6 @@
 // Shared design tokens — use these in new files instead of repeating inline strings
-export const F = '"DM Sans", sans-serif'
-export const D = '"DM Sans", sans-serif'
+export const F = 'var(--font-body)'
+export const D = 'var(--font-display)'
 
 export const colors = {
   text: 'var(--b1n0-text-1)',

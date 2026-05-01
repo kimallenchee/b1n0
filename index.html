@@ -64,7 +64,17 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <!--
+      Type system:
+        Inter        — body, UI labels, default. Variable axis 100-900.
+        Geist        — display + UI numbers. More characterful geometric sans.
+        Geist Mono   — code, raw data, tx hashes, anything that needs to feel like a terminal.
+        Syne         — hero headlines (event questions, primary balance). Kept from previous system.
+
+      All on Google Fonts via a single request. Variable axes keep the
+      payload small (~140KB combined) compared to fixed-weight imports.
+    -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..900&family=Geist:wght@400..900&family=Geist+Mono:wght@400..700&family=Syne:wght@500..800&display=swap" rel="stylesheet" />
   </head>
   <body>
     <div id="root"></div>

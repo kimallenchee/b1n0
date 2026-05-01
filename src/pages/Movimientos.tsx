@@ -1,8 +1,8 @@
 import { mockTransactions } from '../data/mockEvents'
 import type { Transaction } from '../types'
 
-const F = '"DM Sans", sans-serif'
-const D = '"DM Sans", sans-serif'
+const F = 'var(--font-body)'
+const D = 'var(--font-display)'
 
 const typeLabel: Record<Transaction['type'], string> = {
   deposit: 'Depósito',

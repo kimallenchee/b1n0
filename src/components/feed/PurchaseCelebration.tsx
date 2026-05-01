@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 
-const F = '"DM Sans", sans-serif'
-const D = '"DM Sans", sans-serif'
+const F = 'var(--font-body)'
+const D = 'var(--font-display)'
 
 interface PurchaseCelebrationProps {
   side: string

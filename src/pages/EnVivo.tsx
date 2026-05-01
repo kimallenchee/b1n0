@@ -3,8 +3,8 @@ import { EventFeed } from '../components/feed/EventFeed'
 import type { Category } from '../types'
 import { useEvents } from '../context/EventsContext'
 
-const F = '"DM Sans", sans-serif'
-const D = '"DM Sans", sans-serif'
+const F = 'var(--font-body)'
+const D = 'var(--font-display)'
 
 type Filter = Category | 'todos'
 

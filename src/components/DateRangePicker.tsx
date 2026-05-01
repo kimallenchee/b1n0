@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-const F = '"DM Sans", sans-serif'
+const F = 'var(--font-body)'
 
 export interface DateRange {
   from: string

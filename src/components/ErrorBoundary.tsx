@@ -53,7 +53,7 @@ export class ErrorBoundary extends Component<Props, State> {
             minHeight: '300px',
             padding: '24px',
             textAlign: 'center',
-            fontFamily: '"DM Sans", sans-serif',
+            fontFamily: 'var(--font-body)',
           }}
         >
           <p style={{ fontSize: '32px', marginBottom: '8px' }}>:(</p>
@@ -71,7 +71,7 @@ export class ErrorBoundary extends Component<Props, State> {
               border: 'none',
               background: '#4ade80',
               color: '#fff',
-              fontFamily: '"DM Sans", sans-serif',
+              fontFamily: 'var(--font-body)',
               fontWeight: 600,
               fontSize: '14px',
               cursor: 'pointer',

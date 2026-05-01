@@ -7,7 +7,7 @@ interface BetCardsProps {
   selected?: 'si' | 'no' | null
 }
 
-const F = '"DM Sans", sans-serif'
+const F = 'var(--font-body)'
 
 /**
  * BetCards — Tinted card pair for event detail / betting modal.

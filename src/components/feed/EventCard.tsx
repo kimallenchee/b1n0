@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { ChatCircle, ArrowRight, ThumbsUp, ThumbsDown, CheckCircle } from '@phosphor-icons/react'
 import type { Event } from '../../types'
 import { SplitBar } from './SplitBar'
 import { LiveDot } from './LiveDot'
@@ -11,6 +12,13 @@ import { useVotes } from '../../context/VoteContext'
 import { useAuth } from '../../context/AuthContext'
 import { useNow } from '../../context/NowContext'
 import { supabase } from '../../lib/supabase'
+
+// Font role aliases used inside this file:
+//   F — body / UI labels (Inter)
+//   D — display / numbers (Geist)
+//   H — hero (Syne) — used only for the event question, the loudest typographic moment
+const HERO_FONT = 'var(--font-hero)'
+const NUM_FONT  = 'var(--font-num)'
 
 const COUNTRY_CODES: Record<string, string> = {
   GT: 'GT', SV: 'SV', HN: 'HN', NI: 'NI', CR: 'CR', PA: 'PA', BZ: 'BZ',
@@ -62,8 +70,8 @@ const categoryPhotos: Record<string, string> = {
   otro:        'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=500&h=500&q=80',
 }
 
-const F = '"DM Sans", sans-serif'
-const D = '"DM Sans", sans-serif'
+const F = 'var(--font-body)'
+const D = 'var(--font-display)'
 
 function displaySide(s: string): string {
   if (s === 'yes') return 'SÍ'
@@ -242,10 +250,10 @@ export function EventCard({ event }: EventCardProps) {
 
   return (
     <>
-      <div className="event-card" style={{ borderLeft: `3px solid ${color}`, overflow: 'hidden', background: 'var(--color-surface)' }}>
+      <div className="event-card" style={{ borderLeft: `2px solid ${color}`, overflow: 'hidden', background: 'var(--color-surface)' }}>
         {photo ? (
           /* ── Cinematic hero: full-bleed + gradient lower-third ── */
-          <div style={{ margin: '-16px -16px 14px', aspectRatio: '5 / 2', position: 'relative', overflow: 'hidden', borderRadius: '9px 9px 0 0' }}>
+          <div style={{ margin: 'calc(var(--space-6) * -1) calc(var(--space-6) * -1) var(--space-5)', aspectRatio: '5 / 2', position: 'relative', overflow: 'hidden', borderRadius: '7px 7px 0 0' }}>
             <img
               src={photo}
               alt=""
@@ -301,10 +309,22 @@ export function EventCard({ event }: EventCardProps) {
           </div>
         )}
 
-        {/* Question — clickable */}
+        {/* Question — the loudest typographic moment in the product.
+            Syne 800 at hero size carries ESPN headline energy, which
+            is the visual register we want. The card is built around
+            this line; everything else is supporting metadata. */}
         <h2
           onClick={() => navigate(`/eventos/${event.id}`)}
-          style={{ fontFamily: F, fontWeight: 800, fontSize: '17px', color: 'var(--color-text)', lineHeight: 1.35, marginBottom: '2px', cursor: 'pointer', letterSpacing: '-0.3px' }}
+          style={{
+            fontFamily: HERO_FONT,
+            fontWeight: 800,
+            fontSize: 'var(--text-lg)',
+            color: 'var(--color-text)',
+            lineHeight: 'var(--leading-tight)',
+            letterSpacing: 'var(--tracking-tight)',
+            marginBottom: 'var(--space-2)',
+            cursor: 'pointer',
+          }}
         >
           {event.question}
         </h2>
@@ -352,11 +372,11 @@ export function EventCard({ event }: EventCardProps) {
               )}
               {displayPool > 0 && (
                 <>
-                  <span style={{ color: 'rgba(255,255,255,0.08)', fontSize: '10px' }}>·</span>
+                  <span style={{ color: 'var(--b1n0-border)', fontSize: '10px' }}>·</span>
                   <span style={{ fontFamily: F, fontWeight: 500, fontSize: '11px', color: 'var(--b1n0-muted)' }}>{event.currency}{displayPool.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} pool</span>
                 </>
               )}
-              <span style={{ color: 'rgba(255,255,255,0.08)', fontSize: '10px' }}>·</span>
+              <span style={{ color: 'var(--b1n0-border)', fontSize: '10px' }}>·</span>
               <span style={{ fontFamily: F, fontSize: '11px', color: u === 'critical' ? 'var(--b1n0-surface)' : 'var(--b1n0-text-2)', fontWeight: u === 'critical' ? 700 : 400, display: 'flex', alignItems: 'center', gap: '3px' }}>
                 {u === 'critical' && <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--b1n0-text-1)', display: 'inline-block', animation: 'pulse 2s infinite', flexShrink: 0 }} />}
                 {formatCountdown(event.endsAt, now, event.timeRemaining)}
@@ -384,9 +404,21 @@ export function EventCard({ event }: EventCardProps) {
                 )}
                 <button
                   onClick={() => setSheet('vote')}
-                  className="btn-primary" style={{ width: '100%', padding: '13px', fontSize: '13px', letterSpacing: '0.6px', marginBottom: '8px' }}
+                  className="btn-primary"
+                  style={{
+                    width: '100%',
+                    padding: 'var(--space-4)',
+                    fontSize: 'var(--text-sm)',
+                    letterSpacing: 'var(--tracking-tight)',
+                    marginBottom: 'var(--space-3)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 'var(--space-2)',
+                  }}
                 >
-                  {voted ? 'AGREGAR POSICIÓN →' : 'HACER MI VOTO →'}
+                  {voted ? 'Agregar posición' : 'Hacer mi llamado'}
+                  <ArrowRight size={14} weight="bold" />
                 </button>
               </>
             )}
@@ -422,11 +454,11 @@ export function EventCard({ event }: EventCardProps) {
                   {event.sponsor.name}
                 </span>
               )}
-              <span style={{ color: 'rgba(255,255,255,0.08)', fontSize: '10px' }}>·</span>
+              <span style={{ color: 'var(--b1n0-border)', fontSize: '10px' }}>·</span>
               <span style={{ fontFamily: F, fontWeight: 500, fontSize: '11px', color: 'var(--b1n0-muted)' }}>
                 {event.currency}{displayPool.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} pool
               </span>
-              <span style={{ color: 'rgba(255,255,255,0.08)', fontSize: '10px' }}>·</span>
+              <span style={{ color: 'var(--b1n0-border)', fontSize: '10px' }}>·</span>
               <span style={{ fontFamily: F, fontSize: '11px', color: u === 'critical' ? 'var(--b1n0-surface)' : 'var(--b1n0-text-2)', fontWeight: u === 'critical' ? 700 : 400, display: 'flex', alignItems: 'center', gap: '3px' }}>
                 {u === 'critical' && <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--b1n0-text-1)', display: 'inline-block', animation: 'pulse 2s infinite', flexShrink: 0 }} />}
                 {formatCountdown(event.endsAt, now, event.timeRemaining)}
@@ -447,26 +479,45 @@ export function EventCard({ event }: EventCardProps) {
             ) : (
               <>
                 {userPositions.length > 0 ? (
-                  <div style={{ marginBottom: '10px' }}>
+                  <div style={{ marginBottom: 'var(--space-3)' }}>
                     {userPositions.map((pos) => (
-                      <div key={pos.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '5px 0', borderBottom: '1px solid var(--b1n0-border)' }}>
-                        <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>✓ {pos.side === 'yes' ? 'SÍ' : 'NO'} · {event.currency}{Number(pos.gross_amount).toFixed(2)}</span>
-                        <span style={{ fontFamily: D, fontWeight: 600, fontSize: '11px', color: '#4ade80' }}>→ {event.currency}{Number(pos.payout_if_win).toFixed(2)}</span>
+                      <div key={pos.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 'var(--space-2) 0', borderBottom: '1px solid var(--b1n0-border)' }}>
+                        <span style={{ fontFamily: F, fontSize: 'var(--text-xs)', color: 'var(--b1n0-muted)', display: 'inline-flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+                          <CheckCircle size={12} weight="fill" color="var(--b1n0-si)" />
+                          {pos.side === 'yes' ? 'SÍ' : 'NO'} · <span style={{ fontFamily: NUM_FONT, fontVariantNumeric: 'tabular-nums' }}>{event.currency}{Number(pos.gross_amount).toFixed(2)}</span>
+                        </span>
+                        <span style={{ fontFamily: NUM_FONT, fontWeight: 600, fontSize: 'var(--text-xs)', color: 'var(--b1n0-si)', fontVariantNumeric: 'tabular-nums', display: 'inline-flex', alignItems: 'center', gap: 'var(--space-1)' }}>
+                          <ArrowRight size={10} weight="bold" />
+                          {event.currency}{Number(pos.payout_if_win).toFixed(2)}
+                        </span>
                       </div>
                     ))}
                   </div>
                 ) : voted && vote ? (
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', padding: '6px 0 10px' }}>
-                    <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>✓ Tu posición:</span>
-                    <span style={{ fontFamily: D, fontWeight: 700, fontSize: '12px', color: 'var(--b1n0-text-1)' }}>{displaySide(vote.side)}</span>
-                    <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>· {event.currency}{vote.amount}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-2)', padding: 'var(--space-3) 0 var(--space-4)' }}>
+                    <CheckCircle size={12} weight="fill" color="var(--b1n0-si)" />
+                    <span style={{ fontFamily: F, fontSize: 'var(--text-xs)', color: 'var(--b1n0-muted)' }}>Tu posición:</span>
+                    <span style={{ fontFamily: D, fontWeight: 700, fontSize: 'var(--text-sm)', color: 'var(--b1n0-text-1)' }}>{displaySide(vote.side)}</span>
+                    <span style={{ fontFamily: NUM_FONT, fontSize: 'var(--text-xs)', color: 'var(--b1n0-muted)', fontVariantNumeric: 'tabular-nums' }}>· {event.currency}{vote.amount}</span>
                   </div>
                 ) : null}
                 <button
                   onClick={() => setSheet('vote')}
-                  className="btn-primary" style={{ width: '100%', padding: '13px', fontSize: '13px', letterSpacing: '0.6px', marginBottom: '8px' }}
+                  className="btn-primary"
+                  style={{
+                    width: '100%',
+                    padding: 'var(--space-4)',
+                    fontSize: 'var(--text-sm)',
+                    letterSpacing: 'var(--tracking-tight)',
+                    marginBottom: 'var(--space-3)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 'var(--space-2)',
+                  }}
                 >
-                  {voted ? 'AGREGAR POSICIÓN →' : 'HACER MI VOTO →'}
+                  {voted ? 'Agregar posición' : 'Hacer mi llamado'}
+                  <ArrowRight size={14} weight="bold" />
                 </button>
               </>
             )}
@@ -483,9 +534,24 @@ export function EventCard({ event }: EventCardProps) {
         <div style={{ marginTop: '10px', borderTop: '1px solid var(--b1n0-border)', paddingTop: '10px' }}>
           <button
             onClick={() => setSheet('comments')}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '12px', fontWeight: 500, color: 'var(--b1n0-muted)', padding: 0, display: 'flex', alignItems: 'center', gap: '5px' }}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              fontFamily: F,
+              fontSize: 'var(--text-sm)',
+              fontWeight: 500,
+              color: 'var(--b1n0-muted)',
+              padding: 0,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 'var(--space-2)',
+              transition: 'color var(--duration-fast) var(--ease-out)',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--b1n0-text-1)')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--b1n0-muted)')}
           >
-            <span style={{ fontSize: '13px' }}>💬</span>
+            <ChatCircle size={16} weight="regular" />
             {commentCount > 0 ? `${commentCount} comentarios` : 'Comentar'}
           </button>
           {topComments.length > 0 && (
@@ -498,58 +564,4 @@ export function EventCard({ event }: EventCardProps) {
                   {c.avatarUrl ? (
                     <img src={c.avatarUrl} alt="" style={{ width: 22, height: 22, borderRadius: '50%', objectFit: 'cover', flexShrink: 0, marginTop: '1px' }} />
                   ) : (
-                    <div style={{ width: 22, height: 22, borderRadius: '50%', background: '#2a2724', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F, fontWeight: 700, fontSize: '9px', color: '#fff', flexShrink: 0, marginTop: '1px' }}>
-                      {c.username.charAt(0).toUpperCase()}
-                    </div>
-                  )}
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px', flexWrap: 'wrap' }}>
-                      <span style={{ fontFamily: F, fontWeight: 700, fontSize: '11px', color: 'var(--b1n0-text-1)' }}>@{c.username}</span>
-                      {c.side && (
-                        <span style={{ fontFamily: F, fontWeight: 700, fontSize: '9px', color: c.side === 'yes' ? 'var(--b1n0-surface)' : 'var(--b1n0-muted)', background: c.side === 'yes' ? 'rgba(255,255,255,0.06)' : 'transparent', borderRadius: '4px', padding: '1px 5px' }}>
-                          {c.side === 'yes' ? 'SÍ' : 'NO'}
-                        </span>
-                      )}
-                    </div>
-                    <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', lineHeight: 1.4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {c.text}
-                    </p>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '2px' }}>
-                      {(c.likes || 0) > 0 && <span style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)' }}>👍 {c.likes}</span>}
-                      {c.replies_count > 0 && <span style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)' }}>{c.replies_count} respuesta{c.replies_count !== 1 ? 's' : ''}</span>}
-                      {(c.dislikes || 0) > 0 && <span style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)' }}>👎 {c.dislikes}</span>}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Vote sheet */}
-      <BottomSheet open={sheet === 'vote'} onClose={() => setSheet(null)}>
-        <div style={{ padding: '0 16px 40px' }}>
-          <EntryFlow event={event} onClose={() => setSheet(null)} onConfirm={handleConfirm} />
-        </div>
-      </BottomSheet>
-
-      {/* Comments sheet */}
-      <BottomSheet open={sheet === 'comments'} onClose={() => setSheet(null)} title={event.question}>
-        <div style={{ padding: '16px 16px 40px' }}>
-          <CommentFeed comments={event.comments ?? []} eventId={event.id} />
-        </div>
-      </BottomSheet>
-
-      {celeb && (
-        <PurchaseCelebration
-          side={celeb.side}
-          amount={celeb.amount}
-          cobro={celeb.cobro}
-          currency={event.currency}
-          onDone={() => setCeleb(null)}
-        />
-      )}
-    </>
-  )
-}
+                    <div style={{ width: 22, height: 22, borderRadius: '50%', background: 'var(--b1n0-border)', display: 'fl

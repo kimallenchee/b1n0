@@ -13,7 +13,7 @@
 import { useNavigate } from 'react-router-dom'
 import { usePageMeta } from '../hooks/usePageMeta'
 
-const F = '"DM Sans", sans-serif'
+const F = 'var(--font-body)'
 const D = '"Syne", sans-serif'
 
 function LegalShell({ title, children }: { title: string; children: React.ReactNode }) {

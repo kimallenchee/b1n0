@@ -7,6 +7,68 @@
    ═══════════════════════════════════════════════════════════════ */
 
 :root {
+  /* ── Spacing scale ──
+     Deliberate non-Tailwind values. The eye doesn't read 4-8-12-16
+     as designed; it reads it as "default." These are tuned to fit
+     the SÍ/NO split bar's 30px height + standard mobile rhythm. */
+  --space-0: 0;
+  --space-1: 2px;
+  --space-2: 5px;
+  --space-3: 8px;
+  --space-4: 11px;
+  --space-5: 14px;
+  --space-6: 18px;
+  --space-7: 24px;
+  --space-8: 32px;
+  --space-9: 44px;
+  --space-10: 60px;
+
+  /* ── Radius scale ──
+     Cards top out at 8px. Pills and tags at 4-6px. Anything bigger
+     reads as "Tailwind default" and gives off SaaS energy. */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-pill: 999px;
+
+  /* ── Type scale ──
+     Wider jumps than the AI default 12/14/16/24 so hierarchy reads
+     at a glance. Display sizes intentionally bold for ESPN energy. */
+  --text-2xs:    10px;   /* metadata / category badges */
+  --text-xs:     11px;
+  --text-sm:     13px;   /* body small */
+  --text-base:   14px;   /* body */
+  --text-md:     16px;   /* prominent body */
+  --text-lg:     20px;   /* card headlines */
+  --text-xl:     28px;   /* event questions, balance */
+  --text-2xl:    40px;   /* hero numbers (split %) */
+  --text-display: 56px;  /* marketing surfaces */
+
+  --leading-tight:  1.15;
+  --leading-snug:   1.3;
+  --leading-normal: 1.5;
+  --leading-loose:  1.7;
+
+  --tracking-tight:  -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide:   0.04em;
+  --tracking-caps:   0.08em;  /* for ALL CAPS metadata */
+
+  /* ── Motion tokens ──
+     Premium UIs use short, single-property transitions. Anything
+     over 300ms or with bouncy easing reads as juvenile. */
+  --duration-fast:    120ms;
+  --duration-base:    180ms;
+  --duration-slow:    280ms;
+  --duration-cinema:  600ms;  /* split bar reposition */
+  --ease-out:    cubic-bezier(0.2, 0, 0, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ── Focus ring ──
+     Visible without screaming. Inset ring inside an outline so it
+     works on any background. */
+  --focus-ring: 0 0 0 2px var(--b1n0-bg), 0 0 0 4px var(--b1n0-si);
+
   /* ── Brand Accent Colors (identical in both themes) ── */
   --b1n0-mint:     #4ade80;
   --b1n0-gold:     #FFD474;
@@ -243,8 +305,18 @@
   --color-red:       var(--b1n0-no);
   --color-surface2:  var(--b1n0-surface);
 
-  --font-family-display: "DM Sans", sans-serif;
-  --font-family-body: "DM Sans", sans-serif;
+  /* Type system tokens (referenced from inline styles too).
+     Body/UI: Inter. Numbers + UI display: Geist. Mono: Geist Mono.
+     Hero: Syne. Each has a single, deliberate role. */
+  --font-body:    "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Geist", "Inter", system-ui, sans-serif;
+  --font-num:     "Geist", "Inter", system-ui, sans-serif;
+  --font-mono:    "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --font-hero:    "Syne", "Geist", "Inter", system-ui, sans-serif;
+
+  /* Tailwind-ish aliases so existing references keep working. */
+  --font-family-display: var(--font-hero);
+  --font-family-body:    var(--font-body);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -314,10 +386,39 @@ html, body, #root {
 body {
   background-color: var(--b1n0-bg);
   color: var(--b1n0-text-1);
-  font-family: "DM Sans", sans-serif;
+  font-family: var(--font-body);
   font-weight: 400;
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  letter-spacing: var(--tracking-tight);  /* Inter benefits from a touch of negative tracking */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "kern", "ss01", "ss03", "cv11";
+}
+
+/* Numerical content uses tabular figures so columns line up across
+   cards and balances stay rock-steady when they tick. */
+.num,
+[data-num],
+.tabular-nums,
+.tow-price,
+.balance,
+input[type="number"] {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Focus ring — visible without being loud. Buttons and links inherit. */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius-sm);
+}
+
+/* Selection — uses brand accent at low alpha so it never fights content. */
+::selection {
+  background: rgba(74, 222, 128, 0.25);
+  color: var(--b1n0-text-1);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -374,7 +475,7 @@ body {
 .tow-no .tow-price { color: var(--b1n0-no); }
 
 .tow-label {
-  font-family: "DM Sans", sans-serif;
+  font-family: var(--font-body);
   font-size: 13px;
   font-weight: 700;
   color: inherit;
@@ -383,7 +484,7 @@ body {
 }
 
 .tow-price {
-  font-family: "DM Sans", sans-serif;
+  font-family: var(--font-body);
   font-size: 14px;
   font-weight: 600;
   color: inherit;
@@ -410,13 +511,13 @@ body {
 
 /* Legacy poll-style bars */
 .poll-row { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
-.poll-label { width: 24px; font-family: "DM Sans", sans-serif; font-size: 11px; font-weight: 600; flex-shrink: 0; }
+.poll-label { width: 24px; font-family: var(--font-body); font-size: 11px; font-weight: 600; flex-shrink: 0; }
 .poll-label-yes { color: var(--b1n0-text-1); }
 .poll-label-no  { color: var(--b1n0-muted); }
 .poll-track { flex: 1; height: 8px; background: var(--b1n0-surface); border-radius: 8px; overflow: hidden; }
 .poll-fill-yes { height: 100%; background: var(--b1n0-text-1); border-radius: 8px; transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1); }
 .poll-fill-no  { height: 100%; background: var(--b1n0-border); border-radius: 8px; transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1); }
-.poll-percent { width: 30px; font-family: "DM Sans", sans-serif; font-size: 11px; font-weight: 500; color: var(--b1n0-muted); text-align: right; flex-shrink: 0; }
+.poll-percent { width: 30px; font-family: var(--font-body); font-size: 11px; font-weight: 500; color: var(--b1n0-muted); text-align: right; flex-shrink: 0; }
 
 /* ═══════════════════════════════════════════════════════════════
    Live Dots
@@ -441,14 +542,15 @@ body {
 .event-card {
   background: var(--b1n0-card);
   border: 1px solid var(--b1n0-border);
-  border-radius: 10px;
-  padding: 16px;
-  margin-bottom: 10px;
-  transition: border-color 0.18s ease, transform 0.15s ease;
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  margin-bottom: var(--space-3);
+  transition: border-color var(--duration-base) var(--ease-out);
   cursor: pointer;
 }
-.event-card:hover { border-color: var(--b1n0-card-hover-border); transform: translateY(-2px); }
-.event-card:active { transform: translateY(0); }
+/* Premium hover: just brighten the border. No transform, no shadow.
+   The eye picks up the tiny luminance shift; the page stays still. */
+.event-card:hover { border-color: var(--b1n0-card-hover-border); }
 
 /* Card grid: 2 col mobile, 3 col desktop */
 .card-grid { grid-template-columns: repeat(2, 1fr) !important; }
@@ -459,16 +561,16 @@ body {
 .news-card {
   background: var(--b1n0-card);
   border: 1px solid var(--b1n0-border);
-  border-radius: 14px;
-  padding: 16px;
-  margin-bottom: 10px;
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  margin-bottom: var(--space-3);
 }
 
 /* Category badge */
 .cat-badge {
   display: inline-flex; align-items: center; gap: 4px;
   padding: 3px 8px; border-radius: 6px;
-  font-family: "DM Sans", sans-serif;
+  font-family: var(--font-body);
   font-size: 10px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
 }
 
@@ -476,7 +578,7 @@ body {
 .country-badge {
   display: inline-flex; align-items: center;
   padding: 3px 7px; border-radius: 5px;
-  font-family: "DM Sans", sans-serif;
+  font-family: var(--font-body);
   font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
   background: var(--b1n0-surface); color: var(--b1n0-text-2);
 }
@@ -507,19 +609,28 @@ body {
 
 .btn-primary {
   background: var(--b1n0-si); color: var(--b1n0-on-accent);
-  border: none; border-radius: 10px; padding: 12px 24px;
-  font-family: "DM Sans", sans-serif; font-weight: 700; font-size: 14px;
-  cursor: pointer; transition: background 0.15s ease, transform 0.1s ease;
+  border: none; border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-7);
+  font-family: var(--font-body);
+  font-weight: 700; font-size: var(--text-base);
+  letter-spacing: var(--tracking-tight);
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-out);
 }
 .btn-primary:hover { background: var(--b1n0-si-hover); }
-.btn-primary:active { transform: scale(0.98); }
-.btn-primary:disabled { opacity: 0.5; cursor: default; transform: none; }
+.btn-primary:active { background: var(--b1n0-si-hover); }
+.btn-primary:disabled { opacity: 0.4; cursor: default; }
 
 .btn-secondary {
   background: transparent; color: var(--b1n0-text-1);
-  border: 1px solid var(--b1n0-border); border-radius: 10px; padding: 12px 24px;
-  font-family: "DM Sans", sans-serif; font-weight: 600; font-size: 14px;
-  cursor: pointer; transition: background 0.15s ease, border-color 0.15s ease;
+  border: 1px solid var(--b1n0-border); border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-7);
+  font-family: var(--font-body);
+  font-weight: 600; font-size: var(--text-base);
+  letter-spacing: var(--tracking-tight);
+  cursor: pointer;
+  transition: border-color var(--duration-fast) var(--ease-out),
+              background var(--duration-fast) var(--ease-out);
 }
 .btn-secondary:hover { background: var(--b1n0-surface); border-color: var(--b1n0-muted); }
 

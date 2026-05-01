@@ -4,7 +4,7 @@ import { useNotifications } from '../../context/NotificationContext'
 import type { Notification } from '../../context/NotificationContext'
 import { useEffect, useState } from 'react'
 
-const F = '"DM Sans", sans-serif'
+const F = 'var(--font-body)'
 
 /* ── Type config: icon, accent color, label ── */
 const typeConfig: Record<string, { icon: string; color: string; label: string }> = {
@@ -61,7 +61,7 @@ function NotifRow({ n, onTap, onDismiss }: { n: Notification; onTap: () => void;
       <button onClick={onTap} style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', flex: 1, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', padding: 0 }}>
         {/* Icon with colored circle background */}
         <div style={{
-          width: 36, height: 36, borderRadius: '10px', flexShrink: 0,
+          width: 36, height: 36, borderRadius: "var(--radius-lg)", flexShrink: 0,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           background: `color-mix(in srgb, ${cfg.color} 12%, transparent)`,
           fontSize: '16px',
@@ -204,7 +204,7 @@ export function NotificationDrawer({ onClose }: { onClose: () => void }) {
               <span style={{
                 fontFamily: F, fontSize: '11px', fontWeight: 700,
                 color: '#fff', background: 'var(--b1n0-teal-500)',
-                borderRadius: '10px', padding: '2px 8px', lineHeight: '16px',
+                borderRadius: "var(--radius-lg)", padding: '2px 8px', lineHeight: '16px',
               }}>
                 {unreadCount}
               </span>

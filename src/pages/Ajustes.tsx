@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-const F = '"DM Sans", sans-serif'
-const D = '"DM Sans", sans-serif'
+const F = 'var(--font-body)'
+const D = 'var(--font-display)'
 
 function ToggleRow({ label, description, value, onChange }: { label: string; description?: string; value: boolean; onChange: (v: boolean) => void }) {
   return (

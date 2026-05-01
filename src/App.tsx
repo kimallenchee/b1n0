@@ -36,7 +36,7 @@ const PrivacyPage = lazy(() => import('./pages/Legal').then(m => ({ default: m.P
 function LazyFallback() {
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '200px' }}>
-      <p style={{ fontFamily: '"DM Sans", sans-serif', color: 'var(--b1n0-muted)', fontSize: '14px' }}>Cargando...</p>
+      <p style={{ fontFamily: 'var(--font-body)', color: 'var(--b1n0-muted)', fontSize: '14px' }}>Cargando...</p>
     </div>
   )
 }
@@ -101,8 +101,8 @@ function MobileLayout() {
   )
 }
 
-const F = '"DM Sans", sans-serif'
-const D = '"DM Sans", sans-serif'
+const F = 'var(--font-body)'
+const D = 'var(--font-display)'
 
 function ForceChangePassword() {
   const { changePassword, signOut } = useAuth()
@@ -198,7 +198,7 @@ function AppContent() {
   if (loading) {
     return (
       <div style={{ height: '100dvh', background: 'var(--color-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ fontFamily: '"DM Sans", sans-serif', color: 'var(--b1n0-muted)', fontSize: '14px' }}>
+        <p style={{ fontFamily: 'var(--font-body)', color: 'var(--b1n0-muted)', fontSize: '14px' }}>
           Cargando...
         </p>
       </div>

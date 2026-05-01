@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
 
-const F = '"DM Sans", sans-serif'
+const F = 'var(--font-body)'
 const D = '"Syne", sans-serif'
 
 interface HowItWorksProps {

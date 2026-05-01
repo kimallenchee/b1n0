@@ -7,8 +7,8 @@ import { logger } from '../../lib/logger'
 import ExcelJS from 'exceljs'
 import { ImageCropper } from '../ImageCropper'
 
-const F = '"DM Sans", sans-serif'
-const D = '"DM Sans", sans-serif'
+const F = 'var(--font-body)'
+const D = 'var(--font-display)'
 
 const CATEGORIES = ['deportes', 'politica', 'economia', 'geopolitica', 'cultura', 'tecnologia', 'finanzas', 'otro'] as const
 

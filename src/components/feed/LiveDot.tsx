@@ -4,7 +4,7 @@ export function LiveDot() {
       <span className="live-dot" />
       <span
         style={{
-          fontFamily: '"DM Sans", sans-serif',
+          fontFamily: 'var(--font-body)',
           fontSize: '11px',
           fontWeight: 600,
           color: 'var(--b1n0-text-1)',

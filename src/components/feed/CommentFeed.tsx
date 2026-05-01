@@ -8,7 +8,7 @@ interface CommentFeedProps {
   eventId: string
 }
 
-const F = '"DM Sans", sans-serif'
+const F = 'var(--font-body)'
 
 const tierColors: Record<number, string> = { 1: 'var(--b1n0-disabled-bg)', 2: 'var(--b1n0-disabled-bg)', 3: 'var(--b1n0-surface)' }
 const avatarBg = ['var(--b1n0-surface)', 'var(--b1n0-card)', 'var(--b1n0-muted)', 'var(--b1n0-card)', 'var(--b1n0-card)', 'var(--b1n0-muted)']

@@ -12,7 +12,7 @@ const loadingStyle: React.CSSProperties = {
   alignItems: 'center',
   justifyContent: 'center',
   height: '100%',
-  fontFamily: '"DM Sans", sans-serif',
+  fontFamily: 'var(--font-body)',
   color: 'var(--b1n0-muted)',
   fontSize: '14px',
 }

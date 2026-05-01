@@ -6,8 +6,8 @@ import { RetiroSheet } from '../wallet/RetiroSheet'
 import { useVotes } from '../../context/VoteContext'
 import { useAuth } from '../../context/AuthContext'
 
-const F = '"DM Sans", sans-serif'
-const D = '"DM Sans", sans-serif'
+const F = 'var(--font-body)'
+const D = 'var(--font-display)'
 
 interface AccountDrawerProps {
   onClose: () => void
@@ -98,13 +98,13 @@ export function AccountDrawer({ onClose }: AccountDrawerProps) {
                 <div style={{ height: '12px' }} />
                 <button
                   onClick={() => setDepositOpen(true)}
-                  style={{ width: '100%', padding: '12px', borderRadius: '10px', border: 'none', background: '#4ade80', cursor: 'pointer', fontFamily: F, fontWeight: 700, fontSize: '13px', color: '#0d0d0d' }}
+                  style={{ width: '100%', padding: '12px', borderRadius: "var(--radius-lg)", border: 'none', background: '#4ade80', cursor: 'pointer', fontFamily: F, fontWeight: 700, fontSize: '13px', color: '#0d0d0d' }}
                 >
                   Depositar
                 </button>
                 <button
                   onClick={() => setRetiroOpen(true)}
-                  style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.08)', background: 'transparent', cursor: 'pointer', fontFamily: F, fontWeight: 500, fontSize: '13px', color: 'var(--b1n0-text-1)' }}
+                  style={{ width: '100%', padding: '12px', borderRadius: "var(--radius-lg)", border: '1px solid rgba(255,255,255,0.08)', background: 'transparent', cursor: 'pointer', fontFamily: F, fontWeight: 500, fontSize: '13px', color: 'var(--b1n0-text-1)' }}
                 >
                   Retirar
                 </button>

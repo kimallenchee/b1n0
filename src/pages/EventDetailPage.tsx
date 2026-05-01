@@ -14,8 +14,8 @@ import { useAuthModal } from '../context/AuthModalContext'
 import { supabase } from '../lib/supabase'
 import { midPctToAsk } from '../lib/pricing'
 
-const F = '"DM Sans", sans-serif'
-const D = '"DM Sans", sans-serif'
+const F = 'var(--font-body)'
+const D = 'var(--font-display)'
 const catFlat: Record<string, string> = {
   deportes: '#1E3A5F', politica: '#5F1E1E', economia: '#5F3A0E', geopolitica: '#2E1065',
   cultura: '#5F1039', tecnologia: '#0C3A5A', finanzas: '#064E3B', otro: '#3D3D3A',

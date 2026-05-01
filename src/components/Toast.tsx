@@ -129,7 +129,7 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: number) =
         display: 'flex',
         alignItems: 'center',
         gap: '10px',
-        fontFamily: '"DM Sans", sans-serif',
+        fontFamily: 'var(--font-body)',
         fontSize: '13px',
         color: '#f2efea',
         boxShadow: '0 4px 20px rgba(0,0,0,0.4)',

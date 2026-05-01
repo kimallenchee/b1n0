@@ -15,8 +15,8 @@ import { SplitBar } from '../components/feed/SplitBar'
 import { SkeletonFeed } from '../components/Skeleton'
 import { ErrorState } from '../components/EmptyState'
 
-const F = '"DM Sans", sans-serif'
-const D = '"DM Sans", sans-serif'
+const F = 'var(--font-body)'
+const D = 'var(--font-display)'
 
 const COUNTRY_FLAGS: Record<string, string> = {
   GT: 'GT', SV: 'SV', HN: 'HN', US: 'US', MX: 'MX', GLOBAL: 'GL',

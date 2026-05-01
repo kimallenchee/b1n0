@@ -1,38 +1,12 @@
 import { useLocation, useNavigate } from 'react-router-dom'
+import { House, Clock, User } from '@phosphor-icons/react'
 import { useAuth } from '../../context/AuthContext'
 import { useAuthModal } from '../../context/AuthModalContext'
 
-function HomeIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 9.5L12 3l9 6.5V21a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/>
-      <path d="M9 22V12h6v10"/>
-    </svg>
-  )
-}
-
-function ClockIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10"/>
-      <polyline points="12 6 12 12 16 14"/>
-    </svg>
-  )
-}
-
-function PersonIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-      <circle cx="12" cy="7" r="4"/>
-    </svg>
-  )
-}
-
 const tabs = [
-  { path: '/inicio', Icon: HomeIcon, label: 'Inicio' },
-  { path: '/historial', Icon: ClockIcon, label: 'Historial' },
-  { path: '/perfil', Icon: PersonIcon, label: 'Perfil' },
+  { path: '/inicio',    Icon: House, label: 'Inicio' },
+  { path: '/historial', Icon: Clock, label: 'Historial' },
+  { path: '/perfil',    Icon: User,  label: 'Perfil' },
 ]
 
 export function BottomNav() {
@@ -47,7 +21,7 @@ export function BottomNav() {
       role="navigation"
       style={{
         display: 'flex',
-        borderTop: '1px solid rgba(255,255,255,0.06)',
+        borderTop: '1px solid var(--b1n0-border)',
         background: 'var(--b1n0-card)',
         paddingBottom: 'env(safe-area-inset-bottom, 0px)',
       }}
@@ -65,28 +39,51 @@ export function BottomNav() {
               navigate(tab.path)
             }}
             style={{
-              flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',
-              gap: '3px', padding: '10px 4px', background: 'none', border: 'none',
-              cursor: 'pointer', outline: 'none',
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '3px',
+              padding: '10px 4px',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              outline: 'none',
               color: active ? 'var(--b1n0-si)' : 'var(--b1n0-muted)',
+              transition: 'color var(--duration-fast) var(--ease-out)',
             }}
           >
-            <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 36, height: 28, borderRadius: 10, background: active ? 'var(--b1n0-si-bg)' : 'transparent', transition: 'background 0.15s' }}>
-              <tab.Icon />
+            <div
+              style={{
+                position: 'relative',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 36,
+                height: 28,
+                borderRadius: 'var(--radius-md)',
+                background: active ? 'var(--b1n0-si-bg)' : 'transparent',
+                transition: 'background var(--duration-fast) var(--ease-out)',
+              }}
+            >
+              {/*
+                Phosphor weight choice: 'fill' on active (a moment of confidence),
+                'regular' otherwise (1.5px stroke, balanced negative space).
+                Size: 22px – feels right against the 11px label below; smaller
+                than typical 24px lucide nav icons for a more refined feel.
+              */}
+              <tab.Icon size={22} weight={active ? 'fill' : 'regular'} />
             </div>
             <span
               style={{
-                fontFamily: '"DM Sans", sans-serif',
-                fontSize: '10px', fontWeight: active ? 600 : 500,
+                fontFamily: 'var(--font-body)',
+                fontSize: 'var(--text-2xs)',
+                fontWeight: active ? 600 : 500,
                 color: active ? 'var(--b1n0-si)' : 'var(--b1n0-muted)',
+                letterSpacing: 'var(--tracking-tight)',
                 lineHeight: 1,
               }}
             >
               {tab.label}
             </span>
-          </button>
-        )
-      })}
-    </nav>
-  )
-}
+        

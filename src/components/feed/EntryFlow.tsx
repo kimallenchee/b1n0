@@ -52,8 +52,8 @@ function parseOptionItems(options: string[] | undefined): OptionItem[] {
   })
 }
 
-const F = '"DM Sans", sans-serif'
-const D = '"DM Sans", sans-serif'
+const F = 'var(--font-body)'
+const D = 'var(--font-display)'
 
 export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = false }: EntryFlowProps) {
   const { session } = useAuth()

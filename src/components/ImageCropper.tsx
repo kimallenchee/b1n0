@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 
-const F = '"DM Sans", sans-serif'
+const F = 'var(--font-body)'
 const TARGET_W = 1200
 const TARGET_H = 630
 const ASPECT = TARGET_W / TARGET_H // ~1.9

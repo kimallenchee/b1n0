@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { BottomSheet } from '../BottomSheet'
 
-const F = '"DM Sans", sans-serif'
-const D = '"DM Sans", sans-serif'
+const F = 'var(--font-body)'
+const D = 'var(--font-display)'
 
 interface KYCSheetProps {
   open: boolean

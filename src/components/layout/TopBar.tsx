@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { Question, Bell } from '@phosphor-icons/react'
 import type { User } from '../../types'
 import { NotificationDrawer } from './NotificationDrawer'
 import { WalletSheet } from '../wallet/WalletSheet'
@@ -13,8 +14,8 @@ interface TopBarProps {
   user: User
 }
 
-const F = '"DM Sans", sans-serif'
-const D = '"DM Sans", sans-serif'
+const F = 'var(--font-body)'
+const NUM_FONT = 'var(--font-num)'
 
 export function TopBar({ user }: TopBarProps) {
   const navigate = useNavigate()
@@ -37,7 +38,7 @@ export function TopBar({ user }: TopBarProps) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '14px 20px 10px',
+          padding: 'var(--space-5) var(--space-7) var(--space-4)',
           background: 'transparent',
           borderBottom: '1px solid var(--b1n0-border)',
         }}
@@ -53,72 +54,147 @@ export function TopBar({ user }: TopBarProps) {
           }}
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
         >
-          <img src="/b1n0-logo.png" alt="B1N0" style={{ height: '24px', objectFit: 'contain' }} />
+          <img src="/b1n0-logo.png" alt="b1n0" style={{ height: '24px', objectFit: 'contain' }} />
         </button>
 
         {/* Right side */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
           {isLoggedIn ? (
             <>
-              {/* How it works — subtle ? icon */}
-              <button
+              {/* How it works — Question icon */}
+              <IconButton
                 onClick={() => setHowOpen(true)}
+                ariaLabel="¿Cómo funciona?"
                 title="¿Cómo funciona?"
-                aria-label="¿Cómo funciona?"
-                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--b1n0-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10"/>
-                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-                  <line x1="12" y1="17" x2="12.01" y2="17"/>
-                </svg>
-              </button>
+                <Question size={20} weight="regular" color="var(--b1n0-muted)" />
+              </IconButton>
 
               {/* Notification bell */}
               <button
                 onClick={() => setNotifOpen(true)}
-                style={{ position: 'relative', background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                aria-label={unreadCount > 0 ? `${unreadCount} notificaciones nuevas` : 'Notificaciones'}
+                style={{
+                  position: 'relative',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: 'var(--space-2)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: 'var(--radius-md)',
+                  transition: 'background var(--duration-fast) var(--ease-out)',
+                }}
               >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--b1n0-text-2)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-                  <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-                </svg>
+                <Bell size={20} weight={unreadCount > 0 ? 'fill' : 'regular'} color="var(--b1n0-text-2)" />
                 {unreadCount > 0 && (
-                  <span style={{
-                    position: 'absolute', top: 0, right: 0,
-                    minWidth: 16, height: 16, borderRadius: '8px',
-                    background: '#f87171', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontFamily: F, fontWeight: 700, fontSize: '9px', color: '#fff',
-                    padding: '0 4px',
-                  }}>
+                  <span
+                    style={{
+                      position: 'absolute',
+                      top: 2,
+                      right: 2,
+                      minWidth: 14,
+                      height: 14,
+                      borderRadius: 'var(--radius-pill)',
+                      background: 'var(--b1n0-no)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontFamily: NUM_FONT,
+                      fontWeight: 700,
+                      fontSize: '9px',
+                      color: 'var(--b1n0-bg)',
+                      padding: '0 4px',
+                      fontVariantNumeric: 'tabular-nums',
+                      border: '1.5px solid var(--b1n0-bg)',
+                    }}
+                  >
                     {unreadCount > 9 ? '9+' : unreadCount}
                   </span>
                 )}
               </button>
 
-              {/* Balance pill — opens wallet */}
+              {/*
+                Balance pill — the loudest financial moment in the chrome.
+                Geist tabular numerals at 14px / weight 600. The pill itself
+                is restrained (1px border, no fill) so the number leads.
+              */}
               <button
                 onClick={() => setWalletOpen(true)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                aria-label={`Saldo: $${balance.toFixed(2)}`}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: 0,
+                }}
               >
-                <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '20px', padding: '5px 10px' }}>
-                  <span style={{ fontFamily: F, fontWeight: 700, fontSize: '12px', color: 'var(--color-text)', letterSpacing: '-0.3px' }}>
-                    ${balance.toLocaleString()}
+                <div
+                  style={{
+                    background: 'var(--color-surface)',
+                    border: '1px solid var(--color-border)',
+                    borderRadius: 'var(--radius-pill)',
+                    padding: 'var(--space-2) var(--space-4)',
+                    transition: 'border-color var(--duration-fast) var(--ease-out)',
+                  }}
+                >
+                  <span
+                    style={{
+                      fontFamily: NUM_FONT,
+                      fontWeight: 600,
+                      fontSize: 'var(--text-base)',
+                      color: 'var(--color-text)',
+                      letterSpacing: 'var(--tracking-tight)',
+                      fontVariantNumeric: 'tabular-nums',
+                    }}
+                  >
+                    ${balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </span>
                 </div>
               </button>
 
-              {/* Avatar — navigates to perfil */}
+              {/* Avatar — subtle 1px ring at low alpha to feel finished, not ugly */}
               <button
                 onClick={() => navigate('/perfil')}
+                aria-label="Mi perfil"
                 style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
               >
-                <div style={{ position: 'relative', width: 34, height: 34, flexShrink: 0 }}>
+                <div
+                  style={{
+                    position: 'relative',
+                    width: 34,
+                    height: 34,
+                    flexShrink: 0,
+                    borderRadius: '50%',
+                    boxShadow: '0 0 0 1px var(--b1n0-border)',
+                    transition: 'box-shadow var(--duration-fast) var(--ease-out)',
+                    overflow: 'hidden',
+                  }}
+                >
                   {user.avatar ? (
-                    <img src={user.avatar} alt="" style={{ width: 34, height: 34, borderRadius: '50%', objectFit: 'cover' }} />
+                    <img
+                      src={user.avatar}
+                      alt=""
+                      style={{ width: 34, height: 34, borderRadius: '50%', objectFit: 'cover', display: 'block' }}
+                    />
                   ) : (
-                    <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'var(--b1n0-text-1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F, fontWeight: 600, fontSize: '13px', color: '#fff' }}>
-                      {user.name.charAt(0)}
+                    <div
+                      style={{
+                        width: 34,
+                        height: 34,
+                        borderRadius: '50%',
+                        background: 'var(--b1n0-surface)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontFamily: F,
+                        fontWeight: 600,
+                        fontSize: 'var(--text-sm)',
+                        color: 'var(--b1n0-text-1)',
+                      }}
+                    >
+                      {user.name.charAt(0).toUpperCase()}
                     </div>
                   )}
                 </div>
@@ -126,21 +202,30 @@ export function TopBar({ user }: TopBarProps) {
             </>
           ) : (
             <>
-              <button
+              <IconButton
                 onClick={() => setHowOpen(true)}
+                ariaLabel="¿Cómo funciona?"
                 title="¿Cómo funciona?"
-                aria-label="¿Cómo funciona?"
-                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--b1n0-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10"/>
-                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-                  <line x1="12" y1="17" x2="12.01" y2="17"/>
-                </svg>
-              </button>
+                <Question size={20} weight="regular" color="var(--b1n0-muted)" />
+              </IconButton>
               <button
                 onClick={() => openAuth('login')}
-                style={{ padding: '8px 16px', borderRadius: '20px', border: 'none', background: '#4ade80', color: '#0d0d0d', fontFamily: F, fontWeight: 600, fontSize: '12px', cursor: 'pointer' }}
+                style={{
+                  padding: 'var(--space-3) var(--space-6)',
+                  borderRadius: 'var(--radius-pill)',
+                  border: 'none',
+                  background: 'var(--b1n0-si)',
+                  color: 'var(--b1n0-on-accent)',
+                  fontFamily: F,
+                  fontWeight: 600,
+                  fontSize: 'var(--text-sm)',
+                  letterSpacing: 'var(--tracking-tight)',
+                  cursor: 'pointer',
+                  transition: 'background var(--duration-fast) var(--ease-out)',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--b1n0-si-hover)')}
+                onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--b1n0-si)')}
               >
                 Entrar
               </button>
@@ -153,5 +238,42 @@ export function TopBar({ user }: TopBarProps) {
       {notifOpen && <NotificationDrawer onClose={() => setNotifOpen(false)} />}
       <HowItWorks open={howOpen} onClose={() => setHowOpen(false)} />
     </>
+  )
+}
+
+/**
+ * Small wrapper — keeps icon button styling consistent across the chrome
+ * without leaking style prop scaffolding into every callsite.
+ */
+function IconButton({
+  onClick,
+  ariaLabel,
+  title,
+  children,
+}: {
+  onClick: () => void
+  ariaLabel: string
+  title?: string
+  children: React.ReactNode
+}) {
+  return (
+    <button
+      onClick={onClick}
+      aria-label={ariaLabel}
+      title={title}
+      style={{
+        background: 'none',
+        border: 'none',
+        cursor: 'pointer',
+        padding: 'var(--space-2)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 'var(--radius-md)',
+        transition: 'background var(--duration-fast) var(--ease-out)',
+      }}
+    >
+      {children}
+    </button>
   )
 }

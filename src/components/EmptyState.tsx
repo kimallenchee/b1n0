@@ -33,7 +33,7 @@ export function EmptyState({ icon = '📭', title, subtitle, action }: EmptyStat
       <span style={{ fontSize: '36px', marginBottom: '12px' }}>{icon}</span>
       <p
         style={{
-          fontFamily: '"DM Sans", sans-serif',
+          fontFamily: 'var(--font-body)',
           fontSize: '15px',
           fontWeight: 600,
           color: 'var(--b1n0-text-1)',
@@ -45,7 +45,7 @@ export function EmptyState({ icon = '📭', title, subtitle, action }: EmptyStat
       {subtitle && (
         <p
           style={{
-            fontFamily: '"DM Sans", sans-serif',
+            fontFamily: 'var(--font-body)',
             fontSize: '13px',
             color: 'var(--b1n0-muted)',
             maxWidth: '280px',
@@ -65,7 +65,7 @@ export function EmptyState({ icon = '📭', title, subtitle, action }: EmptyStat
             border: 'none',
             background: '#4ade80',
             color: '#fff',
-            fontFamily: '"DM Sans", sans-serif',
+            fontFamily: 'var(--font-body)',
             fontWeight: 600,
             fontSize: '13px',
             cursor: 'pointer',

@@ -2,8 +2,8 @@ import { useState, useMemo, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { usePageMeta } from '../hooks/usePageMeta'
 
-const F = '"DM Sans", sans-serif'
-const D = '"DM Sans", sans-serif'
+const F = 'var(--font-body)'
+const D = 'var(--font-display)'
 
 /* ── Country list (full ISO) ─────────────────────────────────────────────── */
 const COUNTRIES = [

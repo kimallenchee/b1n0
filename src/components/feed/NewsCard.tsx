@@ -5,8 +5,8 @@ interface NewsCardProps {
   onBridgeTap?: () => void
 }
 
-const F = '"DM Sans", sans-serif'
-const D = '"DM Sans", sans-serif'
+const F = 'var(--font-body)'
+const D = 'var(--font-display)'
 
 const countryFlags: Record<string, string> = { GT: '🇬🇹', SV: '🇸🇻', HN: '🇭🇳' }
 

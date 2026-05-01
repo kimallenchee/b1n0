@@ -8,8 +8,8 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { usePageMeta } from '../hooks/usePageMeta'
 
-const F = '"DM Sans", sans-serif'
-const D = '"DM Sans", sans-serif'
+const F = 'var(--font-body)'
+const D = 'var(--font-display)'
 
 const typeLabel: Record<Transaction['type'], string> = {
   deposit: 'Depósito', withdraw: 'Retiro', vote: 'Voto', win: 'Cobro', loss: 'Perdido', sell: 'Venta', refund: 'Reembolso',

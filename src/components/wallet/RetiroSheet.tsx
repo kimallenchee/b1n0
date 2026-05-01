@@ -3,8 +3,8 @@ import { BottomSheet } from '../BottomSheet'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
 
-const F = '"DM Sans", sans-serif'
-const D = '"DM Sans", sans-serif'
+const F = 'var(--font-body)'
+const D = 'var(--font-display)'
 
 interface RetiroSheetProps {
   open: boolean

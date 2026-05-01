@@ -4,8 +4,8 @@ import { logger } from '../../lib/logger'
 import { callRpc } from '../../lib/rpc'
 import { useTreasuryId } from '../../hooks/useTreasuryId'
 
-const F = '"DM Sans", sans-serif'
-const D = '"DM Sans", sans-serif'
+const F = 'var(--font-body)'
+const D = 'var(--font-display)'
 
 // ── Local types (selects are projections of Database rows) ────────
 

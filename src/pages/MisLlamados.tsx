@@ -2,8 +2,8 @@ import type { UserPrediction } from '../types'
 import { useVotes } from '../context/VoteContext'
 import { usePageMeta } from '../hooks/usePageMeta'
 
-const F = '"DM Sans", sans-serif'
-const D = '"DM Sans", sans-serif'
+const F = 'var(--font-body)'
+const D = 'var(--font-display)'
 
 function PredictionCard({ prediction }: { prediction: UserPrediction }) {
   const isActive = prediction.status === 'active'

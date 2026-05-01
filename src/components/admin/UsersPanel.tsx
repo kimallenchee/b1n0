@@ -3,8 +3,8 @@ import { supabase } from '../../lib/supabase'
 import { logger } from '../../lib/logger'
 import { callRpc } from '../../lib/rpc'
 
-const F = '"DM Sans", sans-serif'
-const D = '"DM Sans", sans-serif'
+const F = 'var(--font-body)'
+const D = 'var(--font-display)'
 
 interface AdminUser {
   id: string

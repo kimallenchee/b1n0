@@ -3,8 +3,8 @@ import { createPortal } from 'react-dom'
 import { useAuth } from '../context/AuthContext'
 import { useAuthModal } from '../context/AuthModalContext'
 
-const F = '"DM Sans", sans-serif'
-const D = '"DM Sans", sans-serif'
+const F = 'var(--font-body)'
+const D = 'var(--font-display)'
 
 const COUNTRIES = [
   { code: 'GT', name: 'Guatemala', dial: '+502' },

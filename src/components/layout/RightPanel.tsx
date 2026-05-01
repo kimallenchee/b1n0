@@ -8,8 +8,8 @@ import { useNow } from '../../context/NowContext'
 import { useAuth } from '../../context/AuthContext'
 import { useEvents } from '../../context/EventsContext'
 
-const F = '"DM Sans", sans-serif'
-const D = '"DM Sans", sans-serif'
+const F = 'var(--font-body)'
+const D = 'var(--font-display)'
 
 const categoryShort: Record<string, string> = {
   deportes: 'DEP', politica: 'POL', economia: 'ECO', geopolitica: 'GEO',
@@ -54,10 +54,10 @@ export function RightPanel() {
           ${balance.toLocaleString()}
         </p>
         <div style={{ display: 'flex', gap: '8px' }}>
-          <button onClick={() => setDepositOpen(true)} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: 'none', background: 'var(--b1n0-si)', cursor: 'pointer', fontFamily: F, fontWeight: 700, fontSize: '12px', color: 'var(--b1n0-on-accent)' }}>
+          <button onClick={() => setDepositOpen(true)} style={{ flex: 1, padding: '10px', borderRadius: "var(--radius-lg)", border: 'none', background: 'var(--b1n0-si)', cursor: 'pointer', fontFamily: F, fontWeight: 700, fontSize: '12px', color: 'var(--b1n0-on-accent)' }}>
             Depositar
           </button>
-          <button onClick={() => setRetiroOpen(true)} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: '1px solid var(--b1n0-border)', background: 'transparent', cursor: 'pointer', fontFamily: F, fontWeight: 500, fontSize: '12px', color: 'var(--b1n0-text-1)' }}>
+          <button onClick={() => setRetiroOpen(true)} style={{ flex: 1, padding: '10px', borderRadius: "var(--radius-lg)", border: '1px solid var(--b1n0-border)', background: 'transparent', cursor: 'pointer', fontFamily: F, fontWeight: 500, fontSize: '12px', color: 'var(--b1n0-text-1)' }}>
             Retirar
           </button>
         </div>
@@ -121,7 +121,7 @@ export function RightPanel() {
           </p>
           <button
             onClick={() => setKycOpen(true)}
-            style={{ width: '100%', padding: '10px', borderRadius: '10px', border: 'none', background: 'var(--b1n0-si)', cursor: 'pointer', fontFamily: F, fontWeight: 700, fontSize: '12px', color: 'var(--b1n0-on-accent)' }}
+            style={{ width: '100%', padding: '10px', borderRadius: "var(--radius-lg)", border: 'none', background: 'var(--b1n0-si)', cursor: 'pointer', fontFamily: F, fontWeight: 700, fontSize: '12px', color: 'var(--b1n0-on-accent)' }}
           >
             Verificar →
           </button>

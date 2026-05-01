@@ -10,8 +10,8 @@ import { RetiroSheet } from '../components/wallet/RetiroSheet'
 import { useTheme, type ThemeMode } from '../context/ThemeContext'
 import { usePageMeta } from '../hooks/usePageMeta'
 
-const F = '"DM Sans", sans-serif'
-const D = '"DM Sans", sans-serif'
+const F = 'var(--font-body)'
+const D = 'var(--font-display)'
 
 const tierNames: Record<number, string> = { 1: 'Nivel 1', 2: 'Nivel 2', 3: 'Nivel 3' }
 

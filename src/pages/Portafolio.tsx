@@ -7,8 +7,8 @@ import { midPctToAsk, midPctToBid, SELL_FEE_RATE, round2 } from '../lib/pricing'
 import type { UserPrediction } from '../types'
 import { usePageMeta } from '../hooks/usePageMeta'
 
-const F = '"DM Sans", sans-serif'
-const D = '"DM Sans", sans-serif'
+const F = 'var(--font-body)'
+const D = 'var(--font-display)'
 
 const categoryColors: Record<string, string> = {
   deportes: '#93C5FD', politica: '#C4B5FD', economia: '#FFD474',
