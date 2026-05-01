@@ -1,27 +1,49 @@
 import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
+import {
+  ChartBar,
+  Trophy,
+  Target,
+  CurrencyDollar,
+  Clock,
+  Sparkle,
+  HandWaving,
+  Handshake,
+  ChatCircle,
+  At,
+  CheckCircle,
+  Bank,
+  Warning,
+  ArrowUp,
+  Bell as BellFallback,
+} from '@phosphor-icons/react'
+import type { Icon } from '@phosphor-icons/react'
 import { useNotifications } from '../../context/NotificationContext'
 import type { Notification } from '../../context/NotificationContext'
 import { useEffect, useState } from 'react'
 
 const F = 'var(--font-body)'
 
-/* ── Type config: icon, accent color, label ── */
-const typeConfig: Record<string, { icon: string; color: string; label: string }> = {
-  posicion_creada:     { icon: '📊', color: 'var(--b1n0-teal-500)',   label: 'Posición' },
-  evento_resuelto:     { icon: '📢', color: 'var(--b1n0-si)',         label: 'Resuelto' },
-  resultado:           { icon: '🎯', color: 'var(--b1n0-si)',         label: 'Resultado' },
-  posicion_vendida:    { icon: '💰', color: 'var(--b1n0-orange-500)', label: 'Venta' },
-  evento_por_cerrar:   { icon: '⏰', color: 'var(--b1n0-orange-500)', label: 'Por cerrar' },
-  nuevo_evento:        { icon: '🆕', color: '#2E1065',               label: 'Nuevo' },
-  solicitud_amistad:   { icon: '👋', color: 'var(--b1n0-teal-500)',   label: 'Social' },
-  amistad_aceptada:    { icon: '🤝', color: 'var(--b1n0-teal-500)',   label: 'Social' },
-  respuesta_comentario:{ icon: '💬', color: '#2E1065',               label: 'Comentario' },
-  mencion:             { icon: '📌', color: '#2E1065',               label: 'Mención' },
-  deposito_confirmado: { icon: '✅', color: 'var(--b1n0-si)',         label: 'Depósito' },
-  retiro_procesado:    { icon: '🏦', color: 'var(--b1n0-muted)',      label: 'Retiro' },
-  saldo_bajo:          { icon: '⚠️', color: 'var(--b1n0-orange-500)', label: 'Saldo' },
-  nivel_subio:         { icon: '⬆️', color: 'var(--b1n0-teal-500)',   label: 'Nivel' },
+/* ── Type config: Phosphor icon, accent color, label ──
+   Replaces the previous emoji palette with consistent Phosphor icons.
+   Each notification type gets a clear semantic icon (bar chart for
+   positions, trophy for resolution, sparkle for new events, etc.) so
+   the drawer reads as one coherent system. */
+const typeConfig: Record<string, { Icon: Icon; color: string; label: string }> = {
+  posicion_creada:     { Icon: ChartBar,       color: 'var(--b1n0-teal-500)',   label: 'Posición' },
+  evento_resuelto:     { Icon: Target,         color: 'var(--b1n0-si)',         label: 'Resuelto' },
+  resultado:           { Icon: Trophy,         color: 'var(--b1n0-si)',         label: 'Resultado' },
+  posicion_vendida:    { Icon: CurrencyDollar, color: 'var(--b1n0-orange-500)', label: 'Venta' },
+  evento_por_cerrar:   { Icon: Clock,          color: 'var(--b1n0-orange-500)', label: 'Por cerrar' },
+  nuevo_evento:        { Icon: Sparkle,        color: '#6366f1',                label: 'Nuevo' },
+  solicitud_amistad:   { Icon: HandWaving,     color: 'var(--b1n0-teal-500)',   label: 'Social' },
+  amistad_aceptada:    { Icon: Handshake,      color: 'var(--b1n0-teal-500)',   label: 'Social' },
+  respuesta_comentario:{ Icon: ChatCircle,     color: '#6366f1',                label: 'Comentario' },
+  mencion:             { Icon: At,             color: '#6366f1',                label: 'Mención' },
+  deposito_confirmado: { Icon: CheckCircle,    color: 'var(--b1n0-si)',         label: 'Depósito' },
+  retiro_procesado:    { Icon: Bank,           color: 'var(--b1n0-muted)',      label: 'Retiro' },
+  saldo_bajo:          { Icon: Warning,        color: 'var(--b1n0-orange-500)', label: 'Saldo' },
+  nivel_subio:         { Icon: ArrowUp,        color: 'var(--b1n0-teal-500)',   label: 'Nivel' },
 }
 
 function timeAgo(date: string): string {
@@ -36,7 +58,7 @@ function timeAgo(date: string): string {
 }
 
 function NotifRow({ n, onTap, onDismiss }: { n: Notification; onTap: () => void; onDismiss: () => void }) {
-  const cfg = typeConfig[n.type] || { icon: '🔔', color: 'var(--b1n0-muted)', label: '' }
+  const cfg = typeConfig[n.type] || { Icon: BellFallback, color: 'var(--b1n0-muted)', label: '' }
   const [hovered, setHovered] = useState(false)
   const [dismissHovered, setDismissHovered] = useState(false)
 
@@ -59,14 +81,16 @@ function NotifRow({ n, onTap, onDismiss }: { n: Notification; onTap: () => void;
       }}
     >
       <button onClick={onTap} style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', flex: 1, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', padding: 0 }}>
-        {/* Icon with colored circle background */}
+        {/* Icon with colored circle background — Phosphor regular weight,
+            color tinted by the type's accent. Read state mutes opacity. */}
         <div style={{
-          width: 36, height: 36, borderRadius: "var(--radius-lg)", flexShrink: 0,
+          width: 36, height: 36, borderRadius: 'var(--radius-lg)', flexShrink: 0,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           background: `color-mix(in srgb, ${cfg.color} 12%, transparent)`,
-          fontSize: '16px',
+          opacity: n.read ? 0.6 : 1,
+          transition: 'opacity var(--duration-fast) var(--ease-out)',
         }}>
-          {cfg.icon}
+          <cfg.Icon size={18} weight={n.read ? 'regular' : 'fill'} color={cfg.color} />
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px' }}>

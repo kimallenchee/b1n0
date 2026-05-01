@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { midPctToAsk } from '../../lib/pricing'
+import { AnimatedNumber } from '../AnimatedNumber'
 
 interface SplitBarProps {
   yesPercent: number
@@ -12,9 +13,23 @@ interface SplitBarProps {
 }
 
 /**
- * Tug-of-War Bar — signature b1n0 UI element
- * SÍ fills from left (green), NO fills from right (red)
- * Each side is independently hoverable and clickable.
+ * Tug-of-War Bar — signature b1n0 UI element.
+ *
+ * SÍ fills from left (teal), NO fills from right (amber). Each side
+ * is independently hoverable and clickable.
+ *
+ * Motion design:
+ *   - Bar width transitions via CSS (0.8s cubic) — defined in
+ *     index.css under .tow-si / .tow-no.
+ *   - Prices tween on a separate (slightly faster) curve via
+ *     AnimatedNumber so the eye sees the bar reflow and the number
+ *     update *together* but with the number leading slightly. Reads
+ *     as live, not as a refresh.
+ *
+ * Why two animations instead of one: when the market reprices, the
+ * number changing is the *information* — the bar sliding is the
+ * confirmation. Faster number + slower bar gives a sense of cause
+ * (pool moves) and effect (bar follows).
  */
 export function SplitBar({
   yesPercent, noPercent, yesLabel = 'SÍ', noLabel = 'NO',
@@ -27,8 +42,8 @@ export function SplitBar({
     return () => clearTimeout(t)
   }, [yesPercent])
 
-  const yesPrice = midPctToAsk(yesPercent).toFixed(2)
-  const noPrice = midPctToAsk(noPercent).toFixed(2)
+  const yesPrice = midPctToAsk(yesPercent)
+  const noPrice = midPctToAsk(noPercent)
 
   return (
     <div
@@ -41,13 +56,23 @@ export function SplitBar({
         onClick={(e) => { e.stopPropagation(); onClickSi?.() }}
       >
         <span className="tow-label">{yesLabel}</span>
-        <span className="tow-price">{yesPrice}</span>
+        <AnimatedNumber
+          value={yesPrice}
+          decimals={2}
+          duration={500}
+          className="tow-price"
+        />
       </div>
       <div
         className="tow-no"
         onClick={(e) => { e.stopPropagation(); onClickNo?.() }}
       >
-        <span className="tow-price">{noPrice}</span>
+        <AnimatedNumber
+          value={noPrice}
+          decimals={2}
+          duration={500}
+          className="tow-price"
+        />
         <span className="tow-label">{noLabel}</span>
       </div>
     </div>

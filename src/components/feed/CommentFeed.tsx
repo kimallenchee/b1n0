@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { Comment } from '../../types'
 import { useComments } from '../../hooks/useComments'
 import { useAuth } from '../../context/AuthContext'
+import { SkeletonBlock } from '../Skeleton'
 
 interface CommentFeedProps {
   comments: Comment[]
@@ -308,9 +309,21 @@ export function CommentFeed({ comments: initialComments, eventId }: CommentFeedP
 
       {/* Loading / empty state */}
       {loading && (
-        <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)', textAlign: 'center', padding: '20px 0' }}>
-          Cargando comentarios…
-        </p>
+        /* Skeleton row stack — three commenters worth of placeholder
+           bars sized roughly to the loaded comment shape. Swapping the
+           "Cargando…" text for skeletons removes the perceived wait. */
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-5)', padding: 'var(--space-4) 0' }}>
+          {[0, 1, 2].map((i) => (
+            <div key={i} style={{ display: 'flex', gap: 'var(--space-3)', alignItems: 'flex-start', opacity: 1 - i * 0.18 }}>
+              <SkeletonBlock width="32px" height="32px" style={{ borderRadius: '50%', flexShrink: 0 }} />
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+                <SkeletonBlock width="35%" height="11px" />
+                <SkeletonBlock width="92%" height="13px" />
+                <SkeletonBlock width="68%" height="13px" />
+              </div>
+            </div>
+          ))}
+        </div>
       )}
       {!loading && list.length === 0 && (
         <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)', textAlign: 'center', padding: '20px 0' }}>

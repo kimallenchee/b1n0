@@ -250,7 +250,7 @@ export function EventCard({ event }: EventCardProps) {
 
   return (
     <>
-      <div className="event-card" style={{ borderLeft: `2px solid ${color}`, overflow: 'hidden', background: 'var(--color-surface)' }}>
+      <div className={`event-card${event.isLive && !isResolved ? ' is-live' : ''}`} style={{ borderLeft: `2px solid ${color}`, overflow: 'hidden', background: 'var(--color-surface)' }}>
         {photo ? (
           /* ── Cinematic hero: full-bleed + gradient lower-third ── */
           <div style={{ margin: 'calc(var(--space-6) * -1) calc(var(--space-6) * -1) var(--space-5)', aspectRatio: '5 / 2', position: 'relative', overflow: 'hidden', borderRadius: '7px 7px 0 0' }}>

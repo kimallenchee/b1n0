@@ -579,6 +579,21 @@ input[type="number"] {
    The eye picks up the tiny luminance shift; the page stays still. */
 .event-card:hover { border-color: var(--b1n0-card-hover-border); }
 
+/* Heat indicator — live events get a slow border-color pulse so the
+   eye picks up "this is moving right now" without ever shouting. The
+   pulse only modulates the right side via box-shadow ring; the base
+   border stays static so layout doesn't shift. */
+@keyframes heatPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+  50%      { box-shadow: 0 0 0 1px rgba(74, 222, 128, 0.35); }
+}
+.event-card.is-live {
+  animation: heatPulse 3.2s var(--ease-in-out) infinite;
+}
+/* Live cards keep their hover affordance — the pulse pauses on hover
+   so users can read without distraction, then resumes on leave. */
+.event-card.is-live:hover { animation-play-state: paused; }
+
 /* Card grid: 2 col mobile, 3 col desktop */
 .card-grid { grid-template-columns: repeat(2, 1fr) !important; }
 @media (min-width: 768px) {
