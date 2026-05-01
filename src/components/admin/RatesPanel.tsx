@@ -229,7 +229,7 @@ export function RatesPanel() {
               <div>
                 <label style={{ ...labelStyle, fontSize: '9px' }}>Umbral</label>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
-                  <span style={{ fontFamily: D, fontSize: '14px', fontWeight: 700, color: 'var(--b1n0-text-1)' }}>Q</span>
+                  <span style={{ fontFamily: D, fontSize: '14px', fontWeight: 700, color: 'var(--b1n0-text-1)' }}>$</span>
                   <input type="number" min={1000} max={1000000} step={1000} value={ratesDraft.depth_threshold ?? 50000} onChange={(e) => setRatesDraft((d) => ({ ...d, depth_threshold: parseFloat(e.target.value) || 50000 }))} style={{ ...compactInput, width: '90px' }} />
                 </div>
               </div>

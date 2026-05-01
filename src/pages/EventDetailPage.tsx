@@ -898,7 +898,7 @@ function EventDetailInner({ event }: { event: AppEvent }) {
                                 background: 'var(--b1n0-surface)', borderRadius: '10px', padding: '10px 12px',
                                 border: `1px solid ${outOfRange ? 'var(--b1n0-no)' : 'var(--b1n0-border)'}`,
                               }}>
-                                <span style={{ fontFamily: F, fontSize: '16px', fontWeight: 700, color: 'var(--b1n0-muted)' }}>Q</span>
+                                <span style={{ fontFamily: F, fontSize: '16px', fontWeight: 700, color: 'var(--b1n0-muted)' }}>$</span>
                                 <input
                                   type="number" min={minE} max={maxE} step="any" placeholder="0"
                                   value={panelAmount}
@@ -913,8 +913,8 @@ function EventDetailInner({ event }: { event: AppEvent }) {
                             </div>
                             <p style={{ fontFamily: F, fontSize: '10px', color: outOfRange ? 'var(--b1n0-no)' : 'var(--b1n0-muted)', marginBottom: '10px' }}>
                               {outOfRange
-                                ? `Monto debe ser entre Q${minE} y Q${maxE.toLocaleString()}`
-                                : `Desde Q${minE} · Máx Q${maxE.toLocaleString()}`
+                                ? `Monto debe ser entre $${minE} y $${maxE.toLocaleString()}`
+                                : `Desde $${minE} · Máx $${maxE.toLocaleString()}`
                               }
                             </p>
 

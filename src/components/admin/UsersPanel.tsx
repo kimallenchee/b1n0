@@ -391,7 +391,7 @@ export function UsersPanel() {
                             Saldo
                           </p>
                           <div style={{ display: 'flex', gap: '6px', alignItems: 'center', marginBottom: '6px' }}>
-                            <span style={{ fontFamily: D, fontSize: '14px', fontWeight: 700 }}>Q</span>
+                            <span style={{ fontFamily: D, fontSize: '14px', fontWeight: 700 }}>$</span>
                             <input
                               type="number"
                               step="0.01"

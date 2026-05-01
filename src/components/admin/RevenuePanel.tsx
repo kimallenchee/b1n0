@@ -439,7 +439,7 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
         <div style={{ marginRight: '8px' }}>
           <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: 'var(--b1n0-muted)', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '2px' }}>Ingreso neto</p>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '3px' }}>
-            <span style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)' }}>Q</span>
+            <span style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)' }}>$</span>
             <span style={{ fontFamily: D, fontSize: '34px', fontWeight: 700, color: 'var(--b1n0-text-1)', letterSpacing: '-1.5px' }}>{fmtQ(totalRevenue)}</span>
           </div>
         </div>
@@ -513,7 +513,7 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
             <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: '#C4B5FD', letterSpacing: '0.8px', textTransform: 'uppercase' }}>CUT 2 — COMISIÓN</p>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '2px' }}>
-              <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>Q</span>
+              <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>$</span>
               <span style={{ fontFamily: D, fontSize: '22px', fontWeight: 700, color: '#C4B5FD', letterSpacing: '-0.5px' }}>{fmtQ(cut2Total)}</span>
             </div>
           </div>
@@ -556,7 +556,7 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
             <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: '#14b8a6', letterSpacing: '0.8px', textTransform: 'uppercase' }}>CUT 4 — RESOLUCIÓN</p>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '2px' }}>
-              <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>Q</span>
+              <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>$</span>
               <span style={{ fontFamily: D, fontSize: '22px', fontWeight: 700, color: '#14b8a6', letterSpacing: '-0.5px' }}>{fmtQ(skimTotal)}</span>
             </div>
           </div>

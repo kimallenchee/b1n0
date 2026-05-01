@@ -249,7 +249,7 @@ function OptionRows({ options, onChange, maxPool = 0 }: {
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '5px', paddingLeft: '2px' }}>
             <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', flexShrink: 0 }}>Pool:</span>
-            <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)', flexShrink: 0 }}>Q</span>
+            <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)', flexShrink: 0 }}>$</span>
             <input
               type="number" min={0} step={100}
               value={opt.pool}

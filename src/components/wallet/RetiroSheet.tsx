@@ -154,7 +154,7 @@ export function RetiroSheet({ open, onClose }: RetiroSheetProps) {
 
             <div style={{ textAlign: 'center', padding: '20px 0 8px' }}>
               <div style={{ display: 'inline-flex', alignItems: 'baseline', gap: '4px' }}>
-                <span style={{ fontFamily: D, fontWeight: 700, fontSize: '28px', color: 'var(--b1n0-muted)' }}>Q</span>
+                <span style={{ fontFamily: D, fontWeight: 700, fontSize: '28px', color: 'var(--b1n0-muted)' }}>$</span>
                 <input
                   type="number"
                   value={amount}

@@ -156,7 +156,7 @@ export function TreasuryPanel() {
         <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '10px', padding: '14px' }}>
           <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: 'var(--b1n0-muted)', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '4px' }}>Saldo</p>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '3px', marginBottom: '12px' }}>
-            <span style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)' }}>Q</span>
+            <span style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)' }}>$</span>
             <span style={{ fontFamily: D, fontSize: '36px', fontWeight: 700, color: treasuryBalance >= 0 ? 'var(--b1n0-text-1)' : '#f87171', letterSpacing: '-1.5px' }}>
               {treasuryLoading ? '...' : fmtQ2(treasuryBalance)}
             </span>
@@ -181,7 +181,7 @@ export function TreasuryPanel() {
         <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '10px', padding: '14px' }}>
           <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: 'var(--b1n0-muted)', letterSpacing: '0.8px', textTransform: 'uppercase', marginBottom: '8px' }}>Retiro</p>
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-            <span style={{ fontFamily: D, fontSize: '14px', fontWeight: 700 }}>Q</span>
+            <span style={{ fontFamily: D, fontSize: '14px', fontWeight: 700 }}>$</span>
             <input
               id="treasury-withdraw-amt"
               type="number"
