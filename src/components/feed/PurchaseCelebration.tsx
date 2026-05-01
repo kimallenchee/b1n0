@@ -228,4 +228,3 @@ export function PurchaseCelebration({ side, amount, cobro, currency, onDone }: P
     document.body
   )
 }
-                                                                                                       
