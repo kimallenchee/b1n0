@@ -315,7 +315,7 @@ export function AuthPage() {
             <p style={{ fontFamily: D, fontWeight: 800, fontSize: '38px', color: 'var(--b1n0-text-1)', letterSpacing: '-1px', marginBottom: '6px' , fontVariantNumeric: 'tabular-nums'}}>b1n0</p>
             <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)' }}>Recuperá tu cuenta</p>
           </div>
-          <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-pill)', padding: '28px 24px' }}>
+          <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '28px 24px' }}>
             <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)', marginBottom: '16px', lineHeight: 1.5 }}>
               Ingresá tu correo y te generaremos una contraseña temporal.
             </p>
@@ -441,7 +441,7 @@ export function AuthPage() {
         </div>
 
         {/* Card */}
-        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-pill)', padding: '28px 24px' }}>
+        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '28px 24px' }}>
 
           {/* Tab switcher */}
           <div style={{ display: 'flex', background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-lg)', padding: '3px', marginBottom: '24px' }}>

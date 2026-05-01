@@ -135,7 +135,7 @@ export function HowItWorks({ open, onClose }: HowItWorksProps) {
           maxWidth: '380px',
           background: 'var(--b1n0-surface)',
           border: '1px solid var(--b1n0-border)',
-          borderRadius: 'var(--radius-pill)',
+          borderRadius: 'var(--radius-lg)',
           overflow: 'hidden',
           boxShadow: '0 24px 80px rgba(0,0,0,0.5)',
         }}

@@ -121,7 +121,7 @@ export function PurchaseCelebration({ side, amount, cobro, currency, onDone }: P
         style={{
           position: 'relative',
           background: 'var(--b1n0-card)',
-          borderRadius: 'var(--radius-pill)',
+          borderRadius: 'var(--radius-lg)',
           padding: '36px 32px 32px',
           maxWidth: '340px',
           width: '90%',

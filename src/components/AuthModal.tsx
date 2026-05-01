@@ -114,7 +114,7 @@ export function AuthModal() {
     return createPortal(
       <div style={{ position: 'fixed', inset: 0, zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div onClick={() => { setSignupDone(false); closeAuth() }} style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }} />
-        <div style={{ position: 'relative', maxWidth: 420, width: '90%', background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-pill)', padding: '36px 28px', boxShadow: '0 20px 60px rgba(0,0,0,0.5)', textAlign: 'center' }}>
+        <div style={{ position: 'relative', maxWidth: 420, width: '90%', background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '36px 28px', boxShadow: '0 20px 60px rgba(0,0,0,0.5)', textAlign: 'center' }}>
           <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'var(--b1n0-si-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto var(--space-5)' }}>
             <Envelope size={28} weight="regular" color="var(--b1n0-si)" />
           </div>
@@ -146,7 +146,7 @@ export function AuthModal() {
       <div onClick={closeAuth} style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }} />
 
       {/* Modal */}
-      <div style={{ position: 'relative', maxWidth: 420, width: '90%', maxHeight: '90dvh', overflowY: 'auto', background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-pill)', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.5)' }}>
+      <div style={{ position: 'relative', maxWidth: 420, width: '90%', maxHeight: '90dvh', overflowY: 'auto', background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.5)' }}>
 
         {/* Close button */}
         <button

@@ -135,7 +135,7 @@ function ForceChangePassword() {
           <p style={{ fontFamily: D, fontWeight: 800, fontSize: '38px', color: 'var(--b1n0-text-1)', letterSpacing: '-1px', marginBottom: '6px' , fontVariantNumeric: 'tabular-nums'}}>b1n0</p>
           <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)' }}>Cambiá tu contraseña</p>
         </div>
-        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-pill)', padding: '28px 24px' }}>
+        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '28px 24px' }}>
           <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)', marginBottom: '16px', lineHeight: 1.5 }}>
             Tu cuenta requiere una nueva contraseña antes de continuar.
           </p>
