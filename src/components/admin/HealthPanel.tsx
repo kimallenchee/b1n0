@@ -548,9 +548,9 @@ export function HealthPanel() {
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
           {[
-            { label: 'Saldo tesorería', val: `Q${fmtQ(treasuryBalance)}`, color: 'var(--b1n0-text-1)' },
-            { label: 'Saldo usuarios', val: `Q${fmtQ(userBalanceTotal)}`, color: 'var(--b1n0-text-1)' },
-            { label: 'En pools', val: `Q${fmtQ(moneyInPools)}`, color: '#FFD474' },
+            { label: 'Saldo tesorería', val: `$${fmtQ(treasuryBalance)}`, color: 'var(--b1n0-text-1)' },
+            { label: 'Saldo usuarios', val: `$${fmtQ(userBalanceTotal)}`, color: 'var(--b1n0-text-1)' },
+            { label: 'En pools', val: `$${fmtQ(moneyInPools)}`, color: '#FFD474' },
           ].map(({ label, val, color }) => (
             <div key={label} style={{ background: 'var(--b1n0-surface)', borderRadius: '8px', padding: '10px' }}>
               <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '4px' }}>{label}</p>
@@ -559,24 +559,24 @@ export function HealthPanel() {
           ))}
         </div>
         <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', margin: 0, lineHeight: 1.6 }}>
-          Depósitos netos: <strong style={{ color: 'var(--b1n0-text-1)' }}>Q{fmtQ(netDeposits)}</strong>
+          Depósitos netos: <strong style={{ color: 'var(--b1n0-text-1)' }}>${fmtQ(netDeposits)}</strong>
           {' · '}Saldos totales:{' '}
-          <strong style={{ color: 'var(--b1n0-text-1)' }}>Q{fmtQ(totalAccountBalances)}</strong>
+          <strong style={{ color: 'var(--b1n0-text-1)' }}>${fmtQ(totalAccountBalances)}</strong>
           {' · '}Sum balance_ledger:{' '}
-          <strong style={{ color: 'var(--b1n0-text-1)' }}>Q{fmtQ(ledgerTotal)}</strong>
+          <strong style={{ color: 'var(--b1n0-text-1)' }}>${fmtQ(ledgerTotal)}</strong>
           <br />
-          Posiciones activas (libro): <strong style={{ color: 'var(--b1n0-muted)' }}>Q{fmtQ(positionTableNet)}</strong>
+          Posiciones activas (libro): <strong style={{ color: 'var(--b1n0-muted)' }}>${fmtQ(positionTableNet)}</strong>
           {' '}— gross − fee del positions table; difiere de "En pools" por el spread capturado por el AMM.
           <br />
           <span style={{ color: 'var(--b1n0-muted)' }}>
             Conservación: <code>depósitos − saldos = en pools</code>{' '}
-            (Q{fmtQ(netDeposits)} − Q{fmtQ(totalAccountBalances)} = Q{fmtQ(moneyInPools)}).
+            (${fmtQ(netDeposits)} − ${fmtQ(totalAccountBalances)} = ${fmtQ(moneyInPools)}).
             Cualquier valor distinto de cero significa dinero LP comprometido a eventos abiertos o pagos pendientes.
           </span>
         </p>
         {!reconcileOk && (
           <p style={{ fontFamily: F, fontSize: '11px', color: '#f87171', margin: 0 }}>
-            Δ Q{fmtQ(ledgerDelta)} entre <code>sum(balance_ledger)</code> y <code>sum(profile.balance)</code>. El ledger no concuerda con los saldos — revisá entradas recientes antes de mover fondos.
+            Δ ${fmtQ(ledgerDelta)} entre <code>sum(balance_ledger)</code> y <code>sum(profile.balance)</code>. El ledger no concuerda con los saldos — revisá entradas recientes antes de mover fondos.
           </p>
         )}
       </div>
@@ -624,11 +624,11 @@ export function HealthPanel() {
               <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', margin: 0 }}>
                 Δ ledger:{' '}
                 <strong style={{ color: 'var(--b1n0-text-1)' }}>
-                  Q{fmtQ(Number(reconRuns[0].ledger_balance_delta ?? 0))}
+                  ${fmtQ(Number(reconRuns[0].ledger_balance_delta ?? 0))}
                 </strong>
                 {' · '}Δ conservación:{' '}
                 <strong style={{ color: 'var(--b1n0-text-1)' }}>
-                  Q{fmtQ(Number(reconRuns[0].conservation_delta ?? 0))}
+                  ${fmtQ(Number(reconRuns[0].conservation_delta ?? 0))}
                 </strong>
               </p>
             )}
@@ -818,7 +818,7 @@ export function HealthPanel() {
                 <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--b1n0-muted)' }}>
                   {w.user_id.slice(0, 8)}…
                 </span>
-                <span style={{ fontWeight: 600 }}>Q{fmtQ(Math.abs(Number(w.amount) || 0))}</span>
+                <span style={{ fontWeight: 600 }}>${fmtQ(Math.abs(Number(w.amount) || 0))}</span>
                 <span style={{ color: 'var(--b1n0-muted)' }}>{w.type}</span>
                 <span style={{ color: 'var(--b1n0-muted)' }}>
                   {new Date(w.created_at).toLocaleDateString('es-GT', { day: 'numeric', month: 'short' })}

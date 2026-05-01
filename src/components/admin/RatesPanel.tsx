@@ -238,10 +238,10 @@ export function RatesPanel() {
               </button>
             </div>
             {ratesDraft.depth_threshold !== platformRates.depth_threshold && (
-              <p style={{ fontFamily: F, fontSize: '9px', color: '#FFD474', marginTop: '4px' }}>DB: Q{Number(platformRates.depth_threshold ?? 50000).toLocaleString()}</p>
+              <p style={{ fontFamily: F, fontSize: '9px', color: '#FFD474', marginTop: '4px' }}>DB: ${Number(platformRates.depth_threshold ?? 50000).toLocaleString()}</p>
             )}
             <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', marginTop: '6px' }}>
-              Q5K → <strong style={{ color: 'var(--b1n0-text-1)' }}>{(5000 / (ratesDraft.depth_threshold ?? 50000) * 100).toFixed(0)}%</strong> · Q{((ratesDraft.depth_threshold ?? 50000) / 1000).toFixed(0)}K+ → <strong style={{ color: '#4ade80' }}>100%</strong>
+              Q5K → <strong style={{ color: 'var(--b1n0-text-1)' }}>{(5000 / (ratesDraft.depth_threshold ?? 50000) * 100).toFixed(0)}%</strong> · ${((ratesDraft.depth_threshold ?? 50000) / 1000).toFixed(0)}K+ → <strong style={{ color: '#4ade80' }}>100%</strong>
             </p>
           </div>
 
@@ -273,7 +273,7 @@ export function RatesPanel() {
                   <p style={{ fontFamily: F, fontSize: '9px', color: '#FFD474', marginTop: '4px' }}>DB: {platformRates[key]}%</p>
                 )}
                 <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', marginTop: '6px' }}>
-                  Q1,000 cobro → descuento <strong style={{ color: '#14b8a6' }}>Q{((ratesDraft[key] ?? 5) * 10).toFixed(0)}</strong> · usuario recibe <strong style={{ color: 'var(--b1n0-text-1)' }}>Q{(1000 - (ratesDraft[key] ?? 5) * 10).toFixed(0)}</strong>
+                  Q1,000 cobro → descuento <strong style={{ color: '#14b8a6' }}>${((ratesDraft[key] ?? 5) * 10).toFixed(0)}</strong> · usuario recibe <strong style={{ color: 'var(--b1n0-text-1)' }}>${(1000 - (ratesDraft[key] ?? 5) * 10).toFixed(0)}</strong>
                 </p>
               </div>
             )

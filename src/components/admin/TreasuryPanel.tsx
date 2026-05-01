@@ -164,11 +164,11 @@ export function TreasuryPanel() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
             <div style={{ background: 'var(--b1n0-surface)', borderRadius: '8px', padding: '8px' }}>
               <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', marginBottom: '2px' }}>Ingresos</p>
-              <p style={{ fontFamily: D, fontSize: '14px', fontWeight: 700, color: '#4ade80' }}>+Q{fmtQ2(totalIn)}</p>
+              <p style={{ fontFamily: D, fontSize: '14px', fontWeight: 700, color: '#4ade80' }}>+${fmtQ2(totalIn)}</p>
             </div>
             <div style={{ background: 'var(--b1n0-surface)', borderRadius: '8px', padding: '8px' }}>
               <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', marginBottom: '2px' }}>Egresos</p>
-              <p style={{ fontFamily: D, fontSize: '14px', fontWeight: 700, color: '#f87171' }}>−Q{fmtQ2(totalOut)}</p>
+              <p style={{ fontFamily: D, fontSize: '14px', fontWeight: 700, color: '#f87171' }}>−${fmtQ2(totalOut)}</p>
             </div>
             <div style={{ background: 'var(--b1n0-surface)', borderRadius: '8px', padding: '8px' }}>
               <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', marginBottom: '2px' }}>Txs</p>
@@ -302,8 +302,8 @@ export function TreasuryPanel() {
                 {treasuryLedger.map((entry, i) => (
                   <tr key={i} style={{ borderBottom: '1px solid var(--b1n0-border)' }}>
                     <td style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, padding: '8px 6px', color: entry.amount > 0 ? '#4ade80' : '#f87171' }}>{entry.amount > 0 ? 'Ingreso' : 'Egreso'}</td>
-                    <td style={{ fontFamily: D, fontSize: '12px', fontWeight: 700, padding: '8px 6px', color: entry.amount > 0 ? '#4ade80' : '#f87171' }}>{entry.amount > 0 ? '+' : ''}Q{fmtQ2(entry.amount)}</td>
-                    <td style={{ fontFamily: D, fontSize: '11px', padding: '8px 6px', color: 'var(--b1n0-text-1)' }}>Q{fmtQ2(entry.balance_after)}</td>
+                    <td style={{ fontFamily: D, fontSize: '12px', fontWeight: 700, padding: '8px 6px', color: entry.amount > 0 ? '#4ade80' : '#f87171' }}>{entry.amount > 0 ? '+' : ''}${fmtQ2(entry.amount)}</td>
+                    <td style={{ fontFamily: D, fontSize: '11px', padding: '8px 6px', color: 'var(--b1n0-text-1)' }}>${fmtQ2(entry.balance_after)}</td>
                     <td style={{ fontFamily: F, fontSize: '11px', padding: '8px 6px', color: 'var(--b1n0-muted)', maxWidth: '250px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{entry.label}</td>
                     <td style={{ fontFamily: F, fontSize: '10px', padding: '8px 6px', color: 'var(--b1n0-muted)', whiteSpace: 'nowrap' }}>
                       {new Date(entry.created_at).toLocaleDateString('es-GT', { day: 'numeric', month: 'short' })} {new Date(entry.created_at).toLocaleTimeString('es-GT', { hour: '2-digit', minute: '2-digit' })}

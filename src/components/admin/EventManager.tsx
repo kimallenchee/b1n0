@@ -271,11 +271,11 @@ function OptionRows({ options, onChange, maxPool = 0 }: {
           {maxPool > 0 && (
             <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: poolOver ? 'var(--b1n0-no)' : 'var(--b1n0-si)' }}>
               {poolOver
-                ? `Q${(totalPool - maxPool).toLocaleString()} excedido`
-                : `Q${poolRemaining.toLocaleString()} restante`}
+                ? `$${(totalPool - maxPool).toLocaleString()} excedido`
+                : `$${poolRemaining.toLocaleString()} restante`}
             </span>
           )}
-          <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>Q{totalPool.toLocaleString()} / Q{maxPool.toLocaleString()}</span>
+          <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>${totalPool.toLocaleString()} / ${maxPool.toLocaleString()}</span>
           <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: totalOk ? 'var(--b1n0-si)' : 'var(--b1n0-gold)' }}>
             {total}%
           </span>
@@ -283,7 +283,7 @@ function OptionRows({ options, onChange, maxPool = 0 }: {
       </div>
       {poolOver && (
         <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-no)', marginTop: '6px', padding: '6px 8px', background: 'rgba(248,113,113,0.08)', borderRadius: '6px' }}>
-          El pool de opciones excede el Pool inicial (Q{maxPool.toLocaleString()}). Reducí los montos o aumentá el pool total.
+          El pool de opciones excede el Pool inicial (${maxPool.toLocaleString()}). Reducí los montos o aumentá el pool total.
         </p>
       )}
       {!poolOver && (
@@ -385,7 +385,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
         return
       }
       if (lpUser.balance < lp.amount) {
-        setCreateError(`LP "${lpUser.name || lp.user_id.slice(0, 8)}" tiene saldo Q${lpUser.balance.toLocaleString()} — insuficiente para Q${lp.amount.toLocaleString()}`)
+        setCreateError(`LP "${lpUser.name || lp.user_id.slice(0, 8)}" tiene saldo $${lpUser.balance.toLocaleString()} — insuficiente para $${lp.amount.toLocaleString()}`)
         setCreateLoading(false)
         return
       }
@@ -978,7 +978,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                     <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid var(--b1n0-border)' }}>
                       <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)' }}>{label}</span>
                       <span style={{ fontFamily: D, fontWeight: 700, fontSize: '13px', color }}>
-                        {typeof value === 'string' ? value : `Q${Number(value).toLocaleString()}`}
+                        {typeof value === 'string' ? value : `$${Number(value).toLocaleString()}`}
                       </span>
                     </div>
                   ))}
@@ -1081,7 +1081,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                             <div>
                               <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 600, color: '#C4B5FD' }}>{userName}</span>
                               <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', marginLeft: '8px' }}>
-                                Q{lp.amount.toLocaleString()} · {(lp.return_pct * 100).toFixed(0)}%
+                                ${lp.amount.toLocaleString()} · {(lp.return_pct * 100).toFixed(0)}%
                               </span>
                             </div>
                             <span style={{ fontFamily: F, fontSize: '10px', color: lp.status === 'active' ? '#C4B5FD' : lp.status === 'returned' ? 'var(--b1n0-si)' : 'var(--b1n0-no)', fontWeight: 600, textTransform: 'uppercase' }}>
@@ -1101,7 +1101,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                     >
                       <option value="">Seleccionar LP...</option>
                       {lpUsers.filter(u => u.balance > 0).map(u => (
-                        <option key={u.id} value={u.id}>{u.name || u.id.slice(0, 8)} — Q{u.balance.toLocaleString()}</option>
+                        <option key={u.id} value={u.id}>{u.name || u.id.slice(0, 8)} — ${u.balance.toLocaleString()}</option>
                       ))}
                     </select>
                     <div style={{ display: 'flex', gap: '6px' }}>
@@ -1122,7 +1122,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                     </div>
                     {lpForm.user_id && lpForm.amount && (
                       <p style={{ fontFamily: F, fontSize: '10px', color: '#C4B5FD' }}>
-                        LP recibe capital Q{parseFloat(lpForm.amount).toLocaleString()} + {lpForm.return_pct}% de fees netos al resolver
+                        LP recibe capital ${parseFloat(lpForm.amount).toLocaleString()} + {lpForm.return_pct}% de fees netos al resolver
                       </p>
                     )}
                     <button
@@ -1598,7 +1598,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                       return (
                         <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 10px', background: 'rgba(196,181,253,0.08)', borderRadius: '8px', border: '1px solid rgba(124,58,237,0.1)' }}>
                           <span style={{ fontFamily: F, fontSize: '12px', color: '#C4B5FD', fontWeight: 600 }}>
-                            {u?.name || lp.user_id.slice(0, 8)} — Q{lp.amount.toLocaleString()} · {lp.return_pct}% de fees
+                            {u?.name || lp.user_id.slice(0, 8)} — ${lp.amount.toLocaleString()} · {lp.return_pct}% de fees
                           </span>
                           <button onClick={() => setC('lp_commitments', form.lp_commitments.filter((_, j) => j !== i))}
                             style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--b1n0-no)', fontSize: '14px', padding: 0, lineHeight: 1 }}>×</button>
@@ -1608,7 +1608,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                     <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 10px' }}>
                       <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>Total LP capital</span>
                       <span style={{ fontFamily: D, fontWeight: 700, fontSize: '12px', color: '#C4B5FD' }}>
-                        Q{form.lp_commitments.reduce((s, lp) => s + lp.amount, 0).toLocaleString()}
+                        ${form.lp_commitments.reduce((s, lp) => s + lp.amount, 0).toLocaleString()}
                       </span>
                     </div>
                   </div>
@@ -1622,7 +1622,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                   >
                     <option value="">Seleccionar LP...</option>
                     {lpUsers.map(u => (
-                      <option key={u.id} value={u.id}>{u.name || u.id.slice(0, 8)} — Q{u.balance.toLocaleString()}</option>
+                      <option key={u.id} value={u.id}>{u.name || u.id.slice(0, 8)} — ${u.balance.toLocaleString()}</option>
                     ))}
                   </select>
                   <div style={{ display: 'flex', gap: '6px' }}>

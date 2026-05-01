@@ -447,9 +447,9 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
           { label: 'Eventos', val: `${resolvedCount}/${totalEvents}` },
           { label: 'Posiciones', val: String(positions.length) },
           { label: 'Ventas', val: String(saleTxs.length), color: '#C4B5FD' },
-          { label: 'Vol. compras', val: `Q${fmtQ(buyVolume)}` },
-          { label: 'Pagado', val: `Q${fmtQ(totalPaidOut)}` },
-          { label: 'Bruto', val: `Q${fmtQ(cut2Total + cut3Est + skimTotal)}`, color: '#C4B5FD' },
+          { label: 'Vol. compras', val: `$${fmtQ(buyVolume)}` },
+          { label: 'Pagado', val: `$${fmtQ(totalPaidOut)}` },
+          { label: 'Bruto', val: `$${fmtQ(cut2Total + cut3Est + skimTotal)}`, color: '#C4B5FD' },
         ].map(({ label, val, color }) => (
           <div key={label} style={{ minWidth: '70px' }}>
             <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.3px', marginBottom: '1px' }}>{label}</p>
@@ -473,7 +473,7 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
           <div style={{ display: 'flex', gap: '12px', fontSize: '10px', fontFamily: F, color: 'var(--b1n0-muted)', marginBottom: '6px' }}>
             <span>LPs: <strong style={{ color: 'var(--b1n0-text-1)' }}>{lpDepositsAll.length}</strong></span>
             <span>Eventos: <strong style={{ color: 'var(--b1n0-text-1)' }}>{lpCommissionByEvent.length}</strong></span>
-            <span>Base: <strong style={{ color: 'var(--b1n0-text-1)' }}>Q{fmtQ(lpCommissionByEvent.reduce((s, ev) => s + ev.totalMargins, 0))}</strong></span>
+            <span>Base: <strong style={{ color: 'var(--b1n0-text-1)' }}>${fmtQ(lpCommissionByEvent.reduce((s, ev) => s + ev.totalMargins, 0))}</strong></span>
           </div>
           <button
             onClick={() => setLpExpanded(!lpExpanded)}
@@ -487,15 +487,15 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
                 <div key={ev.eventId} style={{ background: 'rgba(248,113,113,0.08)', borderRadius: '6px', padding: '8px' }}>
                   <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--b1n0-text-1)', marginBottom: '4px' }}>{ev.question}</p>
                   <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginBottom: '4px' }}>
-                    Fees totales: Q{fmtQ(ev.totalMargins)} · Comisión LP: Q{fmtQ(ev.commission)}
+                    Fees totales: ${fmtQ(ev.totalMargins)} · Comisión LP: ${fmtQ(ev.commission)}
                   </p>
                   {ev.lps.map((lp, i) => (
                     <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '2px 0' }}>
                       <span style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)' }}>
-                        LP Q{fmtQ(lp.amount)} ({(lp.return_pct * 100).toFixed(0)}% × Q{fmtQ(lp.delta_fees)} fees+spread)
+                        LP ${fmtQ(lp.amount)} ({(lp.return_pct * 100).toFixed(0)}% × ${fmtQ(lp.delta_fees)} fees+spread)
                       </span>
                       <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: '#f87171' }}>
-                        -Q{fmtQ(lp.cut)}
+                        -${fmtQ(lp.cut)}
                       </span>
                     </div>
                   ))}
@@ -518,7 +518,7 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
             </div>
           </div>
           <div style={{ display: 'flex', gap: '12px', fontSize: '10px', fontFamily: F, color: 'var(--b1n0-muted)', marginBottom: '4px' }}>
-            <span>Vol: <strong style={{ color: 'var(--b1n0-text-1)' }}>Q{fmtQ(cut2Volume)}</strong></span>
+            <span>Vol: <strong style={{ color: 'var(--b1n0-text-1)' }}>${fmtQ(cut2Volume)}</strong></span>
             <span>Tasa: <strong style={{ color: '#C4B5FD' }}>{rates.fee_floor_pct ?? 1}%–{rates.fee_ceiling_pct ?? 5}%</strong></span>
             <span>Txs: <strong style={{ color: 'var(--b1n0-text-1)' }}>{cut2Count}</strong></span>
           </div>
@@ -527,8 +527,8 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
             const purchaseFees = Math.round((cut2Total - saleFees) * 100) / 100
             return saleFees > 0 ? (
               <div style={{ display: 'flex', gap: '12px', fontSize: '10px', fontFamily: F, color: 'var(--b1n0-muted)' }}>
-                <span>Compras: <strong style={{ color: 'var(--b1n0-text-1)' }}>Q{fmtQ(purchaseFees)}</strong></span>
-                <span>Ventas: <strong style={{ color: '#C4B5FD' }}>Q{fmtQ(saleFees)}</strong></span>
+                <span>Compras: <strong style={{ color: 'var(--b1n0-text-1)' }}>${fmtQ(purchaseFees)}</strong></span>
+                <span>Ventas: <strong style={{ color: '#C4B5FD' }}>${fmtQ(saleFees)}</strong></span>
               </div>
             ) : null
           })()}
@@ -544,8 +544,8 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
             </div>
           </div>
           <div style={{ display: 'flex', gap: '12px', fontSize: '10px', fontFamily: F, color: 'var(--b1n0-muted)', marginBottom: '4px' }}>
-            <span>Compras: <strong style={{ color: '#4ade80' }}>Q{fmtQ(cut3Purchases)}</strong></span>
-            <span>Ventas: <strong style={{ color: '#C4B5FD' }}>Q{fmtQ(cut3Sales)}</strong></span>
+            <span>Compras: <strong style={{ color: '#4ade80' }}>${fmtQ(cut3Purchases)}</strong></span>
+            <span>Ventas: <strong style={{ color: '#C4B5FD' }}>${fmtQ(cut3Sales)}</strong></span>
             <span>Rango: <strong style={{ color: '#FFD474' }}>{rates.spread_low_pct}%–{rates.spread_high_pct}%</strong></span>
           </div>
           {!cut3IsReal && <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', fontStyle: 'italic' }}>Estimado</p>}
@@ -562,7 +562,7 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
           </div>
           <div style={{ display: 'flex', gap: '12px', fontSize: '10px', fontFamily: F, color: 'var(--b1n0-muted)' }}>
             <span>Resueltos: <strong style={{ color: 'var(--b1n0-text-1)' }}>{resolvedCount}</strong></span>
-            <span>Promedio: <strong style={{ color: '#14b8a6' }}>Q{resolvedCount > 0 ? fmtQ(skimTotal / resolvedCount) : '0'}</strong></span>
+            <span>Promedio: <strong style={{ color: '#14b8a6' }}>${resolvedCount > 0 ? fmtQ(skimTotal / resolvedCount) : '0'}</strong></span>
             <span>5% → <strong style={{ color: '#4ade80' }}>Tesorería</strong></span>
           </div>
         </div>
@@ -626,10 +626,10 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
           return (
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '14px' }}>
               {[
-                { label: 'Volumen ventas', val: `Q${fmtQ(totalSaleGross)}`, color: 'var(--b1n0-text-1)' },
-                { label: 'Fee cobrado', val: `Q${fmtQ(totalSaleFee)}`, color: '#C4B5FD' },
-                { label: 'Spread capturado', val: `Q${fmtQ(totalSaleSpread)}`, color: '#FFD474' },
-                { label: 'Revenue total ventas', val: `Q${fmtQ(totalSaleRevenue)}`, color: '#4ade80' },
+                { label: 'Volumen ventas', val: `$${fmtQ(totalSaleGross)}`, color: 'var(--b1n0-text-1)' },
+                { label: 'Fee cobrado', val: `$${fmtQ(totalSaleFee)}`, color: '#C4B5FD' },
+                { label: 'Spread capturado', val: `$${fmtQ(totalSaleSpread)}`, color: '#FFD474' },
+                { label: 'Revenue total ventas', val: `$${fmtQ(totalSaleRevenue)}`, color: '#4ade80' },
               ].map(({ label, val, color }) => (
                 <div key={label} style={{ flex: '1 1 100px', background: 'var(--b1n0-surface)', borderRadius: '8px', padding: '10px' }}>
                   <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.3px', marginBottom: '3px' }}>{label}</p>
@@ -670,10 +670,10 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
                       {t.side}
                     </td>
                     <td style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-text-1)', padding: '5px 4px', whiteSpace: 'nowrap' }}>
-                      Q{fmtQ(t.amount)}
+                      ${fmtQ(t.amount)}
                     </td>
                     <td style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', padding: '5px 4px', whiteSpace: 'nowrap' }}>
-                      Q{fmtQ(t.net)}
+                      ${fmtQ(t.net)}
                     </td>
                     <td style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', padding: '5px 4px', whiteSpace: 'nowrap' }}>
                       {t.midPrice?.toFixed(3) || '—'}
@@ -688,13 +688,13 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
                       {t.contracts > 0 ? t.contracts.toFixed(2) : '—'}
                     </td>
                     <td style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', padding: '5px 4px', whiteSpace: 'nowrap' }}>
-                      Q{fmtQ(t.cobro)}
+                      ${fmtQ(t.cobro)}
                     </td>
                     <td style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: '#C4B5FD', padding: '5px 4px', whiteSpace: 'nowrap' }}>
-                      Q{fmtQ(t.fee)}
+                      ${fmtQ(t.fee)}
                     </td>
                     <td style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: '#FFD474', padding: '5px 4px', whiteSpace: 'nowrap' }}>
-                      Q{fmtQ(t.spreadQ)}
+                      ${fmtQ(t.spreadQ)}
                     </td>
                     <td style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: '#f87171', padding: '5px 4px', whiteSpace: 'nowrap', position: 'relative' }}>
                       {(() => {
@@ -717,12 +717,12 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
                               onClick={(e) => { e.stopPropagation(); setLpRowExpanded(isOpen ? null : t.id) }}
                               style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '11px', fontWeight: 600, color: '#f87171', padding: 0, textDecoration: 'underline dotted' }}
                             >
-                              -Q{fmtQ(lpCut)} {isOpen ? '▲' : '▼'}
+                              -${fmtQ(lpCut)} {isOpen ? '▲' : '▼'}
                             </button>
                             {isOpen && (
                               <div style={{ position: 'absolute', top: '100%', right: 0, zIndex: 10, background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '8px', padding: '10px', minWidth: '200px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
                                 <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.3px', marginBottom: '6px' }}>
-                                  Desglose LP · Fees: Q{fmtQ(txMargins)}
+                                  Desglose LP · Fees: ${fmtQ(txMargins)}
                                 </p>
                                 {activeLps.map((lp, i) => (
                                   <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', borderBottom: i < activeLps.length - 1 ? '1px solid rgba(0,0,0,0.05)' : 'none' }}>
@@ -730,7 +730,7 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
                                       {profileMap[lp.user_id] || lp.user_id.slice(0, 8)} ({(lp.return_pct * 100).toFixed(0)}%)
                                     </span>
                                     <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: '#f87171' }}>
-                                      -Q{fmtQ(Math.round(lp.return_pct * txMargins * 100) / 100)}
+                                      -${fmtQ(Math.round(lp.return_pct * txMargins * 100) / 100)}
                                     </span>
                                   </div>
                                 ))}
@@ -799,19 +799,19 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
                         {t.spreadPct > 0 ? `${t.spreadPct.toFixed(2)}%` : '—'}
                       </td>
                       <td style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-text-1)', padding: '5px 4px', whiteSpace: 'nowrap' }}>
-                        Q{fmtQ(t.amount)}
+                        ${fmtQ(t.amount)}
                       </td>
                       <td style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: '#C4B5FD', padding: '5px 4px', whiteSpace: 'nowrap' }}>
-                        Q{fmtQ(t.fee)}
+                        ${fmtQ(t.fee)}
                       </td>
                       <td style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: '#FFD474', padding: '5px 4px', whiteSpace: 'nowrap' }}>
-                        Q{fmtQ(t.spreadQ)}
+                        ${fmtQ(t.spreadQ)}
                       </td>
                       <td style={{ fontFamily: F, fontSize: '11px', fontWeight: 700, color: '#4ade80', padding: '5px 4px', whiteSpace: 'nowrap' }}>
-                        Q{fmtQ(revenue)}
+                        ${fmtQ(revenue)}
                       </td>
                       <td style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', padding: '5px 4px', whiteSpace: 'nowrap' }}>
-                        Q{fmtQ(t.net)}
+                        ${fmtQ(t.net)}
                       </td>
                       <td style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', padding: '5px 4px', whiteSpace: 'nowrap' }}>
                         {new Date(t.created_at).toLocaleString('es-GT', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', hour12: false })}

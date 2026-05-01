@@ -322,10 +322,10 @@ export function UsersPanel() {
                       </div>
                     </div>
                     <span style={{ fontFamily: D, fontSize: '13px', fontWeight: 700, color: 'var(--b1n0-text-1)' }}>
-                      Q{user.balance.toLocaleString('es-GT', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                      ${user.balance.toLocaleString('es-GT', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                     </span>
                     <span style={{ fontFamily: D, fontSize: '13px', fontWeight: 600, color: user.total_cobrado > 0 ? '#4ade80' : 'var(--b1n0-muted)' }}>
-                      Q{user.total_cobrado.toLocaleString('es-GT', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                      ${user.total_cobrado.toLocaleString('es-GT', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                     </span>
                     <span style={{ fontFamily: D, fontSize: '13px', fontWeight: 600, color: 'var(--b1n0-text-2)' }}>
                       {user.total_predictions}
@@ -421,7 +421,7 @@ export function UsersPanel() {
                                   color: '#4ade80',
                                 }}
                               >
-                                +Q{amt.toLocaleString()}
+                                +${amt.toLocaleString()}
                               </button>
                             ))}
                           </div>
@@ -477,7 +477,7 @@ export function UsersPanel() {
                               Creado: {new Date(user.created_at).toLocaleDateString('es-GT')}
                             </p>
                             <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>
-                              Cobrado total: Q{user.total_cobrado.toLocaleString('es-GT', { minimumFractionDigits: 2 })}
+                              Cobrado total: ${user.total_cobrado.toLocaleString('es-GT', { minimumFractionDigits: 2 })}
                             </p>
                           </div>
                           <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 700, color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px' }}>
@@ -652,7 +652,7 @@ export function UsersPanel() {
                                       {pos.side.toUpperCase()}
                                     </td>
                                     <td style={{ fontFamily: D, fontSize: '11px', fontWeight: 600, padding: '6px' }}>
-                                      Q{pos.gross_amount.toLocaleString()}
+                                      ${pos.gross_amount.toLocaleString()}
                                     </td>
                                     <td style={{ fontFamily: D, fontSize: '11px', padding: '6px' }}>
                                       {pos.price_at_purchase?.toFixed(3)}
@@ -661,10 +661,10 @@ export function UsersPanel() {
                                       {pos.contracts?.toFixed(2)}
                                     </td>
                                     <td style={{ fontFamily: D, fontSize: '11px', fontWeight: 600, color: '#4ade80', padding: '6px' }}>
-                                      Q{pos.payout_if_win?.toLocaleString()}
+                                      ${pos.payout_if_win?.toLocaleString()}
                                     </td>
                                     <td style={{ fontFamily: F, fontSize: '11px', color: '#f87171', padding: '6px' }}>
-                                      Q{pos.fee_paid?.toFixed(2)}
+                                      ${pos.fee_paid?.toFixed(2)}
                                     </td>
                                     <td style={{ padding: '6px' }}>
                                       <span
@@ -721,7 +721,7 @@ export function UsersPanel() {
                           color: '#f87171',
                         }}
                       >
-                        -Q{amt.toLocaleString()}
+                        -${amt.toLocaleString()}
                       </button>
                     ))}
                     <input
