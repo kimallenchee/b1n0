@@ -186,7 +186,7 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
             <div style={{ textAlign: 'center', padding: '16px 0 20px' }}>
               <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: '4px' }}>Saldo disponible</p>
               <p style={{ fontFamily: D, fontWeight: 800, fontSize: '36px', color: 'var(--b1n0-text-1)', letterSpacing: '-1px', lineHeight: 1 }}>
-                Q{balance.toLocaleString()}
+                ${balance.toLocaleString()}
               </p>
             </div>
 
@@ -284,7 +284,7 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
                     cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-text-1)',
                   }}
                 >
-                  +Q{q}
+                  +${q}
                 </button>
               ))}
             </div>
@@ -348,7 +348,7 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
               <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-si)', background: 'var(--b1n0-si-bg)', borderRadius: '6px', padding: '4px 10px' }}>↓ DEPOSITAR</span>
             </div>
             <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-              <p style={{ fontFamily: D, fontWeight: 800, fontSize: '28px', color: 'var(--b1n0-text-1)' }}>Q{amountNum.toLocaleString()}</p>
+              <p style={{ fontFamily: D, fontWeight: 800, fontSize: '28px', color: 'var(--b1n0-text-1)' }}>${amountNum.toLocaleString()}</p>
               <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)', marginTop: '4px' }}>Depósito vía tarjeta</p>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '18px' }}>
@@ -409,7 +409,7 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
                 />
               </div>
               <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', marginTop: '6px' }}>
-                Disponible: Q{balance.toLocaleString()}
+                Disponible: ${balance.toLocaleString()}
               </p>
             </div>
 
@@ -426,7 +426,7 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
                     color: amountNum === q ? 'var(--b1n0-on-accent)' : 'var(--b1n0-text-1)',
                   }}
                 >
-                  Q{q}
+                  ${q}
                 </button>
               ))}
             </div>
@@ -474,7 +474,7 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
               <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-gold)', background: 'var(--status-enjuego-bg)', borderRadius: '6px', padding: '4px 10px' }}>↑ RETIRAR</span>
             </div>
             <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-              <p style={{ fontFamily: D, fontWeight: 800, fontSize: '28px', color: 'var(--b1n0-text-1)' }}>Q{amountNum.toLocaleString()}</p>
+              <p style={{ fontFamily: D, fontWeight: 800, fontSize: '28px', color: 'var(--b1n0-text-1)' }}>${amountNum.toLocaleString()}</p>
               <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)', marginTop: '4px' }}>Retiro vía transferencia</p>
             </div>
             <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--b1n0-muted)', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: '10px' }}>Cuenta destino</p>

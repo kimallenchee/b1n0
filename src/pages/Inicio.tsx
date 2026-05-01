@@ -359,9 +359,9 @@ export function Inicio() {
       {isLoggedIn && <div style={{ padding: '10px 16px 0', flexShrink: 0 }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '6px' }}>
           {([
-            { label: 'Saldo', value: `Q${balance.toLocaleString()}`, accent: 'var(--color-teal-500)', click: () => setWalletOpen(true) },
-            { label: 'En juego', value: totalAtRisk > 0 ? `Q${totalAtRisk.toLocaleString()}` : '—', accent: 'var(--color-orange-500)' },
-            { label: 'Pool', value: `Q${totalLivePool.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`, accent: 'var(--color-teal-700)' },
+            { label: 'Saldo', value: `$${balance.toLocaleString()}`, accent: 'var(--color-teal-500)', click: () => setWalletOpen(true) },
+            { label: 'En juego', value: totalAtRisk > 0 ? `$${totalAtRisk.toLocaleString()}` : '—', accent: 'var(--color-orange-500)' },
+            { label: 'Pool', value: `$${totalLivePool.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`, accent: 'var(--color-teal-700)' },
             { label: 'Activos', value: String(activeLive.length), accent: 'var(--color-si)' },
             { label: 'Votos', value: String(totalVotes), accent: 'var(--color-muted)' },
           ] as { label: string; value: string; accent: string; click?: () => void }[]).map((s) => (

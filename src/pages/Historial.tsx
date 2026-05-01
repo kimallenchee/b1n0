@@ -35,7 +35,7 @@ function TxCard({ tx }: { tx: Transaction }) {
         <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', marginTop: '2px' }}>{tx.date}</p>
       </div>
       <p style={{ fontFamily: D, fontWeight: 700, fontSize: '14px', color: 'var(--b1n0-text-1)', flexShrink: 0, letterSpacing: '-0.3px' }}>
-        {positive ? '+' : ''}Q{Math.abs(tx.amount).toFixed(2)}
+        {positive ? '+' : ''}${Math.abs(tx.amount).toFixed(2)}
       </p>
     </div>
   )
@@ -66,7 +66,7 @@ function VoteCard({ p }: { p: UserPrediction }) {
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
         <div>
           <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginBottom: '2px' }}>Participación</p>
-          <p style={{ fontFamily: D, fontWeight: 700, fontSize: '14px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.3px' }}>Q{p.amount.toFixed(2)}</p>
+          <p style={{ fontFamily: D, fontWeight: 700, fontSize: '14px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.3px' }}>${p.amount.toFixed(2)}</p>
         </div>
         <div style={{ textAlign: 'right' }}>
           <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginBottom: '2px' }}>

@@ -184,7 +184,7 @@ export function RetiroSheet({ open, onClose }: RetiroSheetProps) {
                     transition: 'all 0.15s',
                   }}
                 >
-                  Q{q}
+                  ${q}
                 </button>
               ))}
             </div>
@@ -240,7 +240,7 @@ export function RetiroSheet({ open, onClose }: RetiroSheetProps) {
             </button>
 
             <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-              <p style={{ fontFamily: D, fontWeight: 800, fontSize: '28px', color: 'var(--b1n0-text-1)' }}>Q{amountNum.toLocaleString()}</p>
+              <p style={{ fontFamily: D, fontWeight: 800, fontSize: '28px', color: 'var(--b1n0-text-1)' }}>${amountNum.toLocaleString()}</p>
               <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)', marginTop: '4px' }}>Retiro vía transferencia</p>
             </div>
 
@@ -284,7 +284,7 @@ export function RetiroSheet({ open, onClose }: RetiroSheetProps) {
             </div>
             <p style={{ fontFamily: D, fontWeight: 700, fontSize: '20px', color: 'var(--b1n0-text-1)', marginBottom: '6px' }}>Retiro en proceso</p>
             <p style={{ fontFamily: F, fontSize: '14px', color: 'var(--b1n0-muted)', marginBottom: '28px' }}>
-              Q{amountNum.toLocaleString()} vía {method === 'transferencia' ? 'transferencia bancaria' : 'efectivo'}.
+              ${amountNum.toLocaleString()} vía {method === 'transferencia' ? 'transferencia bancaria' : 'efectivo'}.
             </p>
             <button
               onClick={handleClose}

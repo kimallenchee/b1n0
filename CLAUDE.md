@@ -2,9 +2,11 @@
 
 ## What This Project Is
 
-b1n0 is a **sponsored prediction platform** for Central America (Guatemala, El Salvador, Honduras). It is a social opinion game — not a gambling app, not a finance app. Brands fund prize pools and users prove they know their world better than everyone else. The product lives between ESPN, Instagram, and a group chat where someone always has a hot take.
+b1n0 is a **sponsored prediction platform** for Central America (Guatemala, El Salvador, Honduras, Nicaragua, Costa Rica, Panama, Belize). It is a social opinion game — not a gambling app, not a finance app. Brands fund prize pools and users prove they know their world better than everyone else. The product lives between ESPN, Instagram, and a group chat where someone always has a hot take.
 
 **Spanish-first. Mobile-first. 18–35 age target.**
+
+**Live at:** https://www.b1n0.com (Vercel, DNS via GoDaddy)
 
 ## Tech Stack
 
@@ -12,7 +14,9 @@ b1n0 is a **sponsored prediction platform** for Central America (Guatemala, El S
 - **UI:** Custom CSS (inline styles + index.css) — no shadcn/ui, no component library
 - **Styling:** Tailwind CSS v4 (via `@tailwindcss/vite` plugin)
 - **Routing:** React Router DOM v7
-- **Backend:** None yet — mock data in `src/data/mockEvents.ts`
+- **Backend:** Supabase (PostgreSQL + Auth + Realtime + Storage)
+- **Monitoring:** Sentry (lazy-loaded, optional via `VITE_SENTRY_DSN`)
+- **Deployment:** Vercel (auto-deploy from GitHub)
 
 ## Commands
 
@@ -27,57 +31,110 @@ npm run preview    # Preview production build
 
 ```
 src/
-├── pages/                  # 5 route-level pages
-│   ├── Inicio.tsx          # Main feed
-│   ├── EnVivo.tsx          # Live events only
-│   ├── MisLlamados.tsx     # User's active predictions
-│   ├── Tabla.tsx           # Leaderboard
-│   └── Perfil.tsx          # Account + wallet + KYC
+├── pages/                      # Route-level pages
+│   ├── Inicio.tsx              # Main feed (events + news)
+│   ├── MisLlamados.tsx         # User's active predictions (Mis Votos)
+│   ├── Tabla.tsx               # Leaderboard
+│   ├── Perfil.tsx              # Account, wallet, KYC, friends
+│   ├── Portafolio.tsx          # Active positions with live P/L
+│   ├── Historial.tsx           # Transaction history + vote history
+│   ├── EventDetailPage.tsx     # Full event view with comments + purchase
+│   ├── AdminPage.tsx           # 5-panel admin suite
+│   ├── AuthPage.tsx            # Login / signup standalone page
+│   └── Legal.tsx               # Terms + privacy
 ├── components/
 │   ├── layout/
-│   │   ├── TopBar.tsx      # Fixed top: balance + avatar + tier badge
-│   │   └── BottomNav.tsx   # Fixed bottom: 5 tabs
-│   └── feed/
-│       ├── EventCard.tsx   # Signature UI element — the entire product
-│       ├── EventFeed.tsx   # Feed wrapper
-│       ├── SplitBar.tsx    # Animated SÍ/NO split bar
-│       ├── LiveDot.tsx     # Pulsing teal live indicator
-│       └── EntryFlow.tsx   # 3-step entry: pick side → amount → confirm
-├── data/
-│   └── mockEvents.ts       # Mock events, predictions, leaderboard, user
-└── types/
-    └── index.ts            # TypeScript interfaces
+│   │   ├── TopBar.tsx          # Fixed top: balance + avatar + tier badge
+│   │   ├── BottomNav.tsx       # Fixed bottom: 5 tabs (mobile)
+│   │   ├── SideNav.tsx         # Side navigation (desktop)
+│   │   ├── RightPanel.tsx      # Desktop right sidebar
+│   │   ├── NotificationDrawer.tsx
+│   │   └── AccountDrawer.tsx
+│   ├── feed/
+│   │   ├── EventCard.tsx       # Signature UI — the entire product
+│   │   ├── EventFeed.tsx       # Feed wrapper
+│   │   ├── SplitBar.tsx        # Animated SÍ/NO split bar
+│   │   ├── LiveDot.tsx         # Pulsing teal live indicator
+│   │   ├── EntryFlow.tsx       # 3-step entry: pick side → amount → confirm
+│   │   ├── CommentFeed.tsx     # Threaded comments on events
+│   │   ├── PurchaseCelebration.tsx
+│   │   └── NewsCard.tsx
+│   ├── admin/
+│   │   ├── EventManager.tsx    # Create/edit/resolve events (bulk import via xlsx)
+│   │   ├── RevenuePanel.tsx    # Revenue tracking, LP commissions
+│   │   ├── RatesPanel.tsx      # Fee rate configuration
+│   │   ├── UsersPanel.tsx      # User management, balance adjustments
+│   │   └── TreasuryPanel.tsx   # Platform treasury + sweeps
+│   ├── wallet/
+│   │   ├── WalletSheet.tsx     # Main wallet bottom sheet
+│   │   ├── DepositSheet.tsx    # Deposit flow (TODO: payment processor)
+│   │   ├── RetiroSheet.tsx     # Withdrawal flow (TODO: payment processor)
+│   │   └── KYCSheet.tsx        # Tier upgrade flow
+│   ├── AuthModal.tsx           # Login/signup modal overlay
+│   ├── ErrorBoundary.tsx       # App-wide error catching + Sentry
+│   ├── HowItWorks.tsx          # Onboarding modal
+│   └── ProtectedRoute.tsx      # Admin route guard
+├── context/
+│   ├── AuthContext.tsx          # Supabase auth + profile sync + realtime
+│   ├── EventsContext.tsx        # Event fetching + caching
+│   ├── VoteContext.tsx          # Purchase/vote execution + optimistic updates
+│   ├── NotificationContext.tsx  # Realtime notifications
+│   ├── ThemeContext.tsx         # Dark/light/system theme
+│   ├── NowContext.tsx           # Shared clock for countdown timers
+│   └── AuthModalContext.tsx     # Modal state management
+├── hooks/
+│   ├── usePricingEngine.ts      # AMM pricing calculations
+│   ├── useComments.ts           # Comment CRUD + realtime
+│   └── useIsDesktop.ts          # Responsive breakpoint
+├── lib/
+│   ├── supabase.ts              # Supabase client init
+│   ├── pricing.ts               # Parimutuel AMM math
+│   ├── logger.ts                # Structured logging + Sentry
+│   ├── retry.ts                 # Fetch retry with backoff
+│   ├── rateLimit.ts             # Client-side rate limiting
+│   ├── validate.ts              # Input validation helpers
+│   └── theme.ts                 # Theme utilities
+├── types/
+│   └── index.ts                 # TypeScript interfaces
+└── data/
+    └── mockEvents.ts            # Mock data for offline dev
 ```
 
-## Design System
+## Supabase Schema (19 migrations)
 
-### Colors
+**Core tables:** profiles, events, predictions, positions, event_markets, option_markets, market_transactions, comments, balance_ledger, friendships, notifications, platform_config, platform_ledger, rate_limits
+
+**Key RPCs:** execute_purchase, preview_purchase, execute_sell, settle_event, settle_predictions, cast_vote, deposit_balance, withdraw_balance, initialize_market, initialize_option_markets, execute_option_purchase, preview_option_purchase, update_platform_config, admin_adjust_balance
+
+**Event types:** binary (SÍ/NO) and open (multi-option with per-option markets)
+
+**Pricing:** Parimutuel AMM — users stake, pool reprices on every entry, winners split pro-rata. ~8% blended take across transaction fees (1-5%), spread capture (1-2%), and 5% resolution skim.
+
+## Theme System
+
+Supports dark, light, and system modes via `ThemeContext`. Uses `[data-theme="light"]` on `<html>`.
+
+**Critical CSS note:** Tailwind v4's `@theme { }` block resolves `var()` at COMPILE time. All runtime-reactive color aliases must be defined in a `:root { }` block AFTER `@theme` in `index.css`. This is why `--color-*` aliases exist in both places.
+
+**Selected-state pattern:** For tabs/pills that invert across themes, always use `bg: var(--b1n0-text-1)` + `color: var(--b1n0-bg)`. Container uses `--b1n0-card` for contrast. Never hardcode `#fff` on dynamic backgrounds.
+
+### Colors (dark mode defaults)
 ```css
---bg: #090b10          /* Near black background */
---surface: #111318     /* Card background */
---surface2: #161920    /* Inner card elements */
---border: rgba(255,255,255,0.06)
---text: #e2e4ed
---muted: #8b8fa3
---teal: #14b8a6        /* Primary accent — CTA, live, wins */
---amber: #f59e0b       /* Secondary — timers, highlights */
---indigo: #6366f1      /* Tertiary — KYC, badges */
---red: #ef4444         /* Errors only — NEVER for NO side */
+--b1n0-bg: #090b10
+--b1n0-surface: #111318
+--b1n0-card: #161920
+--b1n0-border: rgba(255,255,255,0.06)
+--b1n0-text-1: #e2e4ed
+--b1n0-muted: #8b8fa3
+--b1n0-si: #14b8a6        /* Primary accent — CTA, live, wins */
+--b1n0-no: #f59e0b        /* NO side — amber, NOT red */
+--b1n0-indigo: #6366f1    /* Tertiary — KYC, badges */
 ```
 
 ### Typography
-- **Display / Questions:** Syne 800 — feels like an ESPN headline
+- **Display / Questions:** Syne 800 — ESPN headline energy
 - **Body / UI labels:** DM Sans 400/500 — clean at small sizes
 - **Numbers:** Syne 700, letter-spacing: -1px, tabular-nums
-
-### Category Accents (left border on cards)
-| Category | Color |
-|----------|-------|
-| Fútbol | #14b8a6 |
-| NFL/NBA | #f59e0b |
-| Local | #6366f1 |
-| Economía | #3b82f6 |
-| Cultura | #a78bfa |
 
 ## Language Rules (CRITICAL)
 
@@ -92,16 +149,17 @@ src/
 | Trade / Invertir | Participar / Tomar posición |
 | Probabilidad | ¿Qué dice la gente? |
 | House edge | (never mention) |
+| KYC | Verificá tu cuenta |
 
 ## KYC Tiers
 
 | Tier | Badge | Max per event | Requirement |
 |------|-------|---------------|-------------|
-| Nivel 1 | N1 gray | Q500 | Phone number |
-| Nivel 2 | N2 teal | Q2,000 | Phone + DPI |
-| Nivel 3 | N3 gold | Q10,000 | Full KYC |
+| Nivel 1 | N1 gray | $50 | Phone number |
+| Nivel 2 | N2 teal | $250 | Phone + DPI |
+| Nivel 3 | N3 gold | $1,000 | Full KYC |
 
-Never say "KYC" to users. Say "verificá tu cuenta."
+Currency is **USD** platform-wide. Sponsor model removed — pools are funded exclusively by LP capital flowing through `balance_ledger`. See `LEDGER_INVARIANTS.md` for accounting invariants.
 
 ## What NOT to Build
 
@@ -117,12 +175,23 @@ Never say "KYC" to users. Say "verificá tu cuenta."
 ## Microcopy Examples
 
 - Empty feed: *"No hay llamados activos. Volvé más tarde — esto se pone bueno."*
-- Win: *"¡Lo sabías! Colectás Q82.35"*
+- Win: *"¡Lo sabías! Colectás $82.35"*
 - Loss: *"Esta vez no. Seguí participando."*
-- KYC upsell: *"Subí a Nivel 2 para participar hasta Q2,000. Solo tarda 2 minutos."*
+- KYC upsell: *"Subí a Nivel 2 para participar hasta $250. Solo tarda 2 minutos."*
 - Leaderboard: *"Los que más saben este mes"*
+
+## Known Gaps (as of April 2026)
+
+- **Payment processor not integrated** — DepositSheet and RetiroSheet are stubs (TODO comments). Balances adjust via RPC but no real money moves.
+- **Admin auth is client-side** — `isAdmin` flag on profile row. RPCs check `auth.uid()` server-side, but no dedicated admin role in Supabase.
+- **Treasury ID hardcoded** — UUID `00000000-0000-0000-0000-000000000001` in RevenuePanel/TreasuryPanel. Should move to platform_config.
+- **TypeScript `any` casts** — Several admin panels cast Supabase responses as `any[]` instead of typed interfaces.
+- **No PWA manifest** — App works on mobile browser but can't be added to home screen as an app yet.
 
 ## Environment Variables
 
-None required for frontend-only mock mode.
-When backend is added, prefix all with `VITE_`.
+```
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key-here
+VITE_SENTRY_DSN=              # Optional: leave empty to skip Sentry
+```

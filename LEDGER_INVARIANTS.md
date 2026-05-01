@@ -10,11 +10,11 @@ loss of funds.
 
 | #   | Name                | What it checks                                                                                                          | Tolerance | Page that watches it |
 | :-- | :------------------ | :---------------------------------------------------------------------------------------------------------------------- | :-------- | :------------------- |
-| 1   | Ledger-to-balance   | Every credit/debit to a profile flows through balance_ledger                                                            | Q0.50     | HealthPanel · cron   |
-| 2   | Conservation        | Money in = money parked + money in motion                                                                               | Q0.50     | HealthPanel · cron   |
-| 3   | Treasury accounting | Treasury balance = sum of treasury ledger entries                                                                       | Q0.50     | cron                 |
-| 4   | Per-event solvency  | No market can owe more than its backing                                                                                 | Q1.00     | cron                 |
-| 5   | Spread accounting   | gross paid by user = net to pool + fee + spread captured                                                                | Q0.50     | cron (informational) |
+| 1   | Ledger-to-balance   | Every credit/debit to a profile flows through balance_ledger                                                            | $0.50     | HealthPanel · cron   |
+| 2   | Conservation        | Money in = money parked + money in motion                                                                               | $0.50     | HealthPanel · cron   |
+| 3   | Treasury accounting | Treasury balance = sum of treasury ledger entries                                                                       | $0.50     | cron                 |
+| 4   | Per-event solvency  | No market can owe more than its backing                                                                                 | $1.00     | cron                 |
+| 5   | Spread accounting   | gross paid by user = net to pool + fee + spread captured                                                                | $0.50     | cron (informational) |
 
 The Q-cents tolerances exist because Postgres `numeric(14,4)` math
 rounds to the fourth decimal but `numeric(12,2)` rounds to the second.
@@ -251,9 +251,9 @@ WHERE pool_committed > (pool_total + lp_backing) + 1.00
 ORDER BY overshoot DESC;
 ```
 
-**Threshold.** Tolerance is Q1.00 here (looser than the others)
+**Threshold.** Tolerance is $1.00 here (looser than the others)
 because pool_total is `numeric(14,4)` and committed liability rounds
-during purchase math; an Q0.50 tolerance produces false positives on
+during purchase math; an $0.50 tolerance produces false positives on
 markets right at capacity.
 
 **If it breaks.**
@@ -352,10 +352,10 @@ The `run_reconciliation()` function classifies each run as:
 
 | Status     | Triggered when                                              | Action                                  |
 | :--------- | :---------------------------------------------------------- | :-------------------------------------- |
-| `ok`       | All deltas under Q0.50                                      | Log only                                |
-| `warning`  | Any delta between Q0.50 and Q5.00                           | Log; surface in HealthPanel             |
-| `critical` | Any delta over Q5.00                                        | Log; fire Sentry alert via Edge Function |
+| `ok`       | All deltas under $0.50                                      | Log only                                |
+| `warning`  | Any delta between $0.50 and $5.00                           | Log; surface in HealthPanel             |
+| `critical` | Any delta over $5.00                                        | Log; fire Sentry alert via Edge Function |
 
-Q5.00 is the current critical threshold. Tighten as transaction volume
-grows (real production should be much closer to Q0.50 once spread
+$5.00 is the current critical threshold. Tighten as transaction volume
+grows (real production should be much closer to $0.50 once spread
 accounting is direct).

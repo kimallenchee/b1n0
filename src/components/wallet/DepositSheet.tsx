@@ -217,7 +217,7 @@ export function DepositSheet({ open, onClose }: DepositSheetProps) {
                   onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--b1n0-surface)')}
                   onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--b1n0-card)')}
                 >
-                  +Q{q}
+                  +${q}
                 </button>
               ))}
             </div>
@@ -294,7 +294,7 @@ export function DepositSheet({ open, onClose }: DepositSheetProps) {
             </button>
 
             <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-              <p style={{ fontFamily: D, fontWeight: 800, fontSize: '28px', color: 'var(--b1n0-text-1)' }}>Q{amountNum.toLocaleString()}</p>
+              <p style={{ fontFamily: D, fontWeight: 800, fontSize: '28px', color: 'var(--b1n0-text-1)' }}>${amountNum.toLocaleString()}</p>
               <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)', marginTop: '4px' }}>Depósito vía tarjeta</p>
             </div>
 
@@ -367,7 +367,7 @@ export function DepositSheet({ open, onClose }: DepositSheetProps) {
             </div>
             <p style={{ fontFamily: D, fontWeight: 700, fontSize: '20px', color: 'var(--b1n0-text-1)', marginBottom: '6px' }}>¡Listo!</p>
             <p style={{ fontFamily: F, fontSize: '14px', color: 'var(--b1n0-muted)', marginBottom: '28px' }}>
-              Q{amountNum.toLocaleString()} acreditados a tu saldo.
+              ${amountNum.toLocaleString()} acreditados a tu saldo.
             </p>
             <button
               onClick={handleClose}

@@ -37,7 +37,7 @@ export const mockUser: User = {
   id: 'u1',
   name: 'Tu',
   balance: 0,
-  currency: 'Q',
+  currency: '$',
   tier: 1,
   totalPredictions: 0,
   correctPredictions: 0,

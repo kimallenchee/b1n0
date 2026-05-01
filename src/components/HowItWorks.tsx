@@ -33,7 +33,7 @@ const steps = [
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)' }}>GEOPOLÍTICA</span>
-          <span style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)' }}>Q2,055 pool</span>
+          <span style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)' }}>$200 pool</span>
         </div>
       </div>
     ),
@@ -41,7 +41,7 @@ const steps = [
   {
     number: 2,
     title: 'Participá',
-    description: 'Elegí cuánto querés poner — desde Q10. Vas a ver exactamente cuánto colectás si tenés razón. Sin sorpresas.',
+    description: 'Elegí cuánto querés poner — desde $1. Vas a ver exactamente cuánto colectás si tenés razón. Sin sorpresas.',
     accent: 'var(--b1n0-gold)',
     accentBg: 'rgba(255,212,116,0.12)',
     illustration: (
@@ -51,12 +51,12 @@ const steps = [
           <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-si)', fontWeight: 600 }}>SÍ seleccionado</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', justifyContent: 'center', padding: '8px 0' }}>
-          <span style={{ fontFamily: F, fontSize: '18px', color: 'var(--b1n0-text-2)' }}>Q</span>
-          <span style={{ fontFamily: D, fontWeight: 800, fontSize: '42px', color: 'var(--b1n0-text-1)', letterSpacing: '-2px' }}>50</span>
+          <span style={{ fontFamily: F, fontSize: '18px', color: 'var(--b1n0-text-2)' }}>$</span>
+          <span style={{ fontFamily: D, fontWeight: 800, fontSize: '42px', color: 'var(--b1n0-text-1)', letterSpacing: '-2px' }}>5</span>
         </div>
         <div style={{ background: 'var(--b1n0-si-bg)', borderRadius: '10px', padding: '10px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-text-2)' }}>Si tenés razón, colectás</span>
-          <span style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: 'var(--b1n0-si)' }}>Q156.25</span>
+          <span style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: 'var(--b1n0-si)' }}>$15.62</span>
         </div>
         <div style={{ padding: '10px', borderRadius: '10px', background: 'var(--b1n0-si)', textAlign: 'center', cursor: 'default' }}>
           <span style={{ fontFamily: F, fontWeight: 700, fontSize: '13px', color: 'var(--b1n0-bg)' }}>Confirmar llamado →</span>
@@ -79,11 +79,11 @@ const steps = [
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0' }}>
           <div>
             <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-text-2)', marginBottom: '2px' }}>Tu llamado: SÍ</p>
-            <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-text-2)' }}>Entrada: Q50</p>
+            <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-text-2)' }}>Entrada: $5</p>
           </div>
           <div style={{ textAlign: 'right' }}>
             <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-text-2)', marginBottom: '2px' }}>Colectás</p>
-            <p style={{ fontFamily: D, fontWeight: 800, fontSize: '28px', color: 'var(--b1n0-si)', letterSpacing: '-1px' }}>Q156.25</p>
+            <p style={{ fontFamily: D, fontWeight: 800, fontSize: '28px', color: 'var(--b1n0-si)', letterSpacing: '-1px' }}>$15.62</p>
           </div>
         </div>
         <div style={{ background: 'var(--b1n0-si-bg)', borderRadius: '8px', padding: '8px 12px', textAlign: 'center' }}>

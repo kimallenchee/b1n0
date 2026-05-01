@@ -47,7 +47,7 @@ export function BetCards({ siPrice, noPrice, onSelect, selected = null }: BetCar
             {siPrice.toFixed(2)}
           </p>
           <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--color-si)', opacity: 0.8 }}>
-            Payout Q{siPayout} por Q1
+            Payout ${siPayout} por Q1
           </p>
         </button>
 
@@ -71,7 +71,7 @@ export function BetCards({ siPrice, noPrice, onSelect, selected = null }: BetCar
             {noPrice.toFixed(2)}
           </p>
           <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--color-no)', opacity: 0.8 }}>
-            Payout Q{noPayout} por Q1
+            Payout ${noPayout} por Q1
           </p>
         </button>
       </div>

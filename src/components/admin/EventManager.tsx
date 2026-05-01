@@ -163,7 +163,7 @@ const CREATE_DEFAULT: CreateForm = {
   sponsor_name: '', image_url: '', yes_percent: 50, no_percent: 50,
   options: [{ label: '', pct: 50, pool: 0 }, { label: '', pct: 50, pool: 0 }],
   considerations: '', sponsor_amount: 0,
-  min_entry: 10, max_entry: 10000, tier_required: 1,
+  min_entry: 1, max_entry: 1000, tier_required: 1,
   is_live: false, close_mode: 'manual', ends_at: '',
   country: 'GT', launch_mode: 'public', lp_return_pct: 8,
   lp_commitments: [],
@@ -407,7 +407,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
       options,
       considerations: form.considerations.trim() || null,
       pool_size,
-      currency: 'Q',
+      currency: '$',
       time_remaining: '',
       is_live: form.is_live,
       min_entry: form.min_entry,
@@ -560,8 +560,8 @@ export function EventManager({ platformRates }: EventManagerProps) {
         const yesPct = isOpen ? 0 : Math.max(1, Math.min(99, Number(r.yes_percent ?? r.si_pct ?? 50)))
         const noPct = isOpen ? 0 : 100 - yesPct
 
-        const minEntry = Number(r.min_entry ?? r.min ?? 25)
-        const maxEntry = Number(r.max_entry ?? r.max ?? 500)
+        const minEntry = Number(r.min_entry ?? r.min ?? 1)
+        const maxEntry = Number(r.max_entry ?? r.max ?? 100)
         const isLive = String(r.is_live ?? r.en_vivo ?? 'false').toLowerCase() === 'true'
         const endsAt = r.ends_at ?? r.cierre ?? null
 
@@ -592,7 +592,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
           options,
           considerations,
           pool_size: poolSize,
-          currency: 'Q',
+          currency: '$',  /* USD-only since 2026-04-30 sponsor-removal pass */
           time_remaining: '',
           is_live: isLive,
           min_entry: minEntry,
@@ -985,14 +985,14 @@ export function EventManager({ platformRates }: EventManagerProps) {
                 </div>
               </div>
               <div>
-                <label style={labelStyle}>Mín entrada (Q)</label>
+                <label style={labelStyle}>Mín entrada ($)</label>
                 <input type="number" min={1} value={editForm.min_entry}
-                  onChange={(e) => setE('min_entry', parseInt(e.target.value) || 25)} style={inputStyle} />
+                  onChange={(e) => setE('min_entry', parseInt(e.target.value) || 1)} style={inputStyle} />
               </div>
               <div>
-                <label style={labelStyle}>Máx entrada (Q)</label>
+                <label style={labelStyle}>Máx entrada ($)</label>
                 <input type="number" min={1} value={editForm.max_entry}
-                  onChange={(e) => setE('max_entry', parseInt(e.target.value) || 10000)} style={inputStyle} />
+                  onChange={(e) => setE('max_entry', parseInt(e.target.value) || 1000)} style={inputStyle} />
               </div>
               <div>
                 <label style={labelStyle}>Estado</label>
@@ -1269,7 +1269,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
             <button
               onClick={async () => {
                 const template = [
-                  { question: '¿Guatemala clasifica al Mundial 2026?', event_type: 'binary', category: 'deportes', yes_percent: 35, min_entry: 25, max_entry: 500, is_live: 'false', ends_at: '2026-06-15T23:59', options: '', country: 'GT', considerations: 'Eliminatorias CONCACAF. Guatemala en el grupo B. Fuente: FIFA.', image_url: '' },
+                  { question: '¿Guatemala clasifica al Mundial 2026?', event_type: 'binary', category: 'deportes', yes_percent: 35, min_entry: 1, max_entry: 100, is_live: 'false', ends_at: '2026-06-15T23:59', options: '', country: 'GT', considerations: 'Eliminatorias CONCACAF. Guatemala en el grupo B. Fuente: FIFA.', image_url: '' },
                 ]
                 const wb = new ExcelJS.Workbook()
                 const ws = wb.addWorksheet('Eventos')
@@ -1301,8 +1301,8 @@ export function EventManager({ platformRates }: EventManagerProps) {
                   { Campo: 'event_type', Descripcion: '"binary" = SÍ/NO simple | "open" = múltiples opciones', Ejemplo: 'binary', Dropdown: '✓ binary, open' },
                   { Campo: 'category', Descripcion: 'Categoría del evento', Ejemplo: 'deportes', Dropdown: '✓ deportes, politica, economia, geopolitica, cultura, tecnologia, finanzas, otro' },
                   { Campo: 'yes_percent', Descripcion: 'Probabilidad inicial SÍ (1-99). SOLO para binary. Dejar vacío para open.', Ejemplo: '35', Dropdown: '' },
-                  { Campo: 'min_entry', Descripcion: 'Entrada mínima en Q (default: 25)', Ejemplo: '25', Dropdown: '' },
-                  { Campo: 'max_entry', Descripcion: 'Entrada máxima en Q (default: 500)', Ejemplo: '500', Dropdown: '' },
+                  { Campo: 'min_entry', Descripcion: 'Entrada mínima en $ (default: 1)', Ejemplo: '1', Dropdown: '' },
+                  { Campo: 'max_entry', Descripcion: 'Entrada máxima en $ (default: 100)', Ejemplo: '100', Dropdown: '' },
                   { Campo: 'is_live', Descripcion: '¿Evento en vivo? true = se muestra en sección En Vivo', Ejemplo: 'false', Dropdown: '✓ true, false' },
                   { Campo: 'ends_at', Descripcion: 'Fecha de cierre ISO (vacío = cierre manual desde admin)', Ejemplo: '2026-06-15T23:59', Dropdown: '' },
                   { Campo: 'options', Descripcion: 'SOLO para open. Formato: Nombre:porcentaje separados por ; — porcentajes deben sumar 100.', Ejemplo: 'Comunicaciones:35;Municipal:30;Xelajú:20;Otro:15', Dropdown: '' },
@@ -1656,14 +1656,14 @@ export function EventManager({ platformRates }: EventManagerProps) {
               {!isOpen && (
                 <div style={{ display: 'flex', gap: '12px' }}>
                   <div style={{ flex: 1 }}>
-                    <label style={labelStyle}>Mín entrada (Q)</label>
+                    <label style={labelStyle}>Mín entrada ($)</label>
                     <input type="number" min={1} value={form.min_entry}
-                      onChange={(e) => setC('min_entry', parseInt(e.target.value) || 25)} style={inputStyle} />
+                      onChange={(e) => setC('min_entry', parseInt(e.target.value) || 1)} style={inputStyle} />
                   </div>
                   <div style={{ flex: 1 }}>
-                    <label style={labelStyle}>Máx entrada (Q)</label>
+                    <label style={labelStyle}>Máx entrada ($)</label>
                     <input type="number" min={1} value={form.max_entry}
-                      onChange={(e) => setC('max_entry', parseInt(e.target.value) || 10000)} style={inputStyle} />
+                      onChange={(e) => setC('max_entry', parseInt(e.target.value) || 1000)} style={inputStyle} />
                   </div>
                 </div>
               )}

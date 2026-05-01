@@ -38,7 +38,7 @@ function LeaderboardRow({ entry, isMe }: { entry: RankedUser; isMe: boolean }) {
       </div>
       <div style={{ textAlign: 'right', flexShrink: 0 }}>
         <p style={{ fontFamily: D, fontWeight: 700, fontSize: '14px', color: isTop3 ? 'var(--b1n0-text-1)' : 'var(--b1n0-muted)', letterSpacing: '-0.5px' }}>
-          Q{entry.total_cobrado.toLocaleString()}
+          ${entry.total_cobrado.toLocaleString()}
         </p>
       </div>
     </div>
@@ -177,7 +177,7 @@ export function Tabla() {
           </div>
           <div style={{ textAlign: 'right' }}>
             <p style={{ fontFamily: D, fontWeight: 700, fontSize: '15px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.5px' }}>
-              Q{myEntry.total_cobrado.toLocaleString()}
+              ${myEntry.total_cobrado.toLocaleString()}
             </p>
             <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>cobrado</p>
           </div>

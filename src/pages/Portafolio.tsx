@@ -215,7 +215,7 @@ function PositionCard({
               color: pred.status === 'active' ? (isUp ? '#4ade80' : '#f87171') : (pred.status === 'won' ? '#4ade80' : '#f87171'),
               letterSpacing: '-0.5px',
             }}>
-              {isUp ? '+' : ''}Q{pnl.toFixed(2)}
+              {isUp ? '+' : ''}${pnl.toFixed(2)}
             </p>
             <p style={{
               fontFamily: F, fontSize: '10px', fontWeight: 700,
@@ -314,11 +314,11 @@ function PositionCard({
                 <div style={{ display: 'flex', gap: '8px', marginBottom: '14px' }}>
                   <div style={{ flex: 1, padding: '10px', background: 'var(--b1n0-si-bg)', borderRadius: '10px', border: '1px solid var(--b1n0-border)', textAlign: 'center' }}>
                     <p style={{ fontFamily: F, fontSize: '9px', color: '#4ade80', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>Si gana</p>
-                    <p style={{ fontFamily: D, fontWeight: 700, fontSize: '16px', color: '#4ade80' }}>Q{parimutuelValue.toFixed(2)}</p>
+                    <p style={{ fontFamily: D, fontWeight: 700, fontSize: '16px', color: '#4ade80' }}>${parimutuelValue.toFixed(2)}</p>
                   </div>
                   <div style={{ flex: 1, padding: '10px', background: 'rgba(255,212,116,0.10)', borderRadius: '10px', border: '1px solid var(--b1n0-border)', textAlign: 'center' }}>
                     <p style={{ fontFamily: F, fontSize: '9px', color: '#FFD474', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>Salida ahora</p>
-                    <p style={{ fontFamily: D, fontWeight: 700, fontSize: '16px', color: '#FFD474' }}>Q{livePrice.sell.net.toFixed(2)}</p>
+                    <p style={{ fontFamily: D, fontWeight: 700, fontSize: '16px', color: '#FFD474' }}>${livePrice.sell.net.toFixed(2)}</p>
                   </div>
                 </div>
               )}
@@ -345,7 +345,7 @@ function PositionCard({
               }}>
                 <span style={{ fontFamily: F, fontSize: '13px', fontWeight: 700, color: 'var(--b1n0-text-1)' }}>Recibís</span>
                 <span style={{ fontFamily: D, fontWeight: 800, fontSize: '20px', color: '#FFD474', letterSpacing: '-0.5px' }}>
-                  Q{livePrice.sell.net.toFixed(2)}
+                  ${livePrice.sell.net.toFixed(2)}
                 </span>
               </div>
 
@@ -355,7 +355,7 @@ function PositionCard({
                 const isGain = diff >= 0
                 return (
                   <p style={{ fontFamily: F, fontSize: '11px', color: isGain ? '#4ade80' : '#f87171', marginTop: '6px', textAlign: 'right' }}>
-                    {isGain ? '+' : ''}Q{diff.toFixed(2)} vs tu entrada de Q{pred.amount.toFixed(2)}
+                    {isGain ? '+' : ''}${diff.toFixed(2)} vs tu entrada de ${pred.amount.toFixed(2)}
                   </p>
                 )
               })()}
@@ -838,7 +838,7 @@ export function Portafolio() {
             En juego
           </p>
           <p style={{ fontFamily: D, fontWeight: 800, fontSize: '22px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.5px' }}>
-            Q{totalInvested.toFixed(0)}
+            ${totalInvested.toFixed(0)}
           </p>
           <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginTop: '2px' }}>
             {active.length} posicion{active.length !== 1 ? 'es' : ''}
@@ -1051,23 +1051,23 @@ export function Portafolio() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px' }}>
                 <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '12px', padding: '12px 14px' }}>
                   <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '3px' }}>Capital activo</p>
-                  <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: '#C4B5FD', letterSpacing: '-0.5px' }}>Q{fmt(totalActiveCapital)}</p>
+                  <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: '#C4B5FD', letterSpacing: '-0.5px' }}>${fmt(totalActiveCapital)}</p>
                   <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginTop: '2px' }}>{activeDeposits.length} evento{activeDeposits.length !== 1 ? 's' : ''}</p>
                 </div>
                 <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '12px', padding: '12px 14px' }}>
                   <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '3px' }}>Ganancia estimada</p>
                   <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: totalProfit >= 0 ? '#4ade80' : '#f87171', letterSpacing: '-0.5px' }}>
-                    {totalProfit >= 0 ? '+' : ''}Q{fmt(totalProfit)}
+                    {totalProfit >= 0 ? '+' : ''}${fmt(totalProfit)}
                   </p>
                   <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginTop: '2px' }}>Fees ganados como LP</p>
                 </div>
                 <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '12px', padding: '12px 14px' }}>
                   <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '3px' }}>Total depositado</p>
-                  <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.5px' }}>Q{fmt(totalDeposited)}</p>
+                  <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.5px' }}>${fmt(totalDeposited)}</p>
                 </div>
                 <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '12px', padding: '12px 14px' }}>
                   <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '3px' }}>Cobrado</p>
-                  <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: '#4ade80', letterSpacing: '-0.5px' }}>Q{fmt(totalPaidOut)}</p>
+                  <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: '#4ade80', letterSpacing: '-0.5px' }}>${fmt(totalPaidOut)}</p>
                   <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginTop: '2px' }}>{returnedDeposits.length} resuelto{returnedDeposits.length !== 1 ? 's' : ''}</p>
                 </div>
               </div>
@@ -1100,7 +1100,7 @@ export function Portafolio() {
                   <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
                     <div>
                       <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.3px' }}>Capital</p>
-                      <p style={{ fontFamily: D, fontWeight: 700, fontSize: '14px', color: 'var(--b1n0-text-1)' }}>Q{fmt(lp.amount)}</p>
+                      <p style={{ fontFamily: D, fontWeight: 700, fontSize: '14px', color: 'var(--b1n0-text-1)' }}>${fmt(lp.amount)}</p>
                     </div>
                     <div>
                       <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.3px' }}>% de fees</p>
@@ -1108,7 +1108,7 @@ export function Portafolio() {
                     </div>
                     <div>
                       <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.3px' }}>Fees post-depósito</p>
-                      <p style={{ fontFamily: D, fontWeight: 700, fontSize: '14px', color: 'var(--b1n0-text-1)' }}>Q{fmt(deltaMargins)}</p>
+                      <p style={{ fontFamily: D, fontWeight: 700, fontSize: '14px', color: 'var(--b1n0-text-1)' }}>${fmt(deltaMargins)}</p>
                     </div>
                     <div>
                       <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.3px' }}>

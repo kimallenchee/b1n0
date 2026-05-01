@@ -103,7 +103,7 @@ export function TopBar({ user }: TopBarProps) {
               >
                 <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '20px', padding: '5px 10px' }}>
                   <span style={{ fontFamily: F, fontWeight: 700, fontSize: '12px', color: 'var(--color-text)', letterSpacing: '-0.3px' }}>
-                    Q{balance.toLocaleString()}
+                    ${balance.toLocaleString()}
                   </span>
                 </div>
               </button>

@@ -540,10 +540,10 @@ export function Perfil() {
         </p>
         <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '16px', padding: '20px 18px' }}>
           <p style={{ fontFamily: F, fontWeight: 800, fontSize: '36px', color: 'var(--color-text)', letterSpacing: '-1.5px', marginBottom: '6px', lineHeight: 1 }}>
-            Q{(profile?.balance ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            ${(profile?.balance ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </p>
           <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--color-muted)', marginBottom: '16px' }}>
-            Cobrado total: Q{user.totalCobrado.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+            Cobrado total: ${user.totalCobrado.toLocaleString(undefined, { minimumFractionDigits: 2 })}
           </p>
           <div style={{ display: 'flex', gap: '10px' }}>
             <button
