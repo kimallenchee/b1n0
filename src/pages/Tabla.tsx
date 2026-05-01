@@ -25,7 +25,7 @@ function LeaderboardRow({ entry, isMe }: { entry: RankedUser; isMe: boolean }) {
       <span style={{ fontFamily: D, fontWeight: isTop3 ? 800 : 500, fontSize: isTop3 ? '18px' : '15px', color: isTop3 ? 'var(--b1n0-text-1)' : 'var(--b1n0-muted)', width: '32px', flexShrink: 0, textAlign: 'center' }}>
         #{entry.rank}
       </span>
-      <div style={{ width: 32, height: 32, borderRadius: '50%', background: isTop3 ? '#4ade80' : 'var(--b1n0-surface)', border: isTop3 ? 'none' : '1px solid var(--b1n0-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F, fontWeight: 600, fontSize: '12px', color: isTop3 ? '#0d0d0d' : 'var(--b1n0-muted)', flexShrink: 0 }}>
+      <div style={{ width: 32, height: 32, borderRadius: '50%', background: isTop3 ? 'var(--b1n0-si)' : 'var(--b1n0-surface)', border: isTop3 ? 'none' : '1px solid var(--b1n0-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F, fontWeight: 600, fontSize: '12px', color: isTop3 ? 'var(--b1n0-bg)' : 'var(--b1n0-muted)', flexShrink: 0 }}>
         {entry.name.charAt(0)}
       </div>
       <div style={{ flex: 1, minWidth: 0 }}>
@@ -142,13 +142,13 @@ export function Tabla() {
   return (
     <div className="feed-scroll" style={{ height: '100%', padding: '8px 16px 16px' }}>
       {/* Tabs */}
-      <div style={{ display: 'flex', marginBottom: '16px', background: 'var(--b1n0-surface)', borderRadius: '12px', padding: '4px' }}>
+      <div style={{ display: 'flex', marginBottom: '16px', background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-lg)', padding: '4px' }}>
         {(['general', 'friends'] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
             style={{
-              flex: 1, padding: '10px', borderRadius: '8px', border: 'none',
+              flex: 1, padding: '10px', borderRadius: 'var(--radius-lg)', border: 'none',
               cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '13px',
               background: tab === t ? 'var(--b1n0-card)' : 'transparent',
               color: tab === t ? 'var(--b1n0-text-1)' : 'var(--b1n0-muted)',
@@ -165,8 +165,8 @@ export function Tabla() {
 
       {/* User's own position */}
       {myEntry && (
-        <div style={{ background: 'var(--b1n0-surface)', border: '1.5px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '14px 16px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <span style={{ fontFamily: D, fontWeight: 800, fontSize: '18px', color: 'var(--b1n0-muted)', width: '28px', flexShrink: 0 }}>
+        <div style={{ background: 'var(--b1n0-surface)', border: '1.5px solid rgba(255,255,255,0.08)', borderRadius: 'var(--radius-lg)', padding: '14px 16px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <span style={{ fontFamily: D, fontWeight: 800, fontSize: '18px', color: 'var(--b1n0-muted)', width: '28px', flexShrink: 0 , fontVariantNumeric: 'tabular-nums'}}>
             #{myEntry.rank}
           </span>
           <div style={{ flex: 1 }}>

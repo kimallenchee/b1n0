@@ -7,7 +7,7 @@ const F = 'var(--font-body)'
 const D = 'var(--font-display)'
 
 const inputStyle: React.CSSProperties = {
-  width: '100%', padding: '10px 12px', borderRadius: '10px',
+  width: '100%', padding: '10px 12px', borderRadius: 'var(--radius-lg)',
   border: '1px solid var(--b1n0-border)', background: 'var(--b1n0-surface)',
   color: 'var(--b1n0-text-1)', fontFamily: F, fontSize: '13px',
   outline: 'none', boxSizing: 'border-box',
@@ -96,7 +96,7 @@ export function RatesPanel() {
     const saving = ratesSaving[key]
     const saved = ratesSaved[key] || (key2 && ratesSaved[key2])
     const changed = isRange ? (ratesDraft[key] !== platformRates[key] || (key2 && ratesDraft[key2!] !== platformRates[key2!])) : ratesDraft[key] !== platformRates[key]
-    return { padding: '6px 14px', borderRadius: '7px', border: 'none', background: saved ? '#4ade80' : (saving || !changed) ? 'rgba(255,255,255,0.08)' : '#4ade80', color: '#0d0d0d', fontFamily: F, fontWeight: 600, fontSize: '11px', cursor: 'pointer', transition: 'background 0.2s' }
+    return { padding: '6px 14px', borderRadius: '7px', border: 'none', background: saved ? 'var(--b1n0-si)' : (saving || !changed) ? 'rgba(255,255,255,0.08)' : 'var(--b1n0-si)', color: 'var(--b1n0-bg)', fontFamily: F, fontWeight: 600, fontSize: '11px', cursor: 'pointer', transition: 'background 0.2s' }
   }
   const btnLabel = (key: string, key2?: string) => (ratesSaved[key] || (key2 && ratesSaved[key2])) ? '✓' : ratesSaving[key] ? '...' : '↑'
 
@@ -112,10 +112,10 @@ export function RatesPanel() {
           style={{
             fontFamily: F,
             fontSize: '12px',
-            color: '#f87171',
+            color: 'var(--b1n0-no)',
             background: 'rgba(248,113,113,0.08)',
             padding: '8px 12px',
-            borderRadius: '8px',
+            borderRadius: 'var(--radius-lg)',
             marginBottom: '10px',
           }}
         >
@@ -129,7 +129,7 @@ export function RatesPanel() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
 
           {/* ── Dynamic Buy Fee ── */}
-          <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '10px', padding: '14px', borderLeft: '3px solid #C4B5FD' }}>
+          <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '14px', borderLeft: '3px solid #C4B5FD' }}>
             <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: '#C4B5FD', letterSpacing: '0.8px', textTransform: 'uppercase', marginBottom: '4px' }}>
               Cut 2 — Comisión compras
             </p>
@@ -156,13 +156,13 @@ export function RatesPanel() {
               </button>
             </div>
             {(ratesDraft.fee_floor_pct !== platformRates.fee_floor_pct || ratesDraft.fee_ceiling_pct !== platformRates.fee_ceiling_pct) && (
-              <p style={{ fontFamily: F, fontSize: '9px', color: '#FFD474', marginTop: '4px' }}>DB: {platformRates.fee_floor_pct}%–{platformRates.fee_ceiling_pct}%</p>
+              <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-gold)', marginTop: '4px' }}>DB: {platformRates.fee_floor_pct}%–{platformRates.fee_ceiling_pct}%</p>
             )}
           </div>
 
           {/* ── Flat Sell Fee ── */}
-          <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '10px', padding: '14px', borderLeft: '3px solid #f87171' }}>
-            <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: '#f87171', letterSpacing: '0.8px', textTransform: 'uppercase', marginBottom: '4px' }}>
+          <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '14px', borderLeft: '3px solid var(--b1n0-no)' }}>
+            <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: 'var(--b1n0-no)', letterSpacing: '0.8px', textTransform: 'uppercase', marginBottom: '4px' }}>
               Cut 2b — Comisión venta
             </p>
             <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginBottom: '10px', lineHeight: 1.5 }}>
@@ -181,13 +181,13 @@ export function RatesPanel() {
               </button>
             </div>
             {ratesDraft.sell_fee_pct !== platformRates.sell_fee_pct && (
-              <p style={{ fontFamily: F, fontSize: '9px', color: '#FFD474', marginTop: '4px' }}>DB: {platformRates.sell_fee_pct}%</p>
+              <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-gold)', marginTop: '4px' }}>DB: {platformRates.sell_fee_pct}%</p>
             )}
           </div>
 
           {/* ── Spread ── */}
-          <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '10px', padding: '14px', borderLeft: '3px solid #FFD474' }}>
-            <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: '#FFD474', letterSpacing: '0.8px', textTransform: 'uppercase', marginBottom: '4px' }}>
+          <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '14px', borderLeft: '3px solid var(--b1n0-gold)' }}>
+            <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: 'var(--b1n0-gold)', letterSpacing: '0.8px', textTransform: 'uppercase', marginBottom: '4px' }}>
               Cut 3 — Spread AMM
             </p>
             <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginBottom: '10px', lineHeight: 1.5 }}>
@@ -213,13 +213,13 @@ export function RatesPanel() {
               </button>
             </div>
             {(ratesDraft.spread_low_pct !== platformRates.spread_low_pct || ratesDraft.spread_high_pct !== platformRates.spread_high_pct) && (
-              <p style={{ fontFamily: F, fontSize: '9px', color: '#FFD474', marginTop: '4px' }}>DB: {platformRates.spread_low_pct}%–{platformRates.spread_high_pct}%</p>
+              <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-gold)', marginTop: '4px' }}>DB: {platformRates.spread_low_pct}%–{platformRates.spread_high_pct}%</p>
             )}
           </div>
 
           {/* ── Depth Threshold ── */}
-          <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '10px', padding: '14px', borderLeft: '3px solid #4ade80' }}>
-            <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: '#4ade80', letterSpacing: '0.8px', textTransform: 'uppercase', marginBottom: '4px' }}>
+          <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '14px', borderLeft: '3px solid var(--b1n0-si)' }}>
+            <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: 'var(--b1n0-si)', letterSpacing: '0.8px', textTransform: 'uppercase', marginBottom: '4px' }}>
               Cut 3b — Umbral profundidad
             </p>
             <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginBottom: '10px', lineHeight: 1.5 }}>
@@ -238,10 +238,10 @@ export function RatesPanel() {
               </button>
             </div>
             {ratesDraft.depth_threshold !== platformRates.depth_threshold && (
-              <p style={{ fontFamily: F, fontSize: '9px', color: '#FFD474', marginTop: '4px' }}>DB: ${Number(platformRates.depth_threshold ?? 50000).toLocaleString()}</p>
+              <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-gold)', marginTop: '4px' }}>DB: ${Number(platformRates.depth_threshold ?? 50000).toLocaleString()}</p>
             )}
             <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', marginTop: '6px' }}>
-              Q5K → <strong style={{ color: 'var(--b1n0-text-1)' }}>{(5000 / (ratesDraft.depth_threshold ?? 50000) * 100).toFixed(0)}%</strong> · ${((ratesDraft.depth_threshold ?? 50000) / 1000).toFixed(0)}K+ → <strong style={{ color: '#4ade80' }}>100%</strong>
+              Q5K → <strong style={{ color: 'var(--b1n0-text-1)' }}>{(5000 / (ratesDraft.depth_threshold ?? 50000) * 100).toFixed(0)}%</strong> · ${((ratesDraft.depth_threshold ?? 50000) / 1000).toFixed(0)}K+ → <strong style={{ color: 'var(--b1n0-si)' }}>100%</strong>
             </p>
           </div>
 
@@ -249,7 +249,7 @@ export function RatesPanel() {
           {(() => {
             const key = 'resolution_skim_pct'
             return (
-              <div style={{ gridColumn: '1 / -1', background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '10px', padding: '14px', borderLeft: '3px solid #14b8a6' }}>
+              <div style={{ gridColumn: '1 / -1', background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '14px', borderLeft: '3px solid #14b8a6' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
                   <div>
                     <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: '#14b8a6', letterSpacing: '0.8px', textTransform: 'uppercase', marginBottom: '4px' }}>
@@ -270,7 +270,7 @@ export function RatesPanel() {
                   </div>
                 </div>
                 {ratesDraft[key] !== platformRates[key] && (
-                  <p style={{ fontFamily: F, fontSize: '9px', color: '#FFD474', marginTop: '4px' }}>DB: {platformRates[key]}%</p>
+                  <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-gold)', marginTop: '4px' }}>DB: {platformRates[key]}%</p>
                 )}
                 <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', marginTop: '6px' }}>
                   Q1,000 cobro → descuento <strong style={{ color: '#14b8a6' }}>${((ratesDraft[key] ?? 5) * 10).toFixed(0)}</strong> · usuario recibe <strong style={{ color: 'var(--b1n0-text-1)' }}>${(1000 - (ratesDraft[key] ?? 5) * 10).toFixed(0)}</strong>

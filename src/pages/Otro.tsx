@@ -25,7 +25,7 @@ export function Otro() {
     <div className="feed-scroll" style={{ height: '100%', padding: '8px 16px 24px' }}>
       {/* Header */}
       <div style={{ padding: '24px 0 20px', textAlign: 'center' }}>
-        <p style={{ fontFamily: D, fontWeight: 800, fontSize: '24px', color: 'var(--b1n0-text-1)', marginBottom: '8px', letterSpacing: '-0.5px' }}>
+        <p style={{ fontFamily: D, fontWeight: 800, fontSize: '24px', color: 'var(--b1n0-text-1)', marginBottom: '8px', letterSpacing: '-0.5px' , fontVariantNumeric: 'tabular-nums'}}>
           Más productos
         </p>
         <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)', lineHeight: 1.6, maxWidth: '280px', margin: '0 auto' }}>
@@ -42,7 +42,7 @@ export function Otro() {
               background: 'var(--b1n0-card)',
               border: '1px solid var(--b1n0-border)',
               borderLeft: '3px solid rgba(255,255,255,0.08)',
-              borderRadius: '16px',
+              borderRadius: 'var(--radius-lg)',
               padding: '18px',
               display: 'flex',
               justifyContent: 'space-between',
@@ -67,7 +67,7 @@ export function Otro() {
                 textTransform: 'uppercase',
                 letterSpacing: '0.4px',
                 background: 'var(--b1n0-surface)',
-                borderRadius: '6px',
+                borderRadius: 'var(--radius-md)',
                 padding: '4px 8px',
                 flexShrink: 0,
                 marginTop: '2px',
@@ -86,7 +86,7 @@ export function Otro() {
           marginTop: '24px',
           padding: '16px',
           background: 'var(--b1n0-surface)',
-          borderRadius: '12px',
+          borderRadius: 'var(--radius-lg)',
           textAlign: 'center',
         }}
       >

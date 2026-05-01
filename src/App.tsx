@@ -123,7 +123,7 @@ function ForceChangePassword() {
   }
 
   const inputStyle: React.CSSProperties = {
-    width: '100%', padding: '13px 16px', borderRadius: '12px',
+    width: '100%', padding: '13px 16px', borderRadius: 'var(--radius-lg)',
     border: '1px solid var(--b1n0-border)', background: 'var(--b1n0-surface)',
     color: 'var(--b1n0-text-1)', fontFamily: F, fontSize: '14px', outline: 'none', boxSizing: 'border-box',
   }
@@ -132,10 +132,10 @@ function ForceChangePassword() {
     <div style={{ minHeight: '100dvh', background: 'var(--b1n0-bg)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
       <div style={{ maxWidth: 380, width: '100%' }}>
         <div style={{ textAlign: 'center', marginBottom: '36px' }}>
-          <p style={{ fontFamily: D, fontWeight: 800, fontSize: '38px', color: 'var(--b1n0-text-1)', letterSpacing: '-1px', marginBottom: '6px' }}>b1n0</p>
+          <p style={{ fontFamily: D, fontWeight: 800, fontSize: '38px', color: 'var(--b1n0-text-1)', letterSpacing: '-1px', marginBottom: '6px' , fontVariantNumeric: 'tabular-nums'}}>b1n0</p>
           <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)' }}>Cambiá tu contraseña</p>
         </div>
-        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '20px', padding: '28px 24px' }}>
+        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-pill)', padding: '28px 24px' }}>
           <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)', marginBottom: '16px', lineHeight: 1.5 }}>
             Tu cuenta requiere una nueva contraseña antes de continuar.
           </p>
@@ -144,7 +144,7 @@ function ForceChangePassword() {
             <input type="password" placeholder="Confirmar contraseña" value={pw2} onChange={(e) => setPw2(e.target.value)} required minLength={6} style={inputStyle} />
             {error && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', textAlign: 'center' }}>{error}</p>}
             <button type="submit" disabled={loading} style={{
-              width: '100%', padding: '13px', borderRadius: '12px', border: 'none',
+              width: '100%', padding: '13px', borderRadius: 'var(--radius-lg)', border: 'none',
               background: loading ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)',
               fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: loading ? 'default' : 'pointer', marginTop: '4px',
             }}>

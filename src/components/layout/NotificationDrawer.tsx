@@ -118,7 +118,7 @@ function NotifRow({ n, onTap, onDismiss }: { n: Notification; onTap: () => void;
           border: 'none', cursor: 'pointer',
           padding: '4px 6px', color: 'var(--b1n0-muted)',
           fontSize: '14px', lineHeight: 1, flexShrink: 0,
-          borderRadius: '6px', marginTop: '2px',
+          borderRadius: 'var(--radius-md)', marginTop: '2px',
           opacity: hovered ? 1 : 0.4,
           transition: 'opacity 0.15s ease, background 0.15s ease',
         }}
@@ -218,7 +218,7 @@ export function NotificationDrawer({ onClose }: { onClose: () => void }) {
                   background: 'none', border: 'none', cursor: 'pointer',
                   fontFamily: F, fontSize: '12px', fontWeight: 600,
                   color: 'var(--b1n0-teal-500)', padding: '4px 8px',
-                  borderRadius: '6px', transition: 'background 0.15s',
+                  borderRadius: 'var(--radius-md)', transition: 'background 0.15s',
                 }}
                 onMouseEnter={e => (e.currentTarget.style.background = 'var(--b1n0-surface)')}
                 onMouseLeave={e => (e.currentTarget.style.background = 'none')}
@@ -233,7 +233,7 @@ export function NotificationDrawer({ onClose }: { onClose: () => void }) {
                   background: 'none', border: 'none', cursor: 'pointer',
                   fontFamily: F, fontSize: '12px', fontWeight: 600,
                   color: 'var(--b1n0-no)', padding: '4px 8px',
-                  borderRadius: '6px', transition: 'background 0.15s',
+                  borderRadius: 'var(--radius-md)', transition: 'background 0.15s',
                 }}
                 onMouseEnter={e => (e.currentTarget.style.background = 'var(--b1n0-no-bg)')}
                 onMouseLeave={e => (e.currentTarget.style.background = 'none')}
@@ -246,7 +246,7 @@ export function NotificationDrawer({ onClose }: { onClose: () => void }) {
               style={{
                 background: 'none', border: 'none', cursor: 'pointer',
                 fontFamily: F, fontSize: '18px', color: 'var(--b1n0-muted)',
-                padding: '4px 8px', lineHeight: 1, borderRadius: '6px',
+                padding: '4px 8px', lineHeight: 1, borderRadius: 'var(--radius-md)',
                 transition: 'background 0.15s',
               }}
               onMouseEnter={e => (e.currentTarget.style.background = 'var(--b1n0-surface)')}

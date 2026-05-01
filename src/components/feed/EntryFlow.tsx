@@ -217,7 +217,7 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
 
   return (
     <div
-      style={{ background: 'var(--b1n0-surface)', borderRadius: '14px', padding: '18px', marginTop: '12px', border: '1px solid rgba(255,255,255,0.06)' }}
+      style={{ background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-lg)', padding: '18px', marginTop: '12px', border: '1px solid rgba(255,255,255,0.06)' }}
       onClick={(e) => e.stopPropagation()}
     >
       {/* ── Tier locked ── */}
@@ -231,7 +231,7 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
           </p>
           <a
             href="/perfil"
-            style={{ display: 'inline-block', padding: '11px 24px', borderRadius: '10px', background: 'var(--b1n0-text-1)', color: 'var(--b1n0-bg)', fontFamily: F, fontWeight: 600, fontSize: '13px', textDecoration: 'none' }}
+            style={{ display: 'inline-block', padding: '11px 24px', borderRadius: 'var(--radius-lg)', background: 'var(--b1n0-text-1)', color: 'var(--b1n0-bg)', fontFamily: F, fontWeight: 600, fontSize: '13px', textDecoration: 'none' }}
           >
             Subir a Nivel {event.tierRequired} →
           </a>
@@ -273,7 +273,7 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
             <div style={{ display: 'flex', gap: '8px' }}>
               <button
                 onClick={() => handleSideSelect('yes')}
-                style={{ flex: 1, padding: '12px 0', borderRadius: '10px', border: 'none', cursor: 'pointer',
+                style={{ flex: 1, padding: '12px 0', borderRadius: 'var(--radius-lg)', border: 'none', cursor: 'pointer',
                   fontFamily: F, fontSize: '14px', fontWeight: 700, transition: 'all 0.15s',
                   background: 'var(--b1n0-si)', color: '#fff',
                 }}
@@ -282,7 +282,7 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
               </button>
               <button
                 onClick={() => handleSideSelect('no')}
-                style={{ flex: 1, padding: '12px 0', borderRadius: '10px', border: 'none', cursor: 'pointer',
+                style={{ flex: 1, padding: '12px 0', borderRadius: 'var(--radius-lg)', border: 'none', cursor: 'pointer',
                   fontFamily: F, fontSize: '14px', fontWeight: 700, transition: 'all 0.15s',
                   background: 'var(--b1n0-no)', color: '#fff',
                 }}
@@ -306,7 +306,7 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
             <div style={{ display: 'flex', gap: '8px', marginBottom: '14px' }}>
               <button
                 onClick={() => setSide('yes')}
-                style={{ flex: 1, padding: '10px 0', borderRadius: '10px', border: 'none', cursor: 'pointer',
+                style={{ flex: 1, padding: '10px 0', borderRadius: 'var(--radius-lg)', border: 'none', cursor: 'pointer',
                   fontFamily: F, fontSize: '13px', fontWeight: 700, transition: 'all 0.15s',
                   background: side === 'yes' ? 'var(--b1n0-si)' : 'var(--b1n0-si-bg)',
                   color: side === 'yes' ? '#fff' : 'var(--b1n0-si)',
@@ -316,7 +316,7 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
               </button>
               <button
                 onClick={() => setSide('no')}
-                style={{ flex: 1, padding: '10px 0', borderRadius: '10px', border: 'none', cursor: 'pointer',
+                style={{ flex: 1, padding: '10px 0', borderRadius: 'var(--radius-lg)', border: 'none', cursor: 'pointer',
                   fontFamily: F, fontSize: '13px', fontWeight: 700, transition: 'all 0.15s',
                   background: side === 'no' ? 'var(--b1n0-no)' : 'var(--b1n0-no-bg)',
                   color: side === 'no' ? '#fff' : 'var(--b1n0-no)',
@@ -326,7 +326,7 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
               </button>
             </div>
           ) : (
-            <div style={{ background: 'var(--b1n0-surface)', borderRadius: '8px', padding: '8px 12px', marginBottom: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-lg)', padding: '8px 12px', marginBottom: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <span style={{ fontFamily: F, fontSize: '13px', fontWeight: 700, color: 'var(--b1n0-text-1)' }}>{side ? displaySide(side) : ''}</span>
               <button onClick={() => setStep(1)} style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-teal-500)', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }}>Cambiar</button>
             </div>
@@ -334,8 +334,8 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
 
           <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)', marginBottom: '10px' }}>¿Cuánto querés poner?</p>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'var(--b1n0-card)', borderRadius: '10px', padding: '12px 16px', border: '1px solid var(--b1n0-border)', marginBottom: '12px' }}>
-            <span style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: 'var(--b1n0-muted)' }}>{event.currency}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'var(--b1n0-card)', borderRadius: 'var(--radius-lg)', padding: '12px 16px', border: '1px solid var(--b1n0-border)', marginBottom: '12px' }}>
+            <span style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: 'var(--b1n0-muted)' , fontVariantNumeric: 'tabular-nums'}}>{event.currency}</span>
             <input
               autoFocus
               type="number"
@@ -344,7 +344,7 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
               placeholder="0"
               min={event.minEntry}
               max={event.maxEntry}
-              style={{ flex: 1, background: 'none', border: 'none', outline: 'none', fontFamily: D, fontWeight: 700, fontSize: '22px', color: 'var(--b1n0-text-1)', letterSpacing: '-1px' }}
+              style={{ flex: 1, background: 'none', border: 'none', outline: 'none', fontFamily: D, fontWeight: 700, fontSize: '22px', color: 'var(--b1n0-text-1)', letterSpacing: '-1px' , fontVariantNumeric: 'tabular-nums'}}
             />
           </div>
 
@@ -353,7 +353,7 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
               <button
                 key={q}
                 onClick={() => setAmount(String(q))}
-                style={{ flex: 1, padding: '8px 4px', borderRadius: '8px', border: `1px solid ${amount === String(q) ? 'var(--b1n0-text-1)' : 'var(--b1n0-border)'}`, background: amount === String(q) ? 'var(--b1n0-card)' : 'var(--b1n0-surface)', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 500, color: amount === String(q) ? 'var(--b1n0-text-1)' : 'var(--b1n0-muted)' }}
+                style={{ flex: 1, padding: '8px 4px', borderRadius: 'var(--radius-lg)', border: `1px solid ${amount === String(q) ? 'var(--b1n0-text-1)' : 'var(--b1n0-border)'}`, background: amount === String(q) ? 'var(--b1n0-card)' : 'var(--b1n0-surface)', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 500, color: amount === String(q) ? 'var(--b1n0-text-1)' : 'var(--b1n0-muted)' }}
               >
                 {event.currency}{q}
               </button>
@@ -378,7 +378,7 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
           </div>
 
           {amountNum > 0 && (
-            <div style={{ background: 'var(--b1n0-surface)', borderRadius: '8px', padding: '12px 14px', marginBottom: '10px', border: '1px solid var(--b1n0-border)' }}>
+            <div style={{ background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-lg)', padding: '12px 14px', marginBottom: '10px', border: '1px solid var(--b1n0-border)' }}>
               {/* Breakdown table */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', marginBottom: '8px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -414,7 +414,7 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
               <div style={{ borderTop: '1px solid var(--b1n0-border)', paddingTop: '8px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
                   <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)' }}>Cobro estimado</span>
-                  <span style={{ fontFamily: D, fontWeight: 700, fontSize: '20px', color: 'var(--b1n0-text-1)', letterSpacing: '-1px' }}>
+                  <span style={{ fontFamily: D, fontWeight: 700, fontSize: '20px', color: 'var(--b1n0-text-1)', letterSpacing: '-1px' , fontVariantNumeric: 'tabular-nums'}}>
                     ~{event.currency}{cobro.toFixed(2)}
                   </span>
                 </div>
@@ -427,7 +427,7 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
           )}
 
           {poolFull && (
-            <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', marginBottom: '10px', padding: '8px 10px', background: 'var(--b1n0-no-bg)', borderRadius: '8px' }}>
+            <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', marginBottom: '10px', padding: '8px 10px', background: 'var(--b1n0-no-bg)', borderRadius: 'var(--radius-lg)' }}>
               Pool lleno — reducí el monto
             </p>
           )}
@@ -440,7 +440,7 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
             onClick={handleConfirm}
             disabled={!amountValid || confirming}
             style={{
-              width: '100%', padding: '14px', borderRadius: '12px', border: 'none',
+              width: '100%', padding: '14px', borderRadius: 'var(--radius-lg)', border: 'none',
               background: !amountValid || confirming ? 'var(--b1n0-border)' : (side === 'no' || side?.endsWith('::no')) ? 'var(--b1n0-no)' : 'var(--b1n0-si)',
               cursor: amountValid && !confirming ? 'pointer' : 'not-allowed',
               fontFamily: F, fontWeight: 700, fontSize: '14px', color: amountValid && !confirming ? '#fff' : 'var(--b1n0-muted)', marginBottom: '8px',
@@ -461,7 +461,7 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
       {/* ── Step 3: Confirm ── */}
       {!tierLocked && step === 3 && (
         <div>
-          <div style={{ background: 'var(--b1n0-card)', borderRadius: '12px', padding: '16px', marginBottom: '16px', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <div style={{ background: 'var(--b1n0-card)', borderRadius: 'var(--radius-lg)', padding: '16px', marginBottom: '16px', border: '1px solid rgba(255,255,255,0.06)' }}>
             <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 600, color: 'var(--b1n0-muted)', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Resumen de tu voto</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -503,7 +503,7 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
               {/* Cobro highlight */}
               <div style={{ borderTop: '1px solid var(--b1n0-border)', paddingTop: '10px', marginTop: '4px', display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
                 <span style={{ fontFamily: F, fontSize: '14px', fontWeight: 600, color: 'var(--b1n0-text-1)' }}>Cobro estimado</span>
-                <span style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.5px' }}>
+                <span style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.5px' , fontVariantNumeric: 'tabular-nums'}}>
                   ~{event.currency}{cobro.toFixed(2)}
                 </span>
               </div>
@@ -515,7 +515,7 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
           </div>
 
           {confirmError && (
-            <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', marginBottom: '12px', padding: '8px 10px', background: 'var(--b1n0-no-bg)', borderRadius: '8px' }}>
+            <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', marginBottom: '12px', padding: '8px 10px', background: 'var(--b1n0-no-bg)', borderRadius: 'var(--radius-lg)' }}>
               {confirmError}
             </p>
           )}
@@ -523,7 +523,7 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
           <button
             onClick={handleConfirm}
             disabled={confirming}
-            style={{ width: '100%', padding: '16px', borderRadius: '12px', border: 'none', background: confirming ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-surface)', cursor: confirming ? 'default' : 'pointer', fontFamily: F, fontWeight: 600, fontSize: '14px', color: 'var(--b1n0-text-1)', letterSpacing: '0.8px', marginBottom: '8px' }}
+            style={{ width: '100%', padding: '16px', borderRadius: 'var(--radius-lg)', border: 'none', background: confirming ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-surface)', cursor: confirming ? 'default' : 'pointer', fontFamily: F, fontWeight: 600, fontSize: '14px', color: 'var(--b1n0-text-1)', letterSpacing: '0.8px', marginBottom: '8px' }}
           >
             {confirming ? 'Registrando...' : 'CONFIRMAR VOTO'}
           </button>

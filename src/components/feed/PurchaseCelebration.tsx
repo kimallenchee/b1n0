@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { Check } from '@phosphor-icons/react'
 
 const F = 'var(--font-body)'
 const D = 'var(--font-display)'
@@ -30,7 +31,7 @@ function Particles() {
       x: 50 + (Math.random() - 0.5) * 60,
       y: 40 + (Math.random() - 0.5) * 30,
       size: 4 + Math.random() * 6,
-      color: ['var(--b1n0-surface)', '#4ade80', '#FFD474', '#C4B5FD', 'var(--b1n0-text-2)'][Math.floor(Math.random() * 5)],
+      color: ['var(--b1n0-surface)', 'var(--b1n0-si)', 'var(--b1n0-gold)', '#C4B5FD', 'var(--b1n0-text-2)'][Math.floor(Math.random() * 5)],
       delay: Math.random() * 0.3,
       angle: Math.random() * 360,
       distance: 80 + Math.random() * 120,
@@ -120,7 +121,7 @@ export function PurchaseCelebration({ side, amount, cobro, currency, onDone }: P
         style={{
           position: 'relative',
           background: 'var(--b1n0-card)',
-          borderRadius: '24px',
+          borderRadius: 'var(--radius-pill)',
           padding: '36px 32px 32px',
           maxWidth: '340px',
           width: '90%',
@@ -154,9 +155,7 @@ export function PurchaseCelebration({ side, amount, cobro, currency, onDone }: P
               opacity: 0,
             }}
           >
-            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
+            <Check size={28} weight="bold" color="var(--b1n0-bg)" />
           </div>
         </div>
 
@@ -165,15 +164,14 @@ export function PurchaseCelebration({ side, amount, cobro, currency, onDone }: P
           fontFamily: D, fontWeight: 800, fontSize: '22px', color: 'var(--b1n0-text-1)',
           marginBottom: '4px', letterSpacing: '-0.5px',
           animation: 'celebFadeIn 0.4s 0.2s ease-out forwards',
-          opacity: 0,
-        }}>
+          opacity: 0, fontVariantNumeric: 'tabular-nums'}}>
           Posición confirmada
         </p>
 
         {/* Side badge */}
         <div style={{
           display: 'inline-block',
-          padding: '4px 14px', borderRadius: '8px',
+          padding: '4px 14px', borderRadius: 'var(--radius-lg)',
           background: 'var(--b1n0-surface)',
           fontFamily: F, fontWeight: 700, fontSize: '13px', color: 'var(--b1n0-text-1)',
           marginBottom: '20px',
@@ -194,12 +192,11 @@ export function PurchaseCelebration({ side, amount, cobro, currency, onDone }: P
           <p style={{
             fontFamily: D, fontWeight: 800, fontSize: '38px', color: 'var(--b1n0-text-1)',
             letterSpacing: '-2px', lineHeight: 1,
-            marginBottom: '4px',
-          }}>
+            marginBottom: '4px', fontVariantNumeric: 'tabular-nums'}}>
             {currency}{cobro.toFixed(2)}
           </p>
           {multiplier > 1 && (
-            <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 600, color: '#4ade80' }}>
+            <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 600, color: 'var(--b1n0-si)' }}>
               {multiplier.toFixed(1)}x tu entrada
             </p>
           )}
@@ -207,7 +204,7 @@ export function PurchaseCelebration({ side, amount, cobro, currency, onDone }: P
 
         {/* Entry summary */}
         <div style={{
-          marginTop: '20px', padding: '12px 16px', borderRadius: '10px',
+          marginTop: '20px', padding: '12px 16px', borderRadius: 'var(--radius-lg)',
           background: 'var(--b1n0-bg)',
           animation: 'celebFadeIn 0.4s 0.5s ease-out forwards',
           opacity: 0,
@@ -231,3 +228,4 @@ export function PurchaseCelebration({ side, amount, cobro, currency, onDone }: P
     document.body
   )
 }
+                                                                                                       

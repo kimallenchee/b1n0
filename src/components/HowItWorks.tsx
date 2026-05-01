@@ -17,16 +17,16 @@ const steps = [
     accent: 'var(--b1n0-si)',
     accentBg: 'var(--b1n0-si-bg)',
     illustration: (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '16px 20px', background: 'var(--b1n0-card)', borderRadius: '14px', border: '1px solid var(--b1n0-border)' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '16px 20px', background: 'var(--b1n0-card)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--b1n0-border)' }}>
         <p style={{ fontFamily: D, fontWeight: 800, fontSize: '15px', color: 'var(--b1n0-text-1)', lineHeight: 1.3 }}>
           ¿Trump impone aranceles a CA?
         </p>
         <div style={{ display: 'flex', gap: '8px' }}>
-          <div style={{ flex: 1, padding: '10px', borderRadius: '10px', background: 'var(--b1n0-si-bg)', border: '2px solid var(--b1n0-si)', textAlign: 'center', cursor: 'default' }}>
+          <div style={{ flex: 1, padding: '10px', borderRadius: 'var(--radius-lg)', background: 'var(--b1n0-si-bg)', border: '2px solid var(--b1n0-si)', textAlign: 'center', cursor: 'default' }}>
             <span style={{ fontFamily: D, fontWeight: 700, fontSize: '16px', color: 'var(--b1n0-si)' }}>SÍ</span>
             <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-text-2)', marginLeft: '6px' }}>0.32</span>
           </div>
-          <div style={{ flex: 1, padding: '10px', borderRadius: '10px', background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', textAlign: 'center', cursor: 'default' }}>
+          <div style={{ flex: 1, padding: '10px', borderRadius: 'var(--radius-lg)', background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', textAlign: 'center', cursor: 'default' }}>
             <span style={{ fontFamily: D, fontWeight: 700, fontSize: '16px', color: 'var(--b1n0-text-2)' }}>NO</span>
             <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-text-2)', marginLeft: '6px' }}>0.70</span>
           </div>
@@ -45,20 +45,20 @@ const steps = [
     accent: 'var(--b1n0-gold)',
     accentBg: 'rgba(255,212,116,0.12)',
     illustration: (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '16px 20px', background: 'var(--b1n0-card)', borderRadius: '14px', border: '1px solid var(--b1n0-border)' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '16px 20px', background: 'var(--b1n0-card)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--b1n0-border)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-text-2)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Tu entrada</span>
           <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-si)', fontWeight: 600 }}>SÍ seleccionado</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', justifyContent: 'center', padding: '8px 0' }}>
           <span style={{ fontFamily: F, fontSize: '18px', color: 'var(--b1n0-text-2)' }}>$</span>
-          <span style={{ fontFamily: D, fontWeight: 800, fontSize: '42px', color: 'var(--b1n0-text-1)', letterSpacing: '-2px' }}>5</span>
+          <span style={{ fontFamily: D, fontWeight: 800, fontSize: '42px', color: 'var(--b1n0-text-1)', letterSpacing: '-2px' , fontVariantNumeric: 'tabular-nums'}}>5</span>
         </div>
-        <div style={{ background: 'var(--b1n0-si-bg)', borderRadius: '10px', padding: '10px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ background: 'var(--b1n0-si-bg)', borderRadius: 'var(--radius-lg)', padding: '10px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-text-2)' }}>Si tenés razón, colectás</span>
-          <span style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: 'var(--b1n0-si)' }}>$15.62</span>
+          <span style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: 'var(--b1n0-si)' , fontVariantNumeric: 'tabular-nums'}}>$15.62</span>
         </div>
-        <div style={{ padding: '10px', borderRadius: '10px', background: 'var(--b1n0-si)', textAlign: 'center', cursor: 'default' }}>
+        <div style={{ padding: '10px', borderRadius: 'var(--radius-lg)', background: 'var(--b1n0-si)', textAlign: 'center', cursor: 'default' }}>
           <span style={{ fontFamily: F, fontWeight: 700, fontSize: '13px', color: 'var(--b1n0-bg)' }}>Confirmar llamado →</span>
         </div>
       </div>
@@ -71,7 +71,7 @@ const steps = [
     accent: 'var(--b1n0-si)',
     accentBg: 'var(--b1n0-si-bg)',
     illustration: (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '16px 20px', background: 'var(--b1n0-card)', borderRadius: '14px', border: '1px solid var(--b1n0-border)' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '16px 20px', background: 'var(--b1n0-card)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--b1n0-border)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
           <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--b1n0-si)' }} />
           <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-si)', fontWeight: 600 }}>Resuelto — ¡Lo sabías!</span>
@@ -83,10 +83,10 @@ const steps = [
           </div>
           <div style={{ textAlign: 'right' }}>
             <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-text-2)', marginBottom: '2px' }}>Colectás</p>
-            <p style={{ fontFamily: D, fontWeight: 800, fontSize: '28px', color: 'var(--b1n0-si)', letterSpacing: '-1px' }}>$15.62</p>
+            <p style={{ fontFamily: D, fontWeight: 800, fontSize: '28px', color: 'var(--b1n0-si)', letterSpacing: '-1px' , fontVariantNumeric: 'tabular-nums'}}>$15.62</p>
           </div>
         </div>
-        <div style={{ background: 'var(--b1n0-si-bg)', borderRadius: '8px', padding: '8px 12px', textAlign: 'center' }}>
+        <div style={{ background: 'var(--b1n0-si-bg)', borderRadius: 'var(--radius-lg)', padding: '8px 12px', textAlign: 'center' }}>
           <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-si)', fontWeight: 600 }}>Acreditado a tu saldo automáticamente</span>
         </div>
       </div>
@@ -135,7 +135,7 @@ export function HowItWorks({ open, onClose }: HowItWorksProps) {
           maxWidth: '380px',
           background: 'var(--b1n0-surface)',
           border: '1px solid var(--b1n0-border)',
-          borderRadius: '20px',
+          borderRadius: 'var(--radius-pill)',
           overflow: 'hidden',
           boxShadow: '0 24px 80px rgba(0,0,0,0.5)',
         }}
@@ -204,7 +204,7 @@ export function HowItWorks({ open, onClose }: HowItWorksProps) {
             }}>
               {current.number}
             </span>
-            <h3 style={{ fontFamily: D, fontWeight: 800, fontSize: '20px', color: 'var(--b1n0-text-1)', margin: 0 }}>
+            <h3 style={{ fontFamily: D, fontWeight: 800, fontSize: '20px', color: 'var(--b1n0-text-1)', margin: 0 , fontVariantNumeric: 'tabular-nums'}}>
               {current.title}
             </h3>
           </div>
@@ -227,7 +227,7 @@ export function HowItWorks({ open, onClose }: HowItWorksProps) {
             style={{
               width: '100%',
               padding: '12px',
-              borderRadius: '12px',
+              borderRadius: 'var(--radius-lg)',
               border: 'none',
               background: current.accent,
               color: 'var(--b1n0-bg)',

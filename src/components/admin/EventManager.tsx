@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { UploadSimple } from '@phosphor-icons/react'
 import { useEvents } from '../../context/EventsContext'
 import { useAuth } from '../../context/AuthContext'
 import { useVotes } from '../../context/VoteContext'
@@ -58,7 +59,7 @@ const categoryColors: Record<string, string> = {
 }
 
 const inputStyle: React.CSSProperties = {
-  width: '100%', padding: '10px 12px', borderRadius: '10px',
+  width: '100%', padding: '10px 12px', borderRadius: 'var(--radius-lg)',
   border: '1px solid var(--b1n0-border)', background: 'var(--b1n0-surface)',
   color: 'var(--b1n0-text-1)', fontFamily: F, fontSize: '13px',
   outline: 'none', boxSizing: 'border-box',
@@ -175,7 +176,7 @@ function Toggle({ options, value, onChange }: {
   onChange: (v: string) => void
 }) {
   return (
-    <div style={{ display: 'flex', background: 'var(--b1n0-surface)', borderRadius: '10px', padding: '3px' }}>
+    <div style={{ display: 'flex', background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-lg)', padding: '3px' }}>
       {options.map((o) => (
         <button
           key={o.value}
@@ -282,7 +283,7 @@ function OptionRows({ options, onChange, maxPool = 0 }: {
         </div>
       </div>
       {poolOver && (
-        <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-no)', marginTop: '6px', padding: '6px 8px', background: 'rgba(248,113,113,0.08)', borderRadius: '6px' }}>
+        <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-no)', marginTop: '6px', padding: '6px 8px', background: 'rgba(248,113,113,0.08)', borderRadius: 'var(--radius-md)' }}>
           El pool de opciones excede el Pool inicial (${maxPool.toLocaleString()}). Reducí los montos o aumentá el pool total.
         </p>
       )}
@@ -895,7 +896,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
   return (
     <div>
       {editingId && editForm && (
-        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '16px', padding: '16px', marginBottom: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '16px', marginBottom: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '4px' }}>
             <button onClick={() => { setEditingId(null); setEditForm(null) }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '20px', color: 'var(--b1n0-muted)', padding: 0, lineHeight: 1 }}>←</button>
             <p style={{ fontFamily: D, fontWeight: 700, fontSize: '16px', color: 'var(--b1n0-text-1)' }}>Editando evento</p>
@@ -926,8 +927,8 @@ export function EventManager({ platformRates }: EventManagerProps) {
                 <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                   <input type="url" value={editForm.image_url} onChange={(e) => setE('image_url', e.target.value)}
                     placeholder="https://... (opcional)" style={{ ...inputStyle, flex: 1 }} />
-                  <label style={{ padding: '10px 16px', borderRadius: '10px', border: '1px solid var(--b1n0-border)', background: 'var(--b1n0-surface)', fontFamily: F, fontSize: '12px', fontWeight: 600, cursor: 'pointer', color: 'var(--b1n0-text-1)', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  <label style={{ padding: '10px 16px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--b1n0-border)', background: 'var(--b1n0-surface)', fontFamily: F, fontSize: '12px', fontWeight: 600, cursor: 'pointer', color: 'var(--b1n0-text-1)', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <UploadSimple size={14} weight="bold" />
                     Subir
                     <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => {
                       const file = e.target.files?.[0]
@@ -938,7 +939,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                   </label>
                 </div>
                 {editForm.image_url && (
-                  <div style={{ marginTop: '8px', borderRadius: '8px', overflow: 'hidden', height: '80px' }}>
+                  <div style={{ marginTop: '8px', borderRadius: 'var(--radius-lg)', overflow: 'hidden', height: '80px' }}>
                     <img src={editForm.image_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => (e.currentTarget.style.display = 'none')} />
                   </div>
                 )}
@@ -963,7 +964,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
             <div style={{ flex: '1 1 240px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <div>
                 <label style={labelStyle}>Pool parimutuel</label>
-                <div style={{ padding: '10px 12px', background: 'var(--b1n0-surface)', borderRadius: '10px', border: '1px solid rgba(0,0,0,0.07)' }}>
+                <div style={{ padding: '10px 12px', background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-lg)', border: '1px solid rgba(0,0,0,0.07)' }}>
                   {hasActivePositions && (
                     <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-gold)', marginBottom: '8px', fontWeight: 600 }}>
                       Mercado activo — pool crece con cada voto
@@ -1024,11 +1025,11 @@ export function EventManager({ platformRates }: EventManagerProps) {
                 </label>
               </div>
 
-              {editError && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', padding: '8px 10px', background: 'rgba(248,113,113,0.08)', borderRadius: '8px' }}>{editError}</p>}
-              {editSuccess && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-si)', padding: '8px 10px', background: 'rgba(74,222,128,0.08)', borderRadius: '8px' }}>✓ {editSuccess}</p>}
+              {editError && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', padding: '8px 10px', background: 'rgba(248,113,113,0.08)', borderRadius: 'var(--radius-lg)' }}>{editError}</p>}
+              {editSuccess && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-si)', padding: '8px 10px', background: 'rgba(74,222,128,0.08)', borderRadius: 'var(--radius-lg)' }}>✓ {editSuccess}</p>}
 
               <button onClick={handleEditSave} disabled={editLoading}
-                style={{ width: '100%', padding: '13px', borderRadius: '12px', border: 'none', background: editLoading ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)', fontFamily: F, fontWeight: 600, fontSize: '13px', cursor: editLoading ? 'default' : 'pointer' }}>
+                style={{ width: '100%', padding: '13px', borderRadius: 'var(--radius-lg)', border: 'none', background: editLoading ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)', fontFamily: F, fontWeight: 600, fontSize: '13px', cursor: editLoading ? 'default' : 'pointer' }}>
                 {editLoading ? 'Guardando...' : 'Guardar cambios →'}
               </button>
 
@@ -1044,7 +1045,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                       navigator.clipboard.writeText(url)
                       setEditSuccess('Enlace copiado: ' + url)
                     }}
-                    style={{ width: '100%', padding: '10px', borderRadius: '10px', border: '1px solid #C4B5FD', background: 'rgba(196,181,253,0.12)', color: '#C4B5FD', fontFamily: F, fontWeight: 600, fontSize: '12px', cursor: 'pointer', marginBottom: '8px' }}
+                    style={{ width: '100%', padding: '10px', borderRadius: 'var(--radius-lg)', border: '1px solid #C4B5FD', background: 'rgba(196,181,253,0.12)', color: '#C4B5FD', fontFamily: F, fontWeight: 600, fontSize: '12px', cursor: 'pointer', marginBottom: '8px' }}
                   >
                     Copiar enlace para LPs
                   </button>
@@ -1058,7 +1059,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                         await loadAllEvents()
                       }
                     }}
-                    style={{ width: '100%', padding: '13px', borderRadius: '12px', border: 'none', background: 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)', fontFamily: F, fontWeight: 700, fontSize: '13px', cursor: 'pointer', letterSpacing: '0.5px' }}
+                    style={{ width: '100%', padding: '13px', borderRadius: 'var(--radius-lg)', border: 'none', background: 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)', fontFamily: F, fontWeight: 700, fontSize: '13px', cursor: 'pointer', letterSpacing: '0.5px' }}
                   >
                     Publicar al público →
                   </button>
@@ -1077,7 +1078,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                       {lpDeposits.map((lp) => {
                         const userName = lpUsers.find(u => u.id === lp.user_id)?.name || lp.user_id.slice(0, 8)
                         return (
-                          <div key={lp.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 10px', background: 'rgba(196,181,253,0.08)', borderRadius: '8px', border: '1px solid rgba(124,58,237,0.1)' }}>
+                          <div key={lp.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 10px', background: 'rgba(196,181,253,0.08)', borderRadius: 'var(--radius-lg)', border: '1px solid rgba(124,58,237,0.1)' }}>
                             <div>
                               <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 600, color: '#C4B5FD' }}>{userName}</span>
                               <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', marginLeft: '8px' }}>
@@ -1093,7 +1094,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                     </div>
                   )}
 
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', padding: '10px', background: 'rgba(0,0,0,0.02)', borderRadius: '10px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', padding: '10px', background: 'rgba(0,0,0,0.02)', borderRadius: 'var(--radius-lg)' }}>
                     <select
                       value={lpForm.user_id}
                       onChange={(e) => setLpForm(f => ({ ...f, user_id: e.target.value }))}
@@ -1128,12 +1129,12 @@ export function EventManager({ platformRates }: EventManagerProps) {
                     <button
                       onClick={handleLpDeposit}
                       disabled={lpLoading || !lpForm.user_id || !lpForm.amount}
-                      style={{ width: '100%', padding: '10px', borderRadius: '10px', border: 'none', background: lpLoading ? 'var(--b1n0-border)' : '#C4B5FD', color: '#fff', fontFamily: F, fontWeight: 600, fontSize: '12px', cursor: lpLoading ? 'default' : 'pointer' }}
+                      style={{ width: '100%', padding: '10px', borderRadius: 'var(--radius-lg)', border: 'none', background: lpLoading ? 'var(--b1n0-border)' : '#C4B5FD', color: '#fff', fontFamily: F, fontWeight: 600, fontSize: '12px', cursor: lpLoading ? 'default' : 'pointer' }}
                     >
                       {lpLoading ? 'Procesando...' : 'Agregar Capital LP →'}
                     </button>
-                    {lpError && <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-no)', padding: '6px 8px', background: 'rgba(248,113,113,0.08)', borderRadius: '6px' }}>{lpError}</p>}
-                    {lpSuccess && <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-si)', padding: '6px 8px', background: 'rgba(74,222,128,0.08)', borderRadius: '6px' }}>✓ {lpSuccess}</p>}
+                    {lpError && <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-no)', padding: '6px 8px', background: 'rgba(248,113,113,0.08)', borderRadius: 'var(--radius-md)' }}>{lpError}</p>}
+                    {lpSuccess && <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-si)', padding: '6px 8px', background: 'rgba(74,222,128,0.08)', borderRadius: 'var(--radius-md)' }}>✓ {lpSuccess}</p>}
                   </div>
                 </div>
               )}
@@ -1146,14 +1147,14 @@ export function EventManager({ platformRates }: EventManagerProps) {
                       <button
                         onClick={() => handleResolve('yes')}
                         disabled={resolveLoading}
-                        style={{ flex: 1, padding: '10px', borderRadius: '10px', border: 'none', background: resolveLoading ? 'var(--b1n0-border)' : 'var(--b1n0-si)', cursor: resolveLoading ? 'default' : 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: '#fff' }}
+                        style={{ flex: 1, padding: '10px', borderRadius: 'var(--radius-lg)', border: 'none', background: resolveLoading ? 'var(--b1n0-border)' : 'var(--b1n0-si)', cursor: resolveLoading ? 'default' : 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: '#fff' }}
                       >
                         SÍ ganó
                       </button>
                       <button
                         onClick={() => handleResolve('no')}
                         disabled={resolveLoading}
-                        style={{ flex: 1, padding: '10px', borderRadius: '10px', border: 'none', background: resolveLoading ? 'var(--b1n0-border)' : 'var(--b1n0-no)', cursor: resolveLoading ? 'default' : 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: '#fff' }}
+                        style={{ flex: 1, padding: '10px', borderRadius: 'var(--radius-lg)', border: 'none', background: resolveLoading ? 'var(--b1n0-border)' : 'var(--b1n0-no)', cursor: resolveLoading ? 'default' : 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: '#fff' }}
                       >
                         NO ganó
                       </button>
@@ -1165,15 +1166,15 @@ export function EventManager({ platformRates }: EventManagerProps) {
                           key={opt.label}
                           onClick={() => handleResolve(opt.label)}
                           disabled={resolveLoading}
-                          style={{ width: '100%', padding: '9px', borderRadius: '10px', border: 'none', background: resolveLoading ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-si)', cursor: resolveLoading ? 'default' : 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-on-accent)', textAlign: 'left' }}
+                          style={{ width: '100%', padding: '9px', borderRadius: 'var(--radius-lg)', border: 'none', background: resolveLoading ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-si)', cursor: resolveLoading ? 'default' : 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-on-accent)', textAlign: 'left' }}
                         >
                           {opt.label} ganó →
                         </button>
                       ))}
                     </div>
                   )}
-                  {resolveError && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', marginTop: '8px', padding: '8px 10px', background: 'rgba(248,113,113,0.08)', borderRadius: '8px' }}>{resolveError}</p>}
-                  {resolveSuccess && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-si)', marginTop: '8px', padding: '8px 10px', background: 'rgba(74,222,128,0.08)', borderRadius: '8px' }}>✓ {resolveSuccess}</p>}
+                  {resolveError && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', marginTop: '8px', padding: '8px 10px', background: 'rgba(248,113,113,0.08)', borderRadius: 'var(--radius-lg)' }}>{resolveError}</p>}
+                  {resolveSuccess && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-si)', marginTop: '8px', padding: '8px 10px', background: 'rgba(74,222,128,0.08)', borderRadius: 'var(--radius-lg)' }}>✓ {resolveSuccess}</p>}
                 </div>
               )}
 
@@ -1181,12 +1182,12 @@ export function EventManager({ platformRates }: EventManagerProps) {
                 {!deleteConfirm ? (
                   <button
                     onClick={() => setDeleteConfirm(true)}
-                    style={{ width: '100%', padding: '10px', borderRadius: '10px', border: '1px solid rgba(185,28,28,0.25)', background: 'transparent', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-no)' }}
+                    style={{ width: '100%', padding: '10px', borderRadius: 'var(--radius-lg)', border: '1px solid rgba(185,28,28,0.25)', background: 'transparent', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-no)' }}
                   >
                     Eliminar evento
                   </button>
                 ) : (
-                  <div style={{ background: 'rgba(248,113,113,0.08)', borderRadius: '10px', padding: '12px' }}>
+                  <div style={{ background: 'rgba(248,113,113,0.08)', borderRadius: 'var(--radius-lg)', padding: '12px' }}>
                     <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', marginBottom: '10px', fontWeight: 600 }}>
                       ¿Archivar este evento? Desaparecerá del feed. Los votos y transacciones existentes se conservan.
                     </p>
@@ -1194,13 +1195,13 @@ export function EventManager({ platformRates }: EventManagerProps) {
                       <button
                         onClick={handleDelete}
                         disabled={deleteLoading}
-                        style={{ flex: 1, padding: '9px', borderRadius: '8px', border: 'none', background: 'var(--b1n0-no)', cursor: deleteLoading ? 'default' : 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: '#fff' }}
+                        style={{ flex: 1, padding: '9px', borderRadius: 'var(--radius-lg)', border: 'none', background: 'var(--b1n0-no)', cursor: deleteLoading ? 'default' : 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: '#fff' }}
                       >
                         {deleteLoading ? 'Archivando...' : 'Sí, archivar'}
                       </button>
                       <button
                         onClick={() => setDeleteConfirm(false)}
-                        style={{ flex: 1, padding: '9px', borderRadius: '8px', border: '1px solid var(--b1n0-border)', background: 'var(--b1n0-card)', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-muted)' }}
+                        style={{ flex: 1, padding: '9px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--b1n0-border)', background: 'var(--b1n0-card)', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-muted)' }}
                       >
                         Cancelar
                       </button>
@@ -1213,7 +1214,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
         </div>
       )}
 
-      <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '16px', overflow: 'hidden' }}>
+      <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
         <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--b1n0-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             {(['open', 'resolved'] as const).map((f) => (
@@ -1221,7 +1222,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                 key={f}
                 onClick={() => { setManageFilter(f); setSelectedIds(new Set()); setBulkDeleteConfirm(false) }}
                 style={{
-                  padding: '5px 12px', borderRadius: '8px', border: 'none', cursor: 'pointer',
+                  padding: '5px 12px', borderRadius: 'var(--radius-lg)', border: 'none', cursor: 'pointer',
                   fontFamily: F, fontWeight: 600, fontSize: '11px',
                   background: manageFilter === f ? 'var(--b1n0-card)' : 'transparent',
                   color: manageFilter === f ? 'var(--b1n0-text-1)' : 'var(--b1n0-muted)',
@@ -1320,7 +1321,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                 URL.revokeObjectURL(url)
               }}
               style={{
-                padding: '5px 10px', borderRadius: '8px', border: '1px solid var(--b1n0-border)', cursor: 'pointer',
+                padding: '5px 10px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--b1n0-border)', cursor: 'pointer',
                 background: 'var(--b1n0-card)', color: 'var(--b1n0-muted)',
                 fontFamily: F, fontWeight: 600, fontSize: '11px',
               }}
@@ -1332,7 +1333,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
               onClick={() => bulkFileRef.current?.click()}
               disabled={bulkUploading}
               style={{
-                padding: '5px 10px', borderRadius: '8px', border: 'none', cursor: bulkUploading ? 'default' : 'pointer',
+                padding: '5px 10px', borderRadius: 'var(--radius-lg)', border: 'none', cursor: bulkUploading ? 'default' : 'pointer',
                 background: 'var(--b1n0-surface)', color: 'var(--b1n0-text-1)',
                 fontFamily: F, fontWeight: 600, fontSize: '11px',
               }}
@@ -1342,7 +1343,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
             <button
               onClick={() => { setShowCreateForm(!showCreateForm); setEditingId(null); if (!showCreateForm) loadLpUsers() }}
               style={{
-                width: '28px', height: '28px', borderRadius: '8px', border: 'none', cursor: 'pointer',
+                width: '28px', height: '28px', borderRadius: 'var(--radius-lg)', border: 'none', cursor: 'pointer',
                 background: showCreateForm ? 'var(--b1n0-si)' : 'var(--b1n0-surface)',
                 color: showCreateForm ? 'var(--b1n0-on-accent)' : 'var(--b1n0-text-1)',
                 fontFamily: F, fontWeight: 700, fontSize: '16px', lineHeight: 1,
@@ -1412,7 +1413,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
               </div>
               <button
                 onClick={() => isEditing ? (setEditingId(null), setEditForm(null)) : startEdit(ev)}
-                style={{ flexShrink: 0, padding: '6px 14px', borderRadius: '8px', border: `1px solid ${isEditing ? 'var(--b1n0-border)' : 'var(--b1n0-border)'}`, background: isEditing ? 'var(--b1n0-surface)' : 'transparent', cursor: 'pointer', fontFamily: F, fontSize: '12px', fontWeight: 600, color: isEditing ? 'var(--b1n0-text-1)' : 'var(--b1n0-muted)' }}
+                style={{ flexShrink: 0, padding: '6px 14px', borderRadius: 'var(--radius-lg)', border: `1px solid ${isEditing ? 'var(--b1n0-border)' : 'var(--b1n0-border)'}`, background: isEditing ? 'var(--b1n0-surface)' : 'transparent', cursor: 'pointer', fontFamily: F, fontSize: '12px', fontWeight: 600, color: isEditing ? 'var(--b1n0-text-1)' : 'var(--b1n0-muted)' }}
               >
                 {isEditing ? 'Cerrar' : 'Editar'}
               </button>
@@ -1424,7 +1425,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
       {selectedIds.size > 0 && (
         <div style={{
           position: 'sticky', bottom: '16px', marginTop: '12px',
-          background: 'var(--b1n0-si)', borderRadius: '12px', padding: '12px 18px',
+          background: 'var(--b1n0-si)', borderRadius: 'var(--radius-lg)', padding: '12px 18px',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           boxShadow: '0 4px 20px rgba(255,255,255,0.08)',
         }}>
@@ -1443,7 +1444,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
             <button
               onClick={() => setBulkDeleteConfirm(true)}
               style={{
-                padding: '7px 16px', borderRadius: '8px', border: '1px solid rgba(185,28,28,0.4)',
+                padding: '7px 16px', borderRadius: 'var(--radius-lg)', border: '1px solid rgba(185,28,28,0.4)',
                 background: 'rgba(185,28,28,0.15)', cursor: 'pointer',
                 fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'rgba(248,113,113,0.3)',
               }}
@@ -1457,7 +1458,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                 onClick={handleBulkDelete}
                 disabled={bulkDeleteLoading}
                 style={{
-                  padding: '7px 14px', borderRadius: '8px', border: 'none',
+                  padding: '7px 14px', borderRadius: 'var(--radius-lg)', border: 'none',
                   background: 'var(--b1n0-no)', cursor: bulkDeleteLoading ? 'default' : 'pointer',
                   fontFamily: F, fontWeight: 600, fontSize: '12px', color: '#fff',
                 }}
@@ -1467,7 +1468,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
               <button
                 onClick={() => setBulkDeleteConfirm(false)}
                 style={{
-                  padding: '7px 14px', borderRadius: '8px', border: '1px solid var(--b1n0-border)',
+                  padding: '7px 14px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--b1n0-border)',
                   background: 'transparent', cursor: 'pointer',
                   fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-muted)',
                 }}
@@ -1480,7 +1481,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
       )}
 
       {showCreateForm && (
-        <form onSubmit={handleCreate} style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '16px', padding: '20px', marginTop: '20px', marginBottom: '20px' }}>
+        <form onSubmit={handleCreate} style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '20px', marginTop: '20px', marginBottom: '20px' }}>
           <p style={{ fontFamily: D, fontWeight: 700, fontSize: '16px', color: 'var(--b1n0-text-1)', marginBottom: '16px' }}>Crear evento</p>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
@@ -1532,8 +1533,8 @@ export function EventManager({ platformRates }: EventManagerProps) {
                     placeholder="https://... (opcional)"
                     style={{ ...inputStyle, flex: 1 }}
                   />
-                  <label style={{ padding: '10px 16px', borderRadius: '10px', border: '1px solid var(--b1n0-border)', background: 'var(--b1n0-surface)', fontFamily: F, fontSize: '12px', fontWeight: 600, cursor: 'pointer', color: 'var(--b1n0-text-1)', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  <label style={{ padding: '10px 16px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--b1n0-border)', background: 'var(--b1n0-surface)', fontFamily: F, fontSize: '12px', fontWeight: 600, cursor: 'pointer', color: 'var(--b1n0-text-1)', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <UploadSimple size={14} weight="bold" />
                     Subir
                     <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => {
                       const file = e.target.files?.[0]
@@ -1544,7 +1545,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                   </label>
                 </div>
                 {form.image_url && (
-                  <div style={{ marginTop: '8px', borderRadius: '8px', overflow: 'hidden', height: '80px', position: 'relative' }}>
+                  <div style={{ marginTop: '8px', borderRadius: 'var(--radius-lg)', overflow: 'hidden', height: '80px', position: 'relative' }}>
                     <img src={form.image_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => (e.currentTarget.style.display = 'none')} />
                   </div>
                 )}
@@ -1596,7 +1597,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                     {form.lp_commitments.map((lp, i) => {
                       const u = lpUsers.find(u => u.id === lp.user_id)
                       return (
-                        <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 10px', background: 'rgba(196,181,253,0.08)', borderRadius: '8px', border: '1px solid rgba(124,58,237,0.1)' }}>
+                        <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 10px', background: 'rgba(196,181,253,0.08)', borderRadius: 'var(--radius-lg)', border: '1px solid rgba(124,58,237,0.1)' }}>
                           <span style={{ fontFamily: F, fontSize: '12px', color: '#C4B5FD', fontWeight: 600 }}>
                             {u?.name || lp.user_id.slice(0, 8)} — ${lp.amount.toLocaleString()} · {lp.return_pct}% de fees
                           </span>
@@ -1614,7 +1615,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                   </div>
                 )}
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', padding: '8px', background: 'rgba(0,0,0,0.02)', borderRadius: '8px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', padding: '8px', background: 'rgba(0,0,0,0.02)', borderRadius: 'var(--radius-lg)' }}>
                   <select
                     id="create_lp_user"
                     defaultValue=""
@@ -1643,7 +1644,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                       }])
                       sel.value = ''; amt.value = ''
                     }}
-                    style={{ padding: '8px', borderRadius: '8px', border: '1px solid rgba(124,58,237,0.2)', background: 'rgba(196,181,253,0.08)', color: '#C4B5FD', fontFamily: F, fontWeight: 600, fontSize: '11px', cursor: 'pointer' }}
+                    style={{ padding: '8px', borderRadius: 'var(--radius-lg)', border: '1px solid rgba(124,58,237,0.2)', background: 'rgba(196,181,253,0.08)', color: '#C4B5FD', fontFamily: F, fontWeight: 600, fontSize: '11px', cursor: 'pointer' }}
                   >
                     + Agregar LP
                   </button>
@@ -1694,20 +1695,20 @@ export function EventManager({ platformRates }: EventManagerProps) {
             </div>
           </div>
 
-          {createError && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', padding: '8px 10px', background: 'rgba(248,113,113,0.08)', borderRadius: '8px', marginTop: '12px' }}>{createError}</p>}
+          {createError && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', padding: '8px 10px', background: 'rgba(248,113,113,0.08)', borderRadius: 'var(--radius-lg)', marginTop: '12px' }}>{createError}</p>}
           {createSuccess && (
-            <div style={{ padding: '10px', background: 'rgba(74,222,128,0.08)', borderRadius: '8px', marginTop: '12px' }}>
+            <div style={{ padding: '10px', background: 'rgba(74,222,128,0.08)', borderRadius: 'var(--radius-lg)', marginTop: '12px' }}>
               <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-si)', fontWeight: 600 }}>✓ {createSuccess}</p>
             </div>
           )}
 
           <div style={{ display: 'flex', gap: '10px', marginTop: '16px' }}>
             <button type="submit" disabled={createLoading}
-              style={{ flex: 1, padding: '13px', borderRadius: '12px', border: 'none', background: createLoading ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)', fontFamily: F, fontWeight: 600, fontSize: '13px', cursor: createLoading ? 'default' : 'pointer' }}>
+              style={{ flex: 1, padding: '13px', borderRadius: 'var(--radius-lg)', border: 'none', background: createLoading ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)', fontFamily: F, fontWeight: 600, fontSize: '13px', cursor: createLoading ? 'default' : 'pointer' }}>
               {createLoading ? 'Creando...' : 'Crear evento →'}
             </button>
             <button type="button" onClick={() => setShowCreateForm(false)}
-              style={{ padding: '13px 20px', borderRadius: '12px', border: '1px solid var(--b1n0-border)', background: 'transparent', color: 'var(--b1n0-text-1)', fontFamily: F, fontWeight: 600, fontSize: '13px', cursor: 'pointer' }}>
+              style={{ padding: '13px 20px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--b1n0-border)', background: 'transparent', color: 'var(--b1n0-text-1)', fontFamily: F, fontWeight: 600, fontSize: '13px', cursor: 'pointer' }}>
               Cancelar
             </button>
           </div>

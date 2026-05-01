@@ -33,7 +33,7 @@ export function BetCards({ siPrice, noPrice, onSelect, selected = null }: BetCar
           onMouseEnter={() => setHovering('si')}
           onMouseLeave={() => setHovering(null)}
           style={{
-            flex: 1, borderRadius: '12px', padding: '14px', textAlign: 'center',
+            flex: 1, borderRadius: 'var(--radius-lg)', padding: '14px', textAlign: 'center',
             background: siActive ? 'var(--color-si-bg)' : 'var(--color-surface)',
             border: `1.5px solid ${siActive ? 'var(--color-si)' : 'var(--color-border)'}`,
             cursor: 'pointer', transition: 'all 0.18s ease',
@@ -57,7 +57,7 @@ export function BetCards({ siPrice, noPrice, onSelect, selected = null }: BetCar
           onMouseEnter={() => setHovering('no')}
           onMouseLeave={() => setHovering(null)}
           style={{
-            flex: 1, borderRadius: '12px', padding: '14px', textAlign: 'center',
+            flex: 1, borderRadius: 'var(--radius-lg)', padding: '14px', textAlign: 'center',
             background: noActive ? 'var(--color-no-bg)' : 'var(--color-surface)',
             border: `1.5px solid ${noActive ? 'var(--color-no)' : 'var(--color-border)'}`,
             cursor: 'pointer', transition: 'all 0.18s ease',

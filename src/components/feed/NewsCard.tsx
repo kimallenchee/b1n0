@@ -34,7 +34,7 @@ export function NewsCard({ article, onBridgeTap }: NewsCardProps) {
             <span style={{
               fontFamily: F, fontSize: '10px', fontWeight: 600, color: '#fff',
               background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)',
-              padding: '3px 8px', borderRadius: '6px',
+              padding: '3px 8px', borderRadius: 'var(--radius-md)',
               textTransform: 'uppercase', letterSpacing: '0.5px',
             }}>
               {article.source}
@@ -84,17 +84,17 @@ export function NewsCard({ article, onBridgeTap }: NewsCardProps) {
             onClick={(e) => { e.stopPropagation(); e.preventDefault(); onBridgeTap?.() }}
             style={{
               display: 'flex', alignItems: 'center', gap: '6px',
-              padding: '8px 12px', borderRadius: '8px', marginTop: '8px',
+              padding: '8px 12px', borderRadius: 'var(--radius-lg)', marginTop: '8px',
               border: '1px solid rgba(20,184,166,0.25)',
               background: 'rgba(20,184,166,0.06)',
               cursor: 'pointer', width: '100%', textAlign: 'left',
             }}
           >
             <span style={{ fontSize: '14px' }}>💡</span>
-            <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 500, color: '#4ade80', flex: 1 }}>
+            <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 500, color: 'var(--b1n0-si)', flex: 1 }}>
               Hay un voto relacionado
             </span>
-            <span style={{ fontFamily: F, fontSize: '12px', color: '#4ade80' }}>↓</span>
+            <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-si)' }}>↓</span>
           </button>
         )}
       </div>

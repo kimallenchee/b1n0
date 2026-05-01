@@ -102,8 +102,8 @@ const borderColors: Record<ToastType, string> = {
 }
 
 const iconColors: Record<ToastType, string> = {
-  error: '#f87171',
-  success: '#4ade80',
+  error: 'var(--b1n0-no)',
+  success: 'var(--b1n0-si)',
   info: '#C4B5FD',
 }
 
@@ -124,7 +124,7 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: number) =
       style={{
         background: bgColors[toast.type],
         border: `1px solid ${borderColors[toast.type]}`,
-        borderRadius: '12px',
+        borderRadius: 'var(--radius-lg)',
         padding: '12px 16px',
         display: 'flex',
         alignItems: 'center',

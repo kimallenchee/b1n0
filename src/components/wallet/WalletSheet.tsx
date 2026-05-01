@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { CreditCard, CurrencyDollar, Money } from '@phosphor-icons/react'
 import { BottomSheet } from '../BottomSheet'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
@@ -24,9 +25,7 @@ const depositMethods: { id: DepositMethod; label: string; sub: string; icon: Rea
     label: 'Tarjeta de débito / crédito',
     sub: 'Acreditación inmediata',
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--b1n0-text-1)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/>
-      </svg>
+      <CreditCard size={20} weight="regular" color="var(--b1n0-text-1)" />
     ),
   },
   {
@@ -34,9 +33,7 @@ const depositMethods: { id: DepositMethod; label: string; sub: string; icon: Rea
     label: 'Transferencia bancaria',
     sub: '1–2 días hábiles',
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--b1n0-text-1)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-      </svg>
+      <CurrencyDollar size={20} weight="regular" color="var(--b1n0-text-1)" />
     ),
   },
   {
@@ -57,9 +54,7 @@ const retiroMethods: { id: RetiroMethod; label: string; sub: string; icon: React
     label: 'Transferencia bancaria',
     sub: '1–2 días hábiles',
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--b1n0-text-1)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-      </svg>
+      <CurrencyDollar size={20} weight="regular" color="var(--b1n0-text-1)" />
     ),
   },
   {
@@ -67,9 +62,7 @@ const retiroMethods: { id: RetiroMethod; label: string; sub: string; icon: React
     label: 'Retiro en efectivo',
     sub: 'Puntos autorizados · 24h',
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--b1n0-text-1)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M2 10h2m16 0h2M2 14h2m16 0h2"/>
-      </svg>
+      <Money size={20} weight="regular" color="var(--b1n0-text-1)" />
     ),
   },
 ]
@@ -168,7 +161,7 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
   }
 
   const inputStyle: React.CSSProperties = {
-    width: '100%', padding: '13px 16px', borderRadius: '12px',
+    width: '100%', padding: '13px 16px', borderRadius: 'var(--radius-lg)',
     border: '1px solid var(--b1n0-border)', background: 'var(--b1n0-surface)',
     color: 'var(--b1n0-text-1)', fontFamily: F, fontSize: '14px', outline: 'none', boxSizing: 'border-box',
   }
@@ -185,19 +178,19 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
             {/* Balance display */}
             <div style={{ textAlign: 'center', padding: '16px 0 20px' }}>
               <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: '4px' }}>Saldo disponible</p>
-              <p style={{ fontFamily: D, fontWeight: 800, fontSize: '36px', color: 'var(--b1n0-text-1)', letterSpacing: '-1px', lineHeight: 1 }}>
+              <p style={{ fontFamily: D, fontWeight: 800, fontSize: '36px', color: 'var(--b1n0-text-1)', letterSpacing: '-1px', lineHeight: 1 , fontVariantNumeric: 'tabular-nums'}}>
                 ${balance.toLocaleString()}
               </p>
             </div>
 
             {/* Deposit / Withdraw toggle */}
-            <div style={{ display: 'flex', background: 'var(--b1n0-surface)', borderRadius: '12px', padding: '3px', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-lg)', padding: '3px', marginBottom: '16px' }}>
               {(['depositar', 'retirar'] as const).map((t) => (
                 <button
                   key={t}
                   onClick={() => switchTab(t)}
                   style={{
-                    flex: 1, padding: '10px', borderRadius: '10px', border: 'none',
+                    flex: 1, padding: '10px', borderRadius: 'var(--radius-lg)', border: 'none',
                     background: tab === t ? 'var(--b1n0-card)' : 'transparent',
                     boxShadow: tab === t ? '0 1px 3px var(--b1n0-border)' : 'none',
                     cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '13px',
@@ -218,7 +211,7 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
                   onClick={() => isDeposit ? handleDepositMethodSelect(m.id as DepositMethod) : handleRetiroMethodSelect(m.id as RetiroMethod)}
                   style={{
                     display: 'flex', alignItems: 'center', gap: '12px',
-                    padding: '14px 16px', borderRadius: '12px',
+                    padding: '14px 16px', borderRadius: 'var(--radius-lg)',
                     border: '1px solid var(--b1n0-border)', background: 'var(--b1n0-card)',
                     cursor: 'pointer', textAlign: 'left', width: '100%',
                     transition: 'border-color 0.15s',
@@ -226,7 +219,7 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
                   onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--b1n0-card-hover-border)')}
                   onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--b1n0-border)')}
                 >
-                  <div style={{ width: 36, height: 36, borderRadius: '10px', background: isDeposit ? 'var(--b1n0-si-bg)' : 'var(--status-enjuego-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-lg)', background: isDeposit ? 'var(--b1n0-si-bg)' : 'var(--status-enjuego-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     {m.icon}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
@@ -249,14 +242,14 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
 
             {/* Direction badge */}
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
-              <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-si)', background: 'var(--b1n0-si-bg)', borderRadius: '6px', padding: '4px 10px' }}>
+              <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-si)', background: 'var(--b1n0-si-bg)', borderRadius: 'var(--radius-md)', padding: '4px 10px' }}>
                 ↓ DEPOSITAR
               </span>
             </div>
 
             <div style={{ textAlign: 'center', padding: '12px 0 8px' }}>
               <div style={{ display: 'inline-flex', alignItems: 'baseline', gap: '4px' }}>
-                <span style={{ fontFamily: D, fontWeight: 700, fontSize: '28px', color: 'var(--b1n0-muted)' }}>$</span>
+                <span style={{ fontFamily: D, fontWeight: 700, fontSize: '28px', color: 'var(--b1n0-muted)' , fontVariantNumeric: 'tabular-nums'}}>$</span>
                 <input
                   type="number"
                   value={amount}
@@ -279,7 +272,7 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
                   key={q}
                   onClick={() => setAmount(String(amountNum + q))}
                   style={{
-                    padding: '8px 16px', borderRadius: '10px',
+                    padding: '8px 16px', borderRadius: 'var(--radius-lg)',
                     border: '1px solid var(--b1n0-border)', background: 'var(--b1n0-card)',
                     cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-text-1)',
                   }}
@@ -289,7 +282,7 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
               ))}
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', borderRadius: '10px', background: 'var(--b1n0-surface)', marginBottom: '14px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', borderRadius: 'var(--radius-lg)', background: 'var(--b1n0-surface)', marginBottom: '14px' }}>
               <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 500, color: 'var(--b1n0-text-1)' }}>
                 Método: {depositMethod === 'tarjeta' ? 'Tarjeta' : depositMethod === 'transferencia' ? 'Transferencia' : 'Efectivo'}
               </span>
@@ -305,7 +298,7 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
               onClick={handleDepositAmountNext}
               disabled={!validDepositAmount || loading}
               style={{
-                width: '100%', padding: '14px', borderRadius: '12px', border: 'none',
+                width: '100%', padding: '14px', borderRadius: 'var(--radius-lg)', border: 'none',
                 background: validDepositAmount && !loading ? 'var(--b1n0-si)' : 'var(--b1n0-disabled-bg)',
                 cursor: validDepositAmount && !loading ? 'pointer' : 'default',
                 fontFamily: F, fontWeight: 700, fontSize: '14px', color: validDepositAmount && !loading ? 'var(--b1n0-on-accent)' : 'var(--b1n0-muted)',
@@ -315,7 +308,7 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
             </button>
 
             {depositMethod === 'transferencia' && validDepositAmount && (
-              <div style={{ marginTop: '14px', padding: '12px 14px', borderRadius: '10px', background: 'var(--b1n0-surface)' }}>
+              <div style={{ marginTop: '14px', padding: '12px 14px', borderRadius: 'var(--radius-lg)', background: 'var(--b1n0-surface)' }}>
                 <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>Datos para transferencia</p>
                 {[
                   { l: 'Banco', v: 'Banco Industrial' },
@@ -345,10 +338,10 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
               ‹ Volver
             </button>
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
-              <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-si)', background: 'var(--b1n0-si-bg)', borderRadius: '6px', padding: '4px 10px' }}>↓ DEPOSITAR</span>
+              <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-si)', background: 'var(--b1n0-si-bg)', borderRadius: 'var(--radius-md)', padding: '4px 10px' }}>↓ DEPOSITAR</span>
             </div>
             <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-              <p style={{ fontFamily: D, fontWeight: 800, fontSize: '28px', color: 'var(--b1n0-text-1)' }}>${amountNum.toLocaleString()}</p>
+              <p style={{ fontFamily: D, fontWeight: 800, fontSize: '28px', color: 'var(--b1n0-text-1)' , fontVariantNumeric: 'tabular-nums'}}>${amountNum.toLocaleString()}</p>
               <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)', marginTop: '4px' }}>Depósito vía tarjeta</p>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '18px' }}>
@@ -364,7 +357,7 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
               onClick={handleDeposit}
               disabled={!cardValid || loading}
               style={{
-                width: '100%', padding: '14px', borderRadius: '12px', border: 'none',
+                width: '100%', padding: '14px', borderRadius: 'var(--radius-lg)', border: 'none',
                 background: cardValid && !loading ? 'var(--b1n0-si)' : 'var(--b1n0-disabled-bg)',
                 cursor: cardValid && !loading ? 'pointer' : 'default',
                 fontFamily: F, fontWeight: 700, fontSize: '14px', color: cardValid && !loading ? 'var(--b1n0-on-accent)' : 'var(--b1n0-muted)',
@@ -386,14 +379,14 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
             </button>
 
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
-              <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-gold)', background: 'var(--status-enjuego-bg)', borderRadius: '6px', padding: '4px 10px' }}>
+              <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-gold)', background: 'var(--status-enjuego-bg)', borderRadius: 'var(--radius-md)', padding: '4px 10px' }}>
                 ↑ RETIRAR
               </span>
             </div>
 
             <div style={{ textAlign: 'center', padding: '12px 0 8px' }}>
               <div style={{ display: 'inline-flex', alignItems: 'baseline', gap: '4px' }}>
-                <span style={{ fontFamily: D, fontWeight: 700, fontSize: '28px', color: 'var(--b1n0-muted)' }}>$</span>
+                <span style={{ fontFamily: D, fontWeight: 700, fontSize: '28px', color: 'var(--b1n0-muted)' , fontVariantNumeric: 'tabular-nums'}}>$</span>
                 <input
                   type="number"
                   value={amount}
@@ -419,7 +412,7 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
                   key={q}
                   onClick={() => setAmount(String(q))}
                   style={{
-                    padding: '8px 14px', borderRadius: '10px',
+                    padding: '8px 14px', borderRadius: 'var(--radius-lg)',
                     border: '1px solid var(--b1n0-border)',
                     background: amountNum === q ? 'var(--b1n0-text-1)' : 'var(--b1n0-card)',
                     cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px',
@@ -431,7 +424,7 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
               ))}
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', borderRadius: '10px', background: 'var(--b1n0-surface)', marginBottom: '14px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', borderRadius: 'var(--radius-lg)', background: 'var(--b1n0-surface)', marginBottom: '14px' }}>
               <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 500, color: 'var(--b1n0-text-1)' }}>
                 Método: {retiroMethod === 'transferencia' ? 'Transferencia' : 'Efectivo'}
               </span>
@@ -447,7 +440,7 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
               onClick={handleRetiroAmountNext}
               disabled={!validRetiroAmount || loading}
               style={{
-                width: '100%', padding: '14px', borderRadius: '12px', border: 'none',
+                width: '100%', padding: '14px', borderRadius: 'var(--radius-lg)', border: 'none',
                 background: validRetiroAmount && !loading ? 'var(--b1n0-si)' : 'var(--b1n0-disabled-bg)',
                 cursor: validRetiroAmount && !loading ? 'pointer' : 'default',
                 fontFamily: F, fontWeight: 700, fontSize: '14px', color: validRetiroAmount && !loading ? 'var(--b1n0-on-accent)' : 'var(--b1n0-muted)',
@@ -471,10 +464,10 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
               ‹ Volver
             </button>
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
-              <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-gold)', background: 'var(--status-enjuego-bg)', borderRadius: '6px', padding: '4px 10px' }}>↑ RETIRAR</span>
+              <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-gold)', background: 'var(--status-enjuego-bg)', borderRadius: 'var(--radius-md)', padding: '4px 10px' }}>↑ RETIRAR</span>
             </div>
             <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-              <p style={{ fontFamily: D, fontWeight: 800, fontSize: '28px', color: 'var(--b1n0-text-1)' }}>${amountNum.toLocaleString()}</p>
+              <p style={{ fontFamily: D, fontWeight: 800, fontSize: '28px', color: 'var(--b1n0-text-1)' , fontVariantNumeric: 'tabular-nums'}}>${amountNum.toLocaleString()}</p>
               <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)', marginTop: '4px' }}>Retiro vía transferencia</p>
             </div>
             <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--b1n0-muted)', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: '10px' }}>Cuenta destino</p>
@@ -488,7 +481,7 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
               onClick={handleWithdraw}
               disabled={!bankValid || loading}
               style={{
-                width: '100%', padding: '14px', borderRadius: '12px', border: 'none',
+                width: '100%', padding: '14px', borderRadius: 'var(--radius-lg)', border: 'none',
                 background: bankValid && !loading ? 'var(--b1n0-si)' : 'var(--b1n0-disabled-bg)',
                 cursor: bankValid && !loading ? 'pointer' : 'default',
                 fontFamily: F, fontWeight: 700, fontSize: '14px', color: bankValid && !loading ? 'var(--b1n0-on-accent)' : 'var(--b1n0-muted)',
@@ -510,7 +503,7 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
             </div>
-            <p style={{ fontFamily: D, fontWeight: 700, fontSize: '20px', color: 'var(--b1n0-text-1)', marginBottom: '6px' }}>
+            <p style={{ fontFamily: D, fontWeight: 700, fontSize: '20px', color: 'var(--b1n0-text-1)', marginBottom: '6px' , fontVariantNumeric: 'tabular-nums'}}>
               {doneType === 'deposit' ? '¡Listo!' : 'Retiro en proceso'}
             </p>
             <p style={{ fontFamily: F, fontSize: '14px', color: 'var(--b1n0-muted)', marginBottom: '28px' }}>
@@ -521,7 +514,7 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
             </p>
             <button
               onClick={handleClose}
-              style={{ width: '100%', padding: '14px', borderRadius: '12px', border: 'none', background: 'var(--b1n0-si)', cursor: 'pointer', fontFamily: F, fontWeight: 700, fontSize: '14px', color: 'var(--b1n0-on-accent)' }}
+              style={{ width: '100%', padding: '14px', borderRadius: 'var(--radius-lg)', border: 'none', background: 'var(--b1n0-si)', cursor: 'pointer', fontFamily: F, fontWeight: 700, fontSize: '14px', color: 'var(--b1n0-on-accent)' }}
             >
               Cerrar
             </button>

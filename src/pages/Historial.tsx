@@ -21,13 +21,13 @@ const typeIcon: Record<Transaction['type'], string> = {
 function TxCard({ tx }: { tx: Transaction }) {
   const positive = tx.amount > 0
   return (
-    <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderLeft: `3px solid ${positive ? 'var(--b1n0-surface)' : 'rgba(255,255,255,0.1)'}`, borderRadius: '14px', padding: '13px 15px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+    <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderLeft: `3px solid ${positive ? 'var(--b1n0-surface)' : 'rgba(255,255,255,0.1)'}`, borderRadius: 'var(--radius-lg)', padding: '13px 15px', display: 'flex', alignItems: 'center', gap: '12px' }}>
       <div style={{ width: 34, height: 34, borderRadius: '9px', background: positive ? 'rgba(255,255,255,0.04)' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F, fontSize: '14px', color: 'var(--b1n0-text-2)', flexShrink: 0 }}>
         {typeIcon[tx.type]}
       </div>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
-          <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--b1n0-muted)', background: 'var(--b1n0-surface)', borderRadius: '5px', padding: '2px 6px', textTransform: 'uppercase' as const, letterSpacing: '0.4px' }}>
+          <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--b1n0-muted)', background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-md)', padding: '2px 6px', textTransform: 'uppercase' as const, letterSpacing: '0.4px' }}>
             {typeLabel[tx.type]}
           </span>
         </div>
@@ -49,9 +49,9 @@ function VoteCard({ p }: { p: UserPrediction }) {
   const commentCount = p.event.comments?.length ?? 0
 
   return (
-    <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderLeft: `3px solid ${isWon ? 'var(--b1n0-si)' : isSold ? '#C4B5FD' : isActive ? 'var(--b1n0-gold)' : 'var(--b1n0-no)'}`, borderRadius: '10px', padding: '14px 16px' }}>
+    <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderLeft: `3px solid ${isWon ? 'var(--b1n0-si)' : isSold ? '#C4B5FD' : isActive ? 'var(--b1n0-gold)' : 'var(--b1n0-no)'}`, borderRadius: 'var(--radius-lg)', padding: '14px 16px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-        <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: isActive ? 'var(--status-enjuego-text)' : isWon ? 'var(--status-ganado-text)' : isSold ? '#C4B5FD' : 'var(--status-perdido-text)', background: isActive ? 'var(--status-enjuego-bg)' : isWon ? 'var(--status-ganado-bg)' : isSold ? '#C4B5FD15' : 'var(--status-perdido-bg)', borderRadius: '5px', padding: '2px 7px', textTransform: 'uppercase' as const, letterSpacing: '0.4px' }}>
+        <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: isActive ? 'var(--status-enjuego-text)' : isWon ? 'var(--status-ganado-text)' : isSold ? '#C4B5FD' : 'var(--status-perdido-text)', background: isActive ? 'var(--status-enjuego-bg)' : isWon ? 'var(--status-ganado-bg)' : isSold ? '#C4B5FD15' : 'var(--status-perdido-bg)', borderRadius: 'var(--radius-md)', padding: '2px 7px', textTransform: 'uppercase' as const, letterSpacing: '0.4px' }}>
           {isActive ? 'En juego' : isWon ? 'Ganado' : isSold ? 'Vendido' : 'Perdido'}
         </span>
         <span style={{ fontFamily: D, fontWeight: 800, fontSize: '13px', color: 'var(--b1n0-text-1)' }}>
@@ -72,7 +72,7 @@ function VoteCard({ p }: { p: UserPrediction }) {
           <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginBottom: '2px' }}>
             {isWon ? 'Cobrado' : isSold ? 'Recibido' : isActive ? 'Potencial' : 'Fondos'}
           </p>
-          <p style={{ fontFamily: D, fontWeight: 700, fontSize: '14px', color: isSold ? '#C4B5FD' : isWon ? '#4ade80' : isActive ? '#FFD474' : 'var(--b1n0-muted)', letterSpacing: '-0.3px' }}>
+          <p style={{ fontFamily: D, fontWeight: 700, fontSize: '14px', color: isSold ? '#C4B5FD' : isWon ? 'var(--b1n0-si)' : isActive ? 'var(--b1n0-gold)' : 'var(--b1n0-muted)', letterSpacing: '-0.3px' }}>
             {isWon ? `Q${p.potentialCobro.toFixed(2)}` : isSold ? `Q${p.potentialCobro.toFixed(2)}` : isActive ? `Q${p.potentialCobro.toFixed(2)}` : `-Q${p.amount.toFixed(2)}`}
           </p>
         </div>
@@ -159,13 +159,13 @@ export function Historial() {
   return (
     <div className="feed-scroll" style={{ height: '100%', padding: '8px 16px 24px' }}>
       <div style={{ padding: '20px 0 16px' }}>
-        <p style={{ fontFamily: D, fontWeight: 800, fontSize: '22px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.5px' }}>
+        <p style={{ fontFamily: D, fontWeight: 800, fontSize: '22px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.5px' , fontVariantNumeric: 'tabular-nums'}}>
           Historial
         </p>
       </div>
 
       {/* Tab switcher */}
-      <div style={{ display: 'flex', background: 'var(--b1n0-card)', borderRadius: '12px', padding: '3px', marginBottom: '12px' }}>
+      <div style={{ display: 'flex', background: 'var(--b1n0-card)', borderRadius: 'var(--radius-lg)', padding: '3px', marginBottom: '12px' }}>
         {(['votos', 'movimientos'] as const).map((t) => (
           <button
             key={t}
@@ -185,7 +185,7 @@ export function Historial() {
               <button
                 key={f}
                 onClick={() => setVoteFilter(f)}
-                style={{ padding: '5px 11px', borderRadius: '20px', border: voteFilter === f ? 'none' : '1px solid var(--b1n0-border)', background: voteFilter === f ? 'var(--b1n0-text-1)' : 'var(--b1n0-card)', color: voteFilter === f ? 'var(--b1n0-bg)' : 'var(--b1n0-muted)', fontFamily: F, fontWeight: 600, fontSize: '11px', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0 }}
+                style={{ padding: '5px 11px', borderRadius: 'var(--radius-pill)', border: voteFilter === f ? 'none' : '1px solid var(--b1n0-border)', background: voteFilter === f ? 'var(--b1n0-text-1)' : 'var(--b1n0-card)', color: voteFilter === f ? 'var(--b1n0-bg)' : 'var(--b1n0-muted)', fontFamily: F, fontWeight: 600, fontSize: '11px', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0 }}
               >
                 {label}
               </button>

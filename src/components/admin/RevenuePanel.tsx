@@ -408,7 +408,7 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
   const filtered = filter === 'all' ? viewTxs : viewTxs.filter((t) => t.status === filter)
   const visible = filtered.slice(0, limit)
 
-  const statusColor = (s: string) => s === 'won' ? '#4ade80' : s === 'lost' ? 'var(--b1n0-muted)' : s === 'sold' ? '#C4B5FD' : '#FFD474'
+  const statusColor = (s: string) => s === 'won' ? 'var(--b1n0-si)' : s === 'lost' ? 'var(--b1n0-muted)' : s === 'sold' ? '#C4B5FD' : 'var(--b1n0-gold)'
   const statusLabel = (s: string) => s === 'won' ? 'Ganado' : s === 'lost' ? 'Perdido' : s === 'sold' ? 'Vendido' : 'Activo'
 
   const fmtQ = (v: number) => v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
@@ -424,10 +424,10 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
           style={{
             fontFamily: F,
             fontSize: '12px',
-            color: '#f87171',
+            color: 'var(--b1n0-no)',
             background: 'rgba(248,113,113,0.08)',
             padding: '8px 12px',
-            borderRadius: '8px',
+            borderRadius: 'var(--radius-lg)',
             marginBottom: '10px',
           }}
         >
@@ -435,12 +435,12 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
         </p>
       )}
       {/* ── Compact revenue hero ── */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '20px', background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '12px', padding: '14px 18px', marginBottom: '10px', flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '20px', background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '14px 18px', marginBottom: '10px', flexWrap: 'wrap' }}>
         <div style={{ marginRight: '8px' }}>
           <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: 'var(--b1n0-muted)', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '2px' }}>Ingreso neto</p>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '3px' }}>
             <span style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)' }}>$</span>
-            <span style={{ fontFamily: D, fontSize: '34px', fontWeight: 700, color: 'var(--b1n0-text-1)', letterSpacing: '-1.5px' }}>{fmtQ(totalRevenue)}</span>
+            <span style={{ fontFamily: D, fontSize: '34px', fontWeight: 700, color: 'var(--b1n0-text-1)', letterSpacing: '-1.5px' , fontVariantNumeric: 'tabular-nums'}}>{fmtQ(totalRevenue)}</span>
           </div>
         </div>
         {[
@@ -462,12 +462,12 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px', marginBottom: '10px' }}>
 
         {/* Cut 1 — LP Commission */}
-        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '10px', padding: '14px', borderLeft: '3px solid #f87171', minWidth: 0 }}>
+        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '14px', borderLeft: '3px solid var(--b1n0-no)', minWidth: 0 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: '#f87171', letterSpacing: '0.8px', textTransform: 'uppercase' }}>CUT 1 — LP</p>
+            <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: 'var(--b1n0-no)', letterSpacing: '0.8px', textTransform: 'uppercase' }}>CUT 1 — LP</p>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '2px' }}>
               <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>-Q</span>
-              <span style={{ fontFamily: D, fontSize: '22px', fontWeight: 700, color: '#f87171', letterSpacing: '-0.5px' }}>{fmtQ(lpCommissionTotal)}</span>
+              <span style={{ fontFamily: D, fontSize: '22px', fontWeight: 700, color: 'var(--b1n0-no)', letterSpacing: '-0.5px' , fontVariantNumeric: 'tabular-nums'}}>{fmtQ(lpCommissionTotal)}</span>
             </div>
           </div>
           <div style={{ display: 'flex', gap: '12px', fontSize: '10px', fontFamily: F, color: 'var(--b1n0-muted)', marginBottom: '6px' }}>
@@ -477,14 +477,14 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
           </div>
           <button
             onClick={() => setLpExpanded(!lpExpanded)}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '10px', color: '#f87171', fontWeight: 600, padding: 0, marginBottom: lpExpanded ? '6px' : 0 }}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '10px', color: 'var(--b1n0-no)', fontWeight: 600, padding: 0, marginBottom: lpExpanded ? '6px' : 0 }}
           >
             {lpExpanded ? 'Ocultar ▲' : 'Detalle ▼'}
           </button>
           {lpExpanded && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '4px' }}>
               {lpCommissionByEvent.map((ev) => (
-                <div key={ev.eventId} style={{ background: 'rgba(248,113,113,0.08)', borderRadius: '6px', padding: '8px' }}>
+                <div key={ev.eventId} style={{ background: 'rgba(248,113,113,0.08)', borderRadius: 'var(--radius-md)', padding: '8px' }}>
                   <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--b1n0-text-1)', marginBottom: '4px' }}>{ev.question}</p>
                   <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginBottom: '4px' }}>
                     Fees totales: ${fmtQ(ev.totalMargins)} · Comisión LP: ${fmtQ(ev.commission)}
@@ -494,7 +494,7 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
                       <span style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)' }}>
                         LP ${fmtQ(lp.amount)} ({(lp.return_pct * 100).toFixed(0)}% × ${fmtQ(lp.delta_fees)} fees+spread)
                       </span>
-                      <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: '#f87171' }}>
+                      <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--b1n0-no)' }}>
                         -${fmtQ(lp.cut)}
                       </span>
                     </div>
@@ -509,12 +509,12 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
         </div>
 
         {/* Cut 2 — Transaction Fee */}
-        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '10px', padding: '14px', borderLeft: '3px solid #C4B5FD', minWidth: 0 }}>
+        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '14px', borderLeft: '3px solid #C4B5FD', minWidth: 0 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
             <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: '#C4B5FD', letterSpacing: '0.8px', textTransform: 'uppercase' }}>CUT 2 — COMISIÓN</p>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '2px' }}>
               <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>$</span>
-              <span style={{ fontFamily: D, fontSize: '22px', fontWeight: 700, color: '#C4B5FD', letterSpacing: '-0.5px' }}>{fmtQ(cut2Total)}</span>
+              <span style={{ fontFamily: D, fontSize: '22px', fontWeight: 700, color: '#C4B5FD', letterSpacing: '-0.5px' , fontVariantNumeric: 'tabular-nums'}}>{fmtQ(cut2Total)}</span>
             </div>
           </div>
           <div style={{ display: 'flex', gap: '12px', fontSize: '10px', fontFamily: F, color: 'var(--b1n0-muted)', marginBottom: '4px' }}>
@@ -535,41 +535,41 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
         </div>
 
         {/* Cut 3 — Spread */}
-        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '10px', padding: '14px', borderLeft: '3px solid #FFD474', minWidth: 0 }}>
+        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '14px', borderLeft: '3px solid var(--b1n0-gold)', minWidth: 0 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: '#FFD474', letterSpacing: '0.8px', textTransform: 'uppercase' }}>CUT 3 — SPREAD</p>
+            <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: 'var(--b1n0-gold)', letterSpacing: '0.8px', textTransform: 'uppercase' }}>CUT 3 — SPREAD</p>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '2px' }}>
               <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>{cut3IsReal ? 'Q' : '~Q'}</span>
-              <span style={{ fontFamily: D, fontSize: '22px', fontWeight: 700, color: '#FFD474', letterSpacing: '-0.5px' }}>{fmtQ(cut3Est)}</span>
+              <span style={{ fontFamily: D, fontSize: '22px', fontWeight: 700, color: 'var(--b1n0-gold)', letterSpacing: '-0.5px' , fontVariantNumeric: 'tabular-nums'}}>{fmtQ(cut3Est)}</span>
             </div>
           </div>
           <div style={{ display: 'flex', gap: '12px', fontSize: '10px', fontFamily: F, color: 'var(--b1n0-muted)', marginBottom: '4px' }}>
-            <span>Compras: <strong style={{ color: '#4ade80' }}>${fmtQ(cut3Purchases)}</strong></span>
+            <span>Compras: <strong style={{ color: 'var(--b1n0-si)' }}>${fmtQ(cut3Purchases)}</strong></span>
             <span>Ventas: <strong style={{ color: '#C4B5FD' }}>${fmtQ(cut3Sales)}</strong></span>
-            <span>Rango: <strong style={{ color: '#FFD474' }}>{rates.spread_low_pct}%–{rates.spread_high_pct}%</strong></span>
+            <span>Rango: <strong style={{ color: 'var(--b1n0-gold)' }}>{rates.spread_low_pct}%–{rates.spread_high_pct}%</strong></span>
           </div>
           {!cut3IsReal && <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', fontStyle: 'italic' }}>Estimado</p>}
         </div>
 
         {/* Cut 4 — Resolution Skim */}
-        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '10px', padding: '14px', borderLeft: '3px solid #14b8a6', minWidth: 0 }}>
+        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '14px', borderLeft: '3px solid #14b8a6', minWidth: 0 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
             <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: '#14b8a6', letterSpacing: '0.8px', textTransform: 'uppercase' }}>CUT 4 — RESOLUCIÓN</p>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '2px' }}>
               <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>$</span>
-              <span style={{ fontFamily: D, fontSize: '22px', fontWeight: 700, color: '#14b8a6', letterSpacing: '-0.5px' }}>{fmtQ(skimTotal)}</span>
+              <span style={{ fontFamily: D, fontSize: '22px', fontWeight: 700, color: '#14b8a6', letterSpacing: '-0.5px' , fontVariantNumeric: 'tabular-nums'}}>{fmtQ(skimTotal)}</span>
             </div>
           </div>
           <div style={{ display: 'flex', gap: '12px', fontSize: '10px', fontFamily: F, color: 'var(--b1n0-muted)' }}>
             <span>Resueltos: <strong style={{ color: 'var(--b1n0-text-1)' }}>{resolvedCount}</strong></span>
             <span>Promedio: <strong style={{ color: '#14b8a6' }}>${resolvedCount > 0 ? fmtQ(skimTotal / resolvedCount) : '0'}</strong></span>
-            <span>5% → <strong style={{ color: '#4ade80' }}>Tesorería</strong></span>
+            <span>5% → <strong style={{ color: 'var(--b1n0-si)' }}>Tesorería</strong></span>
           </div>
         </div>
       </div>
 
       {/* ── Transaction history ── */}
-      <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '10px', padding: '12px' }}>
+      <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '12px' }}>
         {/* Header: title + toggle + filters */}
         <div style={{ marginBottom: '10px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', flexWrap: 'wrap', gap: '6px' }}>
@@ -577,15 +577,15 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
               Transacciones ({filtered.length})
             </p>
             {/* Compras / Ventas toggle */}
-            <div style={{ display: 'flex', background: 'var(--b1n0-surface)', borderRadius: '8px', padding: '2px' }}>
+            <div style={{ display: 'flex', background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-lg)', padding: '2px' }}>
               {(['purchases', 'sales'] as const).map((v) => (
                 <button
                   key={v}
                   onClick={() => { setTxView(v); setFilter('all'); setLimit(50) }}
                   style={{
-                    padding: '6px 14px', borderRadius: '6px', border: 'none', cursor: 'pointer',
+                    padding: '6px 14px', borderRadius: 'var(--radius-md)', border: 'none', cursor: 'pointer',
                     fontFamily: F, fontWeight: 600, fontSize: '12px',
-                    background: txView === v ? (v === 'purchases' ? '#4ade80' : '#C4B5FD') : 'transparent',
+                    background: txView === v ? (v === 'purchases' ? 'var(--b1n0-si)' : '#C4B5FD') : 'transparent',
                     color: txView === v ? 'var(--b1n0-text-1)' : 'var(--b1n0-muted)',
                     transition: 'all 0.15s',
                   }}
@@ -605,7 +605,7 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
                 key={f}
                 onClick={() => { setFilter(f); setLimit(50) }}
                 style={{
-                  padding: '5px 10px', borderRadius: '6px', border: 'none', cursor: 'pointer',
+                  padding: '5px 10px', borderRadius: 'var(--radius-md)', border: 'none', cursor: 'pointer',
                   fontFamily: F, fontWeight: 600, fontSize: '11px',
                   background: filter === f ? 'var(--b1n0-surface)' : 'var(--b1n0-card)',
                   color: filter === f ? 'var(--b1n0-text-1)' : 'var(--b1n0-muted)',
@@ -628,10 +628,10 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
               {[
                 { label: 'Volumen ventas', val: `$${fmtQ(totalSaleGross)}`, color: 'var(--b1n0-text-1)' },
                 { label: 'Fee cobrado', val: `$${fmtQ(totalSaleFee)}`, color: '#C4B5FD' },
-                { label: 'Spread capturado', val: `$${fmtQ(totalSaleSpread)}`, color: '#FFD474' },
-                { label: 'Revenue total ventas', val: `$${fmtQ(totalSaleRevenue)}`, color: '#4ade80' },
+                { label: 'Spread capturado', val: `$${fmtQ(totalSaleSpread)}`, color: 'var(--b1n0-gold)' },
+                { label: 'Revenue total ventas', val: `$${fmtQ(totalSaleRevenue)}`, color: 'var(--b1n0-si)' },
               ].map(({ label, val, color }) => (
-                <div key={label} style={{ flex: '1 1 100px', background: 'var(--b1n0-surface)', borderRadius: '8px', padding: '10px' }}>
+                <div key={label} style={{ flex: '1 1 100px', background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-lg)', padding: '10px' }}>
                   <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.3px', marginBottom: '3px' }}>{label}</p>
                   <p style={{ fontFamily: D, fontWeight: 700, fontSize: '16px', color, letterSpacing: '-0.3px' }}>{val}</p>
                 </div>
@@ -681,7 +681,7 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
                     <td style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-muted)', padding: '5px 4px', whiteSpace: 'nowrap' }}>
                       {t.askPrice?.toFixed(3) || '—'}
                     </td>
-                    <td style={{ fontFamily: F, fontSize: '11px', color: '#FFD474', padding: '5px 4px', whiteSpace: 'nowrap' }}>
+                    <td style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-gold)', padding: '5px 4px', whiteSpace: 'nowrap' }}>
                       {t.spreadPct > 0 ? `${t.spreadPct.toFixed(2)}%` : '—'}
                     </td>
                     <td style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-text-1)', padding: '5px 4px', whiteSpace: 'nowrap' }}>
@@ -693,10 +693,10 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
                     <td style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: '#C4B5FD', padding: '5px 4px', whiteSpace: 'nowrap' }}>
                       ${fmtQ(t.fee)}
                     </td>
-                    <td style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: '#FFD474', padding: '5px 4px', whiteSpace: 'nowrap' }}>
+                    <td style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-gold)', padding: '5px 4px', whiteSpace: 'nowrap' }}>
                       ${fmtQ(t.spreadQ)}
                     </td>
-                    <td style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: '#f87171', padding: '5px 4px', whiteSpace: 'nowrap', position: 'relative' }}>
+                    <td style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-no)', padding: '5px 4px', whiteSpace: 'nowrap', position: 'relative' }}>
                       {(() => {
                         const evLps = lpByEvent[t.eventId]
                         if (!evLps || evLps.lps.length === 0) return '—'
@@ -715,12 +715,12 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
                           <div>
                             <button
                               onClick={(e) => { e.stopPropagation(); setLpRowExpanded(isOpen ? null : t.id) }}
-                              style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '11px', fontWeight: 600, color: '#f87171', padding: 0, textDecoration: 'underline dotted' }}
+                              style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-no)', padding: 0, textDecoration: 'underline dotted' }}
                             >
                               -${fmtQ(lpCut)} {isOpen ? '▲' : '▼'}
                             </button>
                             {isOpen && (
-                              <div style={{ position: 'absolute', top: '100%', right: 0, zIndex: 10, background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '8px', padding: '10px', minWidth: '200px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+                              <div style={{ position: 'absolute', top: '100%', right: 0, zIndex: 10, background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '10px', minWidth: '200px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
                                 <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.3px', marginBottom: '6px' }}>
                                   Desglose LP · Fees: ${fmtQ(txMargins)}
                                 </p>
@@ -729,7 +729,7 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
                                     <span style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)' }}>
                                       {profileMap[lp.user_id] || lp.user_id.slice(0, 8)} ({(lp.return_pct * 100).toFixed(0)}%)
                                     </span>
-                                    <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: '#f87171' }}>
+                                    <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--b1n0-no)' }}>
                                       -${fmtQ(Math.round(lp.return_pct * txMargins * 100) / 100)}
                                     </span>
                                   </div>
@@ -748,7 +748,7 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
                     <td style={{ padding: '5px 4px' }}>
                       <span style={{
                         fontFamily: F, fontSize: '9px', fontWeight: 700, color: statusColor(t.status),
-                        background: `${statusColor(t.status)}15`, padding: '3px 8px', borderRadius: '4px', whiteSpace: 'nowrap',
+                        background: `${statusColor(t.status)}15`, padding: '3px 8px', borderRadius: 'var(--radius-sm)', whiteSpace: 'nowrap',
                       }}>
                         {statusLabel(t.status)}
                       </span>
@@ -795,7 +795,7 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
                       <td style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: '#C4B5FD', padding: '5px 4px', whiteSpace: 'nowrap' }}>
                         {t.bidPrice > 0 ? t.bidPrice.toFixed(3) : '—'}
                       </td>
-                      <td style={{ fontFamily: F, fontSize: '11px', color: '#FFD474', padding: '5px 4px', whiteSpace: 'nowrap' }}>
+                      <td style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-gold)', padding: '5px 4px', whiteSpace: 'nowrap' }}>
                         {t.spreadPct > 0 ? `${t.spreadPct.toFixed(2)}%` : '—'}
                       </td>
                       <td style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-text-1)', padding: '5px 4px', whiteSpace: 'nowrap' }}>
@@ -804,10 +804,10 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
                       <td style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: '#C4B5FD', padding: '5px 4px', whiteSpace: 'nowrap' }}>
                         ${fmtQ(t.fee)}
                       </td>
-                      <td style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: '#FFD474', padding: '5px 4px', whiteSpace: 'nowrap' }}>
+                      <td style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-gold)', padding: '5px 4px', whiteSpace: 'nowrap' }}>
                         ${fmtQ(t.spreadQ)}
                       </td>
-                      <td style={{ fontFamily: F, fontSize: '11px', fontWeight: 700, color: '#4ade80', padding: '5px 4px', whiteSpace: 'nowrap' }}>
+                      <td style={{ fontFamily: F, fontSize: '11px', fontWeight: 700, color: 'var(--b1n0-si)', padding: '5px 4px', whiteSpace: 'nowrap' }}>
                         ${fmtQ(revenue)}
                       </td>
                       <td style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', padding: '5px 4px', whiteSpace: 'nowrap' }}>
@@ -828,7 +828,7 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
         {visible.length < filtered.length && (
           <button
             onClick={() => setLimit((l) => l + 50)}
-            style={{ width: '100%', padding: '10px', marginTop: '10px', borderRadius: '8px', border: '1px solid var(--b1n0-border)', background: 'var(--b1n0-surface)', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-muted)' }}
+            style={{ width: '100%', padding: '10px', marginTop: '10px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--b1n0-border)', background: 'var(--b1n0-surface)', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-muted)' }}
           >
             Cargar más ({filtered.length - visible.length} restantes)
           </button>

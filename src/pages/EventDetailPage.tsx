@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, useCallback } from 'react'
+import { ArrowLeft } from '@phosphor-icons/react'
 import { useParams, useNavigate } from 'react-router-dom'
 import type { Event as AppEvent } from '../types'
 import { useEvents } from '../context/EventsContext'
@@ -27,7 +28,7 @@ const COUNTRY_FLAGS: Record<string, string> = {
   GLOBAL: 'GL',
 }
 
-const CHART_COLORS = ['var(--b1n0-si)', 'var(--b1n0-no)', '#FFD474', '#C4B5FD', '#F9A8D4', '#7DD3FC']
+const CHART_COLORS = ['var(--b1n0-si)', 'var(--b1n0-no)', 'var(--b1n0-gold)', '#C4B5FD', '#F9A8D4', '#7DD3FC']
 
 const categoryLabels: Record<string, string> = {
   deportes: 'Deportes', politica: 'Política', economia: 'Economía',
@@ -168,7 +169,7 @@ function ProbabilityChart({ labels, pcts, colors, realData, eventAgeMs, timeRang
             key={r}
             onClick={() => onTimeRangeChange(r)}
             style={{
-              padding: '4px 10px', borderRadius: '6px', border: 'none', cursor: 'pointer',
+              padding: '4px 10px', borderRadius: 'var(--radius-md)', border: 'none', cursor: 'pointer',
               fontFamily: F, fontSize: '11px', fontWeight: timeRange === r ? 700 : 500,
               background: timeRange === r ? 'var(--b1n0-teal-50)' : 'transparent',
               color: timeRange === r ? 'var(--b1n0-teal-700)' : 'var(--b1n0-muted)',
@@ -279,11 +280,11 @@ export function EventDetailPage() {
     }
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '40px 24px', textAlign: 'center' }}>
-        <p style={{ fontFamily: D, fontWeight: 800, fontSize: '20px', color: 'var(--b1n0-text-1)', marginBottom: '8px' }}>Evento no encontrado</p>
+        <p style={{ fontFamily: D, fontWeight: 800, fontSize: '20px', color: 'var(--b1n0-text-1)', marginBottom: '8px' , fontVariantNumeric: 'tabular-nums'}}>Evento no encontrado</p>
         <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)', marginBottom: '20px' }}>Este evento no existe o ya no está disponible.</p>
         <button
           onClick={() => navigate('/')}
-          style={{ padding: '10px 24px', borderRadius: '10px', border: 'none', cursor: 'pointer', background: 'var(--b1n0-surface)', color: 'var(--b1n0-text-1)', fontFamily: F, fontWeight: 600, fontSize: '13px' }}
+          style={{ padding: '10px 24px', borderRadius: 'var(--radius-lg)', border: 'none', cursor: 'pointer', background: 'var(--b1n0-surface)', color: 'var(--b1n0-text-1)', fontFamily: F, fontWeight: 600, fontSize: '13px' }}
         >
           Volver al inicio
         </button>
@@ -612,7 +613,7 @@ function EventDetailInner({ event }: { event: AppEvent }) {
       {/* ── Top header ── */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 16px', borderBottom: '1px solid var(--b1n0-border)', flexShrink: 0, background: 'var(--b1n0-card)' }}>
         <button onClick={() => navigate(-1)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, lineHeight: 1 }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--b1n0-text-1)" strokeWidth="2" strokeLinecap="round"><path d="M19 12H5m7-7l-7 7 7 7"/></svg>
+          <ArrowLeft size={20} weight="bold" color="var(--b1n0-text-1)" />
         </button>
         <span className="cat-badge" style={{ background: `var(--badge-${event.category}-bg, var(--b1n0-surface))`, color: `var(--badge-${event.category}-text, var(--b1n0-text-2))` }}>
           {catLabel}
@@ -622,7 +623,7 @@ function EventDetailInner({ event }: { event: AppEvent }) {
         )}
         {event.isLive && <LiveDot />}
         {event.status === 'private' && (
-          <span style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: '#C4B5FD', background: '#2E1065', borderRadius: '4px', padding: '2px 6px' }}>Ronda Privada</span>
+          <span style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: '#C4B5FD', background: '#2E1065', borderRadius: 'var(--radius-sm)', padding: '2px 6px' }}>Ronda Privada</span>
         )}
         {event.sponsor?.name && (
           <span style={{ marginLeft: 'auto', fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)' }}>
@@ -666,7 +667,7 @@ function EventDetailInner({ event }: { event: AppEvent }) {
 
               {/* Options list — only show in main content on mobile, desktop shows in sidebar */}
               {!isBinary && !isResolved && !isDesktop && (
-                <div style={{ background: 'var(--b1n0-card)', borderRadius: '14px', padding: '16px', marginBottom: '16px', border: '1px solid var(--b1n0-border)' }}>
+                <div style={{ background: 'var(--b1n0-card)', borderRadius: 'var(--radius-lg)', padding: '16px', marginBottom: '16px', border: '1px solid var(--b1n0-border)' }}>
                   {parsedOptions.map((opt, i) => (
                     <div key={i} style={{ marginBottom: i < parsedOptions.length - 1 ? '16px' : 0 }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
@@ -684,8 +685,8 @@ function EventDetailInner({ event }: { event: AppEvent }) {
               )}
 
               {isResolved && (
-                <div style={{ textAlign: 'center', padding: '16px', marginBottom: '16px', background: 'var(--b1n0-card)', borderRadius: '14px', border: '1px solid var(--b1n0-border)' }}>
-                  <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--b1n0-muted)', background: 'var(--b1n0-surface)', borderRadius: '6px', padding: '3px 8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                <div style={{ textAlign: 'center', padding: '16px', marginBottom: '16px', background: 'var(--b1n0-card)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--b1n0-border)' }}>
+                  <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--b1n0-muted)', background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-md)', padding: '3px 8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                     Resuelto
                   </span>
                   {event.result && (
@@ -697,7 +698,7 @@ function EventDetailInner({ event }: { event: AppEvent }) {
               )}
 
               {/* ── Chart card — tall ── */}
-              <div style={{ background: 'var(--b1n0-card)', borderRadius: '14px', padding: '16px', marginBottom: '16px', border: '1px solid var(--b1n0-border)' }}>
+              <div style={{ background: 'var(--b1n0-card)', borderRadius: 'var(--radius-lg)', padding: '16px', marginBottom: '16px', border: '1px solid var(--b1n0-border)' }}>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginBottom: '8px' }}>
                   {chartLabels.map((lbl, i) => (
                     <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -722,7 +723,7 @@ function EventDetailInner({ event }: { event: AppEvent }) {
                   { label: 'Participantes', value: String(participants) },
                   { label: 'Cierra', value: closingDate || 'Manual' },
                 ].map(s => (
-                  <div key={s.label} style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '10px', padding: '10px 12px' }}>
+                  <div key={s.label} style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '10px 12px' }}>
                     <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 600, color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '3px' }}>{s.label}</p>
                     <p style={{ fontFamily: F, fontWeight: 800, fontSize: '14px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.3px' }}>{s.value}</p>
                   </div>
@@ -731,7 +732,7 @@ function EventDetailInner({ event }: { event: AppEvent }) {
 
               {/* ── Contexto ── */}
               {event.considerations && (
-                <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '14px', padding: '14px 16px', marginBottom: '16px' }}>
+                <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '14px 16px', marginBottom: '16px' }}>
                   <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 700, color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '6px' }}>Contexto</p>
                   <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-text-2)', lineHeight: 1.6 }}>{event.considerations}</p>
                 </div>
@@ -739,7 +740,7 @@ function EventDetailInner({ event }: { event: AppEvent }) {
 
               {/* ── Activity feed ── */}
               {activity.length > 0 && (
-                <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '14px', padding: '14px 16px', marginBottom: '16px' }}>
+                <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '14px 16px', marginBottom: '16px' }}>
                   <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 700, color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '10px' }}>Actividad reciente</p>
                   {activity.map((a) => (
                     <div key={a.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 0', borderBottom: '1px solid var(--b1n0-border)' }}>
@@ -768,12 +769,12 @@ function EventDetailInner({ event }: { event: AppEvent }) {
 
               {/* ── Active positions ── */}
               {isBinary && userPositions.length > 0 && (
-                <div style={{ background: 'var(--b1n0-card)', border: '2px solid var(--b1n0-teal-500)', borderRadius: '14px', padding: '14px 16px', marginBottom: '16px' }}>
+                <div style={{ background: 'var(--b1n0-card)', border: '2px solid var(--b1n0-teal-500)', borderRadius: 'var(--radius-lg)', padding: '14px 16px', marginBottom: '16px' }}>
                   <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 700, color: 'var(--b1n0-teal-700)', marginBottom: '8px' }}>
                     {userPositions.length === 1 ? 'Tu posición activa' : `Tus ${userPositions.length} posiciones`}
                   </p>
                   {userPositions.map((pos, i) => (
-                    <div key={pos.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 10px', background: 'var(--b1n0-surface)', borderRadius: '8px', marginBottom: i < userPositions.length - 1 ? '4px' : 0 }}>
+                    <div key={pos.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 10px', background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-lg)', marginBottom: i < userPositions.length - 1 ? '4px' : 0 }}>
                       <div>
                         <span style={{ fontFamily: F, fontWeight: 600, fontSize: '13px', color: pos.side === 'yes' ? 'var(--b1n0-si)' : 'var(--b1n0-no)' }}>
                           {pos.side === 'yes' ? 'SÍ' : 'NO'}
@@ -798,7 +799,7 @@ function EventDetailInner({ event }: { event: AppEvent }) {
               )}
 
               {/* ── Comments ── */}
-              <div style={{ background: 'var(--b1n0-card)', borderRadius: '14px', padding: '16px', border: '1px solid var(--b1n0-border)', marginBottom: '24px' }}>
+              <div style={{ background: 'var(--b1n0-card)', borderRadius: 'var(--radius-lg)', padding: '16px', border: '1px solid var(--b1n0-border)', marginBottom: '24px' }}>
                 <CommentFeed comments={event.comments ?? []} eventId={event.id} />
               </div>
             </div>
@@ -810,7 +811,7 @@ function EventDetailInner({ event }: { event: AppEvent }) {
 
               {/* ── Trading Panel ── */}
               {!isResolved && (
-                <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '14px', padding: '16px' }}>
+                <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '16px' }}>
 
                   {/* Buy / Sell tabs */}
                   <div style={{ display: 'flex', gap: '0', marginBottom: '14px', borderBottom: '2px solid var(--b1n0-border)' }}>
@@ -832,7 +833,7 @@ function EventDetailInner({ event }: { event: AppEvent }) {
                       {/* Option label for open events */}
                       {!isBinary && panelOption && (
                         <div style={{
-                          background: 'var(--b1n0-surface)', borderRadius: '8px', padding: '8px 12px',
+                          background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-lg)', padding: '8px 12px',
                           marginBottom: '10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                         }}>
                           <span style={{ fontFamily: F, fontSize: '13px', fontWeight: 700, color: 'var(--b1n0-text-1)' }}>
@@ -845,7 +846,7 @@ function EventDetailInner({ event }: { event: AppEvent }) {
                       )}
                       {!isBinary && !panelOption && (
                         <div style={{
-                          background: 'var(--b1n0-surface)', borderRadius: '8px', padding: '10px 12px',
+                          background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-lg)', padding: '10px 12px',
                           marginBottom: '10px', textAlign: 'center',
                         }}>
                           <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)' }}>
@@ -863,7 +864,7 @@ function EventDetailInner({ event }: { event: AppEvent }) {
                           return (
                             <>
                               <button onClick={() => setPanelSide('yes')} style={{
-                                flex: 1, padding: '10px 0', borderRadius: '10px', border: 'none', cursor: 'pointer',
+                                flex: 1, padding: '10px 0', borderRadius: 'var(--radius-lg)', border: 'none', cursor: 'pointer',
                                 fontFamily: F, fontSize: '14px', fontWeight: 700, transition: 'all 0.15s ease',
                                 background: panelSide === 'yes' ? 'var(--b1n0-si)' : 'var(--b1n0-si-bg)',
                                 color: panelSide === 'yes' ? '#fff' : 'var(--b1n0-si)',
@@ -871,7 +872,7 @@ function EventDetailInner({ event }: { event: AppEvent }) {
                                 SÍ {midPctToAsk(yesPct).toFixed(2)}
                               </button>
                               <button onClick={() => setPanelSide('no')} style={{
-                                flex: 1, padding: '10px 0', borderRadius: '10px', border: 'none', cursor: 'pointer',
+                                flex: 1, padding: '10px 0', borderRadius: 'var(--radius-lg)', border: 'none', cursor: 'pointer',
                                 fontFamily: F, fontSize: '14px', fontWeight: 700, transition: 'all 0.15s ease',
                                 background: panelSide === 'no' ? 'var(--b1n0-no)' : 'var(--b1n0-no-bg)',
                                 color: panelSide === 'no' ? '#fff' : 'var(--b1n0-no)',
@@ -895,7 +896,7 @@ function EventDetailInner({ event }: { event: AppEvent }) {
                             <div style={{ marginBottom: '4px' }}>
                               <div style={{
                                 display: 'flex', alignItems: 'center', gap: '6px',
-                                background: 'var(--b1n0-surface)', borderRadius: '10px', padding: '10px 12px',
+                                background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-lg)', padding: '10px 12px',
                                 border: `1px solid ${outOfRange ? 'var(--b1n0-no)' : 'var(--b1n0-border)'}`,
                               }}>
                                 <span style={{ fontFamily: F, fontSize: '16px', fontWeight: 700, color: 'var(--b1n0-muted)' }}>$</span>
@@ -922,7 +923,7 @@ function EventDetailInner({ event }: { event: AppEvent }) {
                             <div style={{ display: 'flex', gap: '6px', marginBottom: '14px' }}>
                               {[10, 50, 100].filter(v => v >= minE && v <= maxE).map(v => (
                                 <button key={v} onClick={() => setPanelAmount(String(v))} style={{
-                                  flex: 1, padding: '7px 0', borderRadius: '8px', border: '1px solid var(--b1n0-border)',
+                                  flex: 1, padding: '7px 0', borderRadius: 'var(--radius-lg)', border: '1px solid var(--b1n0-border)',
                                   background: panelAmount === String(v) ? 'var(--b1n0-text-1)' : 'var(--b1n0-card)',
                                   color: panelAmount === String(v) ? 'var(--b1n0-card)' : 'var(--b1n0-text-1)',
                                   fontFamily: F, fontSize: '12px', fontWeight: 700, cursor: 'pointer', transition: 'all 0.15s',
@@ -931,7 +932,7 @@ function EventDetailInner({ event }: { event: AppEvent }) {
                                 </button>
                               ))}
                               <button onClick={() => setPanelAmount(String(maxAllowed))} style={{
-                                flex: 1, padding: '7px 0', borderRadius: '8px', border: '1px solid var(--b1n0-border)',
+                                flex: 1, padding: '7px 0', borderRadius: 'var(--radius-lg)', border: '1px solid var(--b1n0-border)',
                                 background: 'var(--b1n0-card)', color: 'var(--b1n0-text-1)',
                                 fontFamily: F, fontSize: '12px', fontWeight: 700, cursor: 'pointer',
                               }}>
@@ -1022,7 +1023,7 @@ function EventDetailInner({ event }: { event: AppEvent }) {
                             <div style={{
                               background: returnPct < 0 ? 'var(--b1n0-no-bg)' : 'var(--b1n0-orange-50)',
                               border: `1px solid ${returnPct < 0 ? 'var(--b1n0-no)' : 'var(--b1n0-orange-300)'}`,
-                              borderRadius: '8px', padding: '8px 10px', marginBottom: '10px',
+                              borderRadius: 'var(--radius-lg)', padding: '8px 10px', marginBottom: '10px',
                             }}>
                               <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: returnPct < 0 ? 'var(--b1n0-no-dark)' : 'var(--b1n0-orange-700)', lineHeight: 1.4 }}>
                                 {returnPct < 0
@@ -1041,7 +1042,7 @@ function EventDetailInner({ event }: { event: AppEvent }) {
                         onClick={handlePanelBuy}
                         disabled={panelSubmitting || !panelPreview || parseFloat(panelAmount) <= 0 || parseFloat(panelAmount) < (event.minEntry || 1) || parseFloat(panelAmount) > (event.maxEntry || 100000)}
                         style={{
-                          width: '100%', padding: '13px', borderRadius: '10px', border: 'none', cursor: 'pointer',
+                          width: '100%', padding: '13px', borderRadius: 'var(--radius-lg)', border: 'none', cursor: 'pointer',
                           fontFamily: F, fontSize: '14px', fontWeight: 700, letterSpacing: '0.3px',
                           background: panelSide === 'yes' ? 'var(--b1n0-si)' : 'var(--b1n0-no)',
                           color: '#fff', transition: 'opacity 0.15s',
@@ -1055,7 +1056,7 @@ function EventDetailInner({ event }: { event: AppEvent }) {
 
                       {/* Error message */}
                       {panelError && (
-                        <div style={{ marginTop: '8px', padding: '8px 10px', background: 'var(--b1n0-no-bg)', border: '1px solid var(--b1n0-no)', borderRadius: '8px' }}>
+                        <div style={{ marginTop: '8px', padding: '8px 10px', background: 'var(--b1n0-no-bg)', border: '1px solid var(--b1n0-no)', borderRadius: 'var(--radius-lg)' }}>
                           <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-no-dark)' }}>
                             {panelError}
                           </p>
@@ -1077,7 +1078,7 @@ function EventDetailInner({ event }: { event: AppEvent }) {
                           }}>
                             <div>
                               <span style={{
-                                fontFamily: F, fontSize: '11px', fontWeight: 700, padding: '3px 10px', borderRadius: '6px',
+                                fontFamily: F, fontSize: '11px', fontWeight: 700, padding: '3px 10px', borderRadius: 'var(--radius-md)',
                                 background: pos.side === 'yes' ? 'var(--b1n0-si-bg)' : 'var(--b1n0-no-bg)',
                                 color: pos.side === 'yes' ? 'var(--b1n0-si)' : 'var(--b1n0-no)',
                               }}>
@@ -1090,7 +1091,7 @@ function EventDetailInner({ event }: { event: AppEvent }) {
                             <button
                               onClick={() => navigate(`/portafolio`)}
                               style={{
-                                padding: '6px 14px', borderRadius: '8px', border: 'none', cursor: 'pointer',
+                                padding: '6px 14px', borderRadius: 'var(--radius-lg)', border: 'none', cursor: 'pointer',
                                 background: 'var(--b1n0-no-bg)', color: 'var(--b1n0-no)', fontFamily: F, fontSize: '11px', fontWeight: 700,
                               }}
                             >
@@ -1106,7 +1107,7 @@ function EventDetailInner({ event }: { event: AppEvent }) {
 
               {/* ── Options list (open events, desktop only) ── */}
               {!isBinary && !isResolved && parsedOptions.length > 0 && (
-                <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '14px', padding: '14px' }}>
+                <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '14px' }}>
                   <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 700, color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '10px' }}>
                     Opciones
                   </p>
@@ -1115,7 +1116,7 @@ function EventDetailInner({ event }: { event: AppEvent }) {
                     return (
                       <div key={i} style={{
                         marginBottom: i < parsedOptions.length - 1 ? '8px' : 0,
-                        borderRadius: '10px', padding: '6px 8px',
+                        borderRadius: 'var(--radius-lg)', padding: '6px 8px',
                         border: isSelected ? '2px solid var(--b1n0-teal-500)' : '1px solid transparent',
                         background: isSelected ? 'var(--b1n0-surface)' : 'transparent',
                         transition: 'all 0.15s ease',
@@ -1140,7 +1141,7 @@ function EventDetailInner({ event }: { event: AppEvent }) {
               )}
 
               {/* ── Top Holders ── */}
-              <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '14px', overflow: 'hidden' }}>
+              <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
                 {/* Header with pool total */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 16px 10px' }}>
                   <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 700, color: 'var(--b1n0-text-1)' }}>Top Holders</p>
@@ -1155,7 +1156,7 @@ function EventDetailInner({ event }: { event: AppEvent }) {
                     <button
                       onClick={() => setHoldersOption(null)}
                       style={{
-                        padding: '4px 10px', borderRadius: '6px', border: '1px solid',
+                        padding: '4px 10px', borderRadius: 'var(--radius-md)', border: '1px solid',
                         borderColor: holdersOption === null ? 'var(--b1n0-si)' : 'var(--b1n0-border)',
                         background: holdersOption === null ? 'var(--b1n0-si-bg)' : 'transparent',
                         color: holdersOption === null ? 'var(--b1n0-si)' : 'var(--b1n0-muted)',
@@ -1169,7 +1170,7 @@ function EventDetailInner({ event }: { event: AppEvent }) {
                         key={opt.label}
                         onClick={() => setHoldersOption(opt.label)}
                         style={{
-                          padding: '4px 10px', borderRadius: '6px', border: '1px solid',
+                          padding: '4px 10px', borderRadius: 'var(--radius-md)', border: '1px solid',
                           borderColor: holdersOption === opt.label ? CHART_COLORS[i % CHART_COLORS.length] : 'var(--b1n0-border)',
                           background: holdersOption === opt.label ? CHART_COLORS[i % CHART_COLORS.length] + '15' : 'transparent',
                           color: holdersOption === opt.label ? CHART_COLORS[i % CHART_COLORS.length] : 'var(--b1n0-muted)',
@@ -1183,7 +1184,7 @@ function EventDetailInner({ event }: { event: AppEvent }) {
                 )}
 
                 {/* YES / NO toggle */}
-                <div style={{ display: 'flex', margin: '0 16px 12px', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--b1n0-border)' }}>
+                <div style={{ display: 'flex', margin: '0 16px 12px', borderRadius: 'var(--radius-lg)', overflow: 'hidden', border: '1px solid var(--b1n0-border)' }}>
                   {(['yes', 'no'] as const).map(side => (
                     <button key={side} onClick={() => setHoldersTab(side)} style={{
                       flex: 1, padding: '7px 0', border: 'none', cursor: 'pointer',

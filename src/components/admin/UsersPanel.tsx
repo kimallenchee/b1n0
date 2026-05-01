@@ -35,9 +35,9 @@ interface UserPosition {
 const ROLES = [
   { value: 'user', label: 'Usuario', color: 'var(--b1n0-muted)', desc: 'Usuario estándar — paga fees normales' },
   { value: 'market_maker', label: 'Market Maker', color: '#C4B5FD', desc: 'Sin comisiones de compra/venta — provee liquidez' },
-  { value: 'lp', label: 'LP', color: '#4ade80', desc: 'Proveedor de liquidez — puede depositar capital' },
-  { value: 'sponsor', label: 'Sponsor', color: '#FFD474', desc: 'Patrocinador — sin fees, puede fondear eventos' },
-  { value: 'admin', label: 'Admin', color: '#f87171', desc: 'Acceso total al panel de administración' },
+  { value: 'lp', label: 'LP', color: 'var(--b1n0-si)', desc: 'Proveedor de liquidez — puede depositar capital' },
+  { value: 'sponsor', label: 'Sponsor', color: 'var(--b1n0-gold)', desc: 'Patrocinador — sin fees, puede fondear eventos' },
+  { value: 'admin', label: 'Admin', color: 'var(--b1n0-no)', desc: 'Acceso total al panel de administración' },
 ]
 
 export function UsersPanel() {
@@ -159,17 +159,17 @@ export function UsersPanel() {
           placeholder="Buscar por nombre o email..."
           value={usersSearch}
           onChange={(e) => setUsersSearch(e.target.value)}
-          style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--b1n0-border)', fontFamily: F, fontSize: '12px', background: 'var(--b1n0-card)', outline: 'none' }}
+          style={{ width: '100%', padding: '8px 12px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--b1n0-border)', fontFamily: F, fontSize: '12px', background: 'var(--b1n0-card)', outline: 'none' }}
         />
       </div>
 
       {userError && (
-        <p style={{ fontFamily: F, fontSize: '12px', color: '#f87171', background: 'rgba(248,113,113,0.08)', padding: '8px 12px', borderRadius: '8px', marginBottom: '12px' }}>
+        <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', background: 'rgba(248,113,113,0.08)', padding: '8px 12px', borderRadius: 'var(--radius-lg)', marginBottom: '12px' }}>
           {userError}
         </p>
       )}
       {userSuccess && (
-        <p style={{ fontFamily: F, fontSize: '12px', color: '#4ade80', background: 'rgba(74,222,128,0.08)', padding: '8px 12px', borderRadius: '8px', marginBottom: '12px' }}>
+        <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-si)', background: 'rgba(74,222,128,0.08)', padding: '8px 12px', borderRadius: 'var(--radius-lg)', marginBottom: '12px' }}>
           {userSuccess}
         </p>
       )}
@@ -183,9 +183,9 @@ export function UsersPanel() {
             {[
               { label: 'Total', val: adminUsers.length, color: 'var(--b1n0-text-1)', filter: null as string | null },
               { label: 'MM', val: adminUsers.filter((u) => u.role === 'market_maker').length, color: '#C4B5FD', filter: 'market_maker' },
-              { label: 'LPs', val: adminUsers.filter((u) => u.role === 'lp').length, color: '#4ade80', filter: 'lp' },
-              { label: 'Sponsors', val: adminUsers.filter((u) => u.role === 'sponsor').length, color: '#FFD474', filter: 'sponsor' },
-              { label: 'Admins', val: adminUsers.filter((u) => u.is_admin).length, color: '#f87171', filter: 'admin' },
+              { label: 'LPs', val: adminUsers.filter((u) => u.role === 'lp').length, color: 'var(--b1n0-si)', filter: 'lp' },
+              { label: 'Sponsors', val: adminUsers.filter((u) => u.role === 'sponsor').length, color: 'var(--b1n0-gold)', filter: 'sponsor' },
+              { label: 'Admins', val: adminUsers.filter((u) => u.is_admin).length, color: 'var(--b1n0-no)', filter: 'admin' },
             ].map((s) => {
               const isActive = roleFilter === s.filter
               return (
@@ -291,7 +291,7 @@ export function UsersPanel() {
                   style={{
                     background: 'var(--b1n0-card)',
                     border: '1px solid var(--b1n0-border)',
-                    borderRadius: '8px',
+                    borderRadius: 'var(--radius-lg)',
                     overflow: 'hidden',
                     transition: 'box-shadow 0.15s',
                     boxShadow: isEditing ? '0 0 0 1.5px #6366f1' : 'none',
@@ -341,16 +341,16 @@ export function UsersPanel() {
                     <span style={{ fontFamily: D, fontSize: '13px', fontWeight: 700, color: 'var(--b1n0-text-1)' }}>
                       ${user.balance.toLocaleString('es-GT', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                     </span>
-                    <span style={{ fontFamily: D, fontSize: '13px', fontWeight: 600, color: user.total_cobrado > 0 ? '#4ade80' : 'var(--b1n0-muted)' }}>
+                    <span style={{ fontFamily: D, fontSize: '13px', fontWeight: 600, color: user.total_cobrado > 0 ? 'var(--b1n0-si)' : 'var(--b1n0-muted)' }}>
                       ${user.total_cobrado.toLocaleString('es-GT', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                     </span>
                     <span style={{ fontFamily: D, fontSize: '13px', fontWeight: 600, color: 'var(--b1n0-text-2)' }}>
                       {user.total_predictions}
                     </span>
-                    <span style={{ fontFamily: D, fontSize: '13px', fontWeight: 600, color: user.correct_predictions > 0 ? '#4ade80' : 'var(--b1n0-muted)' }}>
+                    <span style={{ fontFamily: D, fontSize: '13px', fontWeight: 600, color: user.correct_predictions > 0 ? 'var(--b1n0-si)' : 'var(--b1n0-muted)' }}>
                       {user.correct_predictions}
                     </span>
-                    <span style={{ fontFamily: D, fontSize: '13px', fontWeight: 600, color: Number(winRate) >= 50 ? '#4ade80' : Number(winRate) > 0 ? '#FFD474' : 'var(--b1n0-muted)' }}>
+                    <span style={{ fontFamily: D, fontSize: '13px', fontWeight: 600, color: Number(winRate) >= 50 ? 'var(--b1n0-si)' : Number(winRate) > 0 ? 'var(--b1n0-gold)' : 'var(--b1n0-muted)' }}>
                       {winRate}%
                     </span>
                     <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>
@@ -383,7 +383,7 @@ export function UsersPanel() {
                                   title={r.desc}
                                   style={{
                                     padding: '6px 12px',
-                                    borderRadius: '20px',
+                                    borderRadius: 'var(--radius-pill)',
                                     border: '1.5px solid',
                                     borderColor: isActive ? r.color : 'var(--b1n0-border)',
                                     background: isActive ? r.color + '15' : 'transparent',
@@ -417,7 +417,7 @@ export function UsersPanel() {
                                 const val = parseFloat(e.target.value)
                                 if (!isNaN(val) && val !== user.balance) saveUser(user, { balance: val })
                               }}
-                              style={{ width: '120px', padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--b1n0-border)', fontFamily: D, fontSize: '14px', fontWeight: 700, outline: 'none' }}
+                              style={{ width: '120px', padding: '8px 12px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--b1n0-border)', fontFamily: D, fontSize: '14px', fontWeight: 700, outline: 'none' }}
                             />
                           </div>
                           <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginBottom: '8px' }}>
@@ -428,14 +428,14 @@ export function UsersPanel() {
                                 disabled={userSaving}
                                 style={{
                                   padding: '4px 8px',
-                                  borderRadius: '6px',
+                                  borderRadius: 'var(--radius-md)',
                                   border: '1px solid var(--b1n0-border)',
                                   background: 'var(--b1n0-surface)',
                                   fontFamily: F,
                                   fontSize: '10px',
                                   fontWeight: 600,
                                   cursor: 'pointer',
-                                  color: '#4ade80',
+                                  color: 'var(--b1n0-si)',
                                 }}
                               >
                                 +${amt.toLocaleString()}
@@ -449,7 +449,7 @@ export function UsersPanel() {
                               placeholder="Monto personalizado"
                               value={customBalanceAmt[user.id] || ''}
                               onChange={(e) => setCustomBalanceAmt((prev) => ({ ...prev, [user.id]: e.target.value }))}
-                              style={{ flex: 1, padding: '6px 10px', borderRadius: '6px', border: '1px solid var(--b1n0-border)', fontFamily: F, fontSize: '12px', outline: 'none' }}
+                              style={{ flex: 1, padding: '6px 10px', borderRadius: 'var(--radius-md)', border: '1px solid var(--b1n0-border)', fontFamily: F, fontSize: '12px', outline: 'none' }}
                             />
                             <button
                               onClick={() => {
@@ -462,9 +462,9 @@ export function UsersPanel() {
                               disabled={userSaving || !customBalanceAmt[user.id]}
                               style={{
                                 padding: '6px 12px',
-                                borderRadius: '6px',
+                                borderRadius: 'var(--radius-md)',
                                 border: 'none',
-                                background: '#4ade80',
+                                background: 'var(--b1n0-si)',
                                 color: '#fff',
                                 fontFamily: F,
                                 fontSize: '11px',
@@ -529,7 +529,7 @@ export function UsersPanel() {
                               }}
                               style={{
                                 padding: '6px 12px',
-                                borderRadius: '6px',
+                                borderRadius: 'var(--radius-md)',
                                 border: '1px solid var(--b1n0-border)',
                                 background: userPortfolio === user.id ? 'var(--b1n0-card)' : 'var(--b1n0-surface)',
                                 fontFamily: F,
@@ -563,14 +563,14 @@ export function UsersPanel() {
                               }}
                               style={{
                                 padding: '6px 12px',
-                                borderRadius: '6px',
+                                borderRadius: 'var(--radius-md)',
                                 border: '1px solid var(--b1n0-border)',
                                 background: 'var(--b1n0-surface)',
                                 fontFamily: F,
                                 fontSize: '11px',
                                 fontWeight: 600,
                                 cursor: 'pointer',
-                                color: '#FFD474',
+                                color: 'var(--b1n0-gold)',
                                 textAlign: 'left',
                               }}
                             >
@@ -583,14 +583,14 @@ export function UsersPanel() {
                               }}
                               style={{
                                 padding: '6px 12px',
-                                borderRadius: '6px',
+                                borderRadius: 'var(--radius-md)',
                                 border: '1px solid #fecaca',
                                 background: 'rgba(248,113,113,0.08)',
                                 fontFamily: F,
                                 fontSize: '11px',
                                 fontWeight: 600,
                                 cursor: 'pointer',
-                                color: '#f87171',
+                                color: 'var(--b1n0-no)',
                                 textAlign: 'left',
                               }}
                             >
@@ -639,7 +639,7 @@ export function UsersPanel() {
                             <tbody>
                               {userPositions.map((pos) => {
                                 const evName = allEvents.find((e) => e.id === pos.event_id)?.question || pos.event_id.slice(0, 12)
-                                const statusColor = pos.status === 'won' ? '#4ade80' : pos.status === 'lost' ? '#f87171' : pos.status === 'sold' ? '#C4B5FD' : '#FFD474'
+                                const statusColor = pos.status === 'won' ? 'var(--b1n0-si)' : pos.status === 'lost' ? 'var(--b1n0-no)' : pos.status === 'sold' ? '#C4B5FD' : 'var(--b1n0-gold)'
                                 return (
                                   <tr key={pos.id} style={{ borderBottom: '1px solid var(--b1n0-border)' }}>
                                     <td
@@ -661,7 +661,7 @@ export function UsersPanel() {
                                         fontFamily: F,
                                         fontSize: '11px',
                                         fontWeight: 600,
-                                        color: pos.side.includes('yes') || pos.side === 'yes' ? '#4ade80' : '#f87171',
+                                        color: pos.side.includes('yes') || pos.side === 'yes' ? 'var(--b1n0-si)' : 'var(--b1n0-no)',
                                         padding: '6px',
                                         whiteSpace: 'nowrap',
                                       }}
@@ -677,10 +677,10 @@ export function UsersPanel() {
                                     <td style={{ fontFamily: D, fontSize: '11px', padding: '6px' }}>
                                       {pos.contracts?.toFixed(2)}
                                     </td>
-                                    <td style={{ fontFamily: D, fontSize: '11px', fontWeight: 600, color: '#4ade80', padding: '6px' }}>
+                                    <td style={{ fontFamily: D, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-si)', padding: '6px' }}>
                                       ${pos.payout_if_win?.toLocaleString()}
                                     </td>
-                                    <td style={{ fontFamily: F, fontSize: '11px', color: '#f87171', padding: '6px' }}>
+                                    <td style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-no)', padding: '6px' }}>
                                       ${pos.fee_paid?.toFixed(2)}
                                     </td>
                                     <td style={{ padding: '6px' }}>
@@ -692,7 +692,7 @@ export function UsersPanel() {
                                           color: statusColor,
                                           background: statusColor + '15',
                                           padding: '2px 6px',
-                                          borderRadius: '4px',
+                                          borderRadius: 'var(--radius-sm)',
                                         }}
                                       >
                                         {pos.status || 'active'}
@@ -714,7 +714,7 @@ export function UsersPanel() {
                   {/* Deduct balance row — only visible when editing */}
                   {isEditing && (
                   <div style={{ display: 'flex', gap: '4px', alignItems: 'center', padding: '8px 12px', borderTop: '1px solid var(--b1n0-border)' }}>
-                    <span style={{ fontFamily: F, fontSize: '10px', color: '#f87171', fontWeight: 600 }}>Deducir:</span>
+                    <span style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-no)', fontWeight: 600 }}>Deducir:</span>
                     {[50, 100, 500, 1000].map((amt) => (
                       <button
                         key={amt}
@@ -728,14 +728,14 @@ export function UsersPanel() {
                         disabled={userSaving}
                         style={{
                           padding: '3px 6px',
-                          borderRadius: '4px',
+                          borderRadius: 'var(--radius-sm)',
                           border: '1px solid #fecaca',
                           background: 'rgba(248,113,113,0.08)',
                           fontFamily: F,
                           fontSize: '9px',
                           fontWeight: 600,
                           cursor: 'pointer',
-                          color: '#f87171',
+                          color: 'var(--b1n0-no)',
                         }}
                       >
                         -${amt.toLocaleString()}
@@ -746,7 +746,7 @@ export function UsersPanel() {
                       placeholder="Monto"
                       value={customBalanceAmt[user.id + '_deduct'] || ''}
                       onChange={(e) => setCustomBalanceAmt((prev) => ({ ...prev, [user.id + '_deduct']: e.target.value }))}
-                      style={{ width: '80px', padding: '3px 6px', borderRadius: '4px', border: '1px solid #fecaca', fontFamily: F, fontSize: '10px', outline: 'none' }}
+                      style={{ width: '80px', padding: '3px 6px', borderRadius: 'var(--radius-sm)', border: '1px solid #fecaca', fontFamily: F, fontSize: '10px', outline: 'none' }}
                     />
                     <button
                       onClick={() => {
@@ -762,9 +762,9 @@ export function UsersPanel() {
                       disabled={userSaving || !customBalanceAmt[user.id + '_deduct']}
                       style={{
                         padding: '3px 8px',
-                        borderRadius: '4px',
+                        borderRadius: 'var(--radius-sm)',
                         border: 'none',
-                        background: '#f87171',
+                        background: 'var(--b1n0-no)',
                         color: '#fff',
                         fontFamily: F,
                         fontSize: '9px',

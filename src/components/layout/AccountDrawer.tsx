@@ -64,7 +64,7 @@ export function AccountDrawer({ onClose }: AccountDrawerProps) {
             {profile?.avatarUrl ? (
               <img src={profile.avatarUrl} alt="" style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover' }} />
             ) : (
-              <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--b1n0-text-1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: D, fontWeight: 800, fontSize: '18px', color: '#fff' }}>
+              <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--b1n0-text-1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: D, fontWeight: 800, fontSize: '18px', color: '#fff' , fontVariantNumeric: 'tabular-nums'}}>
                 {user.name.charAt(0)}
               </div>
             )}
@@ -79,14 +79,14 @@ export function AccountDrawer({ onClose }: AccountDrawerProps) {
         <div style={{ flex: 1, padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
 
           {/* Balance card */}
-          <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '16px', overflow: 'hidden' }}>
+          <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
             <button
               onClick={() => setBalanceExpanded(!balanceExpanded)}
               style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 18px', background: 'none', border: 'none', cursor: 'pointer' }}
             >
               <div style={{ textAlign: 'left' }}>
                 <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', marginBottom: '4px' }}>Saldo disponible</p>
-                <p style={{ fontFamily: D, fontWeight: 800, fontSize: '26px', color: 'var(--b1n0-text-1)', letterSpacing: '-1px' }}>
+                <p style={{ fontFamily: D, fontWeight: 800, fontSize: '26px', color: 'var(--b1n0-text-1)', letterSpacing: '-1px' , fontVariantNumeric: 'tabular-nums'}}>
                   {user.currency} {balance.toLocaleString()}
                 </p>
               </div>
@@ -98,7 +98,7 @@ export function AccountDrawer({ onClose }: AccountDrawerProps) {
                 <div style={{ height: '12px' }} />
                 <button
                   onClick={() => setDepositOpen(true)}
-                  style={{ width: '100%', padding: '12px', borderRadius: "var(--radius-lg)", border: 'none', background: '#4ade80', cursor: 'pointer', fontFamily: F, fontWeight: 700, fontSize: '13px', color: '#0d0d0d' }}
+                  style={{ width: '100%', padding: '12px', borderRadius: "var(--radius-lg)", border: 'none', background: 'var(--b1n0-si)', cursor: 'pointer', fontFamily: F, fontWeight: 700, fontSize: '13px', color: 'var(--b1n0-bg)' }}
                 >
                   Depositar
                 </button>
@@ -113,7 +113,7 @@ export function AccountDrawer({ onClose }: AccountDrawerProps) {
           </div>
 
           {/* Nav links */}
-          <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '16px', overflow: 'hidden' }}>
+          <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
             {navLinks.map((item, i) => (
               <button
                 key={item.label}
@@ -140,7 +140,7 @@ export function AccountDrawer({ onClose }: AccountDrawerProps) {
           {/* Sign out */}
           <button
             onClick={() => { onClose(); signOut() }}
-            style={{ width: '100%', padding: '13px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.08)', background: 'transparent', cursor: 'pointer', fontFamily: F, fontWeight: 500, fontSize: '13px', color: 'var(--b1n0-muted)' }}
+            style={{ width: '100%', padding: '13px', borderRadius: 'var(--radius-lg)', border: '1px solid rgba(255,255,255,0.08)', background: 'transparent', cursor: 'pointer', fontFamily: F, fontWeight: 500, fontSize: '13px', color: 'var(--b1n0-muted)' }}
           >
             Cerrar sesión
           </button>

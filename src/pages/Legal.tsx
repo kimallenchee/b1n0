@@ -56,8 +56,7 @@ function LegalShell({ title, children }: { title: string; children: React.ReactN
           fontWeight: 800,
           fontSize: '28px',
           letterSpacing: '-0.5px',
-          marginBottom: '8px',
-        }}
+          marginBottom: '8px', fontVariantNumeric: 'tabular-nums'}}
       >
         {title}
       </h1>
@@ -80,8 +79,7 @@ function Section({ heading, body }: { heading: string; body: string }) {
           fontWeight: 700,
           fontSize: '18px',
           marginBottom: '8px',
-          letterSpacing: '-0.3px',
-        }}
+          letterSpacing: '-0.3px', fontVariantNumeric: 'tabular-nums'}}
       >
         {heading}
       </h2>

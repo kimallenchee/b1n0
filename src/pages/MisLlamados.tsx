@@ -10,9 +10,9 @@ function PredictionCard({ prediction }: { prediction: UserPrediction }) {
   const isWon = prediction.status === 'won'
 
   return (
-    <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderLeft: `3px solid ${isWon ? 'var(--b1n0-surface)' : isActive ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.06)'}`, borderRadius: '16px', padding: '18px', marginBottom: '12px' }}>
+    <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderLeft: `3px solid ${isWon ? 'var(--b1n0-surface)' : isActive ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.06)'}`, borderRadius: 'var(--radius-lg)', padding: '18px', marginBottom: '12px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
-        <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, padding: '3px 10px', borderRadius: '20px', background: isActive ? 'rgba(255,255,255,0.04)' : isWon ? 'rgba(255,255,255,0.06)' : 'transparent', color: isActive ? 'var(--b1n0-muted)' : isWon ? 'var(--b1n0-surface)' : 'var(--b1n0-muted)' }}>
+        <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, padding: '3px 10px', borderRadius: 'var(--radius-pill)', background: isActive ? 'rgba(255,255,255,0.04)' : isWon ? 'rgba(255,255,255,0.06)' : 'transparent', color: isActive ? 'var(--b1n0-muted)' : isWon ? 'var(--b1n0-surface)' : 'var(--b1n0-muted)' }}>
           {isActive ? 'En juego' : isWon ? '¡Lo sabías!' : 'Esta vez no'}
         </span>
         <span style={{ fontFamily: D, fontWeight: 800, fontSize: '13px', color: prediction.side.includes('yes') ? 'var(--b1n0-surface)' : 'var(--b1n0-muted)' }}>

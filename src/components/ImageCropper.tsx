@@ -106,7 +106,7 @@ export function ImageCropper({ file, onCropped, onCancel }: ImageCropperProps) {
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
     >
-      <div style={{ background: 'var(--b1n0-card)', borderRadius: '16px', padding: '24px', maxWidth: '90vw', maxHeight: '90vh', overflow: 'hidden', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div style={{ background: 'var(--b1n0-card)', borderRadius: 'var(--radius-lg)', padding: '24px', maxWidth: '90vw', maxHeight: '90vh', overflow: 'hidden', display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 700, color: 'var(--b1n0-text-1)' }}>Recortar imagen</p>
           <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>1200 x 630px</p>
@@ -158,10 +158,10 @@ export function ImageCropper({ file, onCropped, onCancel }: ImageCropperProps) {
 
         {/* Actions */}
         <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-          <button onClick={onCancel} style={{ padding: '10px 20px', borderRadius: '10px', border: '1px solid var(--b1n0-border)', background: 'transparent', fontFamily: F, fontWeight: 600, fontSize: '13px', color: 'var(--b1n0-muted)', cursor: 'pointer' }}>
+          <button onClick={onCancel} style={{ padding: '10px 20px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--b1n0-border)', background: 'transparent', fontFamily: F, fontWeight: 600, fontSize: '13px', color: 'var(--b1n0-muted)', cursor: 'pointer' }}>
             Cancelar
           </button>
-          <button onClick={handleCrop} style={{ padding: '10px 24px', borderRadius: '10px', border: 'none', background: 'var(--b1n0-text-1)', fontFamily: F, fontWeight: 600, fontSize: '13px', color: '#fff', cursor: 'pointer' }}>
+          <button onClick={handleCrop} style={{ padding: '10px 24px', borderRadius: 'var(--radius-lg)', border: 'none', background: 'var(--b1n0-text-1)', fontFamily: F, fontWeight: 600, fontSize: '13px', color: '#fff', cursor: 'pointer' }}>
             Recortar y subir
           </button>
         </div>

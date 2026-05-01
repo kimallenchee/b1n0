@@ -34,7 +34,7 @@ function TxCard({ tx }: { tx: Transaction }) {
         background: 'var(--b1n0-card)',
         border: '1px solid var(--b1n0-border)',
         borderLeft: `3px solid ${accentColor}`,
-        borderRadius: '14px',
+        borderRadius: 'var(--radius-lg)',
         padding: '14px 16px',
         display: 'flex',
         alignItems: 'center',
@@ -46,7 +46,7 @@ function TxCard({ tx }: { tx: Transaction }) {
         style={{
           width: 36,
           height: 36,
-          borderRadius: '10px',
+          borderRadius: 'var(--radius-lg)',
           background: positive ? 'rgba(255,255,255,0.04)' : 'transparent',
           display: 'flex',
           alignItems: 'center',
@@ -70,7 +70,7 @@ function TxCard({ tx }: { tx: Transaction }) {
               fontWeight: 600,
               color: 'var(--b1n0-muted)',
               background: 'var(--b1n0-surface)',
-              borderRadius: '5px',
+              borderRadius: 'var(--radius-md)',
               padding: '2px 6px',
               textTransform: 'uppercase',
               letterSpacing: '0.4px',
@@ -116,7 +116,7 @@ export function Movimientos() {
     <div className="feed-scroll" style={{ height: '100%', padding: '8px 16px 24px' }}>
       {/* Header */}
       <div style={{ padding: '20px 0 16px' }}>
-        <p style={{ fontFamily: D, fontWeight: 800, fontSize: '22px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.5px', marginBottom: '4px' }}>
+        <p style={{ fontFamily: D, fontWeight: 800, fontSize: '22px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.5px', marginBottom: '4px' , fontVariantNumeric: 'tabular-nums'}}>
           Movimientos
         </p>
         <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)' }}>
@@ -131,7 +131,7 @@ export function Movimientos() {
           { label: 'Retirado', value: `-Q${totalOut.toLocaleString()}` },
           { label: 'Neto votos', value: `${netVotes >= 0 ? '+' : ''}Q${netVotes}` },
         ].map((s) => (
-          <div key={s.label} style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '12px', padding: '12px 10px', textAlign: 'center' }}>
+          <div key={s.label} style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '12px 10px', textAlign: 'center' }}>
             <p style={{ fontFamily: D, fontWeight: 700, fontSize: '14px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.3px' }}>{s.value}</p>
             <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginTop: '3px' }}>{s.label}</p>
           </div>

@@ -186,7 +186,7 @@ export function CommentFeed({ comments: initialComments, eventId }: CommentFeedP
             autoFocus
             style={{ flex: 1, background: 'var(--b1n0-surface)', border: '1.5px solid var(--b1n0-disabled-bg)', borderRadius: small ? '14px' : '16px', padding: small ? '7px 12px' : '9px 14px', fontFamily: F, fontSize: small ? '12px' : '13px', color: 'var(--b1n0-text-1)', outline: 'none' }}
           />
-          <button onClick={() => handleEdit(c.id, parentId)} disabled={sending || !editDraft.trim()} style={{ padding: '6px 12px', borderRadius: '8px', border: 'none', background: 'var(--b1n0-text-1)', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '11px', color: 'var(--b1n0-bg)', opacity: (sending || !editDraft.trim()) ? 0.4 : 1 }}>
+          <button onClick={() => handleEdit(c.id, parentId)} disabled={sending || !editDraft.trim()} style={{ padding: '6px 12px', borderRadius: 'var(--radius-lg)', border: 'none', background: 'var(--b1n0-text-1)', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '11px', color: 'var(--b1n0-bg)', opacity: (sending || !editDraft.trim()) ? 0.4 : 1 }}>
             Guardar
           </button>
           <button onClick={() => { setEditingId(null); setEditDraft('') }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-muted)', padding: '6px 4px' }}>
@@ -205,7 +205,7 @@ export function CommentFeed({ comments: initialComments, eventId }: CommentFeedP
             </span>
             <span style={{ width: 4, height: 4, borderRadius: '50%', background: tierColors[c.tier], display: 'inline-block', flexShrink: 0 }} />
             {c.side && (
-              <span style={{ padding: '1px 6px', borderRadius: '8px', fontFamily: F, fontWeight: 700, fontSize: '10px', background: c.side === 'yes' ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-border)', color: c.side === 'yes' ? 'var(--b1n0-surface)' : 'var(--b1n0-muted)' }}>
+              <span style={{ padding: '1px 6px', borderRadius: 'var(--radius-lg)', fontFamily: F, fontWeight: 700, fontSize: '10px', background: c.side === 'yes' ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-border)', color: c.side === 'yes' ? 'var(--b1n0-surface)' : 'var(--b1n0-muted)' }}>
                 {c.side === 'yes' ? 'SÍ' : 'NO'}
               </span>
             )}
@@ -225,7 +225,7 @@ export function CommentFeed({ comments: initialComments, eventId }: CommentFeedP
         {menuOpen === c.id && (
           <div style={{
             position: 'absolute', top: '100%', right: 0, marginTop: '4px', zIndex: 20,
-            background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '10px',
+            background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)',
             boxShadow: '0 4px 12px var(--b1n0-border)', overflow: 'hidden', minWidth: '120px',
           }}>
             <button
@@ -276,9 +276,9 @@ export function CommentFeed({ comments: initialComments, eventId }: CommentFeedP
         <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 700, color: 'var(--b1n0-text-1)' }}>
           Comentarios <span style={{ fontWeight: 400, color: 'var(--b1n0-muted)' }}>({list.length})</span>
         </p>
-        <div style={{ display: 'flex', background: 'var(--b1n0-surface)', borderRadius: '8px', padding: '2px' }}>
+        <div style={{ display: 'flex', background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-lg)', padding: '2px' }}>
           {(['reciente', 'popular'] as const).map((s) => (
-            <button key={s} onClick={() => setSort(s)} style={{ padding: '5px 12px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '11px', background: sort === s ? 'var(--b1n0-surface)' : 'transparent', color: sort === s ? 'var(--b1n0-text-1)' : 'var(--b1n0-muted)', transition: 'background 0.15s' }}>
+            <button key={s} onClick={() => setSort(s)} style={{ padding: '5px 12px', borderRadius: 'var(--radius-md)', border: 'none', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '11px', background: sort === s ? 'var(--b1n0-surface)' : 'transparent', color: sort === s ? 'var(--b1n0-text-1)' : 'var(--b1n0-muted)', transition: 'background 0.15s' }}>
               {s === 'reciente' ? 'Reciente' : 'Popular'}
             </button>
           ))}

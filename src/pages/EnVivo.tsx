@@ -40,21 +40,21 @@ export function EnVivo() {
       <div style={{ padding: '16px 16px 12px', borderBottom: '1px solid var(--b1n0-border)', flexShrink: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
           <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--b1n0-text-1)', display: 'inline-block', animation: 'pulse 2s infinite', flexShrink: 0 }} />
-          <span style={{ fontFamily: D, fontWeight: 800, fontSize: '18px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.5px' }}>
+          <span style={{ fontFamily: D, fontWeight: 800, fontSize: '18px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.5px' , fontVariantNumeric: 'tabular-nums'}}>
             En Vivo
           </span>
         </div>
         <div style={{ display: 'flex', gap: '16px' }}>
           <div>
             <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', marginBottom: '2px' }}>Activos ahora</p>
-            <p style={{ fontFamily: D, fontWeight: 700, fontSize: '20px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.5px', lineHeight: 1 }}>
+            <p style={{ fontFamily: D, fontWeight: 700, fontSize: '20px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.5px', lineHeight: 1 , fontVariantNumeric: 'tabular-nums'}}>
               {liveEvents.length}
             </p>
           </div>
           <div style={{ width: '1px', background: 'rgba(255,255,255,0.06)' }} />
           <div>
             <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', marginBottom: '2px' }}>Pool total en juego</p>
-            <p style={{ fontFamily: D, fontWeight: 700, fontSize: '20px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.5px', lineHeight: 1 }}>
+            <p style={{ fontFamily: D, fontWeight: 700, fontSize: '20px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.5px', lineHeight: 1 , fontVariantNumeric: 'tabular-nums'}}>
               Q{totalPool.toLocaleString()}
             </p>
           </div>
@@ -71,7 +71,7 @@ export function EnVivo() {
                 key={cat.id}
                 onClick={() => setCategoryFilter(cat.id)}
                 style={{
-                  padding: '7px 14px', borderRadius: '20px', cursor: 'pointer',
+                  padding: '7px 14px', borderRadius: 'var(--radius-pill)', cursor: 'pointer',
                   border: categoryFilter === cat.id ? 'none' : '1px solid rgba(255,255,255,0.08)',
                   background: categoryFilter === cat.id ? 'var(--b1n0-surface)' : 'var(--b1n0-card)',
                   color: categoryFilter === cat.id ? '#fff' : 'var(--b1n0-muted)',

@@ -48,9 +48,9 @@ export function RightPanel() {
     <div style={{ width: 280, height: '100dvh', overflowY: 'auto', padding: '16px 16px 32px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '12px', borderLeft: '1px solid var(--b1n0-border)', scrollbarWidth: 'none' }}>
 
       {/* Balance */}
-      <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '16px', padding: '18px' }}>
+      <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '18px' }}>
         <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-muted)', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: '6px' }}>Saldo</p>
-        <p style={{ fontFamily: D, fontWeight: 800, fontSize: '30px', color: 'var(--b1n0-text-1)', letterSpacing: '-1px', marginBottom: '14px', lineHeight: 1 }}>
+        <p style={{ fontFamily: D, fontWeight: 800, fontSize: '30px', color: 'var(--b1n0-text-1)', letterSpacing: '-1px', marginBottom: '14px', lineHeight: 1 , fontVariantNumeric: 'tabular-nums'}}>
           ${balance.toLocaleString()}
         </p>
         <div style={{ display: 'flex', gap: '8px' }}>
@@ -64,7 +64,7 @@ export function RightPanel() {
       </div>
 
       {/* Stats */}
-      <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '16px', padding: '16px 18px' }}>
+      <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '16px 18px' }}>
         <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-muted)', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: '12px' }}>
           Estadísticas
         </p>
@@ -83,7 +83,7 @@ export function RightPanel() {
 
       {/* Ending soon */}
       {endingSoon.length > 0 && (
-        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '16px', padding: '16px 18px' }}>
+        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '16px 18px' }}>
           <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-muted)', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: '10px' }}>
             Terminan pronto
           </p>
@@ -95,7 +95,7 @@ export function RightPanel() {
               : `${Math.floor(diff / 3600000)}h`
             return (
               <div key={e.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '9px 0', borderTop: i > 0 ? '1px solid var(--b1n0-border)' : 'none' }}>
-                <span style={{ fontFamily: F, fontSize: '9px', fontWeight: 600, color: 'var(--b1n0-muted)', background: 'var(--b1n0-surface)', borderRadius: '4px', padding: '2px 5px', textTransform: 'uppercase', flexShrink: 0 }}>
+                <span style={{ fontFamily: F, fontSize: '9px', fontWeight: 600, color: 'var(--b1n0-muted)', background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-sm)', padding: '2px 5px', textTransform: 'uppercase', flexShrink: 0 }}>
                   {categoryShort[e.category] || 'EVT'}
                 </span>
                 <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-text-1)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -112,7 +112,7 @@ export function RightPanel() {
 
       {/* KYC */}
       {user.tier < 3 && (
-        <div style={{ background: 'var(--b1n0-surface)', border: '1px solid var(--b1n0-border)', borderRadius: '16px', padding: '16px 18px' }}>
+        <div style={{ background: 'var(--b1n0-surface)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '16px 18px' }}>
           <p style={{ fontFamily: D, fontWeight: 700, fontSize: '14px', color: 'var(--b1n0-text-1)', marginBottom: '4px' }}>
             Subí a Nivel {user.tier + 1}
           </p>

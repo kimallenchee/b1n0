@@ -7,7 +7,7 @@ const shimmerStyle: React.CSSProperties = {
   background: 'linear-gradient(90deg, var(--b1n0-card) 25%, var(--b1n0-surface) 50%, var(--b1n0-card) 75%)',
   backgroundSize: '200% 100%',
   animation: 'shimmer 1.5s ease-in-out infinite',
-  borderRadius: '8px',
+  borderRadius: 'var(--radius-lg)',
 }
 
 /** A single rectangular shimmer block */
@@ -26,7 +26,7 @@ export function SkeletonEventCard() {
       style={{
         background: 'var(--b1n0-card)',
         border: '1px solid var(--b1n0-border)',
-        borderRadius: '16px',
+        borderRadius: 'var(--radius-lg)',
         padding: '16px',
         display: 'flex',
         flexDirection: 'column',
@@ -36,7 +36,7 @@ export function SkeletonEventCard() {
       <SkeletonBlock width="50%" height="12px" />
       <SkeletonBlock width="90%" height="18px" />
       <SkeletonBlock width="70%" height="14px" />
-      <SkeletonBlock width="100%" height="32px" style={{ borderRadius: '16px' }} />
+      <SkeletonBlock width="100%" height="32px" style={{ borderRadius: 'var(--radius-lg)' }} />
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: '12px' }}>
         <SkeletonBlock width="40%" height="12px" />
         <SkeletonBlock width="30%" height="12px" />
@@ -52,14 +52,14 @@ export function SkeletonHeroCard() {
       style={{
         background: 'var(--b1n0-card)',
         border: '1px solid var(--b1n0-border)',
-        borderRadius: '20px',
+        borderRadius: 'var(--radius-pill)',
         padding: '20px',
         display: 'flex',
         flexDirection: 'column',
         gap: '12px',
       }}
     >
-      <SkeletonBlock width="100%" height="140px" style={{ borderRadius: '14px' }} />
+      <SkeletonBlock width="100%" height="140px" style={{ borderRadius: 'var(--radius-lg)' }} />
       <SkeletonBlock width="30%" height="12px" />
       <SkeletonBlock width="85%" height="20px" />
       <SkeletonBlock width="100%" height="36px" style={{ borderRadius: '18px' }} />
@@ -74,7 +74,7 @@ export function SkeletonPredictionCard() {
       style={{
         background: 'var(--b1n0-card)',
         border: '1px solid var(--b1n0-border)',
-        borderRadius: '16px',
+        borderRadius: 'var(--radius-lg)',
         padding: '18px',
         marginBottom: '12px',
         display: 'flex',
@@ -83,7 +83,7 @@ export function SkeletonPredictionCard() {
       }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <SkeletonBlock width="80px" height="20px" style={{ borderRadius: '20px' }} />
+        <SkeletonBlock width="80px" height="20px" style={{ borderRadius: 'var(--radius-pill)' }} />
         <SkeletonBlock width="40px" height="14px" />
       </div>
       <SkeletonBlock width="90%" height="16px" />

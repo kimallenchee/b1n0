@@ -29,7 +29,7 @@ function optionTotal(opts: OptionRow[]): number {
 // ── Shared styles ──────────────────────────────────────────
 
 const inputStyle: React.CSSProperties = {
-  width: '100%', padding: '10px 12px', borderRadius: '10px',
+  width: '100%', padding: '10px 12px', borderRadius: 'var(--radius-lg)',
   border: '1px solid var(--b1n0-border)', background: 'var(--b1n0-surface)',
   color: 'var(--b1n0-text-1)', fontFamily: F, fontSize: '13px',
   outline: 'none', boxSizing: 'border-box',
@@ -94,7 +94,7 @@ export function AdminPage() {
   if (!profile?.isAdmin) {
     return (
       <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '12px' }}>
-        <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: 'var(--b1n0-text-1)' }}>Acceso restringido</p>
+        <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: 'var(--b1n0-text-1)' , fontVariantNumeric: 'tabular-nums'}}>Acceso restringido</p>
         <button onClick={() => navigate('/inicio')} style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}>
           Volver al inicio
         </button>
@@ -107,13 +107,13 @@ export function AdminPage() {
 
       {/* Compact header: tabs left, date filter right */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', marginBottom: '14px', flexWrap: 'wrap' }}>
-        <div style={{ display: 'inline-flex', background: 'var(--b1n0-card)', borderRadius: '8px', padding: '2px', gap: '1px' }}>
+        <div style={{ display: 'inline-flex', background: 'var(--b1n0-card)', borderRadius: 'var(--radius-lg)', padding: '2px', gap: '1px' }}>
           {([['manage', 'Gestionar'], ['revenue', 'Ingresos'], ['rates', 'Tarifas'], ['users', 'Usuarios'], ['treasury', 'Tesorería'], ['health', 'Salud']] as const).map(([v, label]) => (
             <button
               key={v}
               onClick={() => { setView(v) }}
               style={{
-                padding: '6px 14px', borderRadius: '6px', border: 'none', cursor: 'pointer',
+                padding: '6px 14px', borderRadius: 'var(--radius-md)', border: 'none', cursor: 'pointer',
                 fontFamily: F, fontWeight: 600, fontSize: '12px',
                 background: view === v ? 'var(--b1n0-text-1)' : 'transparent',
                 color: view === v ? 'var(--b1n0-bg)' : 'var(--b1n0-muted)',
@@ -133,7 +133,7 @@ export function AdminPage() {
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
               style={{
-                padding: '5px 8px', borderRadius: '6px', border: '1px solid var(--b1n0-border)',
+                padding: '5px 8px', borderRadius: 'var(--radius-md)', border: '1px solid var(--b1n0-border)',
                 background: 'var(--b1n0-surface)', color: 'var(--b1n0-text-1)',
                 fontFamily: F, fontSize: '11px', outline: 'none',
               }}
@@ -144,7 +144,7 @@ export function AdminPage() {
               value={dateTo}
               onChange={(e) => setDateTo(e.target.value)}
               style={{
-                padding: '5px 8px', borderRadius: '6px', border: '1px solid var(--b1n0-border)',
+                padding: '5px 8px', borderRadius: 'var(--radius-md)', border: '1px solid var(--b1n0-border)',
                 background: 'var(--b1n0-surface)', color: 'var(--b1n0-text-1)',
                 fontFamily: F, fontSize: '11px', outline: 'none',
               }}
@@ -152,7 +152,7 @@ export function AdminPage() {
             {(dateFrom || dateTo) && (
               <button
                 onClick={() => { setDateFrom(''); setDateTo('') }}
-                style={{ padding: '4px 8px', borderRadius: '5px', border: 'none', background: 'rgba(255,255,255,0.08)', color: 'var(--b1n0-muted)', fontFamily: F, fontSize: '10px', cursor: 'pointer' }}
+                style={{ padding: '4px 8px', borderRadius: 'var(--radius-md)', border: 'none', background: 'rgba(255,255,255,0.08)', color: 'var(--b1n0-muted)', fontFamily: F, fontSize: '10px', cursor: 'pointer' }}
               >
                 ✕
               </button>
@@ -191,7 +191,7 @@ export function AdminPage() {
             marginTop: '32px',
             padding: '12px',
             border: '1px dashed var(--b1n0-border)',
-            borderRadius: '8px',
+            borderRadius: 'var(--radius-lg)',
             background: 'rgba(248,113,113,0.04)',
           }}
         >
@@ -208,14 +208,14 @@ export function AdminPage() {
               }}
               style={{
                 padding: '6px 12px',
-                borderRadius: '6px',
+                borderRadius: 'var(--radius-md)',
                 border: '1px solid var(--b1n0-border)',
                 background: 'var(--b1n0-surface)',
                 fontFamily: F,
                 fontSize: '11px',
                 fontWeight: 600,
                 cursor: 'pointer',
-                color: '#FFD474',
+                color: 'var(--b1n0-gold)',
               }}
             >
               logger.error → Sentry
@@ -226,14 +226,14 @@ export function AdminPage() {
               }}
               style={{
                 padding: '6px 12px',
-                borderRadius: '6px',
+                borderRadius: 'var(--radius-md)',
                 border: '1px solid #fecaca',
                 background: 'rgba(248,113,113,0.08)',
                 fontFamily: F,
                 fontSize: '11px',
                 fontWeight: 600,
                 cursor: 'pointer',
-                color: '#f87171',
+                color: 'var(--b1n0-no)',
               }}
             >
               throw → ErrorBoundary

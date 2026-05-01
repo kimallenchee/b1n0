@@ -180,7 +180,7 @@ export function AuthPage() {
   }
 
   const inputStyle: React.CSSProperties = {
-    width: '100%', padding: '12px 14px', borderRadius: '10px',
+    width: '100%', padding: '12px 14px', borderRadius: 'var(--radius-lg)',
     border: '1px solid var(--b1n0-border)', background: 'var(--b1n0-surface)',
     color: 'var(--b1n0-text-1)', fontFamily: F, fontSize: '14px',
     outline: 'none', boxSizing: 'border-box',
@@ -273,7 +273,7 @@ export function AuthPage() {
     return (
       <div style={{ minHeight: '100dvh', background: 'var(--b1n0-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
         <div style={{ maxWidth: 380, width: '100%', textAlign: 'center' }}>
-          <p style={{ fontFamily: D, fontWeight: 800, fontSize: '26px', color: 'var(--b1n0-text-1)', marginBottom: '12px', letterSpacing: '-0.5px' }}>
+          <p style={{ fontFamily: D, fontWeight: 800, fontSize: '26px', color: 'var(--b1n0-text-1)', marginBottom: '12px', letterSpacing: '-0.5px' , fontVariantNumeric: 'tabular-nums'}}>
             Contraseña temporal
           </p>
           {tempPassword ? (
@@ -281,7 +281,7 @@ export function AuthPage() {
               <p style={{ fontFamily: F, fontSize: '14px', color: 'var(--b1n0-muted)', lineHeight: 1.6, marginBottom: '20px' }}>
                 Tu nueva contraseña temporal para <strong style={{ color: 'var(--b1n0-text-1)' }}>{loginEmail}</strong>:
               </p>
-              <div style={{ background: 'var(--b1n0-card)', border: '2px dashed var(--b1n0-border)', borderRadius: '14px', padding: '18px 24px', marginBottom: '20px' }}>
+              <div style={{ background: 'var(--b1n0-card)', border: '2px dashed var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '18px 24px', marginBottom: '20px' }}>
                 <p style={{ fontFamily: 'monospace', fontSize: '24px', fontWeight: 700, color: 'var(--b1n0-text-1)', letterSpacing: '2px', userSelect: 'all' }}>
                   {tempPassword}
                 </p>
@@ -297,7 +297,7 @@ export function AuthPage() {
           )}
           <button
             onClick={() => { setTempPassword(null); setForgotMode(false); setTab('login'); setError(null); setLoginPw('') }}
-            style={{ width: '100%', padding: '13px', borderRadius: '12px', border: 'none', background: 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)', fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: 'pointer' }}
+            style={{ width: '100%', padding: '13px', borderRadius: 'var(--radius-lg)', border: 'none', background: 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)', fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: 'pointer' }}
           >
             Iniciar sesión
           </button>
@@ -312,17 +312,17 @@ export function AuthPage() {
       <div style={{ minHeight: '100dvh', background: 'var(--b1n0-bg)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
         <div style={{ maxWidth: 380, width: '100%' }}>
           <div style={{ textAlign: 'center', marginBottom: '36px' }}>
-            <p style={{ fontFamily: D, fontWeight: 800, fontSize: '38px', color: 'var(--b1n0-text-1)', letterSpacing: '-1px', marginBottom: '6px' }}>b1n0</p>
+            <p style={{ fontFamily: D, fontWeight: 800, fontSize: '38px', color: 'var(--b1n0-text-1)', letterSpacing: '-1px', marginBottom: '6px' , fontVariantNumeric: 'tabular-nums'}}>b1n0</p>
             <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)' }}>Recuperá tu cuenta</p>
           </div>
-          <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '20px', padding: '28px 24px' }}>
+          <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-pill)', padding: '28px 24px' }}>
             <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)', marginBottom: '16px', lineHeight: 1.5 }}>
               Ingresá tu correo y te generaremos una contraseña temporal.
             </p>
             <form onSubmit={handleReset} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <input type="email" placeholder="Correo electrónico" value={loginEmail} onChange={e => setLoginEmail(e.target.value)} required style={inputStyle} />
               {error && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', textAlign: 'center' }}>{error}</p>}
-              <button type="submit" disabled={loading} style={{ width: '100%', padding: '13px', borderRadius: '12px', border: 'none', background: loading ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)', fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: loading ? 'default' : 'pointer', marginTop: '4px' }}>
+              <button type="submit" disabled={loading} style={{ width: '100%', padding: '13px', borderRadius: 'var(--radius-lg)', border: 'none', background: loading ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)', fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: loading ? 'default' : 'pointer', marginTop: '4px' }}>
                 {loading ? 'Generando...' : 'Generar contraseña'}
               </button>
             </form>
@@ -340,7 +340,7 @@ export function AuthPage() {
     return (
       <div style={{ minHeight: '100dvh', background: 'var(--b1n0-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
         <div style={{ maxWidth: 360, width: '100%', textAlign: 'center' }}>
-          <p style={{ fontFamily: D, fontWeight: 800, fontSize: '26px', color: 'var(--b1n0-text-1)', marginBottom: '12px', letterSpacing: '-0.5px' }}>
+          <p style={{ fontFamily: D, fontWeight: 800, fontSize: '26px', color: 'var(--b1n0-text-1)', marginBottom: '12px', letterSpacing: '-0.5px' , fontVariantNumeric: 'tabular-nums'}}>
             Revisá tu correo
           </p>
           <p style={{ fontFamily: F, fontSize: '14px', color: 'var(--b1n0-muted)', lineHeight: 1.6 }}>
@@ -367,7 +367,7 @@ export function AuthPage() {
       {/* ════════ LANDING HERO ════════ */}
       <section style={{ background: 'var(--b1n0-surface)', padding: '0 24px', position: 'relative', overflow: 'hidden' }}>
         {/* Subtle pattern overlay */}
-        <div style={{ position: 'absolute', inset: 0, opacity: 0.04, backgroundImage: 'repeating-linear-gradient(45deg, #4ade80 0, #4ade80 1px, transparent 1px, transparent 20px)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', inset: 0, opacity: 0.04, backgroundImage: 'repeating-linear-gradient(45deg, var(--b1n0-si) 0, var(--b1n0-si) 1px, transparent 1px, transparent 20px)', pointerEvents: 'none' }} />
         <div style={{ maxWidth: '960px', margin: '0 auto', padding: '60px 0 50px', position: 'relative', zIndex: 1 }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '20px' }}>
             <img src="/b1n0-logo.png" alt="B1N0" style={{ height: 'clamp(60px, 10vw, 90px)', objectFit: 'contain' }} />
@@ -376,11 +376,11 @@ export function AuthPage() {
             </p>
             <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
               <button onClick={() => { setTab('signup'); document.getElementById('auth-section')?.scrollIntoView({ behavior: 'smooth' }) }}
-                style={{ padding: '14px 32px', borderRadius: '12px', border: 'none', background: 'linear-gradient(135deg, #4ade80 0%, #5CBFA0 100%)', color: 'var(--b1n0-on-accent)', fontFamily: F, fontWeight: 700, fontSize: '15px', cursor: 'pointer', transition: 'transform 0.15s' }}>
+                style={{ padding: '14px 32px', borderRadius: 'var(--radius-lg)', border: 'none', background: 'linear-gradient(135deg, var(--b1n0-si) 0%, #5CBFA0 100%)', color: 'var(--b1n0-on-accent)', fontFamily: F, fontWeight: 700, fontSize: '15px', cursor: 'pointer', transition: 'transform 0.15s' }}>
                 Empezar ahora
               </button>
               <button onClick={() => document.getElementById('como-funciona')?.scrollIntoView({ behavior: 'smooth' })}
-                style={{ padding: '14px 32px', borderRadius: '12px', border: '1px solid var(--b1n0-border)', background: 'transparent', color: 'var(--b1n0-text-1)', fontFamily: F, fontWeight: 600, fontSize: '15px', cursor: 'pointer' }}>
+                style={{ padding: '14px 32px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--b1n0-border)', background: 'transparent', color: 'var(--b1n0-text-1)', fontFamily: F, fontWeight: 600, fontSize: '15px', cursor: 'pointer' }}>
                 ¿Cómo funciona?
               </button>
             </div>
@@ -391,7 +391,7 @@ export function AuthPage() {
       {/* ════════ CÓMO FUNCIONA ════════ */}
       <section id="como-funciona" style={{ padding: '60px 24px', background: 'var(--b1n0-bg)' }}>
         <div style={{ maxWidth: '960px', margin: '0 auto', textAlign: 'center' }}>
-          <p style={{ fontFamily: D, fontWeight: 800, fontSize: '32px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.5px', marginBottom: '8px' }}>¿Cómo funciona?</p>
+          <p style={{ fontFamily: D, fontWeight: 800, fontSize: '32px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.5px', marginBottom: '8px' , fontVariantNumeric: 'tabular-nums'}}>¿Cómo funciona?</p>
           <p style={{ fontFamily: F, fontSize: '14px', color: 'var(--b1n0-muted)', marginBottom: '40px' }}>Tres pasos simples para empezar a predecir</p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
             {[
@@ -399,7 +399,7 @@ export function AuthPage() {
               { step: '2', title: 'Hacé tu llamado', desc: 'Todo es binario: sí o no, pasa o no pasa. Simple.', color: 'var(--b1n0-si)' },
               { step: '3', title: 'Cobrá si acertás', desc: 'Los precios se calculan en tiempo real según las posiciones.', color: 'var(--b1n0-gold)' },
             ].map(s => (
-              <div key={s.step} style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '16px', padding: '28px 24px', textAlign: 'left', position: 'relative' }}>
+              <div key={s.step} style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '28px 24px', textAlign: 'left', position: 'relative' }}>
                 <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: s.color, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '14px' }}>
                   <span style={{ fontFamily: D, fontWeight: 800, fontSize: '15px', color: 'var(--b1n0-on-accent)' }}>{s.step}</span>
                 </div>
@@ -422,7 +422,7 @@ export function AuthPage() {
               { val: 'SSL', label: 'Datos seguros' },
             ].map(t => (
               <div key={t.label} style={{ textAlign: 'center' }}>
-                <p style={{ fontFamily: D, fontWeight: 800, fontSize: '28px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.5px' }}>{t.val}</p>
+                <p style={{ fontFamily: D, fontWeight: 800, fontSize: '28px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.5px' , fontVariantNumeric: 'tabular-nums'}}>{t.val}</p>
                 <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{t.label}</p>
               </div>
             ))}
@@ -441,10 +441,10 @@ export function AuthPage() {
         </div>
 
         {/* Card */}
-        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '20px', padding: '28px 24px' }}>
+        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-pill)', padding: '28px 24px' }}>
 
           {/* Tab switcher */}
-          <div style={{ display: 'flex', background: 'var(--b1n0-surface)', borderRadius: '12px', padding: '3px', marginBottom: '24px' }}>
+          <div style={{ display: 'flex', background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-lg)', padding: '3px', marginBottom: '24px' }}>
             {(['login', 'signup'] as const).map(t => (
               <button key={t} onClick={() => { setTab(t); setError(null) }} style={{
                 flex: 1, padding: '9px', borderRadius: '9px', border: 'none', cursor: 'pointer',
@@ -461,7 +461,7 @@ export function AuthPage() {
           {tab === 'login' && (
             <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {confirmed && (
-                <div style={{ background: 'var(--b1n0-si-bg)', border: '1px solid var(--b1n0-si-border)', borderRadius: '10px', padding: '12px 16px', textAlign: 'center', marginBottom: '4px' }}>
+                <div style={{ background: 'var(--b1n0-si-bg)', border: '1px solid var(--b1n0-si-border)', borderRadius: 'var(--radius-lg)', padding: '12px 16px', textAlign: 'center', marginBottom: '4px' }}>
                   <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 600, color: 'var(--b1n0-si)', margin: 0 }}>
                     Cuenta confirmada — iniciá sesión
                   </p>
@@ -471,7 +471,7 @@ export function AuthPage() {
               <input type="password" placeholder="Contraseña" value={loginPw} onChange={e => setLoginPw(e.target.value)} required minLength={6} style={inputStyle} />
               {error && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', textAlign: 'center', padding: '0 4px' }}>{error}</p>}
               <button type="submit" disabled={loading} style={{
-                width: '100%', padding: '13px', borderRadius: '12px', border: 'none',
+                width: '100%', padding: '13px', borderRadius: 'var(--radius-lg)', border: 'none',
                 background: loading ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)',
                 fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: loading ? 'default' : 'pointer', marginTop: '4px',
               }}>
@@ -580,7 +580,7 @@ export function AuthPage() {
 
               {/* Submit */}
               <button type="submit" disabled={loading} style={{
-                width: '100%', padding: '14px', borderRadius: '12px', border: 'none',
+                width: '100%', padding: '14px', borderRadius: 'var(--radius-lg)', border: 'none',
                 background: loading ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)',
                 fontFamily: F, fontWeight: 600, fontSize: '14px',
                 cursor: loading ? 'default' : 'pointer', marginTop: '8px',

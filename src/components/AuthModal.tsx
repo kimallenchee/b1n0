@@ -81,7 +81,7 @@ export function AuthModal() {
     })
   }
 
-  const inputStyle: React.CSSProperties = { width: '100%', padding: '12px 14px', borderRadius: '10px', border: '1px solid var(--b1n0-border)', background: 'var(--b1n0-surface)', color: 'var(--b1n0-text-1)', fontFamily: F, fontSize: '14px', outline: 'none', boxSizing: 'border-box' }
+  const inputStyle: React.CSSProperties = { width: '100%', padding: '12px 14px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--b1n0-border)', background: 'var(--b1n0-surface)', color: 'var(--b1n0-text-1)', fontFamily: F, fontSize: '14px', outline: 'none', boxSizing: 'border-box' }
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault(); setError(null); setLoading(true)
@@ -113,7 +113,7 @@ export function AuthModal() {
     return createPortal(
       <div style={{ position: 'fixed', inset: 0, zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div onClick={() => { setSignupDone(false); closeAuth() }} style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }} />
-        <div style={{ position: 'relative', maxWidth: 420, width: '90%', background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '20px', padding: '36px 28px', boxShadow: '0 20px 60px rgba(0,0,0,0.5)', textAlign: 'center' }}>
+        <div style={{ position: 'relative', maxWidth: 420, width: '90%', background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-pill)', padding: '36px 28px', boxShadow: '0 20px 60px rgba(0,0,0,0.5)', textAlign: 'center' }}>
           <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'var(--b1n0-si-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', fontSize: '28px' }}>✉️</div>
           <p style={{ fontFamily: F, fontWeight: 700, fontSize: '20px', color: 'var(--b1n0-text-1)', marginBottom: '8px' }}>Revisá tu correo</p>
           <p style={{ fontFamily: F, fontSize: '14px', color: 'var(--b1n0-muted)', lineHeight: 1.6, marginBottom: '6px' }}>
@@ -127,7 +127,7 @@ export function AuthModal() {
           </p>
           <button
             onClick={() => { setSignupDone(false); closeAuth() }}
-            style={{ marginTop: '20px', padding: '12px 28px', borderRadius: '12px', border: 'none', background: 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)', fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: 'pointer' }}
+            style={{ marginTop: '20px', padding: '12px 28px', borderRadius: 'var(--radius-lg)', border: 'none', background: 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)', fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: 'pointer' }}
           >
             Entendido
           </button>
@@ -143,7 +143,7 @@ export function AuthModal() {
       <div onClick={closeAuth} style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }} />
 
       {/* Modal */}
-      <div style={{ position: 'relative', maxWidth: 420, width: '90%', maxHeight: '90dvh', overflowY: 'auto', background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '20px', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.5)' }}>
+      <div style={{ position: 'relative', maxWidth: 420, width: '90%', maxHeight: '90dvh', overflowY: 'auto', background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-pill)', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.5)' }}>
 
         {/* Close button */}
         <button onClick={closeAuth} style={{ position: 'absolute', top: '12px', right: '12px', background: 'none', border: 'none', fontSize: '20px', color: 'var(--b1n0-muted)', cursor: 'pointer', padding: '4px 8px' }}>×</button>
@@ -155,7 +155,7 @@ export function AuthModal() {
         </div>
 
         {/* Tab switcher */}
-        <div style={{ display: 'flex', background: 'var(--b1n0-surface)', borderRadius: '12px', padding: '3px', marginBottom: '20px' }}>
+        <div style={{ display: 'flex', background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-lg)', padding: '3px', marginBottom: '20px' }}>
           {(['login', 'signup'] as const).map(t => (
             <button key={t} onClick={() => { setTab(t); setError(null) }} style={{
               flex: 1, padding: '9px', borderRadius: '9px', border: 'none', cursor: 'pointer',
@@ -174,7 +174,7 @@ export function AuthModal() {
             <input type="email" placeholder="Correo electrónico" value={loginEmail} onChange={e => setLoginEmail(e.target.value)} required style={inputStyle} />
             <input type="password" placeholder="Contraseña" value={loginPw} onChange={e => setLoginPw(e.target.value)} required minLength={6} style={inputStyle} />
             {error && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', textAlign: 'center' }}>{error}</p>}
-            <button type="submit" disabled={loading} style={{ width: '100%', padding: '13px', borderRadius: '12px', border: 'none', background: loading ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)', fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: loading ? 'default' : 'pointer' }}>
+            <button type="submit" disabled={loading} style={{ width: '100%', padding: '13px', borderRadius: 'var(--radius-lg)', border: 'none', background: loading ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)', fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: loading ? 'default' : 'pointer' }}>
               {loading ? 'Cargando...' : 'Entrar'}
             </button>
           </form>
@@ -213,7 +213,7 @@ export function AuthModal() {
                 {Object.values(errors).slice(0, 3).join(' · ')}
               </p>
             )}
-            <button type="submit" disabled={loading} style={{ width: '100%', padding: '13px', borderRadius: '12px', border: 'none', background: loading ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)', fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: loading ? 'default' : 'pointer' }}>
+            <button type="submit" disabled={loading} style={{ width: '100%', padding: '13px', borderRadius: 'var(--radius-lg)', border: 'none', background: loading ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)', fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: loading ? 'default' : 'pointer' }}>
               {loading ? 'Creando cuenta...' : 'Crear cuenta'}
             </button>
           </form>

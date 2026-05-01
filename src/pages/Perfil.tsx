@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
+import { Camera, SignOut } from '@phosphor-icons/react'
 import { useNavigate } from 'react-router-dom'
 import { mockUser } from '../data/mockEvents'
 import { useAuth } from '../context/AuthContext'
@@ -303,7 +304,7 @@ export function Perfil() {
             user.name.charAt(0)
           )}
           <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '24px', background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="white" stroke="none"><path d="M12 15.2a3.2 3.2 0 100-6.4 3.2 3.2 0 000 6.4z"/><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
+            <Camera size={12} weight="fill" color="white" />
           </div>
         </div>
         <p style={{ fontFamily: F, fontWeight: 500, fontSize: '13px', color: 'var(--color-muted)', marginBottom: '2px' }}>
@@ -322,7 +323,7 @@ export function Perfil() {
           { label: 'Correctos', value: String(user.correctPredictions), accent: 'var(--color-si)' },
           { label: 'Acierto', value: `${accuracy}%`, accent: accuracy >= 60 ? 'var(--color-si)' : accuracy >= 40 ? 'var(--color-orange-500)' : 'var(--color-no)' },
         ].map((stat) => (
-          <div key={stat.label} style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '12px', padding: '14px 10px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+          <div key={stat.label} style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-lg)', padding: '14px 10px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
             <p style={{ fontFamily: F, fontWeight: 800, fontSize: '22px', color: 'var(--color-text)', letterSpacing: '-0.5px' }}>{stat.value}</p>
             <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--color-muted)', marginTop: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{stat.label}</p>
             <span style={{ position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '24px', height: '3px', borderRadius: '2px 2px 0 0', background: stat.accent }} />
@@ -336,7 +337,7 @@ export function Perfil() {
         style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           width: '100%', background: 'var(--b1n0-si-bg)', border: '1px solid var(--b1n0-border)',
-          borderRadius: '10px', padding: '16px 18px', marginBottom: '16px',
+          borderRadius: 'var(--radius-lg)', padding: '16px 18px', marginBottom: '16px',
           cursor: 'pointer', textAlign: 'left', transition: 'border-color 0.15s',
         }}
       >
@@ -352,13 +353,13 @@ export function Perfil() {
       </button>
 
       {/* ── Friends section ── */}
-      <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '16px', padding: '18px', marginBottom: '16px' }}>
+      <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '18px', marginBottom: '16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
           <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 600, color: 'var(--b1n0-muted)', letterSpacing: '0.5px', textTransform: 'uppercase' }}>
             Amigos ({acceptedFriends.length})
           </p>
           {pendingReceived.length > 0 && (
-            <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: '#fff', background: '#f87171', borderRadius: '10px', padding: '2px 8px' }}>
+            <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: '#fff', background: 'var(--b1n0-no)', borderRadius: 'var(--radius-lg)', padding: '2px 8px' }}>
               {pendingReceived.length} nueva{pendingReceived.length > 1 ? 's' : ''}
             </span>
           )}
@@ -372,13 +373,13 @@ export function Perfil() {
               value={friendInput}
               onChange={(e) => setFriendInput(e.target.value)}
               placeholder="Buscar por usuario..."
-              style={{ flex: 1, background: 'var(--b1n0-surface)', border: '1px solid var(--b1n0-border)', borderRadius: '10px', padding: '9px 14px', fontFamily: F, fontSize: '13px', color: 'var(--b1n0-text-1)', outline: 'none' }}
+              style={{ flex: 1, background: 'var(--b1n0-surface)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '9px 14px', fontFamily: F, fontSize: '13px', color: 'var(--b1n0-text-1)', outline: 'none' }}
             />
           </div>
 
           {/* Search dropdown */}
           {friendInput.trim() && (
-            <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'var(--b1n0-card)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '10px', marginTop: '4px', zIndex: 10, maxHeight: '200px', overflow: 'auto', boxShadow: '0 4px 12px var(--b1n0-border)' }}>
+            <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'var(--b1n0-card)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 'var(--radius-lg)', marginTop: '4px', zIndex: 10, maxHeight: '200px', overflow: 'auto', boxShadow: '0 4px 12px var(--b1n0-border)' }}>
               {searching ? (
                 <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)', padding: '12px 14px' }}>Buscando...</p>
               ) : searchResults.length === 0 ? (
@@ -403,7 +404,7 @@ export function Perfil() {
                         <button
                           onClick={() => sendFriendRequest(r.id)}
                           disabled={friendActionLoading === r.id}
-                          style={{ padding: '6px 14px', borderRadius: '8px', border: 'none', background: 'var(--b1n0-text-1)', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '13px', color: 'var(--b1n0-bg)', flexShrink: 0, opacity: friendActionLoading === r.id ? 0.5 : 1 }}
+                          style={{ padding: '6px 14px', borderRadius: 'var(--radius-lg)', border: 'none', background: 'var(--b1n0-text-1)', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '13px', color: 'var(--b1n0-bg)', flexShrink: 0, opacity: friendActionLoading === r.id ? 0.5 : 1 }}
                         >
                           +
                         </button>
@@ -417,7 +418,7 @@ export function Perfil() {
         </div>
 
         {/* Friends tabs: Amigos / Solicitudes */}
-        <div style={{ display: 'flex', marginBottom: '12px', background: 'var(--b1n0-card)', borderRadius: '10px', padding: '3px' }}>
+        <div style={{ display: 'flex', marginBottom: '12px', background: 'var(--b1n0-card)', borderRadius: 'var(--radius-lg)', padding: '3px' }}>
           {(['amigos', 'solicitudes'] as const).map((t) => (
             <button key={t} onClick={() => setFriendsTab(t)} style={{
               flex: 1, padding: '8px', borderRadius: '7px', border: 'none', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px',
@@ -427,7 +428,7 @@ export function Perfil() {
             }}>
               {t === 'amigos' ? 'Amigos' : 'Solicitudes'}
               {t === 'solicitudes' && pendingReceived.length > 0 && (
-                <span style={{ position: 'absolute', top: '4px', right: '8px', width: 6, height: 6, borderRadius: '50%', background: '#f87171' }} />
+                <span style={{ position: 'absolute', top: '4px', right: '8px', width: 6, height: 6, borderRadius: '50%', background: 'var(--b1n0-no)' }} />
               )}
             </button>
           ))}
@@ -481,14 +482,14 @@ export function Perfil() {
                       <button
                         onClick={() => acceptRequest(f.id)}
                         disabled={friendActionLoading === f.id}
-                        style={{ padding: '6px 12px', borderRadius: '8px', border: 'none', background: 'var(--b1n0-text-1)', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-bg)', opacity: friendActionLoading === f.id ? 0.5 : 1 }}
+                        style={{ padding: '6px 12px', borderRadius: 'var(--radius-lg)', border: 'none', background: 'var(--b1n0-text-1)', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-bg)', opacity: friendActionLoading === f.id ? 0.5 : 1 }}
                       >
                         Aceptar
                       </button>
                       <button
                         onClick={() => rejectOrRemove(f.id)}
                         disabled={friendActionLoading === f.id}
-                        style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.08)', background: 'transparent', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-muted)', opacity: friendActionLoading === f.id ? 0.5 : 1 }}
+                        style={{ padding: '6px 12px', borderRadius: 'var(--radius-lg)', border: '1px solid rgba(255,255,255,0.08)', background: 'transparent', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-muted)', opacity: friendActionLoading === f.id ? 0.5 : 1 }}
                       >
                         Rechazar
                       </button>
@@ -514,7 +515,7 @@ export function Perfil() {
                     <button
                       onClick={() => rejectOrRemove(f.id)}
                       disabled={friendActionLoading === f.id}
-                      style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.08)', background: 'transparent', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-muted)', opacity: friendActionLoading === f.id ? 0.5 : 1 }}
+                      style={{ padding: '6px 12px', borderRadius: 'var(--radius-lg)', border: '1px solid rgba(255,255,255,0.08)', background: 'transparent', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-muted)', opacity: friendActionLoading === f.id ? 0.5 : 1 }}
                     >
                       Cancelar
                     </button>
@@ -538,7 +539,7 @@ export function Perfil() {
         <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--color-muted)', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: '10px' }}>
           Saldo
         </p>
-        <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '16px', padding: '20px 18px' }}>
+        <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-lg)', padding: '20px 18px' }}>
           <p style={{ fontFamily: F, fontWeight: 800, fontSize: '36px', color: 'var(--color-text)', letterSpacing: '-1.5px', marginBottom: '6px', lineHeight: 1 }}>
             ${(profile?.balance ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </p>
@@ -574,7 +575,7 @@ export function Perfil() {
         </p>
 
         {/* All config in one card */}
-        <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '16px', padding: '4px 18px', marginBottom: '14px' }}>
+        <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-lg)', padding: '4px 18px', marginBottom: '14px' }}>
           {/* Notificaciones — collapsible */}
           <button
             onClick={() => setNotifOpen(o => !o)}
@@ -639,7 +640,7 @@ export function Perfil() {
               <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)', marginBottom: '10px', lineHeight: 1.4 }}>
                 Elegí el tema de la app. "Sistema" sigue la preferencia de tu dispositivo.
               </p>
-              <div style={{ display: 'flex', gap: '6px', background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '10px', padding: '4px' }}>
+              <div style={{ display: 'flex', gap: '6px', background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '4px' }}>
                 {([
                   { value: 'dark', label: 'Oscuro' },
                   { value: 'light', label: 'Claro' },
@@ -653,7 +654,7 @@ export function Perfil() {
                       style={{
                         flex: 1,
                         padding: '9px 10px',
-                        borderRadius: '8px',
+                        borderRadius: 'var(--radius-lg)',
                         border: 'none',
                         background: active ? 'var(--b1n0-si)' : 'transparent',
                         color: active ? 'var(--b1n0-on-accent)' : 'var(--b1n0-text-2)',
@@ -697,14 +698,10 @@ export function Perfil() {
             style={{
               width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
               padding: '14px', marginTop: '8px', background: 'var(--b1n0-surface)', border: '1px solid var(--b1n0-border)',
-              borderRadius: '10px', cursor: 'pointer', transition: 'border-color 0.15s',
+              borderRadius: 'var(--radius-lg)', cursor: 'pointer', transition: 'border-color 0.15s',
             }}
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--b1n0-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-              <polyline points="16 17 21 12 16 7"/>
-              <line x1="21" y1="12" x2="9" y2="12"/>
-            </svg>
+            <SignOut size={16} weight="regular" color="var(--b1n0-muted)" />
             <span style={{ fontFamily: F, fontSize: '14px', fontWeight: 600, color: 'var(--b1n0-text-2)' }}>Cerrar sesión</span>
           </button>
         </div>

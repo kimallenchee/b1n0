@@ -75,7 +75,7 @@ const fmtQ = (n: number) =>
 const card: React.CSSProperties = {
   background: 'var(--b1n0-card)',
   border: '1px solid var(--b1n0-border)',
-  borderRadius: '12px',
+  borderRadius: 'var(--radius-lg)',
   padding: '14px 16px',
   display: 'flex',
   flexDirection: 'column',
@@ -93,9 +93,9 @@ const sectionHead: React.CSSProperties = {
 }
 
 const STATUS_COLOR: Record<ReconciliationLogEntry['status'], string> = {
-  ok: '#4ade80',
-  warning: '#FFD474',
-  critical: '#f87171',
+  ok: 'var(--b1n0-si)',
+  warning: 'var(--b1n0-gold)',
+  critical: 'var(--b1n0-no)',
 }
 
 /**
@@ -502,10 +502,10 @@ export function HealthPanel() {
           style={{
             fontFamily: F,
             fontSize: '12px',
-            color: '#f87171',
+            color: 'var(--b1n0-no)',
             background: 'rgba(248,113,113,0.08)',
             padding: '8px 12px',
-            borderRadius: '8px',
+            borderRadius: 'var(--radius-lg)',
             margin: 0,
           }}
         >
@@ -520,7 +520,7 @@ export function HealthPanel() {
             color: 'var(--b1n0-text-1)',
             background: 'rgba(20,184,166,0.08)',
             padding: '8px 12px',
-            borderRadius: '8px',
+            borderRadius: 'var(--radius-lg)',
             margin: 0,
           }}
         >
@@ -538,9 +538,9 @@ export function HealthPanel() {
               fontSize: '11px',
               fontWeight: 700,
               padding: '3px 8px',
-              borderRadius: '12px',
+              borderRadius: 'var(--radius-lg)',
               background: reconcileOk ? 'rgba(74,222,128,0.12)' : 'rgba(248,113,113,0.12)',
-              color: reconcileOk ? '#4ade80' : '#f87171',
+              color: reconcileOk ? 'var(--b1n0-si)' : 'var(--b1n0-no)',
             }}
           >
             {reconcileOk ? 'OK' : 'Δ Q' + fmtQ(ledgerDelta)}
@@ -550,11 +550,11 @@ export function HealthPanel() {
           {[
             { label: 'Saldo tesorería', val: `$${fmtQ(treasuryBalance)}`, color: 'var(--b1n0-text-1)' },
             { label: 'Saldo usuarios', val: `$${fmtQ(userBalanceTotal)}`, color: 'var(--b1n0-text-1)' },
-            { label: 'En pools', val: `$${fmtQ(moneyInPools)}`, color: '#FFD474' },
+            { label: 'En pools', val: `$${fmtQ(moneyInPools)}`, color: 'var(--b1n0-gold)' },
           ].map(({ label, val, color }) => (
-            <div key={label} style={{ background: 'var(--b1n0-surface)', borderRadius: '8px', padding: '10px' }}>
+            <div key={label} style={{ background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-lg)', padding: '10px' }}>
               <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '4px' }}>{label}</p>
-              <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color }}>{val}</p>
+              <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color , fontVariantNumeric: 'tabular-nums'}}>{val}</p>
             </div>
           ))}
         </div>
@@ -575,7 +575,7 @@ export function HealthPanel() {
           </span>
         </p>
         {!reconcileOk && (
-          <p style={{ fontFamily: F, fontSize: '11px', color: '#f87171', margin: 0 }}>
+          <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-no)', margin: 0 }}>
             Δ ${fmtQ(ledgerDelta)} entre <code>sum(balance_ledger)</code> y <code>sum(profile.balance)</code>. El ledger no concuerda con los saldos — revisá entradas recientes antes de mover fondos.
           </p>
         )}
@@ -592,7 +592,7 @@ export function HealthPanel() {
                 fontSize: '11px',
                 fontWeight: 700,
                 padding: '3px 8px',
-                borderRadius: '12px',
+                borderRadius: 'var(--radius-lg)',
                 background: STATUS_COLOR[reconRuns[0].status] + '22',
                 color: STATUS_COLOR[reconRuns[0].status],
               }}
@@ -633,7 +633,7 @@ export function HealthPanel() {
               </p>
             )}
             {reconRuns[0]?.notes && (
-              <p style={{ fontFamily: F, fontSize: '10px', color: '#f87171', margin: 0 }}>
+              <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-no)', margin: 0 }}>
                 {reconRuns[0].notes}
               </p>
             )}
@@ -664,10 +664,10 @@ export function HealthPanel() {
               disabled={reconRunning}
               style={{
                 padding: '8px 14px',
-                borderRadius: '8px',
+                borderRadius: 'var(--radius-lg)',
                 border: '1px solid var(--b1n0-border)',
                 background: reconRunning ? 'var(--b1n0-surface)' : '#14b8a6',
-                color: reconRunning ? 'var(--b1n0-muted)' : '#0d0d0d',
+                color: reconRunning ? 'var(--b1n0-muted)' : 'var(--b1n0-bg)',
                 fontFamily: F,
                 fontSize: '12px',
                 fontWeight: 600,
@@ -689,7 +689,7 @@ export function HealthPanel() {
             onClick={() => loadAll()}
             style={{
               padding: '4px 10px',
-              borderRadius: '6px',
+              borderRadius: 'var(--radius-md)',
               border: '1px solid var(--b1n0-border)',
               background: 'var(--b1n0-surface)',
               fontFamily: F,
@@ -713,7 +713,7 @@ export function HealthPanel() {
                 key={e.id}
                 style={{
                   background: 'var(--b1n0-surface)',
-                  borderRadius: '8px',
+                  borderRadius: 'var(--radius-lg)',
                   padding: '8px 10px',
                   display: 'flex',
                   justifyContent: 'space-between',
@@ -746,10 +746,10 @@ export function HealthPanel() {
                     onClick={() => settleNow(e.id, 'yes')}
                     style={{
                       padding: '4px 10px',
-                      borderRadius: '6px',
+                      borderRadius: 'var(--radius-md)',
                       border: 'none',
                       background: '#14b8a6',
-                      color: '#0d0d0d',
+                      color: 'var(--b1n0-bg)',
                       fontFamily: F,
                       fontSize: '11px',
                       fontWeight: 600,
@@ -764,7 +764,7 @@ export function HealthPanel() {
                     onClick={() => settleNow(e.id, 'no')}
                     style={{
                       padding: '4px 10px',
-                      borderRadius: '6px',
+                      borderRadius: 'var(--radius-md)',
                       border: '1px solid var(--b1n0-border)',
                       background: 'var(--b1n0-card)',
                       color: 'var(--b1n0-text-1)',
@@ -807,7 +807,7 @@ export function HealthPanel() {
                   gridTemplateColumns: '1fr 90px 80px 100px',
                   gap: '8px',
                   padding: '6px 8px',
-                  borderRadius: '6px',
+                  borderRadius: 'var(--radius-md)',
                   background: 'var(--b1n0-surface)',
                   fontFamily: F,
                   fontSize: '11px',
@@ -845,7 +845,7 @@ export function HealthPanel() {
                 key={String(e.id)}
                 style={{
                   background: 'var(--b1n0-surface)',
-                  borderRadius: '6px',
+                  borderRadius: 'var(--radius-md)',
                   padding: '6px 10px',
                   fontFamily: F,
                   fontSize: '11px',
@@ -853,7 +853,7 @@ export function HealthPanel() {
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', gap: '8px', alignItems: 'baseline' }}>
-                  <span style={{ fontWeight: 600, color: '#f87171' }}>{e.source}</span>
+                  <span style={{ fontWeight: 600, color: 'var(--b1n0-no)' }}>{e.source}</span>
                   <span style={{ color: 'var(--b1n0-muted)', fontSize: '10px' }}>
                     {new Date(e.created_at).toLocaleString('es-GT')}
                   </span>
@@ -890,7 +890,7 @@ export function HealthPanel() {
                   key={action}
                   style={{
                     background: 'var(--b1n0-surface)',
-                    borderRadius: '8px',
+                    borderRadius: 'var(--radius-lg)',
                     padding: '8px 10px',
                   }}
                 >

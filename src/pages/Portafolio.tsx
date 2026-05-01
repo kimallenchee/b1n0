@@ -11,7 +11,7 @@ const F = 'var(--font-body)'
 const D = 'var(--font-display)'
 
 const categoryColors: Record<string, string> = {
-  deportes: '#93C5FD', politica: '#C4B5FD', economia: '#FFD474',
+  deportes: '#93C5FD', politica: '#C4B5FD', economia: 'var(--b1n0-gold)',
   geopolitica: '#FCA5A5', cultura: '#F9A8D4', tecnologia: '#7DD3FC',
   finanzas: '#6EE7B7', otro: 'var(--b1n0-muted)',
 }
@@ -96,10 +96,10 @@ function PositionCard({
   const [confirmingSell, setConfirmingSell] = useState(false)
   const color = categoryColors[pred.event.category] || 'var(--b1n0-muted)'
   const noSide = isNoSide(pred.side)
-  const sideColor = noSide ? '#f87171' : '#4ade80'
+  const sideColor = noSide ? 'var(--b1n0-no)' : 'var(--b1n0-si)'
   const sideBg = noSide ? 'var(--b1n0-no-bg)' : 'var(--b1n0-si-bg)'
 
-  const statusColor = pred.status === 'won' ? '#4ade80' : pred.status === 'lost' ? '#f87171' : '#4ade80'
+  const statusColor = pred.status === 'won' ? 'var(--b1n0-si)' : pred.status === 'lost' ? 'var(--b1n0-no)' : 'var(--b1n0-si)'
   const statusLabel = pred.status === 'won' ? 'Correcto' : pred.status === 'lost' ? 'Incorrecto' : 'Activo'
 
   // Entry price: net / contracts = (amount * 0.975) / potentialCobro
@@ -131,7 +131,7 @@ function PositionCard({
   return (
     <div style={{
       background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)',
-      borderRadius: '14px', overflow: 'hidden',
+      borderRadius: 'var(--radius-lg)', overflow: 'hidden',
     }}>
       {/* Main card — click to expand */}
       <div
@@ -152,7 +152,7 @@ function PositionCard({
           <div style={{ flex: 1 }} />
           <span style={{
             fontFamily: F, fontSize: '10px', fontWeight: 600, color: statusColor,
-            background: `${statusColor}18`, borderRadius: '5px', padding: '2px 7px',
+            background: `${statusColor}18`, borderRadius: 'var(--radius-md)', padding: '2px 7px',
           }}>
             {statusLabel}
           </span>
@@ -175,7 +175,7 @@ function PositionCard({
           <span style={{
             fontFamily: F, fontSize: '12px', fontWeight: 700,
             color: sideColor, background: sideBg,
-            borderRadius: '6px', padding: '3px 9px',
+            borderRadius: 'var(--radius-md)', padding: '3px 9px',
           }}>
             {displaySide(pred.side)}
           </span>
@@ -199,7 +199,7 @@ function PositionCard({
               <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px' }}>
                 {pred.status === 'active' ? 'Actual' : pred.status === 'won' ? 'Ganó' : 'Final'}
               </p>
-              <p style={{ fontFamily: D, fontWeight: 700, fontSize: '17px', color: pred.status === 'won' ? '#4ade80' : pred.status === 'lost' ? '#f87171' : 'var(--b1n0-text-1)', letterSpacing: '-0.5px' }}>
+              <p style={{ fontFamily: D, fontWeight: 700, fontSize: '17px', color: pred.status === 'won' ? 'var(--b1n0-si)' : pred.status === 'lost' ? 'var(--b1n0-no)' : 'var(--b1n0-text-1)', letterSpacing: '-0.5px' }}>
                 {pred.status === 'active' ? currentPrice.toFixed(2) : pred.status === 'won' ? '✓' : '✗'}
               </p>
             </div>
@@ -212,14 +212,14 @@ function PositionCard({
             </p>
             <p style={{
               fontFamily: D, fontWeight: 700, fontSize: '17px',
-              color: pred.status === 'active' ? (isUp ? '#4ade80' : '#f87171') : (pred.status === 'won' ? '#4ade80' : '#f87171'),
+              color: pred.status === 'active' ? (isUp ? 'var(--b1n0-si)' : 'var(--b1n0-no)') : (pred.status === 'won' ? 'var(--b1n0-si)' : 'var(--b1n0-no)'),
               letterSpacing: '-0.5px',
             }}>
               {isUp ? '+' : ''}${pnl.toFixed(2)}
             </p>
             <p style={{
               fontFamily: F, fontSize: '10px', fontWeight: 700,
-              color: isUp ? '#4ade80' : '#f87171',
+              color: isUp ? 'var(--b1n0-si)' : 'var(--b1n0-no)',
             }}>
               {isUp ? '+' : ''}{pnlPct.toFixed(1)}%
             </p>
@@ -242,12 +242,12 @@ function PositionCard({
                 value: pred.status === 'won' ? `Q${(pred.potentialCobro || 0).toFixed(2)}`
                   : pred.status === 'lost' ? 'Q0.00'
                   : pred.status === 'active' ? `Q${currentValue.toFixed(2)}` : '—',
-                color: pred.status === 'won' ? '#4ade80' : pred.status === 'lost' ? '#f87171' : 'var(--b1n0-text-1)' },
+                color: pred.status === 'won' ? 'var(--b1n0-si)' : pred.status === 'lost' ? 'var(--b1n0-no)' : 'var(--b1n0-text-1)' },
               { label: pred.status === 'active' ? 'Si gana' : 'Cobrado',
                 value: pred.status === 'won' ? `Q${(pred.potentialCobro || 0).toFixed(2)}`
                   : pred.status === 'lost' ? 'Q0.00'
                   : `Q${(parimutuelValue ?? pred.potentialCobro).toFixed(2)}`,
-                color: pred.status === 'won' ? '#4ade80' : pred.status === 'lost' ? '#f87171' : '#4ade80',
+                color: pred.status === 'won' ? 'var(--b1n0-si)' : pred.status === 'lost' ? 'var(--b1n0-no)' : 'var(--b1n0-si)',
                 sub: pred.status === 'active' ? `+${(invested > 0 ? (((parimutuelValue ?? pred.potentialCobro) / invested) - 1) * 100 : 0).toFixed(0)}%` : undefined },
             ].map((item) => (
               <div key={item.label}>
@@ -258,7 +258,7 @@ function PositionCard({
                   {item.value}
                 </p>
                 {'sub' in item && item.sub && (
-                  <p style={{ fontFamily: F, fontSize: '10px', color: '#4ade80', marginTop: '1px' }}>{item.sub}</p>
+                  <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-si)', marginTop: '1px' }}>{item.sub}</p>
                 )}
               </div>
             ))}
@@ -269,7 +269,7 @@ function PositionCard({
             <button
               onClick={(e) => { e.stopPropagation(); onClick() }}
               style={{
-                flex: 1, padding: '10px', borderRadius: '10px',
+                flex: 1, padding: '10px', borderRadius: 'var(--radius-lg)',
                 border: '1px solid var(--b1n0-border)', background: 'var(--b1n0-card)',
                 fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-text-1)',
                 cursor: 'pointer',
@@ -282,7 +282,7 @@ function PositionCard({
                 onClick={(e) => { e.stopPropagation(); setConfirmingSell(true) }}
                 disabled={selling}
                 style={{
-                  flex: 1, padding: '10px', borderRadius: '10px',
+                  flex: 1, padding: '10px', borderRadius: 'var(--radius-lg)',
                   border: 'none', background: selling ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-text-1)',
                   fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-bg)',
                   cursor: selling ? 'default' : 'pointer',
@@ -299,7 +299,7 @@ function PositionCard({
               onClick={(e) => e.stopPropagation()}
               style={{
                 marginTop: '12px', background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)',
-                borderRadius: '12px', padding: '16px',
+                borderRadius: 'var(--radius-lg)', padding: '16px',
               }}
             >
               <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 700, color: 'var(--b1n0-text-1)', marginBottom: '6px' }}>
@@ -312,13 +312,13 @@ function PositionCard({
               {/* Comparison: hold vs sell */}
               {parimutuelValue !== null && (
                 <div style={{ display: 'flex', gap: '8px', marginBottom: '14px' }}>
-                  <div style={{ flex: 1, padding: '10px', background: 'var(--b1n0-si-bg)', borderRadius: '10px', border: '1px solid var(--b1n0-border)', textAlign: 'center' }}>
-                    <p style={{ fontFamily: F, fontSize: '9px', color: '#4ade80', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>Si gana</p>
-                    <p style={{ fontFamily: D, fontWeight: 700, fontSize: '16px', color: '#4ade80' }}>${parimutuelValue.toFixed(2)}</p>
+                  <div style={{ flex: 1, padding: '10px', background: 'var(--b1n0-si-bg)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--b1n0-border)', textAlign: 'center' }}>
+                    <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-si)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>Si gana</p>
+                    <p style={{ fontFamily: D, fontWeight: 700, fontSize: '16px', color: 'var(--b1n0-si)' }}>${parimutuelValue.toFixed(2)}</p>
                   </div>
-                  <div style={{ flex: 1, padding: '10px', background: 'rgba(255,212,116,0.10)', borderRadius: '10px', border: '1px solid var(--b1n0-border)', textAlign: 'center' }}>
-                    <p style={{ fontFamily: F, fontSize: '9px', color: '#FFD474', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>Salida ahora</p>
-                    <p style={{ fontFamily: D, fontWeight: 700, fontSize: '16px', color: '#FFD474' }}>${livePrice.sell.net.toFixed(2)}</p>
+                  <div style={{ flex: 1, padding: '10px', background: 'rgba(255,212,116,0.10)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--b1n0-border)', textAlign: 'center' }}>
+                    <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-gold)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>Salida ahora</p>
+                    <p style={{ fontFamily: D, fontWeight: 700, fontSize: '16px', color: 'var(--b1n0-gold)' }}>${livePrice.sell.net.toFixed(2)}</p>
                   </div>
                 </div>
               )}
@@ -344,7 +344,7 @@ function PositionCard({
                 display: 'flex', justifyContent: 'space-between', alignItems: 'center',
               }}>
                 <span style={{ fontFamily: F, fontSize: '13px', fontWeight: 700, color: 'var(--b1n0-text-1)' }}>Recibís</span>
-                <span style={{ fontFamily: D, fontWeight: 800, fontSize: '20px', color: '#FFD474', letterSpacing: '-0.5px' }}>
+                <span style={{ fontFamily: D, fontWeight: 800, fontSize: '20px', color: 'var(--b1n0-gold)', letterSpacing: '-0.5px' , fontVariantNumeric: 'tabular-nums'}}>
                   ${livePrice.sell.net.toFixed(2)}
                 </span>
               </div>
@@ -354,7 +354,7 @@ function PositionCard({
                 const diff = round2(livePrice.sell.net - pred.amount)
                 const isGain = diff >= 0
                 return (
-                  <p style={{ fontFamily: F, fontSize: '11px', color: isGain ? '#4ade80' : '#f87171', marginTop: '6px', textAlign: 'right' }}>
+                  <p style={{ fontFamily: F, fontSize: '11px', color: isGain ? 'var(--b1n0-si)' : 'var(--b1n0-no)', marginTop: '6px', textAlign: 'right' }}>
                     {isGain ? '+' : ''}${diff.toFixed(2)} vs tu entrada de ${pred.amount.toFixed(2)}
                   </p>
                 )
@@ -366,7 +366,7 @@ function PositionCard({
                   onClick={() => setConfirmingSell(false)}
                   disabled={selling}
                   style={{
-                    flex: 1, padding: '11px', borderRadius: '10px',
+                    flex: 1, padding: '11px', borderRadius: 'var(--radius-lg)',
                     border: '1px solid var(--b1n0-border)', background: 'var(--b1n0-card)',
                     fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-muted)',
                     cursor: 'pointer',
@@ -378,7 +378,7 @@ function PositionCard({
                   onClick={() => { setConfirmingSell(false); onSell(pred.id) }}
                   disabled={selling}
                   style={{
-                    flex: 1, padding: '11px', borderRadius: '10px',
+                    flex: 1, padding: '11px', borderRadius: 'var(--radius-lg)',
                     border: 'none', background: selling ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-text-1)',
                     fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-bg)',
                     cursor: selling ? 'default' : 'pointer',
@@ -824,7 +824,7 @@ export function Portafolio() {
           ←
         </button>
         <div>
-          <p style={{ fontFamily: D, fontWeight: 800, fontSize: '22px', color: 'var(--b1n0-text-1)', lineHeight: 1.1 }}>Mi Portafolio</p>
+          <p style={{ fontFamily: D, fontWeight: 800, fontSize: '22px', color: 'var(--b1n0-text-1)', lineHeight: 1.1 , fontVariantNumeric: 'tabular-nums'}}>Mi Portafolio</p>
           {profile && (
             <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)', marginTop: '2px' }}>{profile.name}</p>
           )}
@@ -833,11 +833,11 @@ export function Portafolio() {
 
       {/* Summary cards */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', margin: '20px 0 8px' }}>
-        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '14px', padding: '14px 16px' }}>
+        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '14px 16px' }}>
           <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>
             En juego
           </p>
-          <p style={{ fontFamily: D, fontWeight: 800, fontSize: '22px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.5px' }}>
+          <p style={{ fontFamily: D, fontWeight: 800, fontSize: '22px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.5px' , fontVariantNumeric: 'tabular-nums'}}>
             ${totalInvested.toFixed(0)}
           </p>
           <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginTop: '2px' }}>
@@ -845,19 +845,18 @@ export function Portafolio() {
           </p>
         </div>
 
-        <div style={{ background: 'var(--b1n0-card)', border: `1px solid ${isPortfolioUp ? 'rgba(74,222,128,0.2)' : 'rgba(248,113,113,0.2)'}`, borderRadius: '14px', padding: '14px 16px' }}>
+        <div style={{ background: 'var(--b1n0-card)', border: `1px solid ${isPortfolioUp ? 'rgba(74,222,128,0.2)' : 'rgba(248,113,113,0.2)'}`, borderRadius: 'var(--radius-lg)', padding: '14px 16px' }}>
           <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>
             P&L no realizado
           </p>
           <p style={{
             fontFamily: D, fontWeight: 800, fontSize: '22px',
-            color: active.length === 0 ? 'var(--b1n0-muted)' : isPortfolioUp ? '#4ade80' : '#f87171',
-            letterSpacing: '-0.5px',
-          }}>
+            color: active.length === 0 ? 'var(--b1n0-muted)' : isPortfolioUp ? 'var(--b1n0-si)' : 'var(--b1n0-no)',
+            letterSpacing: '-0.5px', fontVariantNumeric: 'tabular-nums'}}>
             {active.length > 0 ? `${isPortfolioUp ? '+' : ''}Q${totalUnrealizedPnl.toFixed(2)}` : '—'}
           </p>
           {active.length > 0 && (
-            <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: isPortfolioUp ? '#4ade80' : '#f87171', marginTop: '2px' }}>
+            <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: isPortfolioUp ? 'var(--b1n0-si)' : 'var(--b1n0-no)', marginTop: '2px' }}>
               {isPortfolioUp ? '+' : ''}{totalUnrealizedPct.toFixed(1)}% si tu lado gana
             </p>
           )}
@@ -865,11 +864,11 @@ export function Portafolio() {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '20px' }}>
-        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '14px', padding: '14px 16px' }}>
+        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '14px 16px' }}>
           <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>
             Si gana
           </p>
-          <p style={{ fontFamily: D, fontWeight: 800, fontSize: '22px', color: '#4ade80', letterSpacing: '-0.5px' }}>
+          <p style={{ fontFamily: D, fontWeight: 800, fontSize: '22px', color: 'var(--b1n0-si)', letterSpacing: '-0.5px' , fontVariantNumeric: 'tabular-nums'}}>
             {active.length > 0 ? `Q${totalPotentialReturn.toFixed(0)}` : '—'}
           </p>
           <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginTop: '2px' }}>
@@ -877,11 +876,11 @@ export function Portafolio() {
           </p>
         </div>
 
-        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '14px', padding: '14px 16px' }}>
+        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '14px 16px' }}>
           <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>
             Salida anticipada
           </p>
-          <p style={{ fontFamily: D, fontWeight: 800, fontSize: '22px', color: totalSellValue >= totalInvested ? 'var(--b1n0-text-1)' : '#f87171', letterSpacing: '-0.5px' }}>
+          <p style={{ fontFamily: D, fontWeight: 800, fontSize: '22px', color: totalSellValue >= totalInvested ? 'var(--b1n0-text-1)' : 'var(--b1n0-no)', letterSpacing: '-0.5px' , fontVariantNumeric: 'tabular-nums'}}>
             {active.length > 0 && totalSellValue > 0 ? `Q${totalSellValue.toFixed(2)}` : '—'}
           </p>
           <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginTop: '2px' }}>
@@ -891,7 +890,7 @@ export function Portafolio() {
       </div>
 
       {/* Tab bar */}
-      <div style={{ display: 'flex', background: 'var(--b1n0-surface)', borderRadius: '10px', padding: '3px', marginBottom: '12px' }}>
+      <div style={{ display: 'flex', background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-lg)', padding: '3px', marginBottom: '12px' }}>
         {([
           ['active', `Activos (${active.length})`],
           ['resolved', `Resueltos (${resolved.length})`],
@@ -918,7 +917,7 @@ export function Portafolio() {
           <button
             onClick={() => setFilter('all')}
             style={{
-              padding: '4px 10px', borderRadius: '6px', border: 'none', cursor: 'pointer',
+              padding: '4px 10px', borderRadius: 'var(--radius-md)', border: 'none', cursor: 'pointer',
               fontFamily: F, fontWeight: 600, fontSize: '11px',
               background: filter === 'all' ? 'var(--b1n0-card)' : 'transparent',
               color: filter === 'all' ? 'var(--b1n0-text-1)' : 'var(--b1n0-muted)',
@@ -931,7 +930,7 @@ export function Portafolio() {
               key={cat}
               onClick={() => setFilter(cat)}
               style={{
-                padding: '4px 10px', borderRadius: '6px', border: 'none', cursor: 'pointer',
+                padding: '4px 10px', borderRadius: 'var(--radius-md)', border: 'none', cursor: 'pointer',
                 fontFamily: F, fontWeight: 600, fontSize: '11px', whiteSpace: 'nowrap',
                 background: filter === cat ? categoryColors[cat] + '22' : 'transparent',
                 color: filter === cat ? categoryColors[cat] : 'var(--b1n0-muted)',
@@ -951,7 +950,7 @@ export function Portafolio() {
               key={key}
               onClick={() => setSortBy(key)}
               style={{
-                padding: '3px 8px', borderRadius: '5px', border: 'none', cursor: 'pointer',
+                padding: '3px 8px', borderRadius: 'var(--radius-md)', border: 'none', cursor: 'pointer',
                 fontFamily: F, fontWeight: 500, fontSize: '10px',
                 background: sortBy === key ? 'var(--b1n0-surface)' : 'transparent',
                 color: sortBy === key ? 'var(--b1n0-text-1)' : 'var(--b1n0-muted)',
@@ -967,12 +966,12 @@ export function Portafolio() {
       {tab === 'resolved' && resolved.length > 0 && (
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px', marginBottom: '12px' }}>
           {[
-            { label: 'Correctos', value: String(won.length), color: '#4ade80' },
-            { label: 'Incorrectos', value: String(resolved.length - won.length), color: '#f87171' },
-            { label: 'Historial P&L', value: `${historicalPL >= 0 ? '+' : ''}Q${Math.abs(historicalPL).toFixed(2)}`, color: historicalPL >= 0 ? '#4ade80' : '#f87171' },
+            { label: 'Correctos', value: String(won.length), color: 'var(--b1n0-si)' },
+            { label: 'Incorrectos', value: String(resolved.length - won.length), color: 'var(--b1n0-no)' },
+            { label: 'Historial P&L', value: `${historicalPL >= 0 ? '+' : ''}Q${Math.abs(historicalPL).toFixed(2)}`, color: historicalPL >= 0 ? 'var(--b1n0-si)' : 'var(--b1n0-no)' },
           ].map((s) => (
-            <div key={s.label} style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '10px', padding: '12px', textAlign: 'center' }}>
-              <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: s.color, letterSpacing: '-0.5px' }}>{s.value}</p>
+            <div key={s.label} style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '12px', textAlign: 'center' }}>
+              <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: s.color, letterSpacing: '-0.5px' , fontVariantNumeric: 'tabular-nums'}}>{s.value}</p>
               <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', marginTop: '2px' }}>{s.label}</p>
             </div>
           ))}
@@ -981,7 +980,7 @@ export function Portafolio() {
 
       {/* Position list */}
       {sorted.length === 0 ? (
-        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '16px', padding: '48px 24px', textAlign: 'center' }}>
+        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '48px 24px', textAlign: 'center' }}>
           <p style={{ fontFamily: D, fontWeight: 700, fontSize: '17px', color: 'var(--b1n0-text-1)', marginBottom: '8px' }}>
             {tab === 'active' ? 'Sin posiciones activas' : 'Sin eventos resueltos'}
           </p>
@@ -993,7 +992,7 @@ export function Portafolio() {
           {tab === 'active' && (
             <button
               onClick={() => navigate('/inicio')}
-              style={{ padding: '11px 24px', borderRadius: '10px', border: 'none', background: 'var(--b1n0-text-1)', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '13px', color: 'var(--b1n0-bg)' }}
+              style={{ padding: '11px 24px', borderRadius: 'var(--radius-lg)', border: 'none', background: 'var(--b1n0-text-1)', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '13px', color: 'var(--b1n0-bg)' }}
             >
               Explorar eventos →
             </button>
@@ -1002,7 +1001,7 @@ export function Portafolio() {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           {sellError && (
-            <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', textAlign: 'center', padding: '8px', background: 'var(--b1n0-no-bg)', borderRadius: '8px' }}>
+            <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', textAlign: 'center', padding: '8px', background: 'var(--b1n0-no-bg)', borderRadius: 'var(--radius-lg)' }}>
               {sellError}
             </p>
           )}
@@ -1049,25 +1048,25 @@ export function Portafolio() {
 
             return (
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px' }}>
-                <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '12px', padding: '12px 14px' }}>
+                <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '12px 14px' }}>
                   <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '3px' }}>Capital activo</p>
-                  <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: '#C4B5FD', letterSpacing: '-0.5px' }}>${fmt(totalActiveCapital)}</p>
+                  <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: '#C4B5FD', letterSpacing: '-0.5px' , fontVariantNumeric: 'tabular-nums'}}>${fmt(totalActiveCapital)}</p>
                   <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginTop: '2px' }}>{activeDeposits.length} evento{activeDeposits.length !== 1 ? 's' : ''}</p>
                 </div>
-                <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '12px', padding: '12px 14px' }}>
+                <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '12px 14px' }}>
                   <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '3px' }}>Ganancia estimada</p>
-                  <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: totalProfit >= 0 ? '#4ade80' : '#f87171', letterSpacing: '-0.5px' }}>
+                  <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: totalProfit >= 0 ? 'var(--b1n0-si)' : 'var(--b1n0-no)', letterSpacing: '-0.5px' , fontVariantNumeric: 'tabular-nums'}}>
                     {totalProfit >= 0 ? '+' : ''}${fmt(totalProfit)}
                   </p>
                   <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginTop: '2px' }}>Fees ganados como LP</p>
                 </div>
-                <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '12px', padding: '12px 14px' }}>
+                <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '12px 14px' }}>
                   <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '3px' }}>Total depositado</p>
-                  <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.5px' }}>${fmt(totalDeposited)}</p>
+                  <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.5px' , fontVariantNumeric: 'tabular-nums'}}>${fmt(totalDeposited)}</p>
                 </div>
-                <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '12px', padding: '12px 14px' }}>
+                <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '12px 14px' }}>
                   <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '3px' }}>Cobrado</p>
-                  <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: '#4ade80', letterSpacing: '-0.5px' }}>${fmt(totalPaidOut)}</p>
+                  <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: 'var(--b1n0-si)', letterSpacing: '-0.5px' , fontVariantNumeric: 'tabular-nums'}}>${fmt(totalPaidOut)}</p>
                   <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginTop: '2px' }}>{returnedDeposits.length} resuelto{returnedDeposits.length !== 1 ? 's' : ''}</p>
                 </div>
               </div>
@@ -1083,17 +1082,17 @@ export function Portafolio() {
               const estimatedEarning = Math.round(lp.return_pct * deltaMargins * 100) / 100
               const isActive = lp.status === 'active'
               const isReturned = lp.status === 'returned'
-              const statusColor = isActive ? '#C4B5FD' : isReturned ? '#4ade80' : '#f87171'
+              const statusColor = isActive ? '#C4B5FD' : isReturned ? 'var(--b1n0-si)' : 'var(--b1n0-no)'
               const statusLabel = isActive ? 'Activo' : isReturned ? 'Retornado' : 'Pérdida parcial'
               const fmt = (v: number) => v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
               return (
-                <div key={lp.id} style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '12px', padding: '14px 16px' }}>
+                <div key={lp.id} style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '14px 16px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                     <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 600, color: 'var(--b1n0-text-1)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginRight: '8px' }}>
                       {lp.event_question}
                     </p>
-                    <span style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: statusColor, background: `${statusColor}15`, padding: '3px 8px', borderRadius: '4px', whiteSpace: 'nowrap' }}>
+                    <span style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: statusColor, background: `${statusColor}15`, padding: '3px 8px', borderRadius: 'var(--radius-sm)', whiteSpace: 'nowrap' }}>
                       {statusLabel}
                     </span>
                   </div>
@@ -1114,7 +1113,7 @@ export function Portafolio() {
                       <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.3px' }}>
                         {isActive ? 'Ganancia est.' : 'Cobrado'}
                       </p>
-                      <p style={{ fontFamily: D, fontWeight: 700, fontSize: '14px', color: '#4ade80' }}>
+                      <p style={{ fontFamily: D, fontWeight: 700, fontSize: '14px', color: 'var(--b1n0-si)' }}>
                         {isActive ? `+Q${fmt(estimatedEarning)}` : `Q${fmt(lp.payout || 0)}`}
                       </p>
                     </div>

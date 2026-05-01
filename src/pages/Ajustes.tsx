@@ -57,13 +57,13 @@ export function Ajustes() {
         >
           ‹
         </button>
-        <p style={{ fontFamily: D, fontWeight: 800, fontSize: '22px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.5px' }}>
+        <p style={{ fontFamily: D, fontWeight: 800, fontSize: '22px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.5px' , fontVariantNumeric: 'tabular-nums'}}>
           Ajustes
         </p>
       </div>
 
       {/* Notificaciones */}
-      <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '16px', padding: '4px 18px', marginBottom: '14px' }}>
+      <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '4px 18px', marginBottom: '14px' }}>
         <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--b1n0-muted)', letterSpacing: '0.5px', textTransform: 'uppercase', padding: '14px 0 4px' }}>
           Notificaciones
         </p>
@@ -72,7 +72,7 @@ export function Ajustes() {
       </div>
 
       {/* Cuenta */}
-      <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '16px', padding: '4px 18px', marginBottom: '14px' }}>
+      <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '4px 18px', marginBottom: '14px' }}>
         <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--b1n0-muted)', letterSpacing: '0.5px', textTransform: 'uppercase', padding: '14px 0 4px' }}>
           Cuenta
         </p>
@@ -82,7 +82,7 @@ export function Ajustes() {
       </div>
 
       {/* Soporte */}
-      <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: '16px', padding: '4px 18px', marginBottom: '14px' }}>
+      <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '4px 18px', marginBottom: '14px' }}>
         <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--b1n0-muted)', letterSpacing: '0.5px', textTransform: 'uppercase', padding: '14px 0 4px' }}>
           Soporte
         </p>

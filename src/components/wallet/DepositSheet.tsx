@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { CreditCard, CurrencyDollar, Money } from '@phosphor-icons/react'
 import { BottomSheet } from '../BottomSheet'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
@@ -20,10 +21,7 @@ const methods: { id: Method; label: string; sub: string; icon: React.ReactNode }
     label: 'Tarjeta de débito / crédito',
     sub: 'Acreditación inmediata · sin comisión',
     icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--b1n0-text-1)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
-        <line x1="1" y1="10" x2="23" y2="10"/>
-      </svg>
+      <CreditCard size={22} weight="regular" color="var(--b1n0-text-1)" />
     ),
   },
   {
@@ -31,9 +29,7 @@ const methods: { id: Method; label: string; sub: string; icon: React.ReactNode }
     label: 'Transferencia bancaria',
     sub: 'Depósitos mayores · 1–2 días hábiles',
     icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--b1n0-text-1)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-      </svg>
+      <CurrencyDollar size={22} weight="regular" color="var(--b1n0-text-1)" />
     ),
   },
   {
@@ -41,11 +37,7 @@ const methods: { id: Method; label: string; sub: string; icon: React.ReactNode }
     label: 'Depósito en efectivo',
     sub: 'Puntos autorizados · acreditación en 24h',
     icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--b1n0-text-1)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="2" y="6" width="20" height="12" rx="2"/>
-        <circle cx="12" cy="12" r="3"/>
-        <path d="M2 10h2m16 0h2M2 14h2m16 0h2"/>
-      </svg>
+      <Money size={22} weight="regular" color="var(--b1n0-text-1)" />
     ),
   },
 ]
@@ -128,7 +120,7 @@ export function DepositSheet({ open, onClose }: DepositSheetProps) {
   }
 
   const inputStyle: React.CSSProperties = {
-    width: '100%', padding: '13px 16px', borderRadius: '12px',
+    width: '100%', padding: '13px 16px', borderRadius: 'var(--radius-lg)',
     border: '1px solid var(--b1n0-border)', background: 'var(--b1n0-surface)',
     color: 'var(--b1n0-text-1)', fontFamily: F, fontSize: '14px', outline: 'none', boxSizing: 'border-box',
   }
@@ -148,7 +140,7 @@ export function DepositSheet({ open, onClose }: DepositSheetProps) {
                 onClick={() => handleSelectMethod(m.id)}
                 style={{
                   display: 'flex', alignItems: 'center', gap: '14px',
-                  padding: '16px 18px', borderRadius: '14px',
+                  padding: '16px 18px', borderRadius: 'var(--radius-lg)',
                   border: '1px solid var(--b1n0-border)', background: 'var(--b1n0-card)',
                   cursor: 'pointer', textAlign: 'left', width: '100%',
                   transition: 'border-color 0.15s',
@@ -156,7 +148,7 @@ export function DepositSheet({ open, onClose }: DepositSheetProps) {
                 onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--b1n0-card-hover-border)')}
                 onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--b1n0-border)')}
               >
-                <div style={{ width: 40, height: 40, borderRadius: '10px', background: 'var(--b1n0-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <div style={{ width: 40, height: 40, borderRadius: 'var(--radius-lg)', background: 'var(--b1n0-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   {m.icon}
                 </div>
                 <div>
@@ -182,7 +174,7 @@ export function DepositSheet({ open, onClose }: DepositSheetProps) {
             {/* Large amount display */}
             <div style={{ textAlign: 'center', padding: '20px 0 8px' }}>
               <div style={{ display: 'inline-flex', alignItems: 'baseline', gap: '4px' }}>
-                <span style={{ fontFamily: D, fontWeight: 700, fontSize: '28px', color: 'var(--b1n0-muted)' }}>$</span>
+                <span style={{ fontFamily: D, fontWeight: 700, fontSize: '28px', color: 'var(--b1n0-muted)' , fontVariantNumeric: 'tabular-nums'}}>$</span>
                 <input
                   type="number"
                   value={amount}
@@ -209,7 +201,7 @@ export function DepositSheet({ open, onClose }: DepositSheetProps) {
                   key={q}
                   onClick={() => setAmount(String(amountNum + q))}
                   style={{
-                    padding: '9px 18px', borderRadius: '10px',
+                    padding: '9px 18px', borderRadius: 'var(--radius-lg)',
                     border: '1px solid var(--b1n0-border)', background: 'var(--b1n0-card)',
                     cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '13px', color: 'var(--b1n0-text-1)',
                     transition: 'background 0.15s',
@@ -223,7 +215,7 @@ export function DepositSheet({ open, onClose }: DepositSheetProps) {
             </div>
 
             {/* Payment method indicator */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', borderRadius: '12px', background: 'var(--b1n0-surface)', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', borderRadius: 'var(--radius-lg)', background: 'var(--b1n0-surface)', marginBottom: '16px' }}>
               <span style={{ fontFamily: F, fontSize: '13px', fontWeight: 500, color: 'var(--b1n0-text-1)' }}>
                 Método: {method === 'tarjeta' ? 'Tarjeta' : method === 'transferencia' ? 'Transferencia' : 'Efectivo'}
               </span>
@@ -246,7 +238,7 @@ export function DepositSheet({ open, onClose }: DepositSheetProps) {
               onClick={handleAmountNext}
               disabled={!validAmount || loading}
               style={{
-                width: '100%', padding: '14px', borderRadius: '12px', border: 'none',
+                width: '100%', padding: '14px', borderRadius: 'var(--radius-lg)', border: 'none',
                 background: validAmount && !loading ? 'var(--b1n0-si)' : 'var(--b1n0-disabled-bg)',
                 cursor: validAmount && !loading ? 'pointer' : 'default',
                 fontFamily: F, fontWeight: 700, fontSize: '14px', color: validAmount && !loading ? 'var(--b1n0-on-accent)' : 'var(--b1n0-muted)',
@@ -257,7 +249,7 @@ export function DepositSheet({ open, onClose }: DepositSheetProps) {
             </button>
 
             {method === 'transferencia' && validAmount && (
-              <div style={{ marginTop: '16px', padding: '14px 16px', borderRadius: '12px', background: 'var(--b1n0-surface)', border: '1px solid var(--b1n0-border)' }}>
+              <div style={{ marginTop: '16px', padding: '14px 16px', borderRadius: 'var(--radius-lg)', background: 'var(--b1n0-surface)', border: '1px solid var(--b1n0-border)' }}>
                 <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '10px' }}>Datos para transferencia</p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   {[
@@ -294,7 +286,7 @@ export function DepositSheet({ open, onClose }: DepositSheetProps) {
             </button>
 
             <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-              <p style={{ fontFamily: D, fontWeight: 800, fontSize: '28px', color: 'var(--b1n0-text-1)' }}>${amountNum.toLocaleString()}</p>
+              <p style={{ fontFamily: D, fontWeight: 800, fontSize: '28px', color: 'var(--b1n0-text-1)' , fontVariantNumeric: 'tabular-nums'}}>${amountNum.toLocaleString()}</p>
               <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)', marginTop: '4px' }}>Depósito vía tarjeta</p>
             </div>
 
@@ -342,7 +334,7 @@ export function DepositSheet({ open, onClose }: DepositSheetProps) {
               onClick={handleDeposit}
               disabled={!cardValid || loading}
               style={{
-                width: '100%', padding: '14px', borderRadius: '12px', border: 'none',
+                width: '100%', padding: '14px', borderRadius: 'var(--radius-lg)', border: 'none',
                 background: cardValid && !loading ? 'var(--b1n0-si)' : 'var(--b1n0-disabled-bg)',
                 cursor: cardValid && !loading ? 'pointer' : 'default',
                 fontFamily: F, fontWeight: 700, fontSize: '14px', color: cardValid && !loading ? 'var(--b1n0-on-accent)' : 'var(--b1n0-muted)',
@@ -361,17 +353,17 @@ export function DepositSheet({ open, onClose }: DepositSheetProps) {
         {step === 'done' && (
           <div style={{ textAlign: 'center', padding: '32px 0' }}>
             <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'var(--b1n0-si-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--b1n0-si)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
             </div>
-            <p style={{ fontFamily: D, fontWeight: 700, fontSize: '20px', color: 'var(--b1n0-text-1)', marginBottom: '6px' }}>¡Listo!</p>
+            <p style={{ fontFamily: D, fontWeight: 700, fontSize: '20px', color: 'var(--b1n0-text-1)', marginBottom: '6px' , fontVariantNumeric: 'tabular-nums'}}>¡Listo!</p>
             <p style={{ fontFamily: F, fontSize: '14px', color: 'var(--b1n0-muted)', marginBottom: '28px' }}>
               ${amountNum.toLocaleString()} acreditados a tu saldo.
             </p>
             <button
               onClick={handleClose}
-              style={{ width: '100%', padding: '14px', borderRadius: '12px', border: 'none', background: 'var(--b1n0-si)', cursor: 'pointer', fontFamily: F, fontWeight: 700, fontSize: '14px', color: 'var(--b1n0-on-accent)' }}
+              style={{ width: '100%', padding: '14px', borderRadius: 'var(--radius-lg)', border: 'none', background: 'var(--b1n0-si)', cursor: 'pointer', fontFamily: F, fontWeight: 700, fontSize: '14px', color: 'var(--b1n0-on-accent)' }}
             >
               Cerrar
             </button>

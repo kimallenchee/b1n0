@@ -274,7 +274,7 @@ export function EventCard({ event }: EventCardProps) {
                 {event.isLive && (
                   <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                     <span className="live-dot-broadcast" />
-                    <span style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: '#4ade80', letterSpacing: '0.6px', textTransform: 'uppercase' }}>EN VIVO</span>
+                    <span style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: 'var(--b1n0-si)', letterSpacing: '0.6px', textTransform: 'uppercase' }}>EN VIVO</span>
                   </span>
                 )}
               </div>
@@ -352,7 +352,7 @@ export function EventCard({ event }: EventCardProps) {
               </div>
             )}
             {event.considerations && (
-              <div style={{ padding: '8px 10px', background: 'var(--b1n0-surface)', borderRadius: '8px', borderLeft: `3px solid ${color}` }}>
+              <div style={{ padding: '8px 10px', background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-lg)', borderLeft: `3px solid ${color}` }}>
                 <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>
                   Contexto
                 </p>
@@ -363,7 +363,7 @@ export function EventCard({ event }: EventCardProps) {
             )}
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '12px', marginBottom: '10px', flexWrap: 'wrap' }}>
               {event.country && COUNTRY_CODES[event.country] && (
-                <span style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: 'var(--b1n0-muted)', background: 'var(--b1n0-surface)', borderRadius: '4px', padding: '2px 5px', letterSpacing: '0.5px' }}>{COUNTRY_CODES[event.country]}</span>
+                <span style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: 'var(--b1n0-muted)', background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-sm)', padding: '2px 5px', letterSpacing: '0.5px' }}>{COUNTRY_CODES[event.country]}</span>
               )}
               {event.sponsor?.name && (
                 <span style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)' }}>
@@ -384,7 +384,7 @@ export function EventCard({ event }: EventCardProps) {
             </div>
             {isResolved ? (
               <div style={{ textAlign: 'center', padding: '8px 0 4px' }}>
-                <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--b1n0-muted)', background: 'var(--b1n0-surface)', borderRadius: '6px', padding: '3px 8px', textTransform: 'uppercase' as const, letterSpacing: '0.5px' }}>
+                <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--b1n0-muted)', background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-md)', padding: '3px 8px', textTransform: 'uppercase' as const, letterSpacing: '0.5px' }}>
                   Resuelto
                 </span>
                 {event.result && (
@@ -435,7 +435,7 @@ export function EventCard({ event }: EventCardProps) {
             )}
 
             {event.considerations && (
-              <div style={{ padding: '8px 10px', background: 'var(--b1n0-surface)', borderRadius: '8px', borderLeft: `3px solid ${color}`, marginTop: '10px' }}>
+              <div style={{ padding: '8px 10px', background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-lg)', borderLeft: `3px solid ${color}`, marginTop: '10px' }}>
                 <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>
                   Contexto
                 </p>
@@ -447,7 +447,7 @@ export function EventCard({ event }: EventCardProps) {
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '10px', marginBottom: '14px', flexWrap: 'wrap' }}>
               {event.country && COUNTRY_CODES[event.country] && (
-                <span style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: 'var(--b1n0-muted)', background: 'var(--b1n0-surface)', borderRadius: '4px', padding: '2px 5px', letterSpacing: '0.5px' }}>{COUNTRY_CODES[event.country]}</span>
+                <span style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: 'var(--b1n0-muted)', background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-sm)', padding: '2px 5px', letterSpacing: '0.5px' }}>{COUNTRY_CODES[event.country]}</span>
               )}
               {event.sponsor?.name && (
                 <span style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)' }}>
@@ -467,7 +467,7 @@ export function EventCard({ event }: EventCardProps) {
 
             {isResolved ? (
               <div style={{ textAlign: 'center', padding: '8px 0 4px' }}>
-                <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--b1n0-muted)', background: 'var(--b1n0-surface)', borderRadius: '6px', padding: '3px 8px', textTransform: 'uppercase' as const, letterSpacing: '0.5px' }}>
+                <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--b1n0-muted)', background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-md)', padding: '3px 8px', textTransform: 'uppercase' as const, letterSpacing: '0.5px' }}>
                   Resuelto
                 </span>
                 {event.result && (

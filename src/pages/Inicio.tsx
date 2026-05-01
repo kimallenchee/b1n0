@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import { MagnifyingGlass } from '@phosphor-icons/react'
 import { useNavigate } from 'react-router-dom'
 import { usePageMeta } from '../hooks/usePageMeta'
 import { useEvents } from '../context/EventsContext'
@@ -129,7 +130,7 @@ function MiniCard({ event, now, stats, liveOptPcts, liveBinary }: { event: Event
       style={{
         background: 'var(--b1n0-card)',
         border: '1px solid var(--b1n0-border)',
-        borderRadius: '12px',
+        borderRadius: 'var(--radius-lg)',
         cursor: 'pointer',
         overflow: 'hidden',
         transition: 'border-color 0.15s, transform 0.15s',
@@ -180,7 +181,7 @@ function MiniCard({ event, now, stats, liveOptPcts, liveBinary }: { event: Event
                 </span>
                 <span style={{
                   fontFamily: F, fontSize: '12px', fontWeight: 700, color: 'var(--b1n0-si-dark)',
-                  background: 'var(--b1n0-si-bg)', borderRadius: '4px', padding: '2px 8px',
+                  background: 'var(--b1n0-si-bg)', borderRadius: 'var(--radius-sm)', padding: '2px 8px',
                   flexShrink: 0,
                 }}>
                   {midPctToAsk(liveOptPcts?.[opt.label] ?? opt.pct).toFixed(2)}
@@ -196,7 +197,7 @@ function MiniCard({ event, now, stats, liveOptPcts, liveBinary }: { event: Event
             <div style={{
               flex: 1, textAlign: 'center', padding: '6px 0',
               background: isResolved && event.result === 'yes' ? 'var(--b1n0-si)' : 'var(--b1n0-si-bg)',
-              borderRadius: '6px',
+              borderRadius: 'var(--radius-md)',
             }}>
               <span style={{
                 fontFamily: F, fontWeight: 700, fontSize: '13px',
@@ -208,7 +209,7 @@ function MiniCard({ event, now, stats, liveOptPcts, liveBinary }: { event: Event
             <div style={{
               flex: 1, textAlign: 'center', padding: '6px 0',
               background: isResolved && event.result === 'no' ? 'var(--b1n0-no)' : 'var(--b1n0-no-bg)',
-              borderRadius: '6px',
+              borderRadius: 'var(--radius-md)',
             }}>
               <span style={{
                 fontFamily: F, fontWeight: 700, fontSize: '13px',
@@ -370,7 +371,7 @@ export function Inicio() {
               onClick={s.click}
               style={{
                 background: 'var(--color-surface)', border: '1px solid var(--color-border)',
-                borderRadius: '10px', padding: '8px 6px', display: 'flex', flexDirection: 'column',
+                borderRadius: 'var(--radius-lg)', padding: '8px 6px', display: 'flex', flexDirection: 'column',
                 alignItems: 'center', gap: '3px', cursor: s.click ? 'pointer' : 'default',
                 transition: 'box-shadow 0.15s',
               }}
@@ -385,8 +386,8 @@ export function Inicio() {
 
       {/* Search */}
       <div style={{ padding: '10px 16px 6px', flexShrink: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '10px', padding: '9px 12px' }}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-muted)" strokeWidth="2.5" strokeLinecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-lg)', padding: '9px 12px' }}>
+          <MagnifyingGlass size={14} weight="bold" color="var(--color-muted)" />
           <input
             type="text"
             value={search}
@@ -420,7 +421,7 @@ export function Inicio() {
                 fontFamily: F, fontWeight: active ? 700 : 500, fontSize: '11px', whiteSpace: 'nowrap',
                 border: active ? '1px solid transparent' : '1px solid var(--b1n0-border)',
                 background: active ? (c === 'todos' ? 'var(--b1n0-si)' : cc.bg) : 'transparent',
-                color: active ? (c === 'todos' ? '#0d0d0d' : cc.text) : 'var(--b1n0-muted)',
+                color: active ? (c === 'todos' ? 'var(--b1n0-bg)' : cc.text) : 'var(--b1n0-muted)',
                 transition: 'all 0.15s ease',
               }}
             >
@@ -437,7 +438,7 @@ export function Inicio() {
             key={s}
             onClick={() => setSort(s)}
             style={{
-              padding: '5px 12px', borderRadius: '8px', cursor: 'pointer',
+              padding: '5px 12px', borderRadius: 'var(--radius-lg)', cursor: 'pointer',
               fontFamily: F, fontWeight: sort === s ? 700 : 500, fontSize: '11px',
               border: sort === s ? '1px solid var(--b1n0-si)' : '1px solid transparent',
               background: sort === s ? 'var(--b1n0-si-bg)' : 'transparent',
@@ -473,7 +474,7 @@ export function Inicio() {
                 onClick={() => navigate(`/eventos/${featured.id}`)}
                 style={{
                   background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)',
-                  borderRadius: '14px', cursor: 'pointer', overflow: 'hidden', marginBottom: '12px',
+                  borderRadius: 'var(--radius-lg)', cursor: 'pointer', overflow: 'hidden', marginBottom: '12px',
                 }}
               >
                 {(featured.imageUrl || categoryPhotos[featured.category]) && (
@@ -495,7 +496,7 @@ export function Inicio() {
                           </span>
                         )}
                       </div>
-                      <h2 style={{ fontFamily: D, fontWeight: 600, fontSize: '20px', color: '#fff', lineHeight: 1.3 }}>
+                      <h2 style={{ fontFamily: D, fontWeight: 600, fontSize: '20px', color: '#fff', lineHeight: 1.3 , fontVariantNumeric: 'tabular-nums'}}>
                         {featured.question}
                       </h2>
                     </div>
@@ -507,7 +508,7 @@ export function Inicio() {
                       {parseOptionItems(featured.options).slice(0, 4).map((opt) => (
                         <span key={opt.label} style={{
                           fontFamily: F, fontSize: '12px', fontWeight: 600, color: 'var(--b1n0-text-1)',
-                          background: 'rgba(255,255,255,0.04)', borderRadius: '6px', padding: '4px 10px',
+                          background: 'rgba(255,255,255,0.04)', borderRadius: 'var(--radius-md)', padding: '4px 10px',
                         }}>
                           {opt.label} <span style={{ color: 'var(--b1n0-muted)' }}>{midPctToAsk(liveOptMap[featured.id]?.[opt.label] ?? opt.pct).toFixed(2)}</span>
                         </span>

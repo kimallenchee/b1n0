@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { CheckCircle } from '@phosphor-icons/react'
 import { BottomSheet } from '../BottomSheet'
 
 const F = 'var(--font-body)'
@@ -34,7 +35,7 @@ export function KYCSheet({ open, onClose, targetTier }: KYCSheetProps) {
 
         {step === 1 && (
           <>
-            <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: 'var(--b1n0-text-1)', marginBottom: '6px' }}>
+            <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: 'var(--b1n0-text-1)', marginBottom: '6px' , fontVariantNumeric: 'tabular-nums'}}>
               Documento de identidad
             </p>
             <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)', marginBottom: '20px', lineHeight: 1.5 }}>
@@ -45,12 +46,12 @@ export function KYCSheet({ open, onClose, targetTier }: KYCSheetProps) {
               value={dpi}
               onChange={(e) => setDpi(e.target.value.replace(/\D/g, '').slice(0, 13))}
               placeholder="0000 00000 0101"
-              style={{ width: '100%', background: 'var(--b1n0-surface)', border: '1px solid var(--b1n0-border)', borderRadius: '12px', padding: '13px 16px', fontFamily: F, fontSize: '16px', color: 'var(--b1n0-text-1)', outline: 'none', marginBottom: '20px', boxSizing: 'border-box', letterSpacing: '1px' }}
+              style={{ width: '100%', background: 'var(--b1n0-surface)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '13px 16px', fontFamily: F, fontSize: '16px', color: 'var(--b1n0-text-1)', outline: 'none', marginBottom: '20px', boxSizing: 'border-box', letterSpacing: '1px' }}
             />
             <button
               onClick={() => dpi.length >= 8 && setStep(2)}
               disabled={dpi.length < 8}
-              style={{ width: '100%', padding: '13px', borderRadius: '12px', border: 'none', background: dpi.length >= 8 ? 'var(--b1n0-surface)' : 'var(--b1n0-disabled-bg)', cursor: dpi.length >= 8 ? 'pointer' : 'default', fontFamily: F, fontWeight: 600, fontSize: '13px', color: 'var(--b1n0-text-1)', transition: 'background 0.15s' }}
+              style={{ width: '100%', padding: '13px', borderRadius: 'var(--radius-lg)', border: 'none', background: dpi.length >= 8 ? 'var(--b1n0-surface)' : 'var(--b1n0-disabled-bg)', cursor: dpi.length >= 8 ? 'pointer' : 'default', fontFamily: F, fontWeight: 600, fontSize: '13px', color: 'var(--b1n0-text-1)', transition: 'background 0.15s' }}
             >
               Continuar →
             </button>
@@ -59,7 +60,7 @@ export function KYCSheet({ open, onClose, targetTier }: KYCSheetProps) {
 
         {step === 2 && (
           <>
-            <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: 'var(--b1n0-text-1)', marginBottom: '6px' }}>
+            <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: 'var(--b1n0-text-1)', marginBottom: '6px' , fontVariantNumeric: 'tabular-nums'}}>
               Foto del documento
             </p>
             <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)', marginBottom: '20px', lineHeight: 1.5 }}>
@@ -67,9 +68,9 @@ export function KYCSheet({ open, onClose, targetTier }: KYCSheetProps) {
             </p>
             <div
               onClick={() => setPhotoReady(!photoReady)}
-              style={{ border: `2px dashed ${photoReady ? 'var(--b1n0-surface)' : 'var(--b1n0-border)'}`, borderRadius: '14px', padding: '32px 20px', textAlign: 'center', cursor: 'pointer', marginBottom: '12px', background: photoReady ? 'var(--b1n0-card)' : 'transparent', transition: 'all 0.2s' }}
+              style={{ border: `2px dashed ${photoReady ? 'var(--b1n0-surface)' : 'var(--b1n0-border)'}`, borderRadius: 'var(--radius-lg)', padding: '32px 20px', textAlign: 'center', cursor: 'pointer', marginBottom: '12px', background: photoReady ? 'var(--b1n0-card)' : 'transparent', transition: 'all 0.2s' }}
             >
-              <p style={{ fontFamily: D, fontWeight: 800, fontSize: '28px', color: photoReady ? 'var(--b1n0-surface)' : 'var(--b1n0-text-2)', marginBottom: '6px' }}>
+              <p style={{ fontFamily: D, fontWeight: 800, fontSize: '28px', color: photoReady ? 'var(--b1n0-surface)' : 'var(--b1n0-text-2)', marginBottom: '6px' , fontVariantNumeric: 'tabular-nums'}}>
                 {photoReady ? '✓' : '+'}
               </p>
               <p style={{ fontFamily: F, fontSize: '13px', color: photoReady ? 'var(--b1n0-surface)' : 'var(--b1n0-muted)' }}>
@@ -82,7 +83,7 @@ export function KYCSheet({ open, onClose, targetTier }: KYCSheetProps) {
             <button
               onClick={() => photoReady && setStep(3)}
               disabled={!photoReady}
-              style={{ width: '100%', padding: '13px', borderRadius: '12px', border: 'none', background: photoReady ? 'var(--b1n0-surface)' : 'var(--b1n0-disabled-bg)', cursor: photoReady ? 'pointer' : 'default', fontFamily: F, fontWeight: 600, fontSize: '13px', color: 'var(--b1n0-text-1)', transition: 'background 0.15s' }}
+              style={{ width: '100%', padding: '13px', borderRadius: 'var(--radius-lg)', border: 'none', background: photoReady ? 'var(--b1n0-surface)' : 'var(--b1n0-disabled-bg)', cursor: photoReady ? 'pointer' : 'default', fontFamily: F, fontWeight: 600, fontSize: '13px', color: 'var(--b1n0-text-1)', transition: 'background 0.15s' }}
             >
               Enviar verificación →
             </button>
@@ -91,8 +92,10 @@ export function KYCSheet({ open, onClose, targetTier }: KYCSheetProps) {
 
         {step === 3 && (
           <div style={{ textAlign: 'center', padding: '16px 0' }}>
-            <div style={{ fontFamily: D, fontWeight: 800, fontSize: '48px', color: 'var(--b1n0-text-1)', marginBottom: '12px' }}>✓</div>
-            <p style={{ fontFamily: D, fontWeight: 700, fontSize: '20px', color: 'var(--b1n0-text-1)', marginBottom: '8px' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 'var(--space-4)' }}>
+              <CheckCircle size={56} weight="fill" color="var(--b1n0-si)" />
+            </div>
+            <p style={{ fontFamily: D, fontWeight: 700, fontSize: '20px', color: 'var(--b1n0-text-1)', marginBottom: '8px' , fontVariantNumeric: 'tabular-nums'}}>
               Verificación enviada
             </p>
             <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)', marginBottom: '28px', lineHeight: 1.5 }}>
@@ -100,13 +103,5 @@ export function KYCSheet({ open, onClose, targetTier }: KYCSheetProps) {
             </p>
             <button
               onClick={handleClose}
-              style={{ width: '100%', padding: '13px', borderRadius: '12px', border: 'none', background: 'var(--b1n0-text-1)', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '13px', color: 'var(--b1n0-bg)' }}
-            >
-              Cerrar
-            </button>
-          </div>
-        )}
-      </div>
-    </BottomSheet>
-  )
-}
+              style={{ width: '100%', padding: '13px', borderRadius: 'var(--radius-lg)', border: 'none', background: 'var(--b1n0-text-1)', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '13px', color: 'var(--b1n0-bg)' }}
+          
