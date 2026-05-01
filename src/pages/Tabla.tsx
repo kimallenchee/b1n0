@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
+import { usePageMeta } from '../hooks/usePageMeta'
 
 const F = '"DM Sans", sans-serif'
 const D = '"DM Sans", sans-serif'
@@ -45,6 +46,10 @@ function LeaderboardRow({ entry, isMe }: { entry: RankedUser; isMe: boolean }) {
 }
 
 export function Tabla() {
+  usePageMeta({
+    title: 'Tabla · b1n0',
+    description: 'Los que más saben este mes — la tabla de líderes de b1n0.',
+  })
   const { session } = useAuth()
   const userId = session?.user?.id
   const [tab, setTab] = useState<'general' | 'friends'>('general')

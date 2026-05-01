@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
+import { usePageMeta } from '../hooks/usePageMeta'
 
 const F = '"DM Sans", sans-serif'
 const D = '"DM Sans", sans-serif'
@@ -124,6 +125,14 @@ export function AuthPage() {
   const { signIn, signUp, resetPassword } = useAuth()
   const [tab, setTab] = useState<'login' | 'signup'>('login')
   const [confirmed, setConfirmed] = useState(false)
+
+  usePageMeta({
+    title: tab === 'signup' ? 'Crear cuenta · b1n0' : 'Ingresar · b1n0',
+    description:
+      tab === 'signup'
+        ? 'Sumate gratis. Hacé tu primer llamado en menos de un minuto — fútbol, política, economía de Centroamérica.'
+        : 'Iniciá sesión para seguir tus llamados en b1n0.',
+  })
 
   // Detect email confirmation redirect
   useEffect(() => {

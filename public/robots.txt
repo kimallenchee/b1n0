@@ -1,0 +1,15 @@
+# b1n0 — La plataforma de opinión de Centroamérica
+# https://www.b1n0.com
+
+User-agent: *
+Allow: /
+
+# Don't index admin tooling — only b1n0 staff should access it.
+Disallow: /admin
+Disallow: /admin/
+
+# Keep crawlers off internal Supabase callback URLs the auth flow uses.
+Disallow: /auth?type=signup
+Disallow: /auth?type=email
+
+Sitemap: https://www.b1n0.com/sitemap.xml

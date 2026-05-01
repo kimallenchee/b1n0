@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
 import { midPctToAsk, midPctToBid, SELL_FEE_RATE, round2 } from '../lib/pricing'
 import type { UserPrediction } from '../types'
+import { usePageMeta } from '../hooks/usePageMeta'
 
 const F = '"DM Sans", sans-serif'
 const D = '"DM Sans", sans-serif'
@@ -395,6 +396,10 @@ function PositionCard({
 }
 
 export function Portafolio() {
+  usePageMeta({
+    title: 'Portafolio · b1n0',
+    description: 'Posiciones activas, P/L en tiempo real. Seguí tus llamados en b1n0.',
+  })
   const navigate = useNavigate()
   const { predictions, refreshPredictions } = useVotes()
   const { session, profile, refreshProfile } = useAuth()

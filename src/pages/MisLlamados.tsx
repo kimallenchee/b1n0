@@ -1,5 +1,6 @@
 import type { UserPrediction } from '../types'
 import { useVotes } from '../context/VoteContext'
+import { usePageMeta } from '../hooks/usePageMeta'
 
 const F = '"DM Sans", sans-serif'
 const D = '"DM Sans", sans-serif'
@@ -60,6 +61,10 @@ function PredictionCard({ prediction }: { prediction: UserPrediction }) {
 }
 
 export function MisVotos() {
+  usePageMeta({
+    title: 'Mis llamados · b1n0',
+    description: 'Tus participaciones activas en b1n0 — todo lo que estás siguiendo en un solo lugar.',
+  })
   const { predictions } = useVotes()
   // Debug log removed
   const allPredictions = predictions

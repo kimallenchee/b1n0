@@ -6,6 +6,7 @@
  */
 
 import { useNavigate } from 'react-router-dom'
+import { usePageMeta } from '../hooks/usePageMeta'
 
 const F = '"DM Sans", sans-serif'
 const D = '"Syne", sans-serif'
@@ -87,6 +88,10 @@ function Section({ heading, body }: { heading: string; body: string }) {
 // ── Terms of Service ─────────────────────────────────────────────────────────
 
 export function TermsPage() {
+  usePageMeta({
+    title: 'Términos · b1n0',
+    description: 'Términos y Condiciones de uso de b1n0 — la plataforma de opinión patrocinada.',
+  })
   return (
     <LegalShell title="Términos y Condiciones">
       <Section
@@ -136,6 +141,10 @@ export function TermsPage() {
 // ── Privacy Policy ───────────────────────────────────────────────────────────
 
 export function PrivacyPage() {
+  usePageMeta({
+    title: 'Privacidad · b1n0',
+    description: 'Política de Privacidad de b1n0 — cómo manejamos tus datos.',
+  })
   return (
     <LegalShell title="Política de Privacidad">
       <Section

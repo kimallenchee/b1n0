@@ -6,6 +6,7 @@ import type { DateRange } from '../components/DateRangePicker'
 import { useVotes } from '../context/VoteContext'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
+import { usePageMeta } from '../hooks/usePageMeta'
 
 const F = '"DM Sans", sans-serif'
 const D = '"DM Sans", sans-serif'
@@ -98,6 +99,10 @@ function VoteCard({ p }: { p: UserPrediction }) {
 type VoteFilter = 'todos' | 'active' | 'won' | 'lost' | 'sold'
 
 export function Historial() {
+  usePageMeta({
+    title: 'Historial · b1n0',
+    description: 'Todos tus llamados resueltos en b1n0. Mirá tu trayectoria completa.',
+  })
   const { session } = useAuth()
   const { predictions, refreshPredictions } = useVotes()
 

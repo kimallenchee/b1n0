@@ -8,6 +8,7 @@ import { KYCSheet } from '../components/wallet/KYCSheet'
 import { DepositSheet } from '../components/wallet/DepositSheet'
 import { RetiroSheet } from '../components/wallet/RetiroSheet'
 import { useTheme, type ThemeMode } from '../context/ThemeContext'
+import { usePageMeta } from '../hooks/usePageMeta'
 
 const F = '"DM Sans", sans-serif'
 const D = '"DM Sans", sans-serif'
@@ -68,6 +69,10 @@ function LinkRow({ label, onPress }: { label: string; onPress?: () => void }) {
 }
 
 export function Perfil() {
+  usePageMeta({
+    title: 'Perfil · b1n0',
+    description: 'Tu cuenta, saldo, KYC, amigos. Gestioná tu perfil en b1n0.',
+  })
   const navigate = useNavigate()
   const { session, profile, refreshProfile, signOut } = useAuth()
   const { predictions, refreshPredictions } = useVotes()

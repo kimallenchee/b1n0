@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { usePageMeta } from '../hooks/usePageMeta'
 import { useEvents } from '../context/EventsContext'
 import { DateRangePicker, withinDateRange } from '../components/DateRangePicker'
 import type { DateRange } from '../components/DateRangePicker'
@@ -242,6 +243,11 @@ const ALL_CATEGORIES = ['todos', 'deportes', 'politica', 'economia', 'geopolitic
 type SortBy = 'popular' | 'reciente' | 'resueltos'
 
 export function Inicio() {
+  usePageMeta({
+    title: 'Inicio · b1n0',
+    description:
+      'Las preguntas del momento — fútbol, política, economía, cultura. Hacé tu llamado y demostrá que sabés más que todos.',
+  })
   const now = useNow()
   const navigate = useNavigate()
   const { events, resolvedEvents, loading: eventsLoading, error: eventsError, refetch } = useEvents()
