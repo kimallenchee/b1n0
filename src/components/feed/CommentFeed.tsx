@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { ThumbsUp, ThumbsDown } from '@phosphor-icons/react'
 import type { Comment } from '../../types'
 import { useComments } from '../../hooks/useComments'
 import { useAuth } from '../../context/AuthContext'
@@ -250,13 +251,53 @@ export function CommentFeed({ comments: initialComments, eventId }: CommentFeedP
   const mkVotebar = (c: Comment, parentId?: string) => {
     const myVote = votes[c.id]
     return (
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '5px', paddingLeft: '2px' }}>
-        <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>{c.timeAgo}</span>
-        <button onClick={() => handleVote(c.id, 'up', parentId)} style={{ display: 'flex', alignItems: 'center', gap: '3px', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontSize: '13px', color: myVote === 'up' ? 'var(--b1n0-surface)' : 'var(--b1n0-text-2)' }}>
-          👍{(c.likes ?? 0) > 0 && <span style={{ fontFamily: F, fontSize: '11px', fontWeight: myVote === 'up' ? 700 : 400 }}>{c.likes}</span>}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)', marginTop: 'var(--space-2)', paddingLeft: '2px' }}>
+        <span style={{ fontFamily: F, fontSize: 'var(--text-xs)', color: 'var(--b1n0-muted)' }}>{c.timeAgo}</span>
+        <button
+          onClick={() => handleVote(c.id, 'up', parentId)}
+          aria-label="Me gusta"
+          aria-pressed={myVote === 'up'}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 'var(--space-1)',
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            padding: 0,
+            color: myVote === 'up' ? 'var(--b1n0-si)' : 'var(--b1n0-muted)',
+            transition: 'color var(--duration-fast) var(--ease-out)',
+          }}
+        >
+          <ThumbsUp size={14} weight={myVote === 'up' ? 'fill' : 'regular'} />
+          {(c.likes ?? 0) > 0 && (
+            <span style={{ fontFamily: 'var(--font-num)', fontSize: 'var(--text-xs)', fontWeight: myVote === 'up' ? 700 : 500, fontVariantNumeric: 'tabular-nums' }}>
+              {c.likes}
+            </span>
+          )}
         </button>
-        <button onClick={() => handleVote(c.id, 'down', parentId)} style={{ display: 'flex', alignItems: 'center', gap: '3px', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontSize: '13px', color: myVote === 'down' ? 'var(--b1n0-no)' : 'var(--b1n0-text-2)' }}>
-          👎{(c.dislikes ?? 0) > 0 && <span style={{ fontFamily: F, fontSize: '11px', fontWeight: myVote === 'down' ? 700 : 400 }}>{c.dislikes}</span>}
+        <button
+          onClick={() => handleVote(c.id, 'down', parentId)}
+          aria-label="No me gusta"
+          aria-pressed={myVote === 'down'}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 'var(--space-1)',
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            padding: 0,
+            color: myVote === 'down' ? 'var(--b1n0-no)' : 'var(--b1n0-muted)',
+            transition: 'color var(--duration-fast) var(--ease-out)',
+          }}
+        >
+          <ThumbsDown size={14} weight={myVote === 'down' ? 'fill' : 'regular'} />
+          {(c.dislikes ?? 0) > 0 && (
+            <span style={{ fontFamily: 'var(--font-num)', fontSize: 'var(--text-xs)', fontWeight: myVote === 'down' ? 700 : 500, fontVariantNumeric: 'tabular-nums' }}>
+              {c.dislikes}
+            </span>
+          )}
         </button>
         {!parentId && (
           <button onClick={() => { setReplyingTo(replyingTo === c.id ? null : c.id); setReplyDraft('') }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '11px', fontWeight: 600, color: replyingTo === c.id ? 'var(--b1n0-surface)' : 'var(--b1n0-text-2)', padding: 0 }}>
