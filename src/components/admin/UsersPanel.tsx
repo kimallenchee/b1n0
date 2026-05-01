@@ -95,43 +95,60 @@ export function UsersPanel() {
     const { data, error } = await callRpc('admin_adjust_balance', {
       p_user_id: user.id,
       p_amount: amount,
-      p_reason: reason || (amount >= 0 ? `Admin +Q${Math.abs(amount)}` : `Admin -Q${Math.abs(amount)}`),
+      p_reason: reason || (amount >= 0 ? `Admin +$${Math.abs(amount)}` : `Admin -$${Math.abs(amount)}`),
     })
     if (error) {
       setUserError(error.message)
-    } else {
-      const result = data
-      if (result?.error) {
-        setUserError(result.error)
-      } else {
-        const newBal = result?.new_balance ?? (user.balance + amount)
-        setUserSuccess(`Saldo actualizado: Q${newBal.toLocaleString('es-GT', { minimumFractionDigits: 2 })}`)
-        setAdminUsers((prev) => prev.map((u) => (u.id === user.id ? { ...u, balance: newBal } : u)))
-        setTimeout(() => setUserSuccess(null), 2000)
-      }
+      setUserSaving(false)
+      return { error }
     }
+    const result = data
+    if (result?.error) {
+      setUserError(result.error)
+      setUserSaving(false)
+      return { error: { message: result.error } }
+    }
+    const newBal = result?.new_balance ?? (user.balance + amount)
+    setUserSuccess(`Saldo actualizado: $${newBal.toLocaleString('es-GT', { minimumFractionDigits: 2 })}`)
+    setAdminUsers((prev) => prev.map((u) => (u.id === user.id ? { ...u, balance: newBal } : u)))
+    setTimeout(() => setUserSuccess(null), 2000)
     setUserSaving(false)
+    return { newBalance: newBal }
   }
 
   async function saveUser(user: AdminUser, updates: { role?: string; balance?: number; is_admin?: boolean }) {
-    // For balance changes, use the audited RPC
-    if (updates.balance !== undefined && Object.keys(updates).length === 1) {
-      const diff = updates.balance - user.balance
-      return adjustBalance(user, diff)
-    }
-    setUserSaving(true)
+    // CRITICAL: Balance changes MUST go through admin_adjust_balance so they
+    // hit balance_ledger. A direct UPDATE on profiles.balance bypasses the
+    // ledger and causes reconciliation drift. So we split the update into
+    // two phases: (1) balance via RPC, (2) other fields via direct UPDATE.
     setUserError(null)
     setUserSuccess(null)
-    const { error } = await supabase.from('profiles').update(updates).eq('id', user.id)
-    if (error) {
-      logger.error('UsersPanel: profile update failed', { user_id: user.id, error: error.message })
-      setUserError(error.message)
-    } else {
-      setUserSuccess('Guardado')
-      setAdminUsers((prev) => prev.map((u) => (u.id === user.id ? { ...u, ...updates } : u)))
-      setTimeout(() => setUserSuccess(null), 2000)
+
+    const { balance: newBalance, ...nonBalanceUpdates } = updates
+
+    // Phase 1: balance change → RPC
+    if (newBalance !== undefined) {
+      const diff = newBalance - user.balance
+      if (Math.abs(diff) > 0.0001) {
+        const result = await adjustBalance(user, diff)
+        if (result?.error) return // adjustBalance already surfaced the error
+      }
     }
-    setUserSaving(false)
+
+    // Phase 2: role / is_admin → direct UPDATE on profiles (no ledger impact)
+    if (Object.keys(nonBalanceUpdates).length > 0) {
+      setUserSaving(true)
+      const { error } = await supabase.from('profiles').update(nonBalanceUpdates).eq('id', user.id)
+      if (error) {
+        logger.error('UsersPanel: profile update failed', { user_id: user.id, error: error.message })
+        setUserError(error.message)
+      } else {
+        setUserSuccess('Guardado')
+        setAdminUsers((prev) => prev.map((u) => (u.id === user.id ? { ...u, ...nonBalanceUpdates } : u)))
+        setTimeout(() => setUserSuccess(null), 2000)
+      }
+      setUserSaving(false)
+    }
   }
 
   return (
@@ -561,7 +578,7 @@ export function UsersPanel() {
                             </button>
                             <button
                               onClick={() => {
-                                if (!confirm(`¿Poner saldo de ${user.name || 'usuario'} a Q0?`)) return
+                                if (!confirm(`¿Poner saldo de ${user.name || 'usuario'} a $0?`)) return
                                 saveUser(user, { balance: 0 })
                               }}
                               style={{
@@ -577,7 +594,7 @@ export function UsersPanel() {
                                 textAlign: 'left',
                               }}
                             >
-                              Congelar saldo (Q0)
+                              Congelar saldo ($0)
                             </button>
                           </div>
                         </div>
