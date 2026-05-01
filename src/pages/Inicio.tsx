@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { MagnifyingGlass } from '@phosphor-icons/react'
 import { useNavigate } from 'react-router-dom'
 import { usePageMeta } from '../hooks/usePageMeta'
@@ -15,6 +15,8 @@ import { WalletSheet } from '../components/wallet/WalletSheet'
 import { SplitBar } from '../components/feed/SplitBar'
 import { SkeletonFeed } from '../components/Skeleton'
 import { ErrorState } from '../components/EmptyState'
+import { PullIndicator } from '../components/PullIndicator'
+import { usePullToRefresh } from '../hooks/usePullToRefresh'
 
 const F = 'var(--font-body)'
 const D = 'var(--font-display)'
@@ -252,6 +254,13 @@ export function Inicio() {
   const now = useNow()
   const navigate = useNavigate()
   const { events, resolvedEvents, loading: eventsLoading, error: eventsError, refetch } = useEvents()
+  const feedScrollRef = useRef<HTMLDivElement>(null)
+  const { pullDistance, isRefreshing, threshold: pullThreshold } = usePullToRefresh(feedScrollRef, async () => {
+    refetch()
+    // Give Vite-react time to flush the new state so the spinner doesn't
+    // disappear before the user perceives the refresh happened.
+    await new Promise((r) => setTimeout(r, 350))
+  })
   const { balance, predictions } = useVotes()
   const { session } = useAuth()
   const isLoggedIn = !!session
@@ -454,8 +463,11 @@ export function Inicio() {
         </div>
       </div>
 
-      {/* Scrollable feed */}
-      <div className="feed-scroll" style={{ flex: 1, padding: '0 16px 16px' }}>
+      {/* Scrollable feed — pull-to-refresh enabled on touch devices.
+          The PullIndicator sits absolutely positioned above the first
+          card and grows downward as the user pulls. */}
+      <div ref={feedScrollRef} className="feed-scroll" style={{ flex: 1, padding: '0 16px 16px', position: 'relative' }}>
+        <PullIndicator distance={pullDistance} refreshing={isRefreshing} threshold={pullThreshold} />
         {eventsLoading ? (
           <SkeletonFeed />
         ) : eventsError ? (

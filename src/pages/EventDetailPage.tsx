@@ -3,6 +3,7 @@ import { ArrowLeft } from '@phosphor-icons/react'
 import { useParams, useNavigate } from 'react-router-dom'
 import type { Event as AppEvent } from '../types'
 import { useEvents } from '../context/EventsContext'
+import { usePageMeta } from '../hooks/usePageMeta'
 import { SplitBar } from '../components/feed/SplitBar'
 import { EntryFlow } from '../components/feed/EntryFlow'
 import { PurchaseCelebration } from '../components/feed/PurchaseCelebration'
@@ -268,6 +269,16 @@ export function EventDetailPage() {
   const navigate = useNavigate()
   const { getEvent, loading } = useEvents()
   const event = getEvent(id ?? '')
+
+  // Per-event page meta. The og:image points at the dynamic Vercel
+  // serverless endpoint which renders a fresh OG card with the
+  // current SÍ/NO split, so any link share to WhatsApp/Twitter shows
+  // the live state of the question rather than a generic logo.
+  usePageMeta({
+    title: event ? `${event.question} · b1n0` : 'Evento · b1n0',
+    description: event?.considerations ?? `Hacé tu llamado en este evento de b1n0.`,
+    ogImage: id ? `/api/og?event=${encodeURIComponent(id)}` : undefined,
+  })
 
   if (!event) {
     // If still loading, show spinner; otherwise show 404

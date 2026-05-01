@@ -6,6 +6,7 @@ import { usePricingEngine } from '../../hooks/usePricingEngine'
 import type { MarketState } from '../../lib/pricing'
 import { midPctToAsk } from '../../lib/pricing'
 import { supabase } from '../../lib/supabase'
+import { useToast } from '../Toast'
 
 interface EntryFlowProps {
   event: Event
@@ -57,6 +58,7 @@ const D = 'var(--font-display)'
 
 export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = false }: EntryFlowProps) {
   const { session } = useAuth()
+  const toast = useToast()
   const isOpen = event.eventType === 'open'
 
   const tierLocked = false
@@ -179,40 +181,72 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
   }
 
 
+  /**
+   * Optimistic confirm flow.
+   *
+   * The old flow blocked the modal closed for the full RPC round-trip
+   * (200–800ms). For a fast-feeling product, we want the celebration
+   * to fire immediately, then reconcile with the server in the
+   * background.
+   *
+   * Steps:
+   *   1. Capture side/amount/cobro at click time.
+   *   2. Fire onConfirm() — closes the sheet and shows the celebration
+   *      with the locally-computed cobro.
+   *   3. Run the RPC in the background.
+   *   4. On error, surface a toast and keep the sheet closed (we can
+   *      let VoteContext rollback the local optimistic vote).
+   *
+   * For unauthenticated callers (no RPC), behavior is unchanged.
+   */
   const handleConfirm = async () => {
     if (!side) return
-    setConfirming(true)
-    setConfirmError(null)
 
-    let usedPricingEngine = false
+    const sideAtClick = side
+    const amountAtClick = amountNum
+    const cobroAtClick = cobro
 
-    if (isOpen && session?.user?.id) {
-      // Open event: use execute_option_purchase
-      const label = compositeLabel(side)
-      const dir = compositeDir(side)
-      const result = await executeOptionPurchase(event.id, session.user.id, label, dir, amountNum)
-      if (!result) {
-        const errMsg = lastErrorRef.current ?? 'No se pudo registrar. Intentá de nuevo.'
-        setConfirmError(errMsg)
-        setConfirming(false)
-        return
-      }
-      usedPricingEngine = true
-    } else if (!isOpen && session?.user?.id) {
-      // Binary event: use execute_purchase (always use RPC, market state not needed)
-      const result = await executePurchase(event.id, session.user.id, side as 'yes' | 'no', amountNum)
-      if (!result) {
-        const errMsg = lastErrorRef.current ?? 'No se pudo registrar. Intentá de nuevo.'
-        setConfirmError(errMsg)
-        setConfirming(false)
-        return
-      }
-      usedPricingEngine = true
-      fetchMarket(event.id).then((m) => { if (m) setMarket(m) })
+    // No-auth flow: just call onConfirm — VoteContext handles mock state.
+    if (!session?.user?.id) {
+      onConfirm(sideAtClick, amountAtClick, false, cobroAtClick)
+      return
     }
 
-    setConfirming(false)
-    onConfirm(side, amountNum, usedPricingEngine, cobro)
+    // Auth flow: optimistic close + celebration, RPC in background.
+    setConfirming(true)
+    setConfirmError(null)
+    onConfirm(sideAtClick, amountAtClick, true, cobroAtClick)
+
+    // Background RPC. We don't await before closing — but we still
+    // need to surface failures, since profile balance + positions
+    // would be in an inconsistent local state.
+    const runRpc = async () => {
+      if (isOpen) {
+        const label = compositeLabel(sideAtClick)
+        const dir = compositeDir(sideAtClick)
+        return executeOptionPurchase(event.id, session.user.id, label, dir, amountAtClick)
+      }
+      const result = await executePurchase(event.id, session.user.id, sideAtClick as 'yes' | 'no', amountAtClick)
+      // Refresh market on success so the SplitBar repositions.
+      if (result) {
+        fetchMarket(event.id).then((m) => { if (m) setMarket(m) })
+      }
+      return result
+    }
+
+    runRpc()
+      .then((result) => {
+        if (!result) {
+          const errMsg = lastErrorRef.current ?? 'No se pudo registrar. Intentá de nuevo.'
+          toast.showError(errMsg)
+        }
+      })
+      .catch((err) => {
+        toast.showError(err instanceof Error ? err.message : 'Error inesperado al procesar el llamado.')
+      })
+      .finally(() => {
+        setConfirming(false)
+      })
   }
 
   return (

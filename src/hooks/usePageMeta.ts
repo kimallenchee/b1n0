@@ -28,40 +28,50 @@ export interface PageMeta {
   title: string
   /** What appears under the title in search results and link previews. */
   description?: string
+  /**
+   * Optional URL for the page's social preview image (og:image,
+   * twitter:image). When omitted, the global default is used. For
+   * event pages, pass the dynamic /api/og?event=<id> endpoint so
+   * shares show the event's question + current SÍ/NO split.
+   */
+  ogImage?: string
 }
 
 const DEFAULT_TITLE = 'b1n0'
 const DEFAULT_DESCRIPTION =
   'b1n0 — La plataforma de opinión donde demostrás que sabés más que todos. Hacé tu llamado en fútbol, economía y cultura de Centroamérica.'
+const DEFAULT_OG_IMAGE = '/og-image.png'
 
 function setMetaContent(selector: string, content: string) {
   const el = document.querySelector(selector)
   if (el) el.setAttribute('content', content)
 }
 
-export function usePageMeta({ title, description }: PageMeta): void {
+export function usePageMeta({ title, description, ogImage }: PageMeta): void {
   useEffect(() => {
     const previousTitle = document.title
     document.title = title
 
     const desc = description ?? DEFAULT_DESCRIPTION
+    const img = ogImage ?? DEFAULT_OG_IMAGE
 
     setMetaContent('meta[name="description"]', desc)
     setMetaContent('meta[property="og:title"]', title)
     setMetaContent('meta[property="og:description"]', desc)
+    setMetaContent('meta[property="og:image"]', img)
     setMetaContent('meta[name="twitter:title"]', title)
     setMetaContent('meta[name="twitter:description"]', desc)
+    setMetaContent('meta[name="twitter:image"]', img)
 
     return () => {
       document.title = previousTitle || DEFAULT_TITLE
-      // Reset meta tags to defaults so a navigation that doesn't call
-      // usePageMeta (e.g. an admin route) doesn't inherit a stale
-      // title from the previous page.
       setMetaContent('meta[name="description"]', DEFAULT_DESCRIPTION)
       setMetaContent('meta[property="og:title"]', DEFAULT_TITLE)
       setMetaContent('meta[property="og:description"]', DEFAULT_DESCRIPTION)
+      setMetaContent('meta[property="og:image"]', DEFAULT_OG_IMAGE)
       setMetaContent('meta[name="twitter:title"]', DEFAULT_TITLE)
       setMetaContent('meta[name="twitter:description"]', DEFAULT_DESCRIPTION)
+      setMetaContent('meta[name="twitter:image"]', DEFAULT_OG_IMAGE)
     }
-  }, [title, description])
+  }, [title, description, ogImage])
 }

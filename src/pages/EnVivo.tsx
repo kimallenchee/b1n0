@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { EventFeed } from '../components/feed/EventFeed'
 import type { Category } from '../types'
 import { useEvents } from '../context/EventsContext'
+import { MovementTicker } from '../components/MovementTicker'
 
 const F = 'var(--font-body)'
 const D = 'var(--font-display)'
@@ -55,11 +56,14 @@ export function EnVivo() {
           <div>
             <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', marginBottom: '2px' }}>Pool total en juego</p>
             <p style={{ fontFamily: D, fontWeight: 700, fontSize: '20px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.5px', lineHeight: 1 , fontVariantNumeric: 'tabular-nums'}}>
-              Q{totalPool.toLocaleString()}
+              ${totalPool.toLocaleString()}
             </p>
           </div>
         </div>
       </div>
+
+      {/* Movement ticker — realtime stream of recent buys */}
+      <MovementTicker />
 
       {/* Category chips */}
       <div style={{ position: 'relative', flexShrink: 0 }}>

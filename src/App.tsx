@@ -22,6 +22,7 @@ import { ErrorBoundary } from './components/ErrorBoundary'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { ToastProvider, useToast } from './components/Toast'
 import { ThemeProvider } from './context/ThemeContext'
+import { InstallPrompt } from './components/InstallPrompt'
 
 // ── Lazy-loaded routes (code splitting) ──────────────────────
 // These are heavy pages that most users don't visit on every session.
@@ -227,6 +228,7 @@ export default function App() {
                     <AuthModalProvider>
                       <AppContent />
                       <AuthModal />
+                      <InstallPrompt />
                     </AuthModalProvider>
                   </NotificationProvider>
                 </VoteProvider>
