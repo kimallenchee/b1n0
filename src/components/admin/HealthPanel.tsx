@@ -235,29 +235,18 @@ export function HealthPanel() {
   //    Δ ledger holds, the books balance.
   //
   // 2. Money still in active pools (informational):
-  //      net_deposits + sponsor_seeded − sum(profile.balance)
-  //    Sponsored events seed event_markets.pool_total directly, so
-  //    sum(profile.balance) − net_deposits can grow positive when
-  //    winners extract from sponsor pools. Including sponsor_seeded
-  //    on the inflow side makes this number meaningful.
+  //      net_deposits − sum(profile.balance)
+  //    Sponsor seeding has been removed (events now back exclusively
+  //    by LP capital flowing through balance_ledger), so the simple
+  //    deposit-minus-balances formula is correct again.
   const totalAccountBalances = useMemo(
     () => treasuryBalance + userBalanceTotal,
     [treasuryBalance, userBalanceTotal]
   )
 
-  // Sponsor pool seed comes from the latest reconciliation_log row.
-  // The HealthPanel doesn't have access to the events table directly
-  // (that would mean another query), so we trust the reconciliation
-  // function as the source of truth.
-  const sponsorPoolSeeded = useMemo(
-    () => Number(reconRuns[0]?.sponsor_pool_seeded ?? 0),
-    [reconRuns]
-  )
-
   const moneyInPools = useMemo(
-    () =>
-      Math.round((netDeposits + sponsorPoolSeeded - totalAccountBalances) * 100) / 100,
-    [netDeposits, sponsorPoolSeeded, totalAccountBalances]
+    () => Math.round((netDeposits - totalAccountBalances) * 100) / 100,
+    [netDeposits, totalAccountBalances]
   )
 
   const ledgerDelta = useMemo(
@@ -557,12 +546,11 @@ export function HealthPanel() {
             {reconcileOk ? 'OK' : 'Δ Q' + fmtQ(ledgerDelta)}
           </span>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
           {[
             { label: 'Saldo tesorería', val: `Q${fmtQ(treasuryBalance)}`, color: 'var(--b1n0-text-1)' },
             { label: 'Saldo usuarios', val: `Q${fmtQ(userBalanceTotal)}`, color: 'var(--b1n0-text-1)' },
-            { label: 'Pool patrocinado', val: `Q${fmtQ(sponsorPoolSeeded)}`, color: '#C4B5FD' },
-            { label: 'En pools (residual)', val: `Q${fmtQ(moneyInPools)}`, color: '#FFD474' },
+            { label: 'En pools', val: `Q${fmtQ(moneyInPools)}`, color: '#FFD474' },
           ].map(({ label, val, color }) => (
             <div key={label} style={{ background: 'var(--b1n0-surface)', borderRadius: '8px', padding: '10px' }}>
               <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: '4px' }}>{label}</p>
@@ -578,13 +566,12 @@ export function HealthPanel() {
           <strong style={{ color: 'var(--b1n0-text-1)' }}>Q{fmtQ(ledgerTotal)}</strong>
           <br />
           Posiciones activas (libro): <strong style={{ color: 'var(--b1n0-muted)' }}>Q{fmtQ(positionTableNet)}</strong>
-          {' '}— gross − fee del positions table; difiere del residual por el spread capturado por el AMM.
+          {' '}— gross − fee del positions table; difiere de "En pools" por el spread capturado por el AMM.
           <br />
           <span style={{ color: 'var(--b1n0-muted)' }}>
-            Conservación:{' '}
-            <code>depósitos + pool patrocinado − saldos = en pools</code>{' '}
-            (Q{fmtQ(netDeposits)} + Q{fmtQ(sponsorPoolSeeded)} − Q{fmtQ(totalAccountBalances)} = Q{fmtQ(moneyInPools)}).
-            El residual puede ser negativo si los premios se pagaron con dinero patrocinado y el evento todavía cuenta como sponsored.
+            Conservación: <code>depósitos − saldos = en pools</code>{' '}
+            (Q{fmtQ(netDeposits)} − Q{fmtQ(totalAccountBalances)} = Q{fmtQ(moneyInPools)}).
+            Cualquier valor distinto de cero significa dinero LP comprometido a eventos abiertos o pagos pendientes.
           </span>
         </p>
         {!reconcileOk && (

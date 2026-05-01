@@ -369,24 +369,12 @@ export function EventManager({ platformRates }: EventManagerProps) {
     e.preventDefault()
     setCreateError(null); setCreateSuccess(null); setCreateLoading(true)
 
-    const sponsorAmt = form.sponsor_amount || 0
-    if (sponsorAmt > 0 && sponsorAmt % 1 !== 0) {
-      setCreateError('El monto del patrocinador debe ser número entero (sin centavos)')
-      setCreateLoading(false)
-      return
-    }
-
+    // Sponsor model removed — pools are now backed exclusively by LP capital.
+    // Events launch with pool_total = 0 and grow via deposit_lp_capital.
     const isOpen = form.event_type === 'open'
     const filteredOpts = isOpen ? form.options.filter((o) => o.label.trim()) : []
-    const marginRate = platformRates.sponsor_margin_pct / 100
-    const pool_total = sponsorAmt > 0 ? sponsorAmt : 0
+    const pool_total = 0
     const optionPoolTotal = filteredOpts.reduce((s, o) => s + (o.pool || 0), 0)
-
-    if (isOpen && sponsorAmt > 0 && optionPoolTotal > pool_total) {
-      setCreateError(`El pool de opciones (Q${optionPoolTotal.toLocaleString()}) excede el pool de premios (Q${pool_total.toLocaleString()}).`)
-      setCreateLoading(false)
-      return
-    }
 
     for (const lp of form.lp_commitments) {
       if (!lp.user_id || !lp.amount || lp.amount <= 0) continue
@@ -412,7 +400,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
       event_type: form.event_type,
       question: form.question.trim(),
       category: form.category,
-      sponsor_name: form.sponsor_name.trim() || null,
+      sponsor_name: null,
       image_url: form.image_url.trim() || null,
       yes_percent: isOpen ? 0 : form.yes_percent,
       no_percent: isOpen ? 0 : form.no_percent,
@@ -440,7 +428,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
           p_initial_yes_pct: form.yes_percent,
           p_spread_enabled: true,
           p_synthetic_shares: 1000,
-          p_sponsor_amount: sponsorAmt > 0 ? sponsorAmt : null,
+          p_sponsor_amount: null,
           p_lp_return_pct: (form.lp_return_pct || 8) / 100,
           p_launch_mode: form.launch_mode,
         })
@@ -456,7 +444,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
           p_initial_yes_pct: 50,
           p_spread_enabled: true,
           p_synthetic_shares: 1000,
-          p_sponsor_amount: sponsorAmt > 0 ? sponsorAmt : null,
+          p_sponsor_amount: null,
           p_lp_return_pct: (form.lp_return_pct || 8) / 100,
           p_launch_mode: form.launch_mode,
         })
@@ -562,12 +550,11 @@ export function EventManager({ platformRates }: EventManagerProps) {
         const isOpen = eventType === 'open' || eventType === 'abierto'
 
         const category = String(r.category ?? r.categoria ?? 'otro').toLowerCase().trim()
-        const sponsorName = String(r.sponsor_name ?? r.sponsor ?? r.patrocinador ?? '').trim() || null
         const imageUrl = String(r.image_url ?? r.imagen ?? '').trim() || null
         const considerations = String(r.considerations ?? r.contexto ?? '').trim() || null
         const country = String(r.country ?? r.pais ?? 'GT').toUpperCase().trim()
 
-        const sponsorAmt = Number(r.sponsor_amount ?? r.monto ?? r.monto_sponsor ?? 0)
+        // Sponsor model removed — pool starts at 0, LPs fund post-create.
         const lpReturnPct = Number(r.lp_return_pct ?? 0.08)
 
         const yesPct = isOpen ? 0 : Math.max(1, Math.min(99, Number(r.yes_percent ?? r.si_pct ?? 50)))
@@ -579,23 +566,16 @@ export function EventManager({ platformRates }: EventManagerProps) {
         const endsAt = r.ends_at ?? r.cierre ?? null
 
         let options: string[] | null = null
-        let poolSize: number
-        const poolTotal = sponsorAmt > 0 ? sponsorAmt : 0
+        let poolSize: number = 0
 
         if (isOpen) {
           const optStr = String(r.options ?? r.opciones ?? '').trim()
-          if (!optStr) { errors.push(`Fila ${rowNum}: evento abierto requiere "options" (ej: Opción1:40:500;Opción2:60:500)`); fail++; continue }
+          if (!optStr) { errors.push(`Fila ${rowNum}: evento abierto requiere "options" (ej: Opción1:40;Opción2:60)`); fail++; continue }
           options = optStr.split(';').map((s: string) => s.trim()).filter(Boolean)
-          let optPoolTotal = 0
           for (const opt of options) {
             const parts = opt.split(':')
-            if (parts.length < 3) { errors.push(`Fila ${rowNum}: opción "${opt}" mal formateada (usar label:pct:pool)`); fail++; continue }
-            optPoolTotal += parseFloat(parts[parts.length - 1]) || 0
+            if (parts.length < 2) { errors.push(`Fila ${rowNum}: opción "${opt}" mal formateada (usar label:pct)`); fail++; continue }
           }
-          if (sponsorAmt > 0 && optPoolTotal > poolTotal) { errors.push(`Fila ${rowNum}: pool opciones (Q${optPoolTotal}) > pool premios (Q${poolTotal})`); fail++; continue }
-          poolSize = optPoolTotal
-        } else {
-          poolSize = poolTotal
         }
 
         const id = crypto.randomUUID()
@@ -605,7 +585,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
           event_type: isOpen ? 'open' : 'binary',
           question,
           category,
-          sponsor_name: sponsorName,
+          sponsor_name: null,
           image_url: imageUrl,
           yes_percent: yesPct,
           no_percent: noPct,
@@ -636,7 +616,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
             p_initial_yes_pct: yesPct,
             p_spread_enabled: true,
             p_synthetic_shares: 1000,
-            p_sponsor_amount: sponsorAmt > 0 ? sponsorAmt : null,
+            p_sponsor_amount: null,
             p_lp_return_pct: lpReturnPct,
             p_launch_mode: 'public',
           })
@@ -709,42 +689,17 @@ export function EventManager({ platformRates }: EventManagerProps) {
     if (!editForm || !editingId) return
     setEditLoading(true); setEditError(null); setEditSuccess(null)
 
-    const sponsorAmt = editForm.sponsor_amount || 0
-    if (sponsorAmt > 0 && sponsorAmt % 1 !== 0) {
-      setEditError('El monto del patrocinador debe ser número entero (sin centavos)')
-      setEditLoading(false)
-      return
-    }
-
+    // Sponsor model removed — sponsor_amount/sponsor_name are no longer
+    // editable from the UI. Pool funding is exclusively via LP capital.
     const origEvent = allEvents.find((e) => e.id === editingId)
-    const origSponsorAmt = origEvent?.sponsor_amount ?? 0
-    const sponsorChanged = sponsorAmt !== origSponsorAmt
-
-    if (sponsorChanged && hasActivePositions) {
-      setEditError('No se puede modificar el sponsor — hay posiciones abiertas en el mercado')
-      setEditLoading(false)
-      return
-    }
-
     const isOpen = origEvent?.event_type === 'open'
-    const marginRate = platformRates.sponsor_margin_pct / 100
-    const pool_total = sponsorAmt > 0 ? sponsorAmt : 0
-    const platform_margin = sponsorAmt > 0 ? Math.round(sponsorAmt * marginRate * 100) / 100 : 0
     const filteredEditOpts = isOpen ? editForm.options.filter((o) => o.label.trim()) : []
-    const editOptionPoolTotal = filteredEditOpts.reduce((s, o) => s + (o.pool || 0), 0)
-
-    if (isOpen && sponsorAmt > 0 && editOptionPoolTotal > pool_total) {
-      setEditError(`El pool de opciones (Q${editOptionPoolTotal.toLocaleString()}) excede el pool de premios (Q${pool_total.toLocaleString()}).`)
-      setEditLoading(false)
-      return
-    }
 
     const options = isOpen ? serializeOptions(filteredEditOpts) : undefined
 
     const { error: err } = await supabase.from('events').update({
       question: editForm.question.trim(),
       category: editForm.category,
-      sponsor_name: editForm.sponsor_name.trim() || null,
       image_url: editForm.image_url.trim() || null,
       considerations: editForm.considerations.trim() || null,
       ...(isOpen ? { options } : {}),
@@ -760,18 +715,6 @@ export function EventManager({ platformRates }: EventManagerProps) {
     if (err) {
       setEditError(err.message)
     } else {
-      const { data: curMkt } = await supabase.from('event_markets').select('pool_total, lp_capital, bet_pool, sponsor_amount').eq('event_id', editingId).maybeSingle()
-      if (curMkt) {
-        const oldSponsor = Number(curMkt.sponsor_amount) || 0
-        const newSponsor = sponsorAmt || 0
-        if (oldSponsor !== newSponsor) {
-          const diff = newSponsor - oldSponsor
-          const newPoolTotal = Math.max(Number(curMkt.pool_total) + diff, 0)
-          await supabase.from('event_markets').update({ pool_total: newPoolTotal, sponsor_amount: newSponsor }).eq('event_id', editingId)
-          await supabase.from('events').update({ pool_size: Math.round(newPoolTotal), sponsor_amount: newSponsor }).eq('id', editingId)
-          setEventMarket((m) => m ? { ...m, pool_total: newPoolTotal } : m)
-        }
-      }
       setEditSuccess('Guardado')
       refetch()
       await loadAllEvents()
@@ -1001,10 +944,6 @@ export function EventManager({ platformRates }: EventManagerProps) {
                 )}
               </div>
               <div>
-                <label style={labelStyle}>Sponsor</label>
-                <input type="text" value={editForm.sponsor_name} onChange={(e) => setE('sponsor_name', e.target.value)} style={inputStyle} />
-              </div>
-              <div>
                 <label style={labelStyle}>Contexto</label>
                 <textarea value={editForm.considerations} onChange={(e) => setE('considerations', e.target.value)}
                   style={{ ...inputStyle, height: '60px', resize: 'vertical', lineHeight: 1.5 }} />
@@ -1015,7 +954,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                   <OptionRows
                     options={editForm.options}
                     onChange={(opts) => setE('options', opts)}
-                    maxPool={editForm.sponsor_amount > 0 ? editForm.sponsor_amount : 0}
+                    maxPool={0}
                   />
                 </div>
               )}
@@ -1032,7 +971,6 @@ export function EventManager({ platformRates }: EventManagerProps) {
                   )}
                   {[
                     { label: 'Pool total', value: eventMarket?.pool_total ?? 0, color: 'var(--b1n0-si)' },
-                    { label: 'Semilla sponsor', value: editForm.sponsor_amount > 0 ? editForm.sponsor_amount : 0, color: 'var(--b1n0-text-1)' },
                     { label: 'Apuestas en pool', value: eventMarket?.bet_pool ?? 0, color: '#93C5FD' },
                     { label: 'Capital LP', value: eventMarket?.lp_capital ?? 0, color: '#C4B5FD' },
                     { label: 'Fees colectados', value: eventMarket?.fees_collected ?? 0, color: 'var(--b1n0-muted)' },
@@ -1045,18 +983,6 @@ export function EventManager({ platformRates }: EventManagerProps) {
                     </div>
                   ))}
                 </div>
-                {!hasActivePositions && (
-                  <div style={{ marginTop: '8px' }}>
-                    <label style={labelStyle}>Semilla sponsor (Q) — opcional</label>
-                    <input
-                      type="number" min={0} step="any"
-                      value={editForm.sponsor_amount || ''}
-                      onChange={(e) => setE('sponsor_amount', parseInt(e.target.value) || 0)}
-                      placeholder="0 = parimutuel puro"
-                      style={inputStyle}
-                    />
-                  </div>
-                )}
               </div>
               <div>
                 <label style={labelStyle}>Mín entrada (Q)</label>
@@ -1343,7 +1269,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
             <button
               onClick={async () => {
                 const template = [
-                  { question: '¿Guatemala clasifica al Mundial 2026?', event_type: 'binary', category: 'deportes', sponsor_name: 'Gatorade GT', sponsor_amount: 5000, yes_percent: 35, min_entry: 25, max_entry: 500, is_live: 'false', ends_at: '2026-06-15T23:59', options: '', country: 'GT', considerations: 'Eliminatorias CONCACAF. Guatemala en el grupo B. Fuente: FIFA.', image_url: '' },
+                  { question: '¿Guatemala clasifica al Mundial 2026?', event_type: 'binary', category: 'deportes', yes_percent: 35, min_entry: 25, max_entry: 500, is_live: 'false', ends_at: '2026-06-15T23:59', options: '', country: 'GT', considerations: 'Eliminatorias CONCACAF. Guatemala en el grupo B. Fuente: FIFA.', image_url: '' },
                 ]
                 const wb = new ExcelJS.Workbook()
                 const ws = wb.addWorksheet('Eventos')
@@ -1351,8 +1277,6 @@ export function EventManager({ platformRates }: EventManagerProps) {
                   { header: 'question', key: 'question', width: 50 },
                   { header: 'event_type', key: 'event_type', width: 12 },
                   { header: 'category', key: 'category', width: 14 },
-                  { header: 'sponsor_name', key: 'sponsor_name', width: 18 },
-                  { header: 'sponsor_amount', key: 'sponsor_amount', width: 16 },
                   { header: 'yes_percent', key: 'yes_percent', width: 12 },
                   { header: 'min_entry', key: 'min_entry', width: 10 },
                   { header: 'max_entry', key: 'max_entry', width: 10 },
@@ -1376,14 +1300,12 @@ export function EventManager({ platformRates }: EventManagerProps) {
                   { Campo: 'question', Descripcion: 'Pregunta del evento (obligatorio)', Ejemplo: '¿Guatemala clasifica al Mundial 2026?', Dropdown: '' },
                   { Campo: 'event_type', Descripcion: '"binary" = SÍ/NO simple | "open" = múltiples opciones', Ejemplo: 'binary', Dropdown: '✓ binary, open' },
                   { Campo: 'category', Descripcion: 'Categoría del evento', Ejemplo: 'deportes', Dropdown: '✓ deportes, politica, economia, geopolitica, cultura, tecnologia, finanzas, otro' },
-                  { Campo: 'sponsor_name', Descripcion: 'Nombre del patrocinador (opcional, dejar vacío si no hay)', Ejemplo: 'Gatorade GT', Dropdown: '' },
-                  { Campo: 'sponsor_amount', Descripcion: 'Semilla del patrocinador en Q — 100% va al pool. 0 = sin sponsor, pool crece solo con votos.', Ejemplo: '5000', Dropdown: '' },
                   { Campo: 'yes_percent', Descripcion: 'Probabilidad inicial SÍ (1-99). SOLO para binary. Dejar vacío para open.', Ejemplo: '35', Dropdown: '' },
                   { Campo: 'min_entry', Descripcion: 'Entrada mínima en Q (default: 25)', Ejemplo: '25', Dropdown: '' },
                   { Campo: 'max_entry', Descripcion: 'Entrada máxima en Q (default: 500)', Ejemplo: '500', Dropdown: '' },
                   { Campo: 'is_live', Descripcion: '¿Evento en vivo? true = se muestra en sección En Vivo', Ejemplo: 'false', Dropdown: '✓ true, false' },
                   { Campo: 'ends_at', Descripcion: 'Fecha de cierre ISO (vacío = cierre manual desde admin)', Ejemplo: '2026-06-15T23:59', Dropdown: '' },
-                  { Campo: 'options', Descripcion: 'SOLO para open. Formato: Nombre:porcentaje:0 separados por ; — porcentajes deben sumar 100. El tercer valor (pool) se pone 0.', Ejemplo: 'Comunicaciones:35:0;Municipal:30:0;Xelajú:20:0;Otro:15:0', Dropdown: '' },
+                  { Campo: 'options', Descripcion: 'SOLO para open. Formato: Nombre:porcentaje separados por ; — porcentajes deben sumar 100.', Ejemplo: 'Comunicaciones:35;Municipal:30;Xelajú:20;Otro:15', Dropdown: '' },
                   { Campo: 'country', Descripcion: 'Código de país (GT, SV, HN, CR, PA, NI, BZ, MX, US, GLOBAL, etc.)', Ejemplo: 'GT', Dropdown: '✓ GT, SV, HN, NI, CR, PA, BZ, GLOBAL, + 20 más' },
                   { Campo: 'considerations', Descripcion: 'Contexto, fuente, criterio de resolución (opcional)', Ejemplo: 'Eliminatorias CONCACAF. Fuente: FIFA.', Dropdown: '' },
                   { Campo: 'image_url', Descripcion: 'URL de imagen (opcional, vacío = foto de categoría)', Ejemplo: 'https://images.unsplash.com/...', Dropdown: '' },
@@ -1664,32 +1586,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <div>
-                <label style={labelStyle}>Sponsor / Patrocinador</label>
-                <input type="text" value={form.sponsor_name} onChange={(e) => setC('sponsor_name', e.target.value)}
-                  placeholder="Ej: Tigo, Banrural, Gatorade..." style={inputStyle} />
-              </div>
-
-              <div>
-                <label style={labelStyle}>Semilla sponsor (Q) — opcional</label>
-                <input
-                  type="number" min={0} step="any"
-                  value={form.sponsor_amount || ''}
-                  onChange={(e) => setC('sponsor_amount', parseInt(e.target.value) || 0)}
-                  placeholder="0 = parimutuel puro (pool crece con votos)"
-                  style={inputStyle}
-                />
-                {form.sponsor_amount > 0 && (
-                  <div style={{ marginTop: '6px', display: 'flex', justifyContent: 'space-between', padding: '7px 12px', background: 'rgba(74,222,128,0.08)', borderRadius: '8px', border: '1px solid rgba(5,150,105,0.15)' }}>
-                    <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-si)', fontWeight: 600 }}>100% al pool</span>
-                    <span style={{ fontFamily: D, fontWeight: 700, fontSize: '13px', color: 'var(--b1n0-si)' }}>
-                      Q{form.sponsor_amount.toLocaleString()}
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              <div style={{ borderTop: '1px solid var(--b1n0-border)', paddingTop: '12px' }}>
-                <label style={labelStyle}>Capital LP (opcional)</label>
+                <label style={labelStyle}>Capital LP</label>
                 <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginBottom: '8px' }}>
                   LPs depositan capital al pool. Al resolver reciben capital + su % de fees.
                 </p>

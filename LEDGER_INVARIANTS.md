@@ -80,8 +80,9 @@ SELECT
 ## Invariant 2 — Conservation of money
 
 **Statement.** All money that has ever entered the platform sits in
-exactly one of three places: liquid account balances (users + treasury)
-or money committed to active markets.
+exactly one of three places: liquid account balances (users +
+treasury) or money committed to active markets via LP capital and
+unresolved user positions.
 
 ```
 deposits − withdrawals = sum(profile.balance) + money_in_active_markets
@@ -91,7 +92,13 @@ deposits − withdrawals = sum(profile.balance) + money_in_active_markets
 identity above rather than measuring it directly, because the
 positions table doesn't store the spread that the AMM captures
 (see invariant 5). This is the same formula HealthPanel uses for
-"En posiciones".
+"En pools".
+
+This formula assumes **all pool money has flowed through
+balance_ledger** — sponsor seeding (which used to inject phantom
+inflows directly into `event_markets.pool_total`) has been removed.
+Every cent in any pool now traces back to either a user `vote`
+ledger entry or an LP `lp_deposit` ledger entry.
 
 **Why it matters.** This proves the platform isn't holding more
 liability than it took in deposits. If `deposits − withdrawals` is
@@ -192,20 +199,25 @@ SELECT
 ## Invariant 4 — Per-event solvency
 
 **Statement.** No active market can have committed more payout than
-its backing capital. Backing comes from the sponsor pool seed (100%
-of `sponsor_amount` lands in `pool_total` — the platform takes
-nothing from sponsor money by design) plus all active LP deposits
-for that event.
+its backing capital. Backing comes from the sum of all active LP
+deposits for that event.
 
 ```
-pool_committed ≤ pool_total + sum(active lp_deposits.amount)
+pool_committed ≤ sum(active lp_deposits.amount)
 ```
 
-Where `pool_total = sponsor_amount` for sponsored events. The
-`sponsor_margin_pct` config key exists for historical reasons but
-should remain at 0 — any non-zero value means the platform is
-skimming sponsor money before it reaches the pool, which violates
-the design.
+The sponsor model has been removed — events no longer launch with
+pre-seeded `pool_total`. New markets start at `pool_total = 0` and
+grow exclusively as LPs commit capital via `deposit_lp_capital`.
+The `events.sponsor_amount` and `event_markets.sponsor_amount`
+columns remain in the schema for historical event rows but are
+always NULL or 0 going forward.
+
+The `sponsor_margin_pct` config key is locked at 0 by a CHECK
+constraint (`sponsor_margin_must_be_zero`) — any attempt to set it
+non-zero will fail. It exists purely so the legacy
+`initialize_market` code path doesn't crash if a future event were
+to pass a non-NULL sponsor_amount; it'd just no-op (0 × anything = 0).
 
 **Why it matters.** If a market's worst-case payout exceeds its
 backing, the platform takes a loss to make winners whole. The
