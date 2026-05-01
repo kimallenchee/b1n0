@@ -86,4 +86,9 @@ export function BottomNav() {
             >
               {tab.label}
             </span>
-        
+          </button>
+        )
+      })}
+    </nav>
+  )
+}
