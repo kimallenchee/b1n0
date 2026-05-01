@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { createPortal } from 'react-dom'
 
 const F = '"DM Sans", sans-serif'
 const D = '"Syne", sans-serif'
@@ -101,7 +102,13 @@ export function HowItWorks({ open, onClose }: HowItWorksProps) {
   const current = steps[step]
   const isLast = step === steps.length - 1
 
-  return (
+  // Portal into document.body so the modal lives outside every
+  // possible parent stacking context. This was the only thing that
+  // reliably stopped event cards from bleeding through — neither
+  // bumping z-index nor opacity was sufficient because some ancestor
+  // (sticky SideNav, scrollable main, etc.) was creating a context
+  // that trapped fixed-positioned descendants.
+  return createPortal(
     <>
       {/* Backdrop */}
       <div
@@ -255,6 +262,7 @@ export function HowItWorks({ open, onClose }: HowItWorksProps) {
           )}
         </div>
       </div>
-    </>
+    </>,
+    document.body
   )
 }
