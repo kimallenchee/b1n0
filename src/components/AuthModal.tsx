@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { createPortal } from 'react-dom'
+import { Envelope, X } from '@phosphor-icons/react'
 import { useAuth } from '../context/AuthContext'
 import { useAuthModal } from '../context/AuthModalContext'
 
@@ -114,7 +115,9 @@ export function AuthModal() {
       <div style={{ position: 'fixed', inset: 0, zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div onClick={() => { setSignupDone(false); closeAuth() }} style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }} />
         <div style={{ position: 'relative', maxWidth: 420, width: '90%', background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-pill)', padding: '36px 28px', boxShadow: '0 20px 60px rgba(0,0,0,0.5)', textAlign: 'center' }}>
-          <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'var(--b1n0-si-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', fontSize: '28px' }}>✉️</div>
+          <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'var(--b1n0-si-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto var(--space-5)' }}>
+            <Envelope size={28} weight="regular" color="var(--b1n0-si)" />
+          </div>
           <p style={{ fontFamily: F, fontWeight: 700, fontSize: '20px', color: 'var(--b1n0-text-1)', marginBottom: '8px' }}>Revisá tu correo</p>
           <p style={{ fontFamily: F, fontSize: '14px', color: 'var(--b1n0-muted)', lineHeight: 1.6, marginBottom: '6px' }}>
             Enviamos un link a <strong style={{ color: 'var(--b1n0-text-1)' }}>{form.email}</strong>
@@ -146,7 +149,35 @@ export function AuthModal() {
       <div style={{ position: 'relative', maxWidth: 420, width: '90%', maxHeight: '90dvh', overflowY: 'auto', background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-pill)', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.5)' }}>
 
         {/* Close button */}
-        <button onClick={closeAuth} style={{ position: 'absolute', top: '12px', right: '12px', background: 'none', border: 'none', fontSize: '20px', color: 'var(--b1n0-muted)', cursor: 'pointer', padding: '4px 8px' }}>×</button>
+        <button
+          onClick={closeAuth}
+          aria-label="Cerrar"
+          style={{
+            position: 'absolute',
+            top: 'var(--space-4)',
+            right: 'var(--space-4)',
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            padding: 'var(--space-2)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: 'var(--radius-md)',
+            color: 'var(--b1n0-muted)',
+            transition: 'color var(--duration-fast) var(--ease-out), background var(--duration-fast) var(--ease-out)',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.color = 'var(--b1n0-text-1)'
+            e.currentTarget.style.background = 'var(--b1n0-surface)'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color = 'var(--b1n0-muted)'
+            e.currentTarget.style.background = 'transparent'
+          }}
+        >
+          <X size={18} weight="bold" />
+        </button>
 
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: '20px' }}>

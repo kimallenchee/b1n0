@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { CreditCard, CurrencyDollar, Money } from '@phosphor-icons/react'
 import { BottomSheet } from '../BottomSheet'
+import { AnimatedNumber } from '../AnimatedNumber'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
 import { useVotes } from '../../context/VoteContext'
@@ -178,9 +179,21 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
             {/* Balance display */}
             <div style={{ textAlign: 'center', padding: '16px 0 20px' }}>
               <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: '4px' }}>Saldo disponible</p>
-              <p style={{ fontFamily: D, fontWeight: 800, fontSize: '36px', color: 'var(--b1n0-text-1)', letterSpacing: '-1px', lineHeight: 1 , fontVariantNumeric: 'tabular-nums'}}>
-                ${balance.toLocaleString()}
-              </p>
+              <AnimatedNumber
+                value={balance}
+                prefix="$"
+                decimals={2}
+                duration={650}
+                style={{
+                  display: 'block',
+                  fontFamily: D,
+                  fontWeight: 800,
+                  fontSize: '36px',
+                  color: 'var(--b1n0-text-1)',
+                  letterSpacing: '-1px',
+                  lineHeight: 1,
+                }}
+              />
             </div>
 
             {/* Deposit / Withdraw toggle */}

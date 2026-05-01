@@ -410,13 +410,32 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
                   </div>
                 )}
               </div>
-              {/* Cobro highlight */}
-              <div style={{ borderTop: '1px solid var(--b1n0-border)', paddingTop: '8px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                  <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)' }}>Cobro estimado</span>
-                  <span style={{ fontFamily: D, fontWeight: 700, fontSize: '20px', color: 'var(--b1n0-text-1)', letterSpacing: '-1px' , fontVariantNumeric: 'tabular-nums'}}>
-                    ~{event.currency}{cobro.toFixed(2)}
+              {/* Cobro — the hero of the modal. The user is here to know
+                  one thing: "what do I get back if I'm right?" Push it to
+                  display size, give it room to breathe. */}
+              <div style={{ borderTop: '1px solid var(--b1n0-border)', paddingTop: 'var(--space-4)', marginTop: 'var(--space-2)' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-1)' }}>
+                  <span style={{ fontFamily: F, fontSize: 'var(--text-2xs)', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: 'var(--tracking-caps)' }}>
+                    Si tenés razón cobrás
                   </span>
+                  <span
+                    style={{
+                      fontFamily: D,
+                      fontWeight: 800,
+                      fontSize: 'var(--text-xl)',
+                      color: 'var(--b1n0-text-1)',
+                      letterSpacing: 'var(--tracking-tight)',
+                      lineHeight: 1,
+                      fontVariantNumeric: 'tabular-nums',
+                    }}
+                  >
+                    {event.currency}{cobro.toFixed(2)}
+                  </span>
+                  {amountNum > 0 && cobro > amountNum && (
+                    <span style={{ fontFamily: F, fontSize: 'var(--text-xs)', fontWeight: 600, color: 'var(--b1n0-si)', fontVariantNumeric: 'tabular-nums' }}>
+                      {(cobro / amountNum).toFixed(2)}x tu entrada
+                    </span>
+                  )}
                 </div>
               </div>
               {/* Explainer */}

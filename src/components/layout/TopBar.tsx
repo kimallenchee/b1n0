@@ -5,6 +5,7 @@ import type { User } from '../../types'
 import { NotificationDrawer } from './NotificationDrawer'
 import { WalletSheet } from '../wallet/WalletSheet'
 import { HowItWorks } from '../HowItWorks'
+import { AnimatedNumber } from '../AnimatedNumber'
 import { useVotes } from '../../context/VoteContext'
 import { useNotifications } from '../../context/NotificationContext'
 import { useAuth } from '../../context/AuthContext'
@@ -139,18 +140,19 @@ export function TopBar({ user }: TopBarProps) {
                     transition: 'border-color var(--duration-fast) var(--ease-out)',
                   }}
                 >
-                  <span
+                  <AnimatedNumber
+                    value={balance}
+                    prefix="$"
+                    decimals={2}
+                    duration={500}
                     style={{
                       fontFamily: NUM_FONT,
                       fontWeight: 600,
                       fontSize: 'var(--text-base)',
                       color: 'var(--color-text)',
                       letterSpacing: 'var(--tracking-tight)',
-                      fontVariantNumeric: 'tabular-nums',
                     }}
-                  >
-                    ${balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </span>
+                  />
                 </div>
               </button>
 
