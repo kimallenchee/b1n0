@@ -687,3 +687,21 @@ input[type="number"] {
   padding: var(--space-4) var(--space-7);
   font-family: var(--font-body);
   font-weight: 600; font-size: var(--text-base);
+  letter-spacing: var(--tracking-tight);
+  cursor: pointer;
+  transition: border-color var(--duration-fast) var(--ease-out),
+              background var(--duration-fast) var(--ease-out);
+}
+.btn-secondary:hover { background: var(--b1n0-surface); border-color: var(--b1n0-muted); }
+
+/* Toast animation */
+@keyframes toast-slide-in {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Skeleton shimmer */
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
