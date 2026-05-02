@@ -564,4 +564,72 @@ export function EventCard({ event }: EventCardProps) {
                   {c.avatarUrl ? (
                     <img src={c.avatarUrl} alt="" style={{ width: 22, height: 22, borderRadius: '50%', objectFit: 'cover', flexShrink: 0, marginTop: '1px' }} />
                   ) : (
-                    <div style={{ width: 22, height: 22, borderRadius: '50%', background: 'var(--b1n0-border)', display: 'fl
+                    <div style={{ width: 22, height: 22, borderRadius: '50%', background: 'var(--b1n0-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: D, fontWeight: 700, fontSize: 'var(--text-2xs)', color: 'var(--b1n0-text-1)', flexShrink: 0, marginTop: '1px' }}>
+                      {c.username.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px', flexWrap: 'wrap' }}>
+                      <span style={{ fontFamily: F, fontWeight: 700, fontSize: 'var(--text-xs)', color: 'var(--b1n0-text-1)' }}>@{c.username}</span>
+                      {c.side && (
+                        <span style={{ fontFamily: F, fontWeight: 700, fontSize: '9px', color: c.side === 'yes' ? 'var(--b1n0-si)' : 'var(--b1n0-muted)', background: c.side === 'yes' ? 'var(--b1n0-si-bg)' : 'transparent', borderRadius: 'var(--radius-sm)', padding: '1px 5px' }}>
+                          {c.side === 'yes' ? 'SÍ' : 'NO'}
+                        </span>
+                      )}
+                    </div>
+                    <p style={{ fontFamily: F, fontSize: 'var(--text-xs)', color: 'var(--b1n0-muted)', lineHeight: 1.4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {c.text}
+                    </p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', marginTop: 'var(--space-1)' }}>
+                      {(c.likes || 0) > 0 && (
+                        <span style={{ fontFamily: F, fontSize: 'var(--text-2xs)', color: 'var(--b1n0-muted)', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                          <ThumbsUp size={10} weight="regular" />
+                          <span style={{ fontFamily: NUM_FONT, fontVariantNumeric: 'tabular-nums' }}>{c.likes}</span>
+                        </span>
+                      )}
+                      {c.replies_count > 0 && (
+                        <span style={{ fontFamily: F, fontSize: 'var(--text-2xs)', color: 'var(--b1n0-muted)' }}>
+                          <span style={{ fontFamily: NUM_FONT, fontVariantNumeric: 'tabular-nums' }}>{c.replies_count}</span> respuesta{c.replies_count !== 1 ? 's' : ''}
+                        </span>
+                      )}
+                      {(c.dislikes || 0) > 0 && (
+                        <span style={{ fontFamily: F, fontSize: 'var(--text-2xs)', color: 'var(--b1n0-muted)', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                          <ThumbsDown size={10} weight="regular" />
+                          <span style={{ fontFamily: NUM_FONT, fontVariantNumeric: 'tabular-nums' }}>{c.dislikes}</span>
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Vote sheet */}
+      <BottomSheet open={sheet === 'vote'} onClose={() => setSheet(null)}>
+        <div style={{ padding: '0 16px 40px' }}>
+          <EntryFlow event={event} onClose={() => setSheet(null)} onConfirm={handleConfirm} />
+        </div>
+      </BottomSheet>
+
+      {/* Comments sheet */}
+      <BottomSheet open={sheet === 'comments'} onClose={() => setSheet(null)} title={event.question}>
+        <div style={{ padding: '16px 16px 40px' }}>
+          <CommentFeed comments={event.comments ?? []} eventId={event.id} />
+        </div>
+      </BottomSheet>
+
+      {celeb && (
+        <PurchaseCelebration
+          side={celeb.side}
+          amount={celeb.amount}
+          cobro={celeb.cobro}
+          currency={event.currency}
+          onDone={() => setCeleb(null)}
+        />
+      )}
+    </>
+  )
+}

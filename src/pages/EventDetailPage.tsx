@@ -1263,4 +1263,26 @@ function EventDetailInner({ event }: { event: AppEvent }) {
       {/* ── Mobile bottom sheet ── */}
       {!isDesktop && (
         <BottomSheet open={voteOpen} onClose={() => { setVoteOpen(false); setVoteInitSide(undefined) }}>
-          <div style={{ p
+          <div style={{ padding: '0 16px 40px' }}>
+            <EntryFlow
+              event={event}
+              onClose={() => { setVoteOpen(false); setVoteInitSide(undefined) }}
+              onConfirm={handleConfirm}
+              initialSide={voteInitSide}
+            />
+          </div>
+        </BottomSheet>
+      )}
+
+      {celeb && (
+        <PurchaseCelebration
+          side={celeb.side}
+          amount={celeb.amount}
+          cobro={celeb.cobro}
+          currency={event.currency}
+          onDone={() => setCeleb(null)}
+        />
+      )}
+    </div>
+  )
+}

@@ -227,4 +227,68 @@ function AppContent() {
       showSuccess('¡Cuenta confirmada! Bienvenid@ a b1n0')
       window.history.replaceState(null, '', window.location.pathname)
     }
-  }, [session]) // eslint-disable-line react-hooks/exhaustive-d
+  }, [session]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Load platform rates on mount to sync client-side pricing with DB config
+  useEffect(() => {
+    supabase.from('platform_config').select('key, value').then(({ data }) => {
+      if (!data) return
+      const map: Record<string, number> = {}
+      for (const r of data) map[r.key] = Number(r.value)
+      setPricingRates({
+        spreadLow: map.spread_low_pct !== undefined ? map.spread_low_pct / 100 : undefined,
+        spreadHigh: map.spread_high_pct !== undefined ? map.spread_high_pct / 100 : undefined,
+        feeRate: map.tx_fee_pct !== undefined ? map.tx_fee_pct / 100 : undefined,
+        feeFloor: map.fee_floor_pct !== undefined ? map.fee_floor_pct / 100 : undefined,
+        feeCeiling: map.fee_ceiling_pct !== undefined ? map.fee_ceiling_pct / 100 : undefined,
+        sellFeeRate: map.sell_fee_pct !== undefined ? map.sell_fee_pct / 100 : undefined,
+        depthThreshold: map.depth_threshold,
+      })
+    })
+  }, [])
+
+  if (loading) {
+    return (
+      <div style={{ height: '100dvh', background: 'var(--color-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ fontFamily: 'var(--font-body)', color: 'var(--b1n0-muted)', fontSize: '14px' }}>
+          Cargando...
+        </p>
+      </div>
+    )
+  }
+
+  if (session && profile?.mustChangePassword) return <ForceChangePassword />
+
+  return isDesktop ? <DesktopLayout /> : <MobileLayout />
+}
+
+export default function App() {
+  // Root-level ErrorBoundary catches anything outside the route tree
+  // (provider init crashes, theme bootstrap, etc.). Per-layout
+  // boundaries below catch route render crashes so the chrome stays.
+  return (
+    <ErrorBoundary>
+      <BrowserRouter>
+        <ThemeProvider>
+        <AuthProvider>
+          <ToastProvider>
+            <NowProvider>
+              <EventsProvider>
+                <VoteProvider>
+                  <NotificationProvider>
+                    <AuthModalProvider>
+                      <AppContent />
+                      <AuthModal />
+                      <InstallPrompt />
+                    </AuthModalProvider>
+                  </NotificationProvider>
+                </VoteProvider>
+              </EventsProvider>
+            </NowProvider>
+          </ToastProvider>
+        </AuthProvider>
+        </ThemeProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
+  )
+}

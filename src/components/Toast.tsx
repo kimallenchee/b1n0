@@ -158,4 +158,27 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: number) =
           justifyContent: 'center',
           width: 28,
           height: 28,
-          borderRadiu
+          borderRadius: 'var(--radius-md)',
+          background: meta.bg,
+          flexShrink: 0,
+        }}
+      >
+        <meta.Icon size={18} weight="fill" color={meta.color} />
+      </span>
+      <span
+        style={{
+          flex: 1,
+          fontFamily: 'var(--font-body)',
+          fontSize: 'var(--text-sm)',
+          fontWeight: 500,
+          color: 'var(--b1n0-text-1)',
+          letterSpacing: 'var(--tracking-tight)',
+          lineHeight: 1.35,
+        }}
+      >
+        {toast.message}
+      </span>
+      <X size={14} weight="bold" color="var(--b1n0-muted)" />
+    </button>
+  )
+}

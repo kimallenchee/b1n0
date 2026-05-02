@@ -323,4 +323,373 @@ function VoteCard({ p }: { p: UserPrediction }) {
             size={9}
             weight="bold"
             style={{
-              transform: commentsOpen ? 'rotate(180deg)' : 'rot
+              transform: commentsOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+              transition: 'transform var(--duration-fast) var(--ease-out)',
+            }}
+          />
+        </button>
+        {commentsOpen && (
+          <CommentFeed comments={p.event.comments ?? []} eventId={p.event.id} />
+        )}
+      </div>
+    </div>
+  )
+}
+
+/* ─── TxCard ───────────────────────────────────────────────────────
+   Phosphor-iconned, color-tinted by type, with running balance.
+   Includes admin/LP flows (lp_deposit, lp_return, fee_revenue, sweep,
+   skim) since those rows DO land in this user's ledger when they're
+   acting as an LP — without coverage here the destructure crashes.
+   ───────────────────────────────────────────────────────────────── */
+type TxType = Transaction['type'] | 'lp_deposit' | 'lp_return' | 'fee_revenue' | 'sweep' | 'skim'
+
+const txMeta: Record<TxType, { label: string; tint: string; Icon: PhosphorIcon }> = {
+  deposit:     { label: 'Depósito',    tint: 'var(--b1n0-si)',     Icon: ArrowDown },
+  withdraw:    { label: 'Retiro',      tint: 'var(--b1n0-gold)',   Icon: ArrowUp },
+  vote:        { label: 'Voto',        tint: 'var(--b1n0-muted)',  Icon: ChartBar },
+  win:         { label: 'Cobro',       tint: 'var(--b1n0-si)',     Icon: Trophy },
+  loss:        { label: 'Esta vez no', tint: 'var(--b1n0-muted)',  Icon: XCircle },
+  sell:        { label: 'Venta',       tint: '#C4B5FD',            Icon: ArrowUpRight },
+  refund:      { label: 'Reembolso',   tint: 'var(--b1n0-muted)',  Icon: ArrowCounterClockwise },
+  // LP / treasury flows — only show up when the user has admin/LP role
+  lp_deposit:  { label: 'Capital LP',  tint: '#6366f1',            Icon: Bank },
+  lp_return:   { label: 'Retiro LP',   tint: '#6366f1',            Icon: ArrowsClockwise },
+  fee_revenue: { label: 'Comisión',    tint: 'var(--b1n0-muted)',  Icon: Receipt },
+  sweep:       { label: 'Barrido',     tint: 'var(--b1n0-muted)',  Icon: Broom },
+  skim:        { label: 'Resolución',  tint: 'var(--b1n0-muted)',  Icon: Coins },
+}
+
+const FALLBACK_META = { label: 'Movimiento', tint: 'var(--b1n0-muted)', Icon: Receipt }
+
+function TxCard({ tx }: { tx: TxRow }) {
+  const { label, tint, Icon } = txMeta[tx.type as TxType] ?? FALLBACK_META
+  const positive = tx.amount > 0
+  const isMoneyMovement = tx.type === 'deposit' || tx.type === 'withdraw' || tx.type === 'win'
+
+  return (
+    <div
+      style={{
+        background: 'var(--b1n0-card)',
+        border: '1px solid var(--b1n0-border)',
+        borderRadius: 'var(--radius-lg)',
+        padding: '12px 14px',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '12px',
+      }}
+    >
+      {/* Icon disc — tinted background, tinted glyph */}
+      <div
+        style={{
+          width: 34, height: 34, flexShrink: 0,
+          borderRadius: '50%',
+          background: `color-mix(in srgb, ${tint} 14%, transparent)`,
+          color: tint,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}
+      >
+        <Icon size={15} weight="regular" />
+      </div>
+
+      {/* Label + sub-label */}
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <p
+          style={{
+            fontFamily: F, fontSize: '10px', fontWeight: 700, color: 'var(--b1n0-muted)',
+            textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px',
+          }}
+        >
+          {label}
+        </p>
+        <p
+          style={{
+            fontFamily: F, fontSize: '13px', color: 'var(--b1n0-text-1)',
+            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+          }}
+          title={tx.label}
+        >
+          {truncateUuids(tx.label)}
+        </p>
+      </div>
+
+      {/* Amount + balance after */}
+      <div style={{ textAlign: 'right', flexShrink: 0 }}>
+        <p
+          style={{
+            fontFamily: N, fontWeight: 700, fontSize: '14px',
+            color: isMoneyMovement && positive ? 'var(--b1n0-si)' : 'var(--b1n0-text-1)',
+            letterSpacing: '-0.3px',
+            fontVariantNumeric: 'tabular-nums',
+          }}
+        >
+          {positive && isMoneyMovement ? '+' : positive ? '' : '−'}${Math.abs(tx.amount).toFixed(2)}
+        </p>
+        {typeof tx.balanceAfter === 'number' && (
+          <p
+            style={{
+              fontFamily: N, fontSize: '10px', color: 'var(--b1n0-muted)',
+              marginTop: '2px', fontVariantNumeric: 'tabular-nums',
+            }}
+          >
+            Saldo ${tx.balanceAfter.toFixed(2)}
+          </p>
+        )}
+      </div>
+    </div>
+  )
+}
+
+type VoteFilter = 'todos' | 'active' | 'won' | 'lost' | 'sold'
+
+export function Historial() {
+  usePageMeta({
+    title: 'Historial · b1n0',
+    description: 'Todos tus llamados resueltos en b1n0. Mirá tu trayectoria completa.',
+  })
+  const { session } = useAuth()
+  const { predictions, refreshPredictions } = useVotes()
+
+  useEffect(() => { refreshPredictions() }, [])
+
+  const [tab, setTab] = useState<'votos' | 'movimientos'>('votos')
+  const [votesRange, setVotesRange] = useState<DateRange>({ from: '', to: '' })
+  const [txRange, setTxRange] = useState<DateRange>({ from: '', to: '' })
+  const [voteFilter, setVoteFilter] = useState<VoteFilter>('todos')
+  const [ledgerTx, setLedgerTx] = useState<TxRow[]>([])
+
+  // Fetch from balance_ledger — now also captures running balance
+  useEffect(() => {
+    if (!session?.user?.id) return
+    supabase
+      .from('balance_ledger')
+      .select('id, type, amount, balance_after, label, created_at')
+      .eq('user_id', session.user.id)
+      .order('created_at', { ascending: false })
+      .limit(200)
+      .then(({ data }) => {
+        if (!data) return
+        setLedgerTx(data.map((r: Record<string, unknown>) => ({
+          id: r.id as string,
+          type: r.type as Transaction['type'],
+          amount: Number(r.amount),
+          label: r.label as string,
+          date: (r.created_at as string).split('T')[0],
+          balanceAfter: r.balance_after !== null && r.balance_after !== undefined ? Number(r.balance_after) : undefined,
+        })))
+      })
+  }, [session?.user?.id, tab])
+
+  const filteredVotes = predictions
+    .filter((p) => withinDateRange(p.createdAt, votesRange))
+    .filter((p) => voteFilter === 'todos' || p.status === voteFilter)
+
+  const active = filteredVotes.filter((p) => p.status === 'active')
+  const prior = filteredVotes.filter((p) => p.status !== 'active')
+
+  const allTx = ledgerTx.filter((t) => withinDateRange(t.date, txRange))
+
+  // Group transactions by date with daily net
+  const txByDate: { date: string; net: number; items: TxRow[] }[] = []
+  for (const tx of allTx) {
+    const last = txByDate[txByDate.length - 1]
+    if (last && last.date === tx.date) {
+      last.items.push(tx)
+      // Only count cash-impact movements towards the daily net
+      if (tx.type === 'deposit' || tx.type === 'withdraw' || tx.type === 'win') last.net += tx.amount
+    } else {
+      txByDate.push({
+        date: tx.date,
+        items: [tx],
+        net: tx.type === 'deposit' || tx.type === 'withdraw' || tx.type === 'win' ? tx.amount : 0,
+      })
+    }
+  }
+
+  // Aggregate stats for Mis Votos summary strip
+  const totalStaked = filteredVotes.reduce((sum, p) => sum + p.amount, 0)
+  const totalWon = filteredVotes.filter((p) => p.status === 'won').reduce((sum, p) => sum + p.potentialCobro, 0)
+  const correctCount = filteredVotes.filter((p) => p.status === 'won').length
+  const resolvedCount = filteredVotes.filter((p) => p.status !== 'active').length
+  const accuracy = resolvedCount > 0 ? Math.round((correctCount / resolvedCount) * 100) : 0
+
+  return (
+    <div className="feed-scroll" style={{ height: '100%', padding: '8px 16px 24px' }}>
+      <div style={{ padding: '20px 0 16px' }}>
+        <p style={{ fontFamily: D, fontWeight: 800, fontSize: '22px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.5px', fontVariantNumeric: 'tabular-nums' }}>
+          Historial
+        </p>
+      </div>
+
+      {/* Tab switcher */}
+      <div style={{ display: 'flex', background: 'var(--b1n0-card)', borderRadius: 'var(--radius-lg)', padding: '3px', marginBottom: '12px' }}>
+        {(['votos', 'movimientos'] as const).map((t) => (
+          <button
+            key={t}
+            onClick={() => setTab(t)}
+            style={{
+              flex: 1, padding: '9px', borderRadius: '9px', border: 'none', cursor: 'pointer',
+              fontFamily: F, fontWeight: 600, fontSize: '13px',
+              background: tab === t ? 'var(--b1n0-text-1)' : 'transparent',
+              color: tab === t ? 'var(--b1n0-bg)' : 'var(--b1n0-muted)',
+              transition: 'background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out)',
+            }}
+          >
+            {t === 'votos' ? 'Mis Votos' : 'Movimientos'}
+          </button>
+        ))}
+      </div>
+
+      {/* Summary strip — different shape per tab */}
+      {tab === 'votos' && filteredVotes.length > 0 && (
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr 1fr',
+            gap: '8px',
+            marginBottom: '12px',
+            padding: '12px 14px',
+            background: 'var(--b1n0-card)',
+            border: '1px solid var(--b1n0-border)',
+            borderRadius: 'var(--radius-lg)',
+          }}
+        >
+          <SummaryStat label="Entrada" value={`$${totalStaked.toFixed(0)}`} />
+          <SummaryStat label="Cobrado" value={`$${totalWon.toFixed(0)}`} accent="var(--b1n0-si)" />
+          <SummaryStat label="Acierto" value={resolvedCount > 0 ? `${accuracy}%` : '—'} />
+        </div>
+      )}
+
+      {/* Date range + filter chips row */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', gap: '8px' }}>
+        {tab === 'votos' ? (
+          <div style={{ display: 'flex', gap: '5px', overflowX: 'auto', scrollbarWidth: 'none' }}>
+            {([['todos', 'Todos'], ['active', 'Activos'], ['won', 'Ganados'], ['lost', 'Perdidos'], ['sold', 'Vendidos']] as [VoteFilter, string][]).map(([f, label]) => (
+              <button
+                key={f}
+                onClick={() => setVoteFilter(f)}
+                style={{
+                  padding: '5px 11px', borderRadius: 'var(--radius-pill)',
+                  border: voteFilter === f ? 'none' : '1px solid var(--b1n0-border)',
+                  background: voteFilter === f ? 'var(--b1n0-text-1)' : 'var(--b1n0-card)',
+                  color: voteFilter === f ? 'var(--b1n0-bg)' : 'var(--b1n0-muted)',
+                  fontFamily: F, fontWeight: 600, fontSize: '11px',
+                  cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0,
+                  transition: 'background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out)',
+                }}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        ) : <div />}
+        <div style={{ flexShrink: 0 }}>
+          {tab === 'votos'
+            ? <DateRangePicker value={votesRange} onChange={setVotesRange} />
+            : <DateRangePicker value={txRange} onChange={setTxRange} />
+          }
+        </div>
+      </div>
+
+      {tab === 'votos' ? (
+        <>
+          {active.length > 0 && voteFilter !== 'won' && voteFilter !== 'lost' && (
+            <div style={{ marginBottom: '20px' }}>
+              <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-muted)', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: '10px' }}>
+                Activos · {active.length}
+              </p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {active.map((p) => <VoteCard key={p.id} p={p} />)}
+              </div>
+            </div>
+          )}
+          {prior.length > 0 && voteFilter !== 'active' && (
+            <div>
+              <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-muted)', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: '10px' }}>
+                Anteriores · {prior.length}
+              </p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {prior.map((p) => <VoteCard key={p.id} p={p} />)}
+              </div>
+            </div>
+          )}
+          {active.length === 0 && prior.length === 0 && (
+            <div style={{ textAlign: 'center', marginTop: '48px', padding: '0 24px' }}>
+              <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)', marginBottom: '6px' }}>
+                Todavía no tenés votos en este rango.
+              </p>
+              <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)' }}>
+                Participá en el feed y tus votos aparecen acá.
+              </p>
+            </div>
+          )}
+        </>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+          {txByDate.map(({ date, items, net }) => (
+            <div key={date}>
+              <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '8px' }}>
+                <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 700, color: 'var(--b1n0-muted)', letterSpacing: '0.5px', textTransform: 'uppercase' }}>
+                  {formatDateHeader(date)}
+                </p>
+                {net !== 0 && (
+                  <p
+                    style={{
+                      fontFamily: N, fontSize: '11px', fontWeight: 600,
+                      color: net > 0 ? 'var(--b1n0-si)' : 'var(--b1n0-muted)',
+                      fontVariantNumeric: 'tabular-nums',
+                    }}
+                  >
+                    Neto {net >= 0 ? '+' : '−'}${Math.abs(net).toFixed(2)}
+                  </p>
+                )}
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                {items.map((tx) => <TxCard key={tx.id} tx={tx} />)}
+              </div>
+            </div>
+          ))}
+          {allTx.length === 0 && (
+            <div style={{ textAlign: 'center', marginTop: '48px', padding: '0 24px' }}>
+              <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)', marginBottom: '6px' }}>
+                Sin movimientos en este rango.
+              </p>
+              <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)' }}>
+                Tus depósitos, retiros y cobros aparecen acá.
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+/* ─── SummaryStat ──────────────────────────────────────────────────
+   Mini stat for the votos summary strip. Three across.
+   ───────────────────────────────────────────────────────────────── */
+function SummaryStat({ label, value, accent }: { label: string; value: string; accent?: string }) {
+  return (
+    <div>
+      <p
+        style={{
+          fontFamily: F, fontSize: '10px', fontWeight: 700,
+          color: 'var(--b1n0-muted)', textTransform: 'uppercase',
+          letterSpacing: '0.5px', marginBottom: '4px',
+        }}
+      >
+        {label}
+      </p>
+      <p
+        style={{
+          fontFamily: N, fontWeight: 700, fontSize: '16px',
+          color: accent ?? 'var(--b1n0-text-1)',
+          letterSpacing: '-0.4px',
+          fontVariantNumeric: 'tabular-nums',
+        }}
+      >
+        {value}
+      </p>
+    </div>
+  )
+}
