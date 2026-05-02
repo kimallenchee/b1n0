@@ -812,4 +812,487 @@ export function Perfil() {
               </p>
               <div style={{ display: 'flex', gap: '6px', background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '4px' }}>
                 {([
-         
+                  { value: 'dark', label: 'Oscuro' },
+                  { value: 'light', label: 'Claro' },
+                  { value: 'system', label: 'Sistema' },
+                ] as { value: ThemeMode; label: string }[]).map(opt => {
+                  const active = themeMode === opt.value
+                  return (
+                    <button
+                      key={opt.value}
+                      onClick={() => setThemeMode(opt.value)}
+                      style={{
+                        flex: 1,
+                        padding: '9px 10px',
+                        borderRadius: 'var(--radius-lg)',
+                        border: 'none',
+                        background: active ? 'var(--b1n0-si)' : 'transparent',
+                        color: active ? 'var(--b1n0-on-accent)' : 'var(--b1n0-text-2)',
+                        fontFamily: F,
+                        fontWeight: active ? 700 : 500,
+                        fontSize: '13px',
+                        cursor: 'pointer',
+                        transition: 'background 0.15s, color 0.15s',
+                      }}
+                    >
+                      {opt.label}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Soporte — collapsible */}
+          <SettingsRow
+            icon={<Lifebuoy size={16} weight="regular" />}
+            label="Soporte"
+            iconBg="rgba(248, 113, 113, 0.14)"
+            iconColor="var(--b1n0-no)"
+            open={soporteOpen}
+            onToggle={() => setSoporteOpen((o) => !o)}
+            noBottomBorder
+          />
+          {soporteOpen && (
+            <>
+              <LinkRow label="Centro de ayuda" />
+              <LinkRow label="Reportar un problema" />
+              <LinkRow label="Términos y condiciones" />
+            </>
+          )}
+
+        </div>
+
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginTop: '24px' }}>
+          <a href="/terminos" style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', textDecoration: 'underline' }}>Términos</a>
+          <a href="/privacidad" style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', textDecoration: 'underline' }}>Privacidad</a>
+        </div>
+        <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', textAlign: 'center', marginTop: '8px', marginBottom: '16px' }}>
+          b1n0 v0.1.0 · Hecho en Guatemala
+        </p>
+      </div>
+    </div>
+  )
+}
+
+/* ───────────────────────────────────────────────────────────────────────
+   Helper components
+   Kept in this file rather than spun out because they're tightly
+   coupled to Perfil's specific data shape and aren't used elsewhere.
+   ─────────────────────────────────────────────────────────────────── */
+
+/**
+ * TierBadge — small pill that sits next to the user's name showing
+ * their current verification tier. Color-keyed: gray → teal → gold
+ * for tiers 1 → 2 → 3.
+ */
+function TierBadge({ tier }: { tier: number }) {
+  const meta =
+    tier >= 3
+      ? { color: 'var(--b1n0-gold)', bg: 'rgba(255, 212, 116, 0.15)', label: 'N3' }
+      : tier === 2
+        ? { color: 'var(--b1n0-si)', bg: 'var(--b1n0-si-bg)', label: 'N2' }
+        : { color: 'var(--b1n0-muted)', bg: 'var(--b1n0-surface)', label: 'N1' }
+  return (
+    <span
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '3px',
+        fontFamily: 'var(--font-num)',
+        fontWeight: 700,
+        fontSize: 'var(--text-2xs)',
+        color: meta.color,
+        background: meta.bg,
+        padding: '2px 8px',
+        borderRadius: 'var(--radius-pill)',
+        letterSpacing: 'var(--tracking-caps)',
+      }}
+    >
+      <ShieldCheck size={10} weight="fill" />
+      {meta.label}
+    </span>
+  )
+}
+
+/**
+ * StatCard — quick-stat box with a Phosphor icon, animated number,
+ * label, and a colored accent hairline at the bottom.
+ */
+function StatCard({
+  icon,
+  label,
+  value,
+  suffix,
+  accent,
+}: {
+  icon: React.ReactNode
+  label: string
+  value: number
+  suffix?: string
+  accent: string
+}) {
+  return (
+    <div
+      style={{
+        background: 'var(--b1n0-card)',
+        border: '1px solid var(--b1n0-border)',
+        borderRadius: 'var(--radius-lg)',
+        padding: 'var(--space-4) var(--space-3) var(--space-5)',
+        textAlign: 'center',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-1)', color: accent, marginBottom: 'var(--space-2)' }}>
+        {icon}
+      </div>
+      <AnimatedNumber
+        value={value}
+        decimals={0}
+        suffix={suffix}
+        duration={650}
+        style={{
+          display: 'block',
+          fontFamily: 'var(--font-display)',
+          fontWeight: 800,
+          fontSize: 'var(--text-xl)',
+          color: 'var(--b1n0-text-1)',
+          letterSpacing: 'var(--tracking-tight)',
+          lineHeight: 1,
+        }}
+      />
+      <p
+        style={{
+          fontFamily: 'var(--font-body)',
+          fontSize: 'var(--text-2xs)',
+          fontWeight: 700,
+          color: 'var(--b1n0-muted)',
+          marginTop: 'var(--space-2)',
+          textTransform: 'uppercase',
+          letterSpacing: 'var(--tracking-caps)',
+        }}
+      >
+        {label}
+      </p>
+      <span
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: 28,
+          height: 3,
+          borderRadius: '2px 2px 0 0',
+          background: accent,
+        }}
+      />
+    </div>
+  )
+}
+
+/**
+ * PortfolioCard — Mi Portafolio CTA with content preview. Shows the
+ * count of active positions, total positions, and a tiny SplitBar
+ * representing the user's overall won/lost ratio. If the user has no
+ * predictions yet, shows a friendly "haz tu primer llamado" prompt
+ * instead of empty stats.
+ */
+function PortfolioCard({
+  activeCount,
+  totalCount,
+  onClick,
+}: {
+  activeCount: number
+  totalCount: number
+  wonCount?: number  // kept for backward-compat with the call site
+  onClick: () => void
+}) {
+  const hasAny = totalCount > 0
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        width: '100%',
+        background: 'var(--b1n0-card)',
+        border: '1px solid var(--b1n0-border)',
+        borderLeft: '3px solid var(--b1n0-si)',
+        borderRadius: 'var(--radius-lg)',
+        padding: 'var(--space-5) var(--space-6)',
+        marginBottom: 'var(--space-5)',
+        cursor: 'pointer',
+        textAlign: 'left',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 'var(--space-4)',
+        transition: 'border-color var(--duration-base) var(--ease-out)',
+      }}
+      onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--b1n0-card-hover-border)')}
+      onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--b1n0-border)')}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 'var(--space-3)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+          <span
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 32,
+              height: 32,
+              borderRadius: 'var(--radius-md)',
+              background: 'var(--b1n0-si-bg)',
+              color: 'var(--b1n0-si)',
+            }}
+          >
+            <TrendUp size={18} weight="fill" />
+          </span>
+          <div>
+            <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 'var(--text-base)', color: 'var(--b1n0-text-1)', letterSpacing: 'var(--tracking-tight)' }}>
+              Mi Portafolio
+            </p>
+            <p style={{ fontFamily: 'var(--font-body)', fontSize: 'var(--text-xs)', color: 'var(--b1n0-muted)' }}>
+              {hasAny
+                ? `${activeCount} activa${activeCount !== 1 ? 's' : ''} · ${totalCount} en total`
+                : 'Posiciones, rendimiento e historial'}
+            </p>
+          </div>
+        </div>
+        <ArrowRight size={16} weight="bold" color="var(--b1n0-si)" />
+      </div>
+    </button>
+  )
+}
+
+/**
+ * FriendsEmpty — illustration + invite CTA for the "no friends yet" state.
+ * Replaces the bare "Todavía no tenés amigos" italic line. The Share
+ * button copies the user's referral link to the clipboard.
+ */
+function FriendsEmpty({ userId }: { userId?: string }) {
+  const [copied, setCopied] = useState(false)
+  const inviteUrl = userId
+    ? `https://www.b1n0.com/?invite=${userId.slice(0, 8)}`
+    : 'https://www.b1n0.com'
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        textAlign: 'center',
+        padding: 'var(--space-7) var(--space-3) var(--space-3)',
+        gap: 'var(--space-3)',
+      }}
+    >
+      <div
+        style={{
+          width: 56,
+          height: 56,
+          borderRadius: 'var(--radius-pill)',
+          background: 'var(--b1n0-surface)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'var(--b1n0-muted)',
+        }}
+      >
+        <UsersIcon size={26} weight="regular" />
+      </div>
+      <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 'var(--text-base)', color: 'var(--b1n0-text-1)' }}>
+        Sin amigos en b1n0 todavía
+      </p>
+      <p style={{ fontFamily: 'var(--font-body)', fontSize: 'var(--text-sm)', color: 'var(--b1n0-muted)', maxWidth: 280, lineHeight: 1.5 }}>
+        Invitá a tus amigos. Es más divertido cuando alguien más también está poniendo su opinión.
+      </p>
+      <button
+        onClick={async () => {
+          try {
+            await navigator.clipboard.writeText(inviteUrl)
+            setCopied(true)
+            setTimeout(() => setCopied(false), 1800)
+          } catch {
+            /* clipboard may be denied — silently no-op */
+          }
+        }}
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 'var(--space-2)',
+          padding: 'var(--space-3) var(--space-5)',
+          background: 'var(--b1n0-text-1)',
+          color: 'var(--b1n0-bg)',
+          border: 'none',
+          borderRadius: 'var(--radius-pill)',
+          fontFamily: 'var(--font-body)',
+          fontWeight: 600,
+          fontSize: 'var(--text-sm)',
+          cursor: 'pointer',
+          marginTop: 'var(--space-2)',
+        }}
+      >
+        <ShareNetwork size={14} weight="bold" />
+        {copied ? '¡Copiado!' : 'Copiar invitación'}
+      </button>
+    </div>
+  )
+}
+
+/**
+ * TierProgressCard — only renders when the user is below tier 3. Shows
+ * a slim progress strip with their position relative to max tier and
+ * a CTA to upgrade via KYC.
+ */
+function TierProgressCard({
+  currentTier,
+  onUpgrade,
+}: {
+  currentTier: number
+  onUpgrade: () => void
+}) {
+  const nextTier = Math.min(currentTier + 1, 3)
+  const progressPct = ((currentTier - 1) / 2) * 100  // 0 → 50 → 100
+  const limits: Record<number, number> = { 1: 50, 2: 250, 3: 1000 }
+  return (
+    <div
+      style={{
+        marginTop: 'var(--space-3)',
+        background: 'var(--b1n0-card)',
+        border: '1px solid var(--b1n0-border)',
+        borderRadius: 'var(--radius-lg)',
+        padding: 'var(--space-5) var(--space-6)',
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 'var(--space-3)', marginBottom: 'var(--space-4)' }}>
+        <div>
+          <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 'var(--text-base)', color: 'var(--b1n0-text-1)', letterSpacing: 'var(--tracking-tight)' }}>
+            Subí a Nivel {nextTier}
+          </p>
+          <p style={{ fontFamily: 'var(--font-body)', fontSize: 'var(--text-xs)', color: 'var(--b1n0-muted)', marginTop: '2px' }}>
+            Llamá hasta <span style={{ fontFamily: 'var(--font-num)', color: 'var(--b1n0-text-1)', fontWeight: 600, fontVariantNumeric: 'tabular-nums' }}>${limits[nextTier]}</span> por evento
+          </p>
+        </div>
+        <button
+          onClick={onUpgrade}
+          style={{
+            padding: 'var(--space-2) var(--space-4)',
+            background: 'var(--b1n0-si)',
+            color: 'var(--b1n0-on-accent)',
+            border: 'none',
+            borderRadius: 'var(--radius-pill)',
+            fontFamily: 'var(--font-body)',
+            fontWeight: 600,
+            fontSize: 'var(--text-xs)',
+            cursor: 'pointer',
+            flexShrink: 0,
+          }}
+        >
+          Verificar
+        </button>
+      </div>
+      {/* Progress strip — three steps (1, 2, 3), filled to currentTier */}
+      <div style={{ position: 'relative', height: 6, background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-pill)', overflow: 'hidden' }}>
+        <span
+          style={{
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            bottom: 0,
+            width: `${progressPct}%`,
+            background: 'linear-gradient(90deg, var(--b1n0-muted) 0%, var(--b1n0-si) 50%, var(--b1n0-gold) 100%)',
+            transition: 'width 1s var(--ease-out)',
+          }}
+        />
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 'var(--space-2)' }}>
+        {[1, 2, 3].map((t) => (
+          <span
+            key={t}
+            style={{
+              fontFamily: 'var(--font-num)',
+              fontSize: 'var(--text-2xs)',
+              fontWeight: 700,
+              color: t <= currentTier ? 'var(--b1n0-text-1)' : 'var(--b1n0-muted)',
+              fontVariantNumeric: 'tabular-nums',
+              letterSpacing: 'var(--tracking-caps)',
+            }}
+          >
+            N{t}
+          </span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/**
+ * SettingsRow — collapsible header for the Configuración card. Each
+ * row gets a colored Phosphor icon in a tinted square, the label, and
+ * a chevron that rotates when the section is open.
+ */
+function SettingsRow({
+  icon,
+  label,
+  iconBg,
+  iconColor,
+  open,
+  onToggle,
+  noBottomBorder,
+}: {
+  icon: React.ReactNode
+  label: string
+  iconBg: string
+  iconColor: string
+  open: boolean
+  onToggle: () => void
+  noBottomBorder?: boolean
+}) {
+  return (
+    <button
+      onClick={onToggle}
+      aria-expanded={open}
+      style={{
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 'var(--space-3)',
+        padding: 'var(--space-4) 0',
+        background: 'none',
+        border: 'none',
+        borderBottom: noBottomBorder ? 'none' : '1px solid var(--b1n0-border)',
+        cursor: 'pointer',
+        textAlign: 'left',
+      }}
+    >
+      <span
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: 28,
+          height: 28,
+          borderRadius: 'var(--radius-md)',
+          background: iconBg,
+          color: iconColor,
+          flexShrink: 0,
+        }}
+      >
+        {icon}
+      </span>
+      <span style={{ flex: 1, fontFamily: 'var(--font-body)', fontSize: 'var(--text-sm)', fontWeight: 500, color: 'var(--b1n0-text-1)' }}>
+        {label}
+      </span>
+      <span
+        aria-hidden
+        style={{
+          fontFamily: 'var(--font-body)',
+          fontSize: 'var(--text-md)',
+          color: 'var(--b1n0-muted)',
+          transform: open ? 'rotate(90deg)' : 'none',
+          transition: 'transform var(--duration-base) var(--ease-out)',
+        }}
+      >
+        ›
+      </span>
+    </button>
+  )
+}

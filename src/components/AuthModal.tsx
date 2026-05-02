@@ -347,4 +347,193 @@ export function AuthModal() {
               type={loginShowPw ? 'text' : 'password'}
               placeholder="Contraseña"
               value={loginPw}
-              onChange={(v) => 
+              onChange={(v) => setLoginPw(v)}
+              required
+              minLength={6}
+              autoComplete="current-password"
+              trailing={
+                <button
+                  type="button"
+                  onClick={() => setLoginShowPw((v) => !v)}
+                  aria-label={loginShowPw ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: 'var(--space-1)',
+                    color: 'var(--b1n0-muted)',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  {loginShowPw ? <EyeSlash size={16} weight="regular" /> : <Eye size={16} weight="regular" />}
+                </button>
+              }
+            />
+
+            {/* Forgot password link — centered for symmetry with the
+                rest of the centered chrome. */}
+            <a
+              href="/auth?recover=1"
+              onClick={(e) => {
+                e.preventDefault()
+                closeAuth()
+                window.location.href = '/auth?recover=1'
+              }}
+              style={{
+                fontFamily: F,
+                fontSize: 'var(--text-xs)',
+                fontWeight: 500,
+                color: 'var(--b1n0-muted)',
+                textDecoration: 'none',
+                alignSelf: 'center',
+                padding: '2px 0',
+                marginTop: 'calc(var(--space-1) * -1)',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--b1n0-text-1)')}
+              onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--b1n0-muted)')}
+            >
+              ¿Olvidaste tu contraseña?
+            </a>
+
+            {error && (
+              <p
+                style={{
+                  fontFamily: F,
+                  fontSize: 'var(--text-xs)',
+                  color: 'var(--b1n0-no)',
+                  textAlign: 'center',
+                  background: 'var(--b1n0-no-bg)',
+                  padding: 'var(--space-2) var(--space-3)',
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid var(--b1n0-no-border)',
+                }}
+              >
+                {error}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              style={{
+                width: '100%',
+                padding: 'var(--space-4)',
+                borderRadius: 'var(--radius-md)',
+                border: 'none',
+                background: loading ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-si)',
+                color: 'var(--b1n0-on-accent)',
+                fontFamily: F,
+                fontWeight: 700,
+                fontSize: 'var(--text-base)',
+                letterSpacing: 'var(--tracking-tight)',
+                cursor: loading ? 'default' : 'pointer',
+                marginTop: 'var(--space-2)',
+                transition: 'background var(--duration-fast) var(--ease-out)',
+              }}
+              onMouseEnter={(e) => {
+                if (!loading) e.currentTarget.style.background = 'var(--b1n0-si-hover)'
+              }}
+              onMouseLeave={(e) => {
+                if (!loading) e.currentTarget.style.background = 'var(--b1n0-si)'
+              }}
+            >
+              {loading ? 'Entrando…' : 'Entrar'}
+            </button>
+          </form>
+        )}
+
+        {/* Signup */}
+        {tab === 'signup' && (
+          <form onSubmit={handleSignup} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <input placeholder="Nombre *" value={form.firstName} onChange={e => setField('firstName', e.target.value)} style={{ ...inputStyle, flex: 1 }} />
+              <input placeholder="Apellidos *" value={form.lastName} onChange={e => setField('lastName', e.target.value)} style={{ ...inputStyle, flex: 1 }} />
+            </div>
+            <input placeholder="Nombre de usuario *" value={form.username} onChange={e => setField('username', e.target.value)} style={inputStyle} />
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <select value={form.country} onChange={e => setField('country', e.target.value)} style={{ ...inputStyle, flex: 1 }}>
+                {COUNTRIES.map(c => <option key={c.code} value={c.code}>{c.name}</option>)}
+              </select>
+              <input type="date" placeholder="Fecha nacimiento *" value={form.dob} onChange={e => setField('dob', e.target.value)} style={{ ...inputStyle, flex: 1 }} />
+            </div>
+            <input placeholder="Dirección *" value={form.addr1} onChange={e => setField('addr1', e.target.value)} style={inputStyle} />
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <input placeholder="Ciudad *" value={form.city} onChange={e => setField('city', e.target.value)} style={{ ...inputStyle, flex: 1 }} />
+              <input placeholder="Depto/Estado *" value={form.state} onChange={e => setField('state', e.target.value)} style={{ ...inputStyle, flex: 1 }} />
+            </div>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <span style={{ ...inputStyle, width: '70px', textAlign: 'center', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--b1n0-muted)', fontSize: '13px' }}>{form.phoneCode}</span>
+              <input placeholder="Teléfono *" value={form.phone} onChange={e => setField('phone', e.target.value)} style={{ ...inputStyle, flex: 1 }} />
+            </div>
+            <input type="email" placeholder="Correo electrónico *" value={form.email} onChange={e => setField('email', e.target.value)} style={inputStyle} />
+            <input type="email" placeholder="Confirmar correo *" value={form.emailConfirm} onChange={e => setField('emailConfirm', e.target.value)} style={inputStyle} />
+            <input type="password" placeholder="Contraseña *" value={form.password} onChange={e => setField('password', e.target.value)} style={inputStyle} />
+            <input type="password" placeholder="Confirmar contraseña *" value={form.passwordConfirm} onChange={e => setField('passwordConfirm', e.target.value)} style={inputStyle} />
+            {error && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', textAlign: 'center' }}>{error}</p>}
+            {touched.firstName && Object.keys(errors).length > 0 && (
+              <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-no)', lineHeight: 1.4 }}>
+                {Object.values(errors).slice(0, 3).join(' · ')}
+              </p>
+            )}
+            <button type="submit" disabled={loading} style={{ width: '100%', padding: '13px', borderRadius: 'var(--radius-lg)', border: 'none', background: loading ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)', fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: loading ? 'default' : 'pointer' }}>
+              {loading ? 'Creando cuenta...' : 'Crear cuenta'}
+            </button>
+          </form>
+        )}
+
+        {/* Footer — small print + tab-switch animation keyframe */}
+        <p
+          style={{
+            marginTop: 'var(--space-5)',
+            fontFamily: F,
+            fontSize: 'var(--text-2xs)',
+            color: 'var(--b1n0-muted)',
+            textAlign: 'center',
+            lineHeight: 1.5,
+          }}
+        >
+          Al continuar, aceptás los{' '}
+          <a
+            href="/terminos"
+            onClick={(e) => {
+              e.preventDefault()
+              closeAuth()
+              window.location.href = '/terminos'
+            }}
+            style={{ color: 'var(--b1n0-text-2)', textDecoration: 'none', fontWeight: 500 }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--b1n0-text-1)')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--b1n0-text-2)')}
+          >
+            Términos
+          </a>
+          {' y '}
+          <a
+            href="/privacidad"
+            onClick={(e) => {
+              e.preventDefault()
+              closeAuth()
+              window.location.href = '/privacidad'
+            }}
+            style={{ color: 'var(--b1n0-text-2)', textDecoration: 'none', fontWeight: 500 }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--b1n0-text-1)')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--b1n0-text-2)')}
+          >
+            Privacidad
+          </a>
+          .
+        </p>
+
+        {/* Tab-swap micro-motion. Form contents shift a few px on tab
+            change so the screen feels like a real product, not a swap. */}
+        <style>{`
+          @keyframes authSlideIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to   { opacity: 1; transform: translateY(0); }
+          }
+        `}</style>
+      </div>
+    </div>,
+    document.body
+  )
+}
