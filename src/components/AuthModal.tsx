@@ -57,6 +57,127 @@ function validate(f: SignupForm) {
   return e
 }
 
+/**
+ * IconInput — styled text/email/password input with a leading Phosphor
+ * icon, an optional trailing slot (used for the eye-toggle on password
+ * fields), and a hairline border that brightens on focus. The whole
+ * row is a flex container so the icon and trailing element vertically
+ * center next to the input itself.
+ */
+function IconInput({
+  icon,
+  type,
+  placeholder,
+  value,
+  onChange,
+  required,
+  minLength,
+  autoComplete,
+  trailing,
+}: {
+  icon: React.ReactNode
+  type: string
+  placeholder: string
+  value: string
+  onChange: (v: string) => void
+  required?: boolean
+  minLength?: number
+  autoComplete?: string
+  trailing?: React.ReactNode
+}) {
+  const [focus, setFocus] = useState(false)
+  return (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 'var(--space-2)',
+        padding: 'var(--space-3) var(--space-4)',
+        background: 'var(--b1n0-surface)',
+        border: `1px solid ${focus ? 'var(--b1n0-text-2)' : 'var(--b1n0-border)'}`,
+        borderRadius: 'var(--radius-md)',
+        transition: 'border-color var(--duration-fast) var(--ease-out)',
+      }}
+    >
+      <span style={{ display: 'flex', alignItems: 'center', color: 'var(--b1n0-muted)', flexShrink: 0 }}>
+        {icon}
+      </span>
+      <input
+        type={type}
+        placeholder={placeholder}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        onFocus={() => setFocus(true)}
+        onBlur={() => setFocus(false)}
+        required={required}
+        minLength={minLength}
+        autoComplete={autoComplete}
+        style={{
+          flex: 1,
+          background: 'none',
+          border: 'none',
+          outline: 'none',
+          fontFamily: F,
+          fontSize: 'var(--text-sm)',
+          color: 'var(--b1n0-text-1)',
+          minWidth: 0,
+        }}
+      />
+      {trailing}
+    </div>
+  )
+}
+
+/**
+ * OAuthButton — full-width button used for the "Continuar con Google /
+ * Apple" rows. Rendered as a quiet outline button so the primary
+ * action (email submit) stays the loudest element on the form.
+ */
+function OAuthButton({
+  label,
+  icon,
+  onClick,
+}: {
+  label: string
+  icon: React.ReactNode
+  onClick: () => void
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 'var(--space-2)',
+        width: '100%',
+        padding: 'var(--space-3) var(--space-4)',
+        background: 'var(--b1n0-surface)',
+        border: '1px solid var(--b1n0-border)',
+        borderRadius: 'var(--radius-md)',
+        cursor: 'pointer',
+        fontFamily: F,
+        fontWeight: 600,
+        fontSize: 'var(--text-sm)',
+        color: 'var(--b1n0-text-1)',
+        transition: 'border-color var(--duration-fast) var(--ease-out), background var(--duration-fast) var(--ease-out)',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.borderColor = 'var(--b1n0-text-2)'
+        e.currentTarget.style.background = 'var(--b1n0-card)'
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderColor = 'var(--b1n0-border)'
+        e.currentTarget.style.background = 'var(--b1n0-surface)'
+      }}
+    >
+      {icon}
+      {label}
+    </button>
+  )
+}
+
 export function AuthModal() {
   const { isOpen, closeAuth, initialTab } = useAuthModal()
   const { signIn, signUp, session } = useAuth()
