@@ -21,8 +21,11 @@ import { ImageResponse } from '@vercel/og'
  * response). The Node runtime works too but is slower.
  */
 
+// Note: defaulting to Node.js runtime — @vercel/og works there without
+// the Edge-runtime restrictions on bundled modules. Cold start is slightly
+// slower but the function still completes well under 1s for an OG image.
 export const config = {
-  runtime: 'edge',
+  runtime: 'nodejs',
 }
 
 interface EventRow {
