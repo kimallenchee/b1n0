@@ -370,7 +370,7 @@ export function AuthPage() {
         <div style={{ position: 'absolute', inset: 0, opacity: 0.04, backgroundImage: 'repeating-linear-gradient(45deg, var(--b1n0-si) 0, var(--b1n0-si) 1px, transparent 1px, transparent 20px)', pointerEvents: 'none' }} />
         <div style={{ maxWidth: '960px', margin: '0 auto', padding: '60px 0 50px', position: 'relative', zIndex: 1 }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '20px' }}>
-            <img src="/b1n0-logo.png" alt="B1N0" style={{ height: 'clamp(60px, 10vw, 90px)', objectFit: 'contain' }} />
+            <img src="/b1n0-logov2.png" alt="B1N0" style={{ height: 'clamp(60px, 10vw, 90px)', objectFit: 'contain' }} />
             <p style={{ fontFamily: F, fontSize: 'clamp(14px, 2.5vw, 18px)', color: 'var(--b1n0-text-2)', maxWidth: '520px', lineHeight: 1.6, margin: 0 }}>
               La plataforma de predicciones de Latinoamérica. Todo es 0 o 1 — <span style={{ color: 'var(--b1n0-si)', fontWeight: 600 }}>¿acertás o no?</span>
             </p>
@@ -436,7 +436,7 @@ export function AuthPage() {
 
         {/* Wordmark */}
         <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-          <img src="/b1n0-logo.png" alt="B1N0" style={{ height: '40px', objectFit: 'contain', marginBottom: '6px' }} />
+          <img src="/b1n0-logov2.png" alt="B1N0" style={{ height: '40px', objectFit: 'contain', marginBottom: '6px' }} />
           <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)' }}>Predicciones que importan</p>
         </div>
 

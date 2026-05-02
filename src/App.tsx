@@ -1,8 +1,7 @@
 import { useState, useEffect, lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { TopBar } from './components/layout/TopBar'
-import { BottomNav } from './components/layout/BottomNav'
-import { SideNav } from './components/layout/SideNav'
+import { DesktopDock } from './components/layout/DesktopDock'
 import { Inicio } from './pages/Inicio'
 import { MisVotos } from './pages/MisLlamados'
 import { Perfil } from './pages/Perfil'
@@ -61,15 +60,64 @@ const routes = (
 
 function DesktopLayout() {
   const { pathname } = useLocation()
+  const { profile } = useAuth()
   const isAdmin = pathname.startsWith('/admin')
+  // Hydrate the TopBar's `user` prop from the live profile so saldo
+  // and avatar always reflect the current session. Same shape mobile
+  // uses — no fork in the data path.
+  const user = profile
+    ? { ...mockUser, name: profile.name, tier: profile.tier, balance: profile.balance, totalPredictions: profile.totalPredictions, correctPredictions: profile.correctPredictions, totalCobrado: profile.totalCobrado, avatar: profile.avatarUrl ?? undefined }
+    : mockUser
+
   return (
-    <div style={{ display: 'flex', height: '100dvh', background: 'var(--color-bg)', overflow: 'hidden' }}>
-      <SideNav />
+    /*
+      Desktop chrome:
+        - Thin TopBar at the top — same component as mobile, with its
+          contents constrained to the same 1060px centered column as
+          the page below so the wordmark sits flush with the leading
+          edge of feed cards and the avatar sits flush with the right.
+        - No left rail. The full viewport width below the TopBar
+          belongs to content; the dock floats above its bottom edge.
+        - Bottom padding on `main` keeps the last card clear of the
+          dock at typical viewport heights.
+    */
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100dvh', background: 'var(--color-bg)', overflow: 'hidden' }}>
+      {/* TopBar — constrained to same column as the content below.
+          Border lives on the inner column rather than the outer
+          full-viewport wrapper, so the line stops where the content
+          stops instead of stretching to the screen edges. Cleaner
+          for wide monitors. */}
+      <div style={{ flexShrink: 0 }}>
+        <div
+          style={{
+            maxWidth: isAdmin ? 'none' : '1060px',
+            margin: '0 auto',
+            padding: isAdmin ? '0 var(--space-7)' : 0,
+            borderBottom: '1px solid var(--b1n0-border)',
+          }}
+        >
+          <TopBar user={user} />
+        </div>
+      </div>
       <main style={{ flex: 1, overflow: 'hidden', minWidth: 0, display: 'flex', justifyContent: isAdmin ? 'flex-start' : 'center' }}>
-        <div style={{ width: '100%', maxWidth: isAdmin ? 'none' : '1060px', height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+        <div
+          style={{
+            width: '100%',
+            maxWidth: isAdmin ? 'none' : '1060px',
+            height: '100%',
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
+            // Reserves clearance for the floating dock so the last
+            // feed card never sits underneath it. 88px = dock height
+            // (~52) + bottom offset (~24) + a little breathing room.
+            paddingBottom: isAdmin ? 0 : 88,
+          }}
+        >
           <ErrorBoundary>{routes}</ErrorBoundary>
         </div>
       </main>
+      <DesktopDock />
     </div>
   )
 }
@@ -97,7 +145,10 @@ function MobileLayout() {
       <main style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
         <ErrorBoundary>{routes}</ErrorBoundary>
       </main>
-      <BottomNav />
+      {/* Same floating dock on mobile — replaces the old BottomNav.
+          .feed-scroll containers across the app reserve bottom padding
+          via index.css so cards never sit hidden under the dock. */}
+      <DesktopDock />
     </div>
   )
 }
@@ -176,68 +227,4 @@ function AppContent() {
       showSuccess('¡Cuenta confirmada! Bienvenid@ a b1n0')
       window.history.replaceState(null, '', window.location.pathname)
     }
-  }, [session]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Load platform rates on mount to sync client-side pricing with DB config
-  useEffect(() => {
-    supabase.from('platform_config').select('key, value').then(({ data }) => {
-      if (!data) return
-      const map: Record<string, number> = {}
-      for (const r of data) map[r.key] = Number(r.value)
-      setPricingRates({
-        spreadLow: map.spread_low_pct !== undefined ? map.spread_low_pct / 100 : undefined,
-        spreadHigh: map.spread_high_pct !== undefined ? map.spread_high_pct / 100 : undefined,
-        feeRate: map.tx_fee_pct !== undefined ? map.tx_fee_pct / 100 : undefined,
-        feeFloor: map.fee_floor_pct !== undefined ? map.fee_floor_pct / 100 : undefined,
-        feeCeiling: map.fee_ceiling_pct !== undefined ? map.fee_ceiling_pct / 100 : undefined,
-        sellFeeRate: map.sell_fee_pct !== undefined ? map.sell_fee_pct / 100 : undefined,
-        depthThreshold: map.depth_threshold,
-      })
-    })
-  }, [])
-
-  if (loading) {
-    return (
-      <div style={{ height: '100dvh', background: 'var(--color-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ fontFamily: 'var(--font-body)', color: 'var(--b1n0-muted)', fontSize: '14px' }}>
-          Cargando...
-        </p>
-      </div>
-    )
-  }
-
-  if (session && profile?.mustChangePassword) return <ForceChangePassword />
-
-  return isDesktop ? <DesktopLayout /> : <MobileLayout />
-}
-
-export default function App() {
-  // Root-level ErrorBoundary catches anything outside the route tree
-  // (provider init crashes, theme bootstrap, etc.). Per-layout
-  // boundaries below catch route render crashes so the chrome stays.
-  return (
-    <ErrorBoundary>
-      <BrowserRouter>
-        <ThemeProvider>
-        <AuthProvider>
-          <ToastProvider>
-            <NowProvider>
-              <EventsProvider>
-                <VoteProvider>
-                  <NotificationProvider>
-                    <AuthModalProvider>
-                      <AppContent />
-                      <AuthModal />
-                      <InstallPrompt />
-                    </AuthModalProvider>
-                  </NotificationProvider>
-                </VoteProvider>
-              </EventsProvider>
-            </NowProvider>
-          </ToastProvider>
-        </AuthProvider>
-        </ThemeProvider>
-      </BrowserRouter>
-    </ErrorBoundary>
-  )
-}
+  }, [session]) // eslint-disable-line react-hooks/exhaustive-d

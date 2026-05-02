@@ -104,12 +104,4 @@ export function KYCSheet({ open, onClose, targetTier }: KYCSheetProps) {
             <button
               onClick={handleClose}
               style={{ width: '100%', padding: '13px', borderRadius: 'var(--radius-lg)', border: 'none', background: 'var(--b1n0-text-1)', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '13px', color: 'var(--b1n0-bg)' }}
-            >
-              Cerrar
-            </button>
-          </div>
-        )}
-      </div>
-    </BottomSheet>
-  )
-}
+          

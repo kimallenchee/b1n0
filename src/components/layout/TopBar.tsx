@@ -1,13 +1,7 @@
-import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { Question, Bell } from '@phosphor-icons/react'
+import { Lightbulb } from '@phosphor-icons/react'
 import type { User } from '../../types'
-import { NotificationDrawer } from './NotificationDrawer'
-import { WalletSheet } from '../wallet/WalletSheet'
-import { HowItWorks } from '../HowItWorks'
-import { AnimatedNumber } from '../AnimatedNumber'
-import { useVotes } from '../../context/VoteContext'
-import { useNotifications } from '../../context/NotificationContext'
+import { useToast } from '../Toast'
 import { useAuth } from '../../context/AuthContext'
 import { useAuthModal } from '../../context/AuthModalContext'
 
@@ -16,16 +10,11 @@ interface TopBarProps {
 }
 
 const F = 'var(--font-body)'
-const NUM_FONT = 'var(--font-num)'
 
 export function TopBar({ user }: TopBarProps) {
   const navigate = useNavigate()
   const location = useLocation()
-  const [walletOpen, setWalletOpen] = useState(false)
-  const [notifOpen, setNotifOpen] = useState(false)
-  const [howOpen, setHowOpen] = useState(false)
-  const { balance } = useVotes()
-  const { unreadCount } = useNotifications()
+  const toast = useToast()
   const { session } = useAuth()
   const { openAuth } = useAuthModal()
   const isLoggedIn = !!session
@@ -55,107 +44,63 @@ export function TopBar({ user }: TopBarProps) {
           }}
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
         >
-          <img src="/b1n0-logo.png" alt="b1n0" style={{ height: '24px', objectFit: 'contain' }} />
+          <img src="/b1n0-logov2.png" alt="b1n0" style={{ height: '24px', width: 'auto', objectFit: 'contain', display: 'block' }} />
         </button>
 
         {/* Right side */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
           {isLoggedIn ? (
             <>
-              {/* How it works — Question icon */}
-              <IconButton
-                onClick={() => setHowOpen(true)}
-                ariaLabel="¿Cómo funciona?"
-                title="¿Cómo funciona?"
-              >
-                <Question size={20} weight="regular" color="var(--b1n0-muted)" />
-              </IconButton>
+              {/*
+                Bell + Question removed — both live in the floating dock
+                at the bottom now, so duplicating them here cluttered the
+                top chrome. The TopBar is now: brand wordmark · saldo · avatar.
+              */}
 
-              {/* Notification bell */}
+              {/*
+                Cómo jugar — entry point for the future interactive
+                tutorial / guided playthrough. For now it surfaces a
+                placeholder toast; we'll wire the actual walkthrough
+                in a later session. Saldo display moved out of the
+                chrome — users see it on the Perfil page and the
+                Inicio page stats row.
+              */}
+              {/*
+                Cómo jugar — sibling to the avatar. Same 34×34 circle,
+                same hairline ring via box-shadow (no border, so it sits
+                visually flush like the avatar does). The two together
+                read as the right side of the chrome: "tip + identity".
+              */}
               <button
-                onClick={() => setNotifOpen(true)}
-                aria-label={unreadCount > 0 ? `${unreadCount} notificaciones nuevas` : 'Notificaciones'}
+                onClick={() => toast.showInfo('Pronto: tutorial interactivo. Te vamos a guiar paso a paso.')}
+                aria-label="Cómo jugar"
+                title="Cómo jugar"
                 style={{
-                  position: 'relative',
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: 'var(--space-2)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  borderRadius: 'var(--radius-md)',
-                  transition: 'background var(--duration-fast) var(--ease-out)',
-                }}
-              >
-                <Bell size={20} weight={unreadCount > 0 ? 'fill' : 'regular'} color="var(--b1n0-text-2)" />
-                {unreadCount > 0 && (
-                  <span
-                    style={{
-                      position: 'absolute',
-                      top: 2,
-                      right: 2,
-                      minWidth: 14,
-                      height: 14,
-                      borderRadius: 'var(--radius-pill)',
-                      background: 'var(--b1n0-no)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontFamily: NUM_FONT,
-                      fontWeight: 700,
-                      fontSize: '9px',
-                      color: 'var(--b1n0-bg)',
-                      padding: '0 4px',
-                      fontVariantNumeric: 'tabular-nums',
-                      border: '1.5px solid var(--b1n0-bg)',
-                    }}
-                  >
-                    {unreadCount > 9 ? '9+' : unreadCount}
-                  </span>
-                )}
-              </button>
-
-              {/*
-                Balance pill — the loudest financial moment in the chrome.
-                Geist tabular numerals at 14px / weight 600. The pill itself
-                is restrained (1px border, no fill) so the number leads.
-                AnimatedNumber tweens to the new balance over 500ms after a
-                buy/win/deposit instead of jumping.
-              */}
-              <button
-                onClick={() => setWalletOpen(true)}
-                aria-label={`Saldo: $${balance.toFixed(2)}`}
-                style={{
-                  background: 'none',
+                  width: 34,
+                  height: 34,
+                  borderRadius: '50%',
+                  background: 'transparent',
                   border: 'none',
+                  boxShadow: '0 0 0 1px var(--b1n0-border)',
                   cursor: 'pointer',
-                  padding: 0,
+                  color: 'var(--b1n0-muted)',
+                  flexShrink: 0,
+                  transition:
+                    'color var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = 'var(--b1n0-text-1)'
+                  e.currentTarget.style.boxShadow = '0 0 0 1.5px var(--b1n0-muted)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = 'var(--b1n0-muted)'
+                  e.currentTarget.style.boxShadow = '0 0 0 1px var(--b1n0-border)'
                 }}
               >
-                <div
-                  style={{
-                    background: 'var(--color-surface)',
-                    border: '1px solid var(--color-border)',
-                    borderRadius: 'var(--radius-pill)',
-                    padding: 'var(--space-2) var(--space-4)',
-                    transition: 'border-color var(--duration-fast) var(--ease-out)',
-                  }}
-                >
-                  <AnimatedNumber
-                    value={balance}
-                    prefix="$"
-                    decimals={2}
-                    duration={500}
-                    style={{
-                      fontFamily: NUM_FONT,
-                      fontWeight: 600,
-                      fontSize: 'var(--text-base)',
-                      color: 'var(--color-text)',
-                      letterSpacing: 'var(--tracking-tight)',
-                    }}
-                  />
-                </div>
+                <Lightbulb size={16} weight="regular" />
               </button>
 
               {/* Avatar — subtle 1px ring at low alpha to feel finished, not ugly */}
@@ -206,13 +151,8 @@ export function TopBar({ user }: TopBarProps) {
             </>
           ) : (
             <>
-              <IconButton
-                onClick={() => setHowOpen(true)}
-                ariaLabel="¿Cómo funciona?"
-                title="¿Cómo funciona?"
-              >
-                <Question size={20} weight="regular" color="var(--b1n0-muted)" />
-              </IconButton>
+              {/* Question icon also moved to the dock — TopBar logged-out
+                  state is now just: brand · "Entrar" pill. */}
               <button
                 onClick={() => openAuth('login')}
                 style={{
@@ -237,47 +177,7 @@ export function TopBar({ user }: TopBarProps) {
           )}
         </div>
       </div>
-
-      <WalletSheet open={walletOpen} onClose={() => setWalletOpen(false)} />
-      {notifOpen && <NotificationDrawer onClose={() => setNotifOpen(false)} />}
-      <HowItWorks open={howOpen} onClose={() => setHowOpen(false)} />
     </>
   )
 }
 
-/**
- * Small wrapper — keeps icon button styling consistent across the chrome
- * without leaking style prop scaffolding into every callsite.
- */
-function IconButton({
-  onClick,
-  ariaLabel,
-  title,
-  children,
-}: {
-  onClick: () => void
-  ariaLabel: string
-  title?: string
-  children: React.ReactNode
-}) {
-  return (
-    <button
-      onClick={onClick}
-      aria-label={ariaLabel}
-      title={title}
-      style={{
-        background: 'none',
-        border: 'none',
-        cursor: 'pointer',
-        padding: 'var(--space-2)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: 'var(--radius-md)',
-        transition: 'background var(--duration-fast) var(--ease-out)',
-      }}
-    >
-      {children}
-    </button>
-  )
-}

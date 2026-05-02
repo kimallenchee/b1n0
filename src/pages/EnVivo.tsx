@@ -95,10 +95,4 @@ export function EnVivo() {
         <EventFeed
           events={filtered}
           emptyMessage={categoryFilter === 'todos'
-            ? 'No hay votos en vivo en este momento.'
-            : 'No hay votos en vivo en esta categoría ahora.'}
-        />
-      </div>
-    </div>
-  )
-}
+         

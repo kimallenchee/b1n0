@@ -1,6 +1,21 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { Camera, SignOut } from '@phosphor-icons/react'
+import {
+  Camera,
+  Bell,
+  User as UserIcon,
+  PaintBrush,        // capital B in 2.x
+  Lifebuoy,          // alt name for LifeRing
+  ChartBar as VoteIcon,
+  Trophy,
+  Target as TargetIcon,
+  ArrowRight,
+  ShieldCheck,
+  Users as UsersIcon,
+  ShareNetwork,
+  TrendUp,           // alt name for ChartLineUp
+} from '@phosphor-icons/react'
 import { useNavigate } from 'react-router-dom'
+import { AnimatedNumber } from '../components/AnimatedNumber'
 import { mockUser } from '../data/mockEvents'
 import { useAuth } from '../context/AuthContext'
 import { useVotes } from '../context/VoteContext'
@@ -75,7 +90,7 @@ export function Perfil() {
     description: 'Tu cuenta, saldo, KYC, amigos. Gestioná tu perfil en b1n0.',
   })
   const navigate = useNavigate()
-  const { session, profile, refreshProfile, signOut } = useAuth()
+  const { session, profile, refreshProfile } = useAuth()
   const { predictions, refreshPredictions } = useVotes()
   const userId = session?.user?.id
 
@@ -291,66 +306,205 @@ export function Perfil() {
 
   return (
     <div className="feed-scroll" style={{ height: '100%', padding: '8px 16px 24px' }}>
-      {/* Avatar + name */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '24px 0 20px' }}>
-        <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleAvatarUpload} />
+      {/* Hero — gradient banner + avatar overlap + name with tier badge.
+          The banner's a soft horizontal teal→amber gradient at very low
+          alpha so it tints the section without dominating. Avatar bottom
+          overlaps the banner so it visually anchors the seam. */}
+      <div style={{ position: 'relative', marginBottom: 'var(--space-7)' }}>
+        {/* Gradient banner — fixed 96px tall */}
         <div
-          onClick={() => fileInputRef.current?.click()}
-          style={{ width: 80, height: 80, borderRadius: '50%', background: 'var(--color-teal-500)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F, fontWeight: 800, fontSize: '30px', color: '#fff', marginBottom: '12px', position: 'relative', cursor: 'pointer', overflow: 'hidden', opacity: avatarUploading ? 0.5 : 1, transition: 'opacity 0.2s', border: '3px solid var(--color-surface)', boxShadow: '0 2px 12px var(--b1n0-border)' }}
+          aria-hidden
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 'calc(var(--space-5) * -1)',
+            right: 'calc(var(--space-5) * -1)',
+            height: 96,
+            background: 'linear-gradient(135deg, rgba(74, 222, 128, 0.16) 0%, rgba(255, 212, 116, 0.10) 50%, rgba(99, 102, 241, 0.10) 100%)',
+            borderBottom: '1px solid var(--b1n0-border)',
+          }}
+        />
+        {/* Tier badge — pinned to top-right of the banner so the name
+            below sits visually centered without competing for space. */}
+        <div style={{ position: 'absolute', top: 'var(--space-3)', right: 0, zIndex: 1 }}>
+          <TierBadge tier={user.tier ?? 1} />
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            paddingTop: 'var(--space-7)',
+            position: 'relative',
+          }}
         >
-          {profile?.avatarUrl ? (
-            <img src={profile.avatarUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-          ) : (
-            user.name.charAt(0)
+          <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleAvatarUpload} />
+          <div
+            onClick={() => fileInputRef.current?.click()}
+            style={{
+              width: 88,
+              height: 88,
+              borderRadius: '50%',
+              background: 'var(--b1n0-si)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontFamily: D,
+              fontWeight: 800,
+              fontSize: '32px',
+              color: 'var(--b1n0-bg)',
+              marginBottom: 'var(--space-4)',
+              position: 'relative',
+              cursor: 'pointer',
+              overflow: 'hidden',
+              opacity: avatarUploading ? 0.5 : 1,
+              transition: 'opacity 0.2s',
+              boxShadow: '0 0 0 4px var(--color-bg), 0 8px 24px rgba(0, 0, 0, 0.18)',
+            }}
+          >
+            {profile?.avatarUrl ? (
+              <img src={profile.avatarUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            ) : (
+              user.name.charAt(0).toUpperCase()
+            )}
+            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '26px', background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Camera size={12} weight="fill" color="white" />
+            </div>
+          </div>
+          <p style={{ fontFamily: F, fontWeight: 500, fontSize: 'var(--text-sm)', color: 'var(--b1n0-muted)', marginBottom: '2px' }}>
+            {profile?.username ? `@${profile.username}` : ''}
+          </p>
+          <p style={{ fontFamily: D, fontWeight: 800, fontSize: 'var(--text-xl)', color: 'var(--b1n0-text-1)', letterSpacing: 'var(--tracking-tight)' }}>{user.name}</p>
+          {avatarUploadError && (
+            <p style={{ fontFamily: F, fontSize: 'var(--text-xs)', color: 'var(--b1n0-no)', marginTop: 'var(--space-2)' }}>{avatarUploadError}</p>
           )}
-          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '24px', background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Camera size={12} weight="fill" color="white" />
+        </div>
+      </div>
+
+      {/* Quick stats — Phosphor icon top-left, animated number top-right
+          aligned-baseline, label below in muted caps. Bottom hairline
+          accent stays as the visual hierarchy cue. */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 'var(--space-3)', marginBottom: 'var(--space-5)' }}>
+        <StatCard
+          icon={<VoteIcon size={14} weight="regular" />}
+          label="Votos"
+          value={user.totalPredictions}
+          accent="var(--b1n0-muted)"
+        />
+        <StatCard
+          icon={<Trophy size={14} weight="regular" />}
+          label="Correctos"
+          value={user.correctPredictions}
+          accent="var(--b1n0-si)"
+        />
+        <StatCard
+          icon={<TargetIcon size={14} weight="regular" />}
+          label="Acierto"
+          value={accuracy}
+          suffix="%"
+          accent={accuracy >= 60 ? 'var(--b1n0-si)' : accuracy >= 40 ? 'var(--b1n0-orange-500)' : 'var(--b1n0-no)'}
+        />
+      </div>
+
+      {/* ── Saldo / Wallet ──
+          Wallet-card treatment: subtle gradient strip at the top, Syne
+          hero font on the balance, cobrado total floats to the right of
+          the balance line instead of stacked below. */}
+      <div style={{ marginTop: 'var(--space-5)', marginBottom: 'var(--space-5)' }}>
+        <p style={{ fontFamily: F, fontSize: 'var(--text-2xs)', fontWeight: 700, color: 'var(--b1n0-muted)', letterSpacing: 'var(--tracking-caps)', textTransform: 'uppercase', marginBottom: 'var(--space-3)' }}>
+          Saldo
+        </p>
+        <div
+          style={{
+            position: 'relative',
+            background: 'var(--b1n0-card)',
+            border: '1px solid var(--b1n0-border)',
+            borderRadius: 'var(--radius-lg)',
+            padding: 'var(--space-6) var(--space-6)',
+            overflow: 'hidden',
+          }}
+        >
+          {/* Decorative gradient strip — top edge */}
+          <span
+            aria-hidden
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: 3,
+              background: 'linear-gradient(90deg, var(--b1n0-si) 0%, var(--b1n0-gold) 50%, var(--b1n0-si) 100%)',
+            }}
+          />
+          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 'var(--space-5)', gap: 'var(--space-4)' }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <AnimatedNumber
+                value={profile?.balance ?? 0}
+                prefix="$"
+                decimals={2}
+                duration={650}
+                style={{
+                  display: 'block',
+                  fontFamily: 'var(--font-hero)',
+                  fontWeight: 800,
+                  fontSize: 'var(--text-2xl)',
+                  color: 'var(--b1n0-text-1)',
+                  letterSpacing: 'var(--tracking-tight)',
+                  lineHeight: 1,
+                }}
+              />
+              <p style={{ fontFamily: F, fontSize: 'var(--text-2xs)', fontWeight: 600, color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: 'var(--tracking-caps)', marginTop: 'var(--space-2)' }}>
+                Disponible
+              </p>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <p style={{ fontFamily: 'var(--font-num)', fontSize: 'var(--text-md)', fontWeight: 700, color: 'var(--b1n0-text-1)', fontVariantNumeric: 'tabular-nums', letterSpacing: 'var(--tracking-tight)' }}>
+                ${user.totalCobrado.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+              </p>
+              <p style={{ fontFamily: F, fontSize: 'var(--text-2xs)', fontWeight: 600, color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: 'var(--tracking-caps)', marginTop: 'var(--space-2)' }}>
+                Cobrado total
+              </p>
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
+            <button
+              onClick={() => setDepositOpen(true)}
+              className="btn-primary"
+              style={{ flex: 1, padding: 'var(--space-4)', fontSize: 'var(--text-sm)' }}
+            >
+              Depositar
+            </button>
+            <button
+              onClick={() => setRetiroOpen(true)}
+              className="btn-secondary"
+              style={{ flex: 1, padding: 'var(--space-4)', fontSize: 'var(--text-sm)' }}
+            >
+              Retirar
+            </button>
           </div>
         </div>
-        <p style={{ fontFamily: F, fontWeight: 500, fontSize: '13px', color: 'var(--color-muted)', marginBottom: '2px' }}>
-          {profile?.username ? `@${profile.username}` : ''}
-        </p>
-        <p style={{ fontFamily: F, fontWeight: 800, fontSize: '22px', color: 'var(--color-text)', letterSpacing: '-0.5px' }}>{user.name}</p>
-        {avatarUploadError && (
-          <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', marginTop: '6px' }}>{avatarUploadError}</p>
+
+        {/* Tier progress CTA — only when not at max */}
+        {(user.tier ?? 1) < 3 && (
+          <TierProgressCard
+            currentTier={user.tier ?? 1}
+            onUpgrade={() => setKycOpen(true)}
+          />
         )}
       </div>
 
-      {/* Quick stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px', marginBottom: '16px' }}>
-        {[
-          { label: 'Votos', value: String(user.totalPredictions), accent: 'var(--color-muted)' },
-          { label: 'Correctos', value: String(user.correctPredictions), accent: 'var(--color-si)' },
-          { label: 'Acierto', value: `${accuracy}%`, accent: accuracy >= 60 ? 'var(--color-si)' : accuracy >= 40 ? 'var(--color-orange-500)' : 'var(--color-no)' },
-        ].map((stat) => (
-          <div key={stat.label} style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-lg)', padding: '14px 10px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
-            <p style={{ fontFamily: F, fontWeight: 800, fontSize: '22px', color: 'var(--color-text)', letterSpacing: '-0.5px' }}>{stat.value}</p>
-            <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--color-muted)', marginTop: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{stat.label}</p>
-            <span style={{ position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '24px', height: '3px', borderRadius: '2px 2px 0 0', background: stat.accent }} />
-          </div>
-        ))}
-      </div>
+      <DepositSheet open={depositOpen} onClose={() => setDepositOpen(false)} />
+      <RetiroSheet open={retiroOpen} onClose={() => setRetiroOpen(false)} />
 
-      {/* Portfolio CTA */}
-      <button
+      {/* Portfolio CTA — now with content preview: active position count
+          and total exposure. Shows up immediately whether the user has
+          any positions, so the card always feels alive. */}
+      <PortfolioCard
+        activeCount={predictions.filter((p) => p.status === 'active').length}
+        totalCount={predictions.length}
+        wonCount={user.correctPredictions}
         onClick={() => navigate('/portafolio')}
-        style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          width: '100%', background: 'var(--b1n0-si-bg)', border: '1px solid var(--b1n0-border)',
-          borderRadius: 'var(--radius-lg)', padding: '16px 18px', marginBottom: '16px',
-          cursor: 'pointer', textAlign: 'left', transition: 'border-color 0.15s',
-        }}
-      >
-        <div>
-          <p style={{ fontFamily: F, fontWeight: 700, fontSize: '14px', color: 'var(--b1n0-si)', marginBottom: '3px' }}>
-            Mi Portafolio
-          </p>
-          <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)' }}>
-            Posiciones, rendimiento e historial completo
-          </p>
-        </div>
-        <span style={{ fontFamily: F, fontWeight: 700, fontSize: '20px', color: 'var(--b1n0-si)', lineHeight: 1, flexShrink: 0 }}>→</span>
-      </button>
+      />
 
       {/* ── Friends section ── */}
       <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '18px', marginBottom: '16px' }}>
@@ -417,29 +571,76 @@ export function Perfil() {
           )}
         </div>
 
-        {/* Friends tabs: Amigos / Solicitudes */}
-        <div style={{ display: 'flex', marginBottom: '12px', background: 'var(--b1n0-card)', borderRadius: 'var(--radius-lg)', padding: '3px' }}>
+        {/* Friends tabs — slim segmented with sliding teal underline.
+            Same pattern as the AuthModal so the visual language is
+            consistent across the app. */}
+        <div
+          style={{
+            display: 'flex',
+            position: 'relative',
+            marginBottom: 'var(--space-4)',
+            borderBottom: '1px solid var(--b1n0-border)',
+          }}
+        >
           {(['amigos', 'solicitudes'] as const).map((t) => (
-            <button key={t} onClick={() => setFriendsTab(t)} style={{
-              flex: 1, padding: '8px', borderRadius: '7px', border: 'none', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px',
-              background: friendsTab === t ? 'var(--b1n0-text-1)' : 'transparent',
-              color: friendsTab === t ? 'var(--b1n0-bg)' : 'var(--b1n0-muted)',
-              position: 'relative',
-            }}>
+            <button
+              key={t}
+              onClick={() => setFriendsTab(t)}
+              style={{
+                flex: 1,
+                padding: 'var(--space-3) var(--space-2)',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                fontFamily: F,
+                fontWeight: 600,
+                fontSize: 'var(--text-sm)',
+                color: friendsTab === t ? 'var(--b1n0-text-1)' : 'var(--b1n0-muted)',
+                letterSpacing: 'var(--tracking-tight)',
+                position: 'relative',
+                transition: 'color var(--duration-fast) var(--ease-out)',
+              }}
+            >
               {t === 'amigos' ? 'Amigos' : 'Solicitudes'}
               {t === 'solicitudes' && pendingReceived.length > 0 && (
-                <span style={{ position: 'absolute', top: '4px', right: '8px', width: 6, height: 6, borderRadius: '50%', background: 'var(--b1n0-no)' }} />
+                <span
+                  style={{
+                    marginLeft: 'var(--space-2)',
+                    fontFamily: 'var(--font-num)',
+                    fontSize: 'var(--text-2xs)',
+                    fontWeight: 700,
+                    color: 'var(--b1n0-bg)',
+                    background: 'var(--b1n0-no)',
+                    padding: '1px 6px',
+                    borderRadius: 'var(--radius-pill)',
+                    fontVariantNumeric: 'tabular-nums',
+                  }}
+                >
+                  {pendingReceived.length}
+                </span>
               )}
             </button>
           ))}
+          {/* Sliding indicator */}
+          <span
+            aria-hidden
+            style={{
+              position: 'absolute',
+              bottom: -1,
+              left: friendsTab === 'amigos' ? 0 : '50%',
+              width: '50%',
+              height: 2,
+              background: 'var(--b1n0-si)',
+              borderRadius: '2px 2px 0 0',
+              transition: 'left var(--duration-base) var(--ease-out)',
+            }}
+          />
         </div>
 
         {friendsTab === 'amigos' ? (
           /* Accepted friends */
           acceptedFriends.length === 0 ? (
-            <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)', fontStyle: 'italic', padding: '8px 0' }}>
-              Todavía no tenés amigos en b1n0.
-            </p>
+            <FriendsEmpty userId={userId} />
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
               {acceptedFriends.map((f) => (
@@ -534,40 +735,6 @@ export function Perfil() {
       </div>
 
 
-      {/* ── Saldo / Wallet ── */}
-      <div style={{ marginTop: '16px', marginBottom: '16px' }}>
-        <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--color-muted)', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: '10px' }}>
-          Saldo
-        </p>
-        <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-lg)', padding: '20px 18px' }}>
-          <p style={{ fontFamily: F, fontWeight: 800, fontSize: '36px', color: 'var(--color-text)', letterSpacing: '-1.5px', marginBottom: '6px', lineHeight: 1 }}>
-            ${(profile?.balance ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-          </p>
-          <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--color-muted)', marginBottom: '16px' }}>
-            Cobrado total: ${user.totalCobrado.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-          </p>
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <button
-              onClick={() => setDepositOpen(true)}
-              className="btn-primary"
-              style={{ flex: 1, padding: '12px', fontSize: '13px' }}
-            >
-              Depositar
-            </button>
-            <button
-              onClick={() => setRetiroOpen(true)}
-              className="btn-secondary"
-              style={{ flex: 1, padding: '12px', fontSize: '13px' }}
-            >
-              Retirar
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <DepositSheet open={depositOpen} onClose={() => setDepositOpen(false)} />
-      <RetiroSheet open={retiroOpen} onClose={() => setRetiroOpen(false)} />
-
       {/* ── Configuración ── */}
       <div style={{ marginTop: '16px' }}>
         <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--b1n0-muted)', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: '10px' }}>
@@ -577,13 +744,14 @@ export function Perfil() {
         {/* All config in one card */}
         <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-lg)', padding: '4px 18px', marginBottom: '14px' }}>
           {/* Notificaciones — collapsible */}
-          <button
-            onClick={() => setNotifOpen(o => !o)}
-            style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 0', background: 'none', border: 'none', borderBottom: '1px solid var(--b1n0-border)', cursor: 'pointer', textAlign: 'left' }}
-          >
-            <span style={{ fontFamily: F, fontSize: '14px', fontWeight: 500, color: 'var(--b1n0-text-1)' }}>Notificaciones</span>
-            <span style={{ fontFamily: F, fontSize: '16px', color: 'var(--b1n0-muted)', transform: notifOpen ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s' }}>›</span>
-          </button>
+          <SettingsRow
+            icon={<Bell size={16} weight="regular" />}
+            label="Notificaciones"
+            iconBg="rgba(74, 222, 128, 0.14)"
+            iconColor="var(--b1n0-si)"
+            open={notifOpen}
+            onToggle={() => setNotifOpen((o) => !o)}
+          />
           {notifOpen && (
             <div style={{ padding: '8px 0 4px' }}>
               <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--b1n0-muted)', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: '4px' }}>Predicciones</p>
@@ -609,13 +777,14 @@ export function Perfil() {
           )}
 
           {/* Cuenta — collapsible */}
-          <button
-            onClick={() => setCuentaOpen(o => !o)}
-            style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 0', background: 'none', border: 'none', borderBottom: '1px solid var(--b1n0-border)', cursor: 'pointer', textAlign: 'left' }}
-          >
-            <span style={{ fontFamily: F, fontSize: '14px', fontWeight: 500, color: 'var(--b1n0-text-1)' }}>Cuenta</span>
-            <span style={{ fontFamily: F, fontSize: '16px', color: 'var(--b1n0-muted)', transform: cuentaOpen ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s' }}>›</span>
-          </button>
+          <SettingsRow
+            icon={<UserIcon size={16} weight="regular" />}
+            label="Cuenta"
+            iconBg="rgba(99, 102, 241, 0.14)"
+            iconColor="#6366f1"
+            open={cuentaOpen}
+            onToggle={() => setCuentaOpen((o) => !o)}
+          />
           {cuentaOpen && (
             <>
               <InfoRow label="Usuario" value={profile?.username ? `@${profile.username}` : '@usuario'} />
@@ -628,13 +797,14 @@ export function Perfil() {
           )}
 
           {/* Apariencia — collapsible */}
-          <button
-            onClick={() => setAparienciaOpen(o => !o)}
-            style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 0', background: 'none', border: 'none', borderBottom: '1px solid var(--b1n0-border)', cursor: 'pointer', textAlign: 'left' }}
-          >
-            <span style={{ fontFamily: F, fontSize: '14px', fontWeight: 500, color: 'var(--b1n0-text-1)' }}>Apariencia</span>
-            <span style={{ fontFamily: F, fontSize: '16px', color: 'var(--b1n0-muted)', transform: aparienciaOpen ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s' }}>›</span>
-          </button>
+          <SettingsRow
+            icon={<PaintBrush size={16} weight="regular" />}
+            label="Apariencia"
+            iconBg="rgba(255, 212, 116, 0.18)"
+            iconColor="var(--b1n0-orange-700, #C45A0A)"
+            open={aparienciaOpen}
+            onToggle={() => setAparienciaOpen((o) => !o)}
+          />
           {aparienciaOpen && (
             <div style={{ padding: '12px 0 14px' }}>
               <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)', marginBottom: '10px', lineHeight: 1.4 }}>
@@ -642,78 +812,4 @@ export function Perfil() {
               </p>
               <div style={{ display: 'flex', gap: '6px', background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '4px' }}>
                 {([
-                  { value: 'dark', label: 'Oscuro' },
-                  { value: 'light', label: 'Claro' },
-                  { value: 'system', label: 'Sistema' },
-                ] as { value: ThemeMode; label: string }[]).map(opt => {
-                  const active = themeMode === opt.value
-                  return (
-                    <button
-                      key={opt.value}
-                      onClick={() => setThemeMode(opt.value)}
-                      style={{
-                        flex: 1,
-                        padding: '9px 10px',
-                        borderRadius: 'var(--radius-lg)',
-                        border: 'none',
-                        background: active ? 'var(--b1n0-si)' : 'transparent',
-                        color: active ? 'var(--b1n0-on-accent)' : 'var(--b1n0-text-2)',
-                        fontFamily: F,
-                        fontWeight: active ? 700 : 500,
-                        fontSize: '13px',
-                        cursor: 'pointer',
-                        transition: 'background 0.15s, color 0.15s',
-                      }}
-                    >
-                      {opt.label}
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* Soporte — collapsible */}
-          <button
-            onClick={() => setSoporteOpen(o => !o)}
-            style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 0', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}
-          >
-            <span style={{ fontFamily: F, fontSize: '14px', fontWeight: 500, color: 'var(--b1n0-text-1)' }}>Soporte</span>
-            <span style={{ fontFamily: F, fontSize: '16px', color: 'var(--b1n0-muted)', transform: soporteOpen ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s' }}>›</span>
-          </button>
-          {soporteOpen && (
-            <>
-              <LinkRow label="Centro de ayuda" />
-              <LinkRow label="Reportar un problema" />
-              <LinkRow label="Términos y condiciones" />
-            </>
-          )}
-
-          {/* Sign out */}
-          <button
-            onClick={async () => {
-              await signOut()
-              navigate('/inicio')
-            }}
-            style={{
-              width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-              padding: '14px', marginTop: '8px', background: 'var(--b1n0-surface)', border: '1px solid var(--b1n0-border)',
-              borderRadius: 'var(--radius-lg)', cursor: 'pointer', transition: 'border-color 0.15s',
-            }}
-          >
-            <SignOut size={16} weight="regular" color="var(--b1n0-muted)" />
-            <span style={{ fontFamily: F, fontSize: '14px', fontWeight: 600, color: 'var(--b1n0-text-2)' }}>Cerrar sesión</span>
-          </button>
-        </div>
-
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginTop: '24px' }}>
-          <a href="/terminos" style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', textDecoration: 'underline' }}>Términos</a>
-          <a href="/privacidad" style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', textDecoration: 'underline' }}>Privacidad</a>
-        </div>
-        <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', textAlign: 'center', marginTop: '8px', marginBottom: '16px' }}>
-          b1n0 v0.1.0 · Hecho en Guatemala
-        </p>
-      </div>
-    </div>
-  )
-}
+         

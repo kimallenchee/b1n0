@@ -639,11 +639,29 @@ input[type="number"] {
    Scrolling
    ═══════════════════════════════════════════════════════════════ */
 
-.feed-scroll { overflow-y: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.feed-scroll {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  /*
+    The floating dock sits at bottom 16-24px and measures ~52px tall.
+    Reserve clearance so the last card never sits hidden under it.
+    96px = dock height (~52) + bottom offset (~24) + breathing room.
+  */
+  padding-bottom: 96px;
+}
 .feed-scroll::-webkit-scrollbar { display: none; }
 .scroll-x { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
 .scroll-x::-webkit-scrollbar { display: none; }
 .tabular-nums { font-variant-numeric: tabular-nums; letter-spacing: -0.5px; }
+
+/* Dock — open the gap on viewports that have room (≥600px). The
+   inline style sets a tight 2px gap as the mobile baseline; this
+   media query relaxes it to 4px on tablets + desktops where the
+   extra breathing room reads as more polished. */
+@media (min-width: 600px) {
+  .b1n0-dock { gap: 4px !important; }
+}
 
 /* ═══════════════════════════════════════════════════════════════
    Buttons
@@ -669,21 +687,3 @@ input[type="number"] {
   padding: var(--space-4) var(--space-7);
   font-family: var(--font-body);
   font-weight: 600; font-size: var(--text-base);
-  letter-spacing: var(--tracking-tight);
-  cursor: pointer;
-  transition: border-color var(--duration-fast) var(--ease-out),
-              background var(--duration-fast) var(--ease-out);
-}
-.btn-secondary:hover { background: var(--b1n0-surface); border-color: var(--b1n0-muted); }
-
-/* Toast animation */
-@keyframes toast-slide-in {
-  from { opacity: 0; transform: translateY(-12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* Skeleton shimmer */
-@keyframes shimmer {
-  0%   { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}

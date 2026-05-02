@@ -1,4 +1,21 @@
 import { useState, useEffect } from 'react'
+import type { Icon as PhosphorIcon } from '@phosphor-icons/react'
+import {
+  ArrowDown,
+  ArrowUp,
+  ArrowUpRight,
+  ArrowCounterClockwise,
+  ArrowsClockwise,
+  ChartBar,
+  Trophy,
+  XCircle,
+  ChatCircle,
+  CaretDown,
+  Bank,
+  Receipt,
+  Broom,
+  Coins,
+} from '@phosphor-icons/react'
 import type { UserPrediction, Transaction } from '../types'
 import { CommentFeed } from '../components/feed/CommentFeed'
 import { DateRangePicker, withinDateRange } from '../components/DateRangePicker'
@@ -10,253 +27,300 @@ import { usePageMeta } from '../hooks/usePageMeta'
 
 const F = 'var(--font-body)'
 const D = 'var(--font-display)'
+const N = 'var(--font-num)'
 
-const typeLabel: Record<Transaction['type'], string> = {
-  deposit: 'Depósito', withdraw: 'Retiro', vote: 'Voto', win: 'Cobro', loss: 'Perdido', sell: 'Venta', refund: 'Reembolso',
-}
-const typeIcon: Record<Transaction['type'], string> = {
-  deposit: '↓', withdraw: '↑', vote: '•', win: '✓', loss: '✕', sell: '↗', refund: '↩',
-}
+/* ─────────────────────────────────────────────────────────────────
+   Local extension of Transaction so we can carry running balance.
+   The DB column already exists (balance_after) — we just need a
+   typed surface here.
+   ───────────────────────────────────────────────────────────── */
+type TxRow = Transaction & { balanceAfter?: number | null }
 
-function TxCard({ tx }: { tx: Transaction }) {
-  const positive = tx.amount > 0
-  return (
-    <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderLeft: `3px solid ${positive ? 'var(--b1n0-surface)' : 'rgba(255,255,255,0.1)'}`, borderRadius: 'var(--radius-lg)', padding: '13px 15px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-      <div style={{ width: 34, height: 34, borderRadius: '9px', background: positive ? 'rgba(255,255,255,0.04)' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F, fontSize: '14px', color: 'var(--b1n0-text-2)', flexShrink: 0 }}>
-        {typeIcon[tx.type]}
-      </div>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
-          <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--b1n0-muted)', background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-md)', padding: '2px 6px', textTransform: 'uppercase' as const, letterSpacing: '0.4px' }}>
-            {typeLabel[tx.type]}
-          </span>
-        </div>
-        <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-text-1)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{tx.label}</p>
-        <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', marginTop: '2px' }}>{tx.date}</p>
-      </div>
-      <p style={{ fontFamily: D, fontWeight: 700, fontSize: '14px', color: 'var(--b1n0-text-1)', flexShrink: 0, letterSpacing: '-0.3px' }}>
-        {positive ? '+' : ''}${Math.abs(tx.amount).toFixed(2)}
-      </p>
-    </div>
-  )
+const categoryLabels: Record<string, string> = {
+  deportes: 'Deportes', politica: 'Política', economia: 'Economía',
+  geopolitica: 'Geopolítica', cultura: 'Cultura', tecnologia: 'Tecnología',
+  finanzas: 'Finanzas', otro: 'Otro',
 }
 
+/* ─── Helpers ──────────────────────────────────────────────────── */
+
+/** Pretty Spanish relative date for date-only strings ("YYYY-MM-DD"). */
+function formatDateHeader(dateStr: string): string {
+  const today = new Date()
+  const todayStr = today.toISOString().split('T')[0]
+  const yesterday = new Date(today.getTime() - 86400000).toISOString().split('T')[0]
+  if (dateStr === todayStr) return 'Hoy'
+  if (dateStr === yesterday) return 'Ayer'
+  // Spanish abbreviated: "1 may 2026"
+  const months = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']
+  const [y, m, d] = dateStr.split('-').map(Number)
+  if (!y || !m || !d) return dateStr
+  return `${d} ${months[m - 1]} ${y === today.getFullYear() ? '' : y}`.trim()
+}
+
+/** "hace 3h", "hace 2 días". Falls back to date string for old entries. */
+function formatRelativeTime(iso?: string): string {
+  if (!iso) return ''
+  const then = new Date(iso).getTime()
+  if (Number.isNaN(then)) return ''
+  const diffMs = Date.now() - then
+  const min = Math.round(diffMs / 60000)
+  if (min < 1) return 'ahora'
+  if (min < 60) return `hace ${min} min`
+  const hr = Math.round(min / 60)
+  if (hr < 24) return `hace ${hr}h`
+  const days = Math.round(hr / 24)
+  if (days < 30) return `hace ${days} días`
+  const months = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']
+  const dt = new Date(iso)
+  return `${dt.getDate()} ${months[dt.getMonth()]}`
+}
+
+/** Shorten any 36-char UUID to first8…last4 so the label stays scannable. */
+function truncateUuids(label: string): string {
+  return label.replace(/([0-9a-f]{8})-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{8}([0-9a-f]{4})/gi, '$1…$2')
+}
+
+/* ─── VoteCard ─────────────────────────────────────────────────────
+   Adapts shape based on status:
+     - active   : stake + potential cobro + gain delta + live split bar
+     - won      : stake + cobrado + net P/L
+     - lost     : stake + which side won + net P/L
+     - sold     : stake + recibido + net P/L
+   ───────────────────────────────────────────────────────────────── */
 function VoteCard({ p }: { p: UserPrediction }) {
   const [commentsOpen, setCommentsOpen] = useState(false)
   const isActive = p.status === 'active'
   const isWon = p.status === 'won'
+  const isLost = p.status === 'lost'
   const isSold = p.status === 'sold'
   const commentCount = p.event.comments?.length ?? 0
 
+  // P/L math
+  const netPL = isWon
+    ? p.potentialCobro - p.amount
+    : isSold
+      ? p.potentialCobro - p.amount
+      : isLost
+        ? -p.amount
+        : p.potentialCobro - p.amount // active = potential gain
+  const pctPL = p.amount > 0 ? (netPL / p.amount) * 100 : 0
+
+  // Side rendering — handles open events (key::yes|no)
+  const sideLabel = p.side.includes('::')
+    ? `${p.side.split('::')[0]} — ${p.side.split('::')[1] === 'yes' ? 'SÍ' : 'NO'}`
+    : p.side === 'yes'
+      ? 'SÍ'
+      : 'NO'
+  const userPickedYes = p.side.endsWith('yes') || p.side === 'yes'
+
+  // Color of left accent stripe
+  const accent = isWon
+    ? 'var(--b1n0-si)'
+    : isSold
+      ? '#C4B5FD'
+      : isActive
+        ? 'var(--b1n0-gold)'
+        : 'var(--b1n0-no)'
+
+  // Status pill
+  const statusBg = isActive
+    ? 'var(--status-enjuego-bg)'
+    : isWon
+      ? 'var(--status-ganado-bg)'
+      : isSold
+        ? 'rgba(196,181,253,0.15)'
+        : 'var(--status-perdido-bg)'
+  const statusFg = isActive
+    ? 'var(--status-enjuego-text)'
+    : isWon
+      ? 'var(--status-ganado-text)'
+      : isSold
+        ? '#C4B5FD'
+        : 'var(--status-perdido-text)'
+  const statusLabel = isActive ? 'En juego' : isWon ? 'Ganado' : isSold ? 'Vendido' : 'Perdido'
+
+  // Outcome text shown for resolved items
+  const winningSide: 'yes' | 'no' | null = p.event.result ?? null
+  const outcomeText = (() => {
+    if (isWon) return 'Tuviste razón'
+    if (isLost && winningSide) return `${winningSide === 'yes' ? 'SÍ' : 'NO'} ganó al cierre`
+    if (isLost) return 'Esta vez no fue'
+    if (isSold) return 'Vendiste antes del cierre'
+    return ''
+  })()
+
+  // Right-side primary metric label/value
+  const rightLabel = isWon ? 'Cobrado' : isSold ? 'Recibido' : isActive ? 'Potencial' : 'Tu participación'
+  const rightValue = isWon || isSold || isActive ? p.potentialCobro : p.amount
+  const rightColor = isWon ? 'var(--b1n0-si)' : isSold ? '#C4B5FD' : isActive ? 'var(--b1n0-gold)' : 'var(--b1n0-muted)'
+
   return (
-    <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderLeft: `3px solid ${isWon ? 'var(--b1n0-si)' : isSold ? '#C4B5FD' : isActive ? 'var(--b1n0-gold)' : 'var(--b1n0-no)'}`, borderRadius: 'var(--radius-lg)', padding: '14px 16px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-        <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: isActive ? 'var(--status-enjuego-text)' : isWon ? 'var(--status-ganado-text)' : isSold ? '#C4B5FD' : 'var(--status-perdido-text)', background: isActive ? 'var(--status-enjuego-bg)' : isWon ? 'var(--status-ganado-bg)' : isSold ? '#C4B5FD15' : 'var(--status-perdido-bg)', borderRadius: 'var(--radius-md)', padding: '2px 7px', textTransform: 'uppercase' as const, letterSpacing: '0.4px' }}>
-          {isActive ? 'En juego' : isWon ? 'Ganado' : isSold ? 'Vendido' : 'Perdido'}
+    <div
+      style={{
+        background: 'var(--b1n0-card)',
+        border: '1px solid var(--b1n0-border)',
+        borderLeft: `3px solid ${accent}`,
+        borderRadius: 'var(--radius-lg)',
+        padding: '14px 16px',
+      }}
+    >
+      {/* Top row: status pill · side */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+        <span
+          style={{
+            fontFamily: F, fontSize: '10px', fontWeight: 700,
+            color: statusFg, background: statusBg,
+            borderRadius: 'var(--radius-md)', padding: '3px 8px',
+            textTransform: 'uppercase', letterSpacing: '0.5px',
+          }}
+        >
+          {statusLabel}
         </span>
-        <span style={{ fontFamily: D, fontWeight: 800, fontSize: '13px', color: 'var(--b1n0-text-1)' }}>
-          {p.side.includes('::')
-            ? `${p.side.split('::')[0]} — ${p.side.split('::')[1] === 'yes' ? 'SÍ' : 'NO'}`
-            : p.side === 'yes' ? 'SÍ' : 'NO'}
-        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            Tu llamado
+          </span>
+          <span
+            style={{
+              fontFamily: D, fontWeight: 800, fontSize: '12px', color: 'var(--b1n0-text-1)',
+              background: userPickedYes ? 'rgba(74,222,128,0.14)' : 'rgba(255,212,116,0.16)',
+              padding: '3px 8px', borderRadius: 'var(--radius-md)', letterSpacing: '0.3px',
+            }}
+          >
+            {sideLabel}
+          </span>
+        </div>
       </div>
-      <p style={{ fontFamily: D, fontWeight: 700, fontSize: '14px', color: 'var(--b1n0-text-1)', lineHeight: 1.35, marginBottom: '10px' }}>
+
+      {/* Question */}
+      <p style={{ fontFamily: D, fontWeight: 700, fontSize: '14px', color: 'var(--b1n0-text-1)', lineHeight: 1.35, marginBottom: '8px' }}>
         {p.event.question}
       </p>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+
+      {/* Meta row — category · time · outcome (resolved only) */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '12px' }}>
+        {p.event.category && (
+          <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            {categoryLabels[p.event.category] || p.event.category}
+          </span>
+        )}
+        {(p.resolvedAt || p.createdAt) && (
+          <>
+            <span style={{ width: 3, height: 3, borderRadius: '50%', background: 'var(--b1n0-border)' }} />
+            <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>
+              {isActive
+                ? `Entraste ${formatRelativeTime(p.createdAt)}`
+                : `Resuelto ${formatRelativeTime(p.resolvedAt || p.createdAt)}`}
+            </span>
+          </>
+        )}
+        {!isActive && outcomeText && (
+          <>
+            <span style={{ width: 3, height: 3, borderRadius: '50%', background: 'var(--b1n0-border)' }} />
+            <span
+              style={{
+                fontFamily: F, fontSize: '11px', fontWeight: 600,
+                color: isWon ? 'var(--b1n0-si)' : isSold ? '#C4B5FD' : 'var(--b1n0-muted)',
+              }}
+            >
+              {outcomeText}
+            </span>
+          </>
+        )}
+      </div>
+
+      {/* Stake / Result block */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-end',
+          padding: '12px 14px',
+          background: 'var(--b1n0-surface)',
+          borderRadius: 'var(--radius-md)',
+          marginBottom: '10px',
+        }}
+      >
         <div>
-          <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginBottom: '2px' }}>Participación</p>
-          <p style={{ fontFamily: D, fontWeight: 700, fontSize: '14px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.3px' }}>${p.amount.toFixed(2)}</p>
+          <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>
+            Participación
+          </p>
+          <p style={{ fontFamily: N, fontWeight: 700, fontSize: '16px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.4px', fontVariantNumeric: 'tabular-nums' }}>
+            ${p.amount.toFixed(2)}
+          </p>
         </div>
         <div style={{ textAlign: 'right' }}>
-          <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginBottom: '2px' }}>
-            {isWon ? 'Cobrado' : isSold ? 'Recibido' : isActive ? 'Potencial' : 'Fondos'}
+          <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>
+            {rightLabel}
           </p>
-          <p style={{ fontFamily: D, fontWeight: 700, fontSize: '14px', color: isSold ? '#C4B5FD' : isWon ? 'var(--b1n0-si)' : isActive ? 'var(--b1n0-gold)' : 'var(--b1n0-muted)', letterSpacing: '-0.3px' }}>
-            {isWon ? `Q${p.potentialCobro.toFixed(2)}` : isSold ? `Q${p.potentialCobro.toFixed(2)}` : isActive ? `Q${p.potentialCobro.toFixed(2)}` : `-Q${p.amount.toFixed(2)}`}
+          <p style={{ fontFamily: N, fontWeight: 700, fontSize: '16px', color: rightColor, letterSpacing: '-0.4px', fontVariantNumeric: 'tabular-nums' }}>
+            ${rightValue.toFixed(2)}
           </p>
+          {/* P/L delta — only show when meaningful */}
+          {(isWon || isSold || isActive || isLost) && (
+            <p
+              style={{
+                fontFamily: N, fontSize: '11px', fontWeight: 600, marginTop: '2px',
+                color: netPL > 0 ? 'var(--b1n0-si)' : netPL < 0 ? 'var(--b1n0-muted)' : 'var(--b1n0-muted)',
+                fontVariantNumeric: 'tabular-nums',
+              }}
+            >
+              {isActive ? 'Ganancia ' : ''}
+              {netPL >= 0 ? '+' : '−'}${Math.abs(netPL).toFixed(2)}
+              {Number.isFinite(pctPL) && p.amount > 0 && (
+                <span style={{ color: 'var(--b1n0-muted)', fontWeight: 500 }}>
+                  {' '}· {pctPL >= 0 ? '+' : '−'}{Math.abs(pctPL).toFixed(0)}%
+                </span>
+              )}
+            </p>
+          )}
         </div>
       </div>
+
+      {/* Mini split bar — only for active votes, shows live state */}
+      {isActive && typeof p.event.yesPercent === 'number' && (
+        <div style={{ marginBottom: '10px' }}>
+          <div
+            style={{
+              display: 'flex',
+              height: 4,
+              borderRadius: 'var(--radius-pill)',
+              overflow: 'hidden',
+              background: 'var(--b1n0-surface)',
+            }}
+          >
+            <div style={{ width: `${p.event.yesPercent}%`, background: 'var(--b1n0-si)' }} />
+            <div style={{ width: `${100 - p.event.yesPercent}%`, background: 'var(--b1n0-gold)' }} />
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '5px' }}>
+            <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--b1n0-muted)' }}>
+              SÍ {Math.round(p.event.yesPercent)}%
+            </span>
+            <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--b1n0-muted)' }}>
+              NO {Math.round(100 - p.event.yesPercent)}%
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Comment toggle */}
       <div style={{ borderTop: '1px solid var(--b1n0-border)', paddingTop: '8px' }}>
         <button
           onClick={() => setCommentsOpen(!commentsOpen)}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '12px', fontWeight: 500, color: 'var(--b1n0-muted)', padding: 0, display: 'flex', alignItems: 'center', gap: '5px' }}
+          style={{
+            background: 'none', border: 'none', cursor: 'pointer',
+            fontFamily: F, fontSize: '12px', fontWeight: 500, color: 'var(--b1n0-muted)',
+            padding: 0, display: 'flex', alignItems: 'center', gap: '6px',
+            transition: 'color var(--duration-fast) var(--ease-out)',
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--b1n0-text-1)')}
+          onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--b1n0-muted)')}
         >
-          <span style={{ fontSize: '13px' }}>💬</span>
+          <ChatCircle size={13} weight="regular" />
           {commentCount > 0 ? `${commentCount} comentarios` : 'Comentar'}
-          <span style={{ fontSize: '10px' }}>{commentsOpen ? '▲' : '▼'}</span>
-        </button>
-        {commentsOpen && (
-          <CommentFeed comments={p.event.comments ?? []} eventId={p.event.id} />
-        )}
-      </div>
-    </div>
-  )
-}
-
-type VoteFilter = 'todos' | 'active' | 'won' | 'lost' | 'sold'
-
-export function Historial() {
-  usePageMeta({
-    title: 'Historial · b1n0',
-    description: 'Todos tus llamados resueltos en b1n0. Mirá tu trayectoria completa.',
-  })
-  const { session } = useAuth()
-  const { predictions, refreshPredictions } = useVotes()
-
-  useEffect(() => { refreshPredictions() }, [])
-
-  const [tab, setTab] = useState<'votos' | 'movimientos'>('votos')
-  const [votesRange, setVotesRange] = useState<DateRange>({ from: '', to: '' })
-  const [txRange, setTxRange] = useState<DateRange>({ from: '', to: '' })
-  const [voteFilter, setVoteFilter] = useState<VoteFilter>('todos')
-  const [ledgerTx, setLedgerTx] = useState<Transaction[]>([])
-
-  // Fetch from balance_ledger
-  useEffect(() => {
-    if (!session?.user?.id) return
-    supabase
-      .from('balance_ledger')
-      .select('id, type, amount, balance_after, label, created_at')
-      .eq('user_id', session.user.id)
-      .order('created_at', { ascending: false })
-      .limit(200)
-      .then(({ data }) => {
-        if (!data) return
-        setLedgerTx(data.map((r: Record<string, unknown>) => ({
-          id: r.id as string,
-          type: r.type as Transaction['type'],
-          amount: Number(r.amount),
-          label: r.label as string,
-          date: (r.created_at as string).split('T')[0],
-        })))
-      })
-  }, [session?.user?.id, tab])
-
-  const filteredVotes = predictions
-    .filter((p) => withinDateRange(p.createdAt, votesRange))
-    .filter((p) => voteFilter === 'todos' || p.status === voteFilter)
-
-  const active = filteredVotes.filter((p) => p.status === 'active')
-  const prior = filteredVotes.filter((p) => p.status !== 'active')
-
-  const allTx = ledgerTx
-    .filter((t) => withinDateRange(t.date, txRange))
-
-  // Group transactions by date
-  const txByDate: { date: string; items: Transaction[] }[] = []
-  for (const tx of allTx) {
-    const last = txByDate[txByDate.length - 1]
-    if (last && last.date === tx.date) {
-      last.items.push(tx)
-    } else {
-      txByDate.push({ date: tx.date, items: [tx] })
-    }
-  }
-
-  return (
-    <div className="feed-scroll" style={{ height: '100%', padding: '8px 16px 24px' }}>
-      <div style={{ padding: '20px 0 16px' }}>
-        <p style={{ fontFamily: D, fontWeight: 800, fontSize: '22px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.5px' , fontVariantNumeric: 'tabular-nums'}}>
-          Historial
-        </p>
-      </div>
-
-      {/* Tab switcher */}
-      <div style={{ display: 'flex', background: 'var(--b1n0-card)', borderRadius: 'var(--radius-lg)', padding: '3px', marginBottom: '12px' }}>
-        {(['votos', 'movimientos'] as const).map((t) => (
-          <button
-            key={t}
-            onClick={() => setTab(t)}
-            style={{ flex: 1, padding: '9px', borderRadius: '9px', border: 'none', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '13px', background: tab === t ? 'var(--b1n0-text-1)' : 'transparent', color: tab === t ? 'var(--b1n0-bg)' : 'var(--b1n0-muted)' }}
-          >
-            {t === 'votos' ? 'Mis Votos' : 'Movimientos'}
-          </button>
-        ))}
-      </div>
-
-      {/* Date range + filter chips row */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', gap: '8px' }}>
-        {tab === 'votos' ? (
-          <div style={{ display: 'flex', gap: '5px', overflowX: 'auto', scrollbarWidth: 'none' }}>
-            {([['todos', 'Todos'], ['active', 'Activos'], ['won', 'Ganados'], ['lost', 'Perdidos'], ['sold', 'Vendidos']] as [VoteFilter, string][]).map(([f, label]) => (
-              <button
-                key={f}
-                onClick={() => setVoteFilter(f)}
-                style={{ padding: '5px 11px', borderRadius: 'var(--radius-pill)', border: voteFilter === f ? 'none' : '1px solid var(--b1n0-border)', background: voteFilter === f ? 'var(--b1n0-text-1)' : 'var(--b1n0-card)', color: voteFilter === f ? 'var(--b1n0-bg)' : 'var(--b1n0-muted)', fontFamily: F, fontWeight: 600, fontSize: '11px', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0 }}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-        ) : <div />}
-        <div style={{ flexShrink: 0 }}>
-          {tab === 'votos'
-            ? <DateRangePicker value={votesRange} onChange={setVotesRange} />
-            : <DateRangePicker value={txRange} onChange={setTxRange} />
-          }
-        </div>
-      </div>
-
-      {tab === 'votos' ? (
-        <>
-          {active.length > 0 && voteFilter !== 'won' && voteFilter !== 'lost' && (
-            <div style={{ marginBottom: '20px' }}>
-              <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-muted)', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: '10px' }}>
-                Activos
-              </p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {active.map((p) => <VoteCard key={p.id} p={p} />)}
-              </div>
-            </div>
-          )}
-          {prior.length > 0 && voteFilter !== 'active' && (
-            <div>
-              <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-muted)', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: '10px' }}>
-                Anteriores
-              </p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {prior.map((p) => <VoteCard key={p.id} p={p} />)}
-              </div>
-            </div>
-          )}
-          {active.length === 0 && prior.length === 0 && (
-            <div style={{ textAlign: 'center', marginTop: '48px', padding: '0 24px' }}>
-              <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)', marginBottom: '6px' }}>
-                Todavía no tenés votos en este rango.
-              </p>
-              <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)' }}>
-                Participá en el feed y tus votos aparecen acá.
-              </p>
-            </div>
-          )}
-        </>
-      ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          {txByDate.map(({ date, items }) => (
-            <div key={date}>
-              <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-muted)', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: '8px' }}>
-                {date}
-              </p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                {items.map((tx) => <TxCard key={tx.id} tx={tx} />)}
-              </div>
-            </div>
-          ))}
-          {allTx.length === 0 && (
-            <div style={{ textAlign: 'center', marginTop: '48px', padding: '0 24px' }}>
-              <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)', marginBottom: '6px' }}>
-                Sin movimientos en este rango.
-              </p>
-              <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)' }}>
-                Tus depósitos, retiros y cobros aparecen acá.
-              </p>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  )
-}
+          <CaretDown
+            size={9}
+            weight="bold"
+            style={{
+              transform: commentsOpen ? 'rotate(180deg)' : 'rot

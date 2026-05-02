@@ -66,12 +66,4 @@ export function usePageMeta({ title, description, ogImage }: PageMeta): void {
     return () => {
       document.title = previousTitle || DEFAULT_TITLE
       setMetaContent('meta[name="description"]', DEFAULT_DESCRIPTION)
-      setMetaContent('meta[property="og:title"]', DEFAULT_TITLE)
-      setMetaContent('meta[property="og:description"]', DEFAULT_DESCRIPTION)
-      setMetaContent('meta[property="og:image"]', DEFAULT_OG_IMAGE)
-      setMetaContent('meta[name="twitter:title"]', DEFAULT_TITLE)
-      setMetaContent('meta[name="twitter:description"]', DEFAULT_DESCRIPTION)
-      setMetaContent('meta[name="twitter:image"]', DEFAULT_OG_IMAGE)
-    }
-  }, [title, description, ogImage])
-}
+     

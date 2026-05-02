@@ -13,19 +13,19 @@
   "categories": ["social", "entertainment", "sports"],
   "icons": [
     {
-      "src": "/b1n0-logo.png",
+      "src": "/b1n0-icon.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/b1n0-logo.png",
+      "src": "/b1n0-icon.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/b1n0-logo.png",
+      "src": "/b1n0-icon.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

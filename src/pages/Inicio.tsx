@@ -547,28 +547,4 @@ export function Inicio() {
                         </span>
                       )}
                     </div>
-                    <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>
-                      {formatCountdown(featured.endsAt, now)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Grid of compact cards — 2 col mobile, 3 col desktop */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
-              gap: '10px',
-            }} className="card-grid">
-              {rest.map((event) => (
-                <MiniCard key={event.id} event={event} now={now} stats={statsMap[event.id]} liveOptPcts={liveOptMap[event.id]} liveBinary={liveBinaryMap[event.id]} />
-              ))}
-            </div>
-          </>
-        )}
-      </div>
-      <WalletSheet open={walletOpen} onClose={() => setWalletOpen(false)} />
-    </div>
-  )
-}
+                    <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)

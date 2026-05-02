@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { Envelope, X } from '@phosphor-icons/react'
+import { Envelope, X, Lock, Eye, EyeSlash, GoogleLogo, AppleLogo } from '@phosphor-icons/react'
 import { useAuth } from '../context/AuthContext'
 import { useAuthModal } from '../context/AuthModalContext'
 
@@ -63,6 +63,7 @@ export function AuthModal() {
   const [tab, setTab] = useState<'login' | 'signup'>('login')
   const [loginEmail, setLoginEmail] = useState('')
   const [loginPw, setLoginPw] = useState('')
+  const [loginShowPw, setLoginShowPw] = useState(false)
   const [form, setForm] = useState<SignupForm>({ ...SIGNUP_DEFAULT })
   const [touched, setTouched] = useState<Record<string, boolean>>({})
   const [error, setError] = useState<string | null>(null)
@@ -179,78 +180,171 @@ export function AuthModal() {
           <X size={18} weight="bold" />
         </button>
 
-        {/* Logo */}
-        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-          <img src="/b1n0-logo.png" alt="B1N0" style={{ height: '36px', objectFit: 'contain', marginBottom: '4px' }} />
-          <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)' }}>Predicciones que importan</p>
+        {/* Header — logo + country pills, perfectly centered.
+            Tagline removed — the logo carries the moment on its own. */}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            marginBottom: 'var(--space-6)',
+          }}
+        >
+          <img
+            src="/b1n0-logov2.png"
+            alt="b1n0"
+            style={{
+              height: '38px',
+              width: 'auto',
+              objectFit: 'contain',
+              marginBottom: 'var(--space-4)',
+              display: 'block',
+            }}
+          />
+          {/* Country pills — geographic specificity is a trust signal in CA */}
+          <div
+            style={{
+              display: 'flex',
+              gap: 'var(--space-1)',
+              justifyContent: 'center',
+              flexWrap: 'wrap',
+            }}
+          >
+            {['GT', 'SV', 'HN', 'NI', 'CR'].map((c) => (
+              <span
+                key={c}
+                style={{
+                  fontFamily: 'var(--font-num)',
+                  fontSize: '9px',
+                  fontWeight: 700,
+                  color: 'var(--b1n0-muted)',
+                  background: 'var(--b1n0-surface)',
+                  padding: '3px 7px',
+                  borderRadius: 'var(--radius-pill)',
+                  letterSpacing: 'var(--tracking-caps)',
+                }}
+              >
+                {c}
+              </span>
+            ))}
+          </div>
         </div>
 
-        {/* Tab switcher */}
-        <div style={{ display: 'flex', background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-lg)', padding: '3px', marginBottom: '20px' }}>
-          {(['login', 'signup'] as const).map(t => (
-            <button key={t} onClick={() => { setTab(t); setError(null) }} style={{
-              flex: 1, padding: '9px', borderRadius: '9px', border: 'none', cursor: 'pointer',
-              fontFamily: F, fontWeight: 600, fontSize: '13px',
-              background: tab === t ? 'var(--b1n0-si)' : 'transparent',
-              color: tab === t ? 'var(--b1n0-on-accent)' : 'var(--b1n0-muted)', transition: 'all 0.15s',
-            }}>
+        {/* OAuth providers — placeholders until Supabase OAuth is wired.
+            Visually significant because they tell the user "you have
+            options" without committing to email-only flow. */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', marginBottom: 'var(--space-5)' }}>
+          <OAuthButton
+            label="Continuar con Google"
+            icon={<GoogleLogo size={18} weight="bold" />}
+            onClick={() => setError('Pronto: inicio de sesión con Google.')}
+          />
+          <OAuthButton
+            label="Continuar con Apple"
+            icon={<AppleLogo size={18} weight="fill" />}
+            onClick={() => setError('Pronto: inicio de sesión con Apple.')}
+          />
+        </div>
+
+        {/* "or" divider */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 'var(--space-3)',
+            marginBottom: 'var(--space-5)',
+          }}
+        >
+          <div style={{ flex: 1, height: 1, background: 'var(--b1n0-border)' }} />
+          <span
+            style={{
+              fontFamily: F,
+              fontSize: 'var(--text-2xs)',
+              fontWeight: 600,
+              color: 'var(--b1n0-muted)',
+              textTransform: 'uppercase',
+              letterSpacing: 'var(--tracking-caps)',
+            }}
+          >
+            o con email
+          </span>
+          <div style={{ flex: 1, height: 1, background: 'var(--b1n0-border)' }} />
+        </div>
+
+        {/* Tab switcher — slim segmented control with a sliding teal bar
+            indicator under the active tab instead of a heavy filled pill.
+            That way the only "loud" teal element is the submit button. */}
+        <div
+          style={{
+            display: 'flex',
+            position: 'relative',
+            marginBottom: 'var(--space-5)',
+            borderBottom: '1px solid var(--b1n0-border)',
+          }}
+        >
+          {(['login', 'signup'] as const).map((t) => (
+            <button
+              key={t}
+              onClick={() => {
+                setTab(t)
+                setError(null)
+              }}
+              style={{
+                flex: 1,
+                padding: 'var(--space-3) var(--space-2)',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                fontFamily: F,
+                fontWeight: 600,
+                fontSize: 'var(--text-sm)',
+                color: tab === t ? 'var(--b1n0-text-1)' : 'var(--b1n0-muted)',
+                letterSpacing: 'var(--tracking-tight)',
+                transition: 'color var(--duration-fast) var(--ease-out)',
+              }}
+            >
               {t === 'login' ? 'Entrar' : 'Crear cuenta'}
             </button>
           ))}
+          {/* Sliding indicator — animates left/right when tabs change */}
+          <span
+            aria-hidden
+            style={{
+              position: 'absolute',
+              bottom: -1,
+              left: tab === 'login' ? 0 : '50%',
+              width: '50%',
+              height: 2,
+              background: 'var(--b1n0-si)',
+              borderRadius: '2px 2px 0 0',
+              transition: 'left var(--duration-base) var(--ease-out)',
+            }}
+          />
         </div>
 
         {/* Login */}
         {tab === 'login' && (
-          <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <input type="email" placeholder="Correo electrónico" value={loginEmail} onChange={e => setLoginEmail(e.target.value)} required style={inputStyle} />
-            <input type="password" placeholder="Contraseña" value={loginPw} onChange={e => setLoginPw(e.target.value)} required minLength={6} style={inputStyle} />
-            {error && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', textAlign: 'center' }}>{error}</p>}
-            <button type="submit" disabled={loading} style={{ width: '100%', padding: '13px', borderRadius: 'var(--radius-lg)', border: 'none', background: loading ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)', fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: loading ? 'default' : 'pointer' }}>
-              {loading ? 'Cargando...' : 'Entrar'}
-            </button>
-          </form>
-        )}
-
-        {/* Signup */}
-        {tab === 'signup' && (
-          <form onSubmit={handleSignup} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <input placeholder="Nombre *" value={form.firstName} onChange={e => setField('firstName', e.target.value)} style={{ ...inputStyle, flex: 1 }} />
-              <input placeholder="Apellidos *" value={form.lastName} onChange={e => setField('lastName', e.target.value)} style={{ ...inputStyle, flex: 1 }} />
-            </div>
-            <input placeholder="Nombre de usuario *" value={form.username} onChange={e => setField('username', e.target.value)} style={inputStyle} />
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <select value={form.country} onChange={e => setField('country', e.target.value)} style={{ ...inputStyle, flex: 1 }}>
-                {COUNTRIES.map(c => <option key={c.code} value={c.code}>{c.name}</option>)}
-              </select>
-              <input type="date" placeholder="Fecha nacimiento *" value={form.dob} onChange={e => setField('dob', e.target.value)} style={{ ...inputStyle, flex: 1 }} />
-            </div>
-            <input placeholder="Dirección *" value={form.addr1} onChange={e => setField('addr1', e.target.value)} style={inputStyle} />
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <input placeholder="Ciudad *" value={form.city} onChange={e => setField('city', e.target.value)} style={{ ...inputStyle, flex: 1 }} />
-              <input placeholder="Depto/Estado *" value={form.state} onChange={e => setField('state', e.target.value)} style={{ ...inputStyle, flex: 1 }} />
-            </div>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <span style={{ ...inputStyle, width: '70px', textAlign: 'center', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--b1n0-muted)', fontSize: '13px' }}>{form.phoneCode}</span>
-              <input placeholder="Teléfono *" value={form.phone} onChange={e => setField('phone', e.target.value)} style={{ ...inputStyle, flex: 1 }} />
-            </div>
-            <input type="email" placeholder="Correo electrónico *" value={form.email} onChange={e => setField('email', e.target.value)} style={inputStyle} />
-            <input type="email" placeholder="Confirmar correo *" value={form.emailConfirm} onChange={e => setField('emailConfirm', e.target.value)} style={inputStyle} />
-            <input type="password" placeholder="Contraseña *" value={form.password} onChange={e => setField('password', e.target.value)} style={inputStyle} />
-            <input type="password" placeholder="Confirmar contraseña *" value={form.passwordConfirm} onChange={e => setField('passwordConfirm', e.target.value)} style={inputStyle} />
-            {error && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', textAlign: 'center' }}>{error}</p>}
-            {touched.firstName && Object.keys(errors).length > 0 && (
-              <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-no)', lineHeight: 1.4 }}>
-                {Object.values(errors).slice(0, 3).join(' · ')}
-              </p>
-            )}
-            <button type="submit" disabled={loading} style={{ width: '100%', padding: '13px', borderRadius: 'var(--radius-lg)', border: 'none', background: loading ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)', fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: loading ? 'default' : 'pointer' }}>
-              {loading ? 'Creando cuenta...' : 'Crear cuenta'}
-            </button>
-          </form>
-        )}
-      </div>
-    </div>,
-    document.body
-  )
-}
+          <form
+            onSubmit={handleLogin}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 'var(--space-3)',
+              animation: 'authSlideIn 0.28s var(--ease-out)',
+            }}
+          >
+            <IconInput
+              icon={<Envelope size={16} weight="regular" />}
+              type="email"
+              placeholder="Correo electrónico"
+              value={loginEmail}
+              onChange={(v) => setLoginEmail(v)}
+              required
+              autoComplete="email"
+            />
+            <IconInput
+              icon={<Lock size={16} weight="regular" />}
+              type={loginShowPw ? 'text' : 'password'}
+              placeholder="Contraseña"
+              value={loginPw}
+              onChange={(v) => 
