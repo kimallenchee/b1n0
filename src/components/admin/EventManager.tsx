@@ -133,7 +133,7 @@ interface EditForm {
   is_live: boolean
   close_mode: 'manual' | 'date'
   ends_at: string
-  status: 'open' | 'closed' | 'resolved' | 'private'
+  status: 'open' | 'closed' | 'resolved' | 'private' | 'voided' | 'archived'
   country: string
   lp_return_pct: number
 }
@@ -330,6 +330,12 @@ export function EventManager({ platformRates }: EventManagerProps) {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [bulkDeleteConfirm, setBulkDeleteConfirm] = useState(false)
   const [bulkDeleteLoading, setBulkDeleteLoading] = useState(false)
+  // Void flow — see void_event RPC. Distinct from "archive" because
+  // void actually moves money: refunds positions and returns LP capital.
+  const [voidPreview, setVoidPreview] = useState<{ positions_count: number; positions_total: number; lp_count: number; lp_total: number; grand_total: number } | null>(null)
+  const [voidReason, setVoidReason] = useState('')
+  const [voidLoading, setVoidLoading] = useState(false)
+  const [voidError, setVoidError] = useState<string | null>(null)
   const [resolveLoading, setResolveLoading] = useState(false)
   const [resolveError, setResolveError] = useState<string | null>(null)
   const [resolveSuccess, setResolveSuccess] = useState<string | null>(null)
@@ -345,6 +351,16 @@ export function EventManager({ platformRates }: EventManagerProps) {
   useEffect(() => {
     loadAllEvents()
   }, [])
+
+  // Clear void-flow state whenever the editor closes or the admin
+  // jumps to a different event. Otherwise stale preview data from
+  // event A could appear inside event B's editor.
+  useEffect(() => {
+    setVoidPreview(null)
+    setVoidReason('')
+    setVoidError(null)
+    setDeleteConfirm(false)
+  }, [editingId])
 
   async function loadAllEvents() {
     setManageLoading(true)
@@ -724,6 +740,11 @@ export function EventManager({ platformRates }: EventManagerProps) {
   }
 
   async function handleDelete() {
+    // "Archive" is now a cosmetic action only — it moves the event
+    // out of the admin's active list. We only allow it for events
+    // that are *already resolved or already voided*. In-flight
+    // events with money committed must go through handleVoid()
+    // instead, which actually refunds users + returns LP capital.
     if (!editingId) return
     setDeleteLoading(true)
     setEditError(null)
@@ -732,6 +753,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
       .from('events')
       .update({ status: 'archived' })
       .eq('id', editingId)
+      .in('status', ['resolved', 'voided'])
 
     if (error) {
       setEditError(`Error al archivar: ${error.message}`)
@@ -744,6 +766,66 @@ export function EventManager({ platformRates }: EventManagerProps) {
     setEditForm(null)
     setDeleteConfirm(false)
     setDeleteLoading(false)
+    refetch()
+    await loadAllEvents()
+  }
+
+  /**
+   * Pull a refund preview for the currently-edited event so the
+   * admin sees exactly what the void will do BEFORE confirming:
+   *   - how many user positions get refunded, and the total $
+   *   - how many LP deposits get returned, and the total $
+   * This is read-only — calling it doesn't change any state.
+   */
+  async function loadVoidPreview() {
+    if (!editingId) return
+    setVoidError(null)
+    setVoidPreview(null)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (supabase as any).rpc('preview_void', { p_event_id: editingId })
+    if (error) {
+      setVoidError(`Error al obtener vista previa: ${error.message}`)
+      return
+    }
+    if (!data?.voidable) {
+      setVoidError(`No se puede anular un evento en estado "${data?.event_status}". Solo eventos abiertos pueden anularse.`)
+      return
+    }
+    setVoidPreview({
+      positions_count: Number(data.positions_count) || 0,
+      positions_total: Number(data.positions_total) || 0,
+      lp_count:        Number(data.lp_count) || 0,
+      lp_total:        Number(data.lp_total) || 0,
+      grand_total:     Number(data.grand_total) || 0,
+    })
+  }
+
+  async function handleVoid() {
+    if (!editingId) return
+    if (voidReason.trim().length < 3) {
+      setVoidError('La razón debe tener al menos 3 caracteres.')
+      return
+    }
+    setVoidLoading(true)
+    setVoidError(null)
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error } = await (supabase as any).rpc('void_event', {
+      p_event_id: editingId,
+      p_reason:   voidReason.trim(),
+    })
+
+    if (error) {
+      setVoidError(`Error al anular: ${error.message}`)
+      setVoidLoading(false)
+      return
+    }
+
+    setVoidPreview(null)
+    setVoidReason('')
+    setVoidLoading(false)
+    setEditingId(null)
+    setEditForm(null)
     refetch()
     await loadAllEvents()
   }
@@ -972,7 +1054,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                   )}
                   {[
                     { label: 'Pool total', value: eventMarket?.pool_total ?? 0, color: 'var(--b1n0-si)' },
-                    { label: 'Apuestas en pool', value: eventMarket?.bet_pool ?? 0, color: '#93C5FD' },
+                    { label: 'Entradas en pool', value: eventMarket?.bet_pool ?? 0, color: '#93C5FD' },
                     { label: 'Capital LP', value: eventMarket?.lp_capital ?? 0, color: '#C4B5FD' },
                     { label: 'Fees colectados', value: eventMarket?.fees_collected ?? 0, color: 'var(--b1n0-muted)' },
                   ].map(({ label, value, color }) => (
@@ -1110,7 +1192,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                         type="number" min={0.01} step="any"
                         value={lpForm.amount}
                         onChange={(e) => setLpForm(f => ({ ...f, amount: e.target.value }))}
-                        placeholder="Monto (Q)"
+                        placeholder="Monto ($)"
                         style={{ ...inputStyle, flex: 2 }}
                       />
                       <input
@@ -1178,30 +1260,147 @@ export function EventManager({ platformRates }: EventManagerProps) {
                 </div>
               )}
 
+              {/* ── Anular y reembolsar ──
+                   Two-stage: click loads a preview from preview_void,
+                   admin sees who's affected and how much, types a
+                   reason, then confirms. The actual void_event RPC
+                   refunds positions and returns LP capital atomically.
+                   For events already resolved/voided we show a tiny
+                   cosmetic "Archivar" instead, since voiding doesn't
+                   apply once payouts have happened. */}
               <div style={{ borderTop: '1px solid var(--b1n0-border)', paddingTop: '12px' }}>
-                {!deleteConfirm ? (
+                {(editForm?.status === 'resolved' || editForm?.status === 'voided') ? (
+                  /* Cosmetic archive — only for events that are already done. */
+                  !deleteConfirm ? (
+                    <button
+                      onClick={() => setDeleteConfirm(true)}
+                      style={{ width: '100%', padding: '10px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--b1n0-border)', background: 'transparent', cursor: 'pointer', fontFamily: F, fontWeight: 500, fontSize: '12px', color: 'var(--b1n0-muted)' }}
+                    >
+                      Archivar (ocultar de la lista)
+                    </button>
+                  ) : (
+                    <div style={{ background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-lg)', padding: '12px' }}>
+                      <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-text-2)', marginBottom: '10px' }}>
+                        Archivar es solo cosmético: oculta el evento de tu lista. No mueve dinero.
+                      </p>
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <button
+                          onClick={handleDelete}
+                          disabled={deleteLoading}
+                          style={{ flex: 1, padding: '9px', borderRadius: 'var(--radius-lg)', border: 'none', background: 'var(--b1n0-text-1)', cursor: deleteLoading ? 'default' : 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-bg)' }}
+                        >
+                          {deleteLoading ? 'Archivando...' : 'Archivar'}
+                        </button>
+                        <button
+                          onClick={() => setDeleteConfirm(false)}
+                          style={{ flex: 1, padding: '9px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--b1n0-border)', background: 'var(--b1n0-card)', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-muted)' }}
+                        >
+                          Cancelar
+                        </button>
+                      </div>
+                    </div>
+                  )
+                ) : !voidPreview ? (
+                  /* Initial state: button to load the void preview. */
                   <button
-                    onClick={() => setDeleteConfirm(true)}
-                    style={{ width: '100%', padding: '10px', borderRadius: 'var(--radius-lg)', border: '1px solid rgba(185,28,28,0.25)', background: 'transparent', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-no)' }}
+                    onClick={loadVoidPreview}
+                    style={{ width: '100%', padding: '10px', borderRadius: 'var(--radius-lg)', border: '1px solid rgba(185,28,28,0.35)', background: 'transparent', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-no)' }}
                   >
-                    Eliminar evento
+                    Anular y reembolsar
                   </button>
                 ) : (
-                  <div style={{ background: 'rgba(248,113,113,0.08)', borderRadius: 'var(--radius-lg)', padding: '12px' }}>
-                    <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', marginBottom: '10px', fontWeight: 600 }}>
-                      ¿Archivar este evento? Desaparecerá del feed. Los votos y transacciones existentes se conservan.
+                  /* Preview + confirm: show what will happen, require a reason. */
+                  <div style={{ background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.25)', borderRadius: 'var(--radius-lg)', padding: '14px' }}>
+                    <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 700, color: 'var(--b1n0-no)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      Anular evento
                     </p>
+                    <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-text-2)', lineHeight: 1.5, marginBottom: '10px' }}>
+                      Esto reembolsa cada participación al saldo del usuario y devuelve el capital LP. La operación es atómica y queda registrada.
+                    </p>
+
+                    {/* Impact preview — count + totals broken out by group. */}
+                    <div style={{ background: 'var(--b1n0-card)', borderRadius: 'var(--radius-md)', padding: '10px 12px', marginBottom: '10px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '4px' }}>
+                        <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                          {voidPreview.positions_count} {voidPreview.positions_count === 1 ? 'usuario' : 'usuarios'}
+                        </span>
+                        <span style={{ fontFamily: 'var(--font-num)', fontWeight: 700, fontSize: '13px', color: 'var(--b1n0-text-1)', fontVariantNumeric: 'tabular-nums' }}>
+                          ${voidPreview.positions_total.toFixed(2)}
+                        </span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '4px' }}>
+                        <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                          {voidPreview.lp_count} LP{voidPreview.lp_count === 1 ? '' : 's'}
+                        </span>
+                        <span style={{ fontFamily: 'var(--font-num)', fontWeight: 700, fontSize: '13px', color: 'var(--b1n0-text-1)', fontVariantNumeric: 'tabular-nums' }}>
+                          ${voidPreview.lp_total.toFixed(2)}
+                        </span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', borderTop: '1px solid var(--b1n0-border)', paddingTop: '6px', marginTop: '6px' }}>
+                        <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 600, color: 'var(--b1n0-text-1)' }}>
+                          Total a reembolsar
+                        </span>
+                        <span style={{ fontFamily: 'var(--font-num)', fontWeight: 800, fontSize: '15px', color: 'var(--b1n0-no)', fontVariantNumeric: 'tabular-nums' }}>
+                          ${voidPreview.grand_total.toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Required reason — written to events.voided_reason
+                         and to the audit trail. min 3 chars enforced
+                         in both client and the SQL RPC. */}
+                    <label style={{ display: 'block', fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '6px' }}>
+                      Razón (queda registrada)
+                    </label>
+                    <textarea
+                      value={voidReason}
+                      onChange={(e) => setVoidReason(e.target.value)}
+                      placeholder="Ej: pregunta ambigua, evento mundial cambió, fuente irresoluble..."
+                      rows={2}
+                      style={{
+                        width: '100%',
+                        padding: '8px 10px',
+                        borderRadius: 'var(--radius-md)',
+                        border: '1px solid var(--b1n0-border)',
+                        background: 'var(--b1n0-card)',
+                        color: 'var(--b1n0-text-1)',
+                        fontFamily: F,
+                        fontSize: '12px',
+                        resize: 'vertical',
+                        marginBottom: '10px',
+                        boxSizing: 'border-box',
+                      }}
+                    />
+
+                    {voidError && (
+                      <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-no)', marginBottom: '8px' }}>
+                        {voidError}
+                      </p>
+                    )}
+
                     <div style={{ display: 'flex', gap: '8px' }}>
                       <button
-                        onClick={handleDelete}
-                        disabled={deleteLoading}
-                        style={{ flex: 1, padding: '9px', borderRadius: 'var(--radius-lg)', border: 'none', background: 'var(--b1n0-no)', cursor: deleteLoading ? 'default' : 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: '#fff' }}
+                        onClick={handleVoid}
+                        disabled={voidLoading || voidReason.trim().length < 3}
+                        style={{
+                          flex: 1,
+                          padding: '9px',
+                          borderRadius: 'var(--radius-lg)',
+                          border: 'none',
+                          background: voidReason.trim().length < 3 || voidLoading ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-no)',
+                          cursor: voidLoading || voidReason.trim().length < 3 ? 'default' : 'pointer',
+                          fontFamily: F,
+                          fontWeight: 600,
+                          fontSize: '12px',
+                          color: '#fff',
+                        }}
                       >
-                        {deleteLoading ? 'Archivando...' : 'Sí, archivar'}
+                        {voidLoading ? 'Anulando...' : `Anular y reembolsar $${voidPreview.grand_total.toFixed(2)}`}
                       </button>
                       <button
-                        onClick={() => setDeleteConfirm(false)}
-                        style={{ flex: 1, padding: '9px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--b1n0-border)', background: 'var(--b1n0-card)', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-muted)' }}
+                        onClick={() => { setVoidPreview(null); setVoidReason(''); setVoidError(null) }}
+                        disabled={voidLoading}
+                        style={{ flex: '0 0 auto', padding: '9px 14px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--b1n0-border)', background: 'var(--b1n0-card)', cursor: voidLoading ? 'default' : 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-muted)' }}
                       >
                         Cancelar
                       </button>
@@ -1627,7 +1826,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                     ))}
                   </select>
                   <div style={{ display: 'flex', gap: '6px' }}>
-                    <input id="create_lp_amt" type="number" min={0.01} step="any" placeholder="Monto (Q)" style={{ ...inputStyle, flex: 2 }} />
+                    <input id="create_lp_amt" type="number" min={0.01} step="any" placeholder="Monto ($)" style={{ ...inputStyle, flex: 2 }} />
                     <input id="create_lp_ret" type="number" min={0} max={100} step={1} placeholder="% de fees" defaultValue="8" style={{ ...inputStyle, flex: 1 }} />
                   </div>
                   <button
