@@ -11,7 +11,7 @@
 --    execute_option_purchase inserts a position. The column has been
 --    silently stuck at 0 forever.
 --
---    This is purely a *display* bug — every settlement and void
+--    This is purely a *display* bug -- every settlement and void
 --    queries the positions table directly, so payouts and refunds
 --    have always been correct. But the admin event editor reads
 --    bet_pool to show "Entradas en pool: $X", and that number
@@ -30,7 +30,13 @@
 --    for any future code path that inserts into positions.
 --
 --  WHAT THIS DOES:
---    1. Trigger function bet_pool_on_position_insert() runs
+--    1. Defensive ALTER TABLE adds bet_pool to event_markets and
+--       option_markets if missing. The column was supposed to be
+--       added by parimutuel-model.sql but the IF NOT EXISTS
+--       CREATE TABLE for option_markets is a no-op once the table
+--       exists -- so on this DB option_markets.bet_pool was never
+--       created.
+--    2. Trigger function bet_pool_on_position_insert() runs
 --       AFTER INSERT on positions. Computes net = gross - fee
 --       (the actual pool contribution after the fee skim) and
 --       updates the relevant market's bet_pool.
@@ -38,20 +44,28 @@
 --         event_markets.
 --       - Open event positions (side LIKE '%:yes' / '%:no') hit
 --         the matching row in option_markets.
---    2. Backfill existing markets so the historical numbers are
+--    3. Backfill existing markets so the historical numbers are
 --       finally accurate. Pulls from positions table grouped by
 --       event_id (binary) or (event_id, option_label) (open).
---       Excludes 'voided' and 'lost'/'won' positions because those
---       money flows have already been refunded or paid out — they
---       no longer represent live pool money.
+--       Excludes 'voided' positions because those have been
+--       refunded -- they no longer represent live pool money.
 --
---  Idempotency: CREATE OR REPLACE for the function, DROP/CREATE
---  for the trigger, plain UPDATE for the backfill. Safe to re-run.
+--  Idempotency: ALTER TABLE IF NOT EXISTS, CREATE OR REPLACE for
+--  the function, DROP/CREATE for the trigger, plain UPDATE for
+--  the backfill. Safe to re-run.
 -- ============================================================
 
 BEGIN;
 
--- ── 1. Trigger function ──
+-- -- 0. Defensive column adds --
+
+ALTER TABLE public.event_markets
+  ADD COLUMN IF NOT EXISTS bet_pool numeric(14,4) NOT NULL DEFAULT 0;
+
+ALTER TABLE public.option_markets
+  ADD COLUMN IF NOT EXISTS bet_pool numeric(12,2) NOT NULL DEFAULT 0;
+
+-- -- 1. Trigger function --
 
 CREATE OR REPLACE FUNCTION public.bet_pool_on_position_insert()
 RETURNS TRIGGER
@@ -62,8 +76,8 @@ DECLARE
   v_option_label  text;
 BEGIN
   -- Net contribution = what the user paid minus the fee that gets
-  -- skimmed off to treasury. This matches what execute_purchase
-  -- adds to pool_total internally.
+  -- skimmed off to treasury. Mirrors what execute_purchase adds
+  -- to pool_total internally.
   v_net := ROUND(NEW.gross_amount - NEW.fee_paid, 2);
 
   IF NEW.side IN ('yes', 'no') THEN
@@ -84,7 +98,7 @@ BEGIN
 END;
 $$;
 
--- ── 2. Trigger ──
+-- -- 2. Trigger --
 
 DROP TRIGGER IF EXISTS positions_bet_pool_increment ON public.positions;
 
@@ -93,13 +107,13 @@ AFTER INSERT ON public.positions
 FOR EACH ROW
 EXECUTE FUNCTION public.bet_pool_on_position_insert();
 
--- ── 3. Backfill: recompute bet_pool from current positions ──
+-- -- 3. Backfill: recompute bet_pool from current positions --
 
--- Binary events. Only count positions that are still in-flight
--- (status='active') OR have already paid out / been written off
--- but the pool money was already moved at settlement
--- (status='won','lost'). Voided positions have been refunded so
--- they no longer represent pool money.
+-- Binary events. Only count positions still on the books that
+-- represent real pool money (active = in flight, won/lost = pool
+-- money was already moved at settle but the column should reflect
+-- "this much user money flowed through here"). Voided positions
+-- have been refunded so they no longer represent pool money.
 UPDATE event_markets em
 SET bet_pool = COALESCE((
   SELECT SUM(p.gross_amount - p.fee_paid)
@@ -123,13 +137,16 @@ COMMIT;
 
 -- ============================================================
 --  Verification (after applying):
---    -- Spot-check a known event
+--    -- Trigger live?
+--    SELECT tgname FROM pg_trigger
+--    WHERE tgname = 'positions_bet_pool_increment';
+--
+--    -- Backfill worked?
 --    SELECT event_id, pool_total, bet_pool, lp_capital
 --    FROM event_markets
---    WHERE event_id = '<event-with-positions>';
---    -- Should now show bet_pool > 0 if there are user stakes.
+--    WHERE pool_total > 0
+--    LIMIT 5;
 --
---    -- Test the trigger by inserting a fresh position
---    -- (use execute_purchase from the UI, not raw insert)
---    -- and re-query above; bet_pool should bump by gross-fee.
+--    -- After voting on a fresh event, bet_pool should bump by
+--    -- (gross_amount - fee_paid) per position.
 -- ============================================================
