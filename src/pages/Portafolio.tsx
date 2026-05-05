@@ -408,6 +408,10 @@ export function Portafolio() {
   const [tab, setTab] = useState<'active' | 'resolved'>('active')
   const [filter, setFilter] = useState<string>('all')
   const [sortBy, setSortBy] = useState<SortKey>('pnl')
+  // Capital LP sub-tab — separate from the main `tab` state above
+  // (which controls user-position positions vs resolved). LPs have
+  // their own activos/resueltos split.
+  const [lpTab, setLpTab] = useState<'active' | 'resolved'>('active')
   const [sellingId, setSellingId] = useState<string | null>(null)
   const [sellError, setSellError] = useState<string | null>(null)
 
@@ -424,6 +428,8 @@ export function Portafolio() {
     created_at: string
     event_question: string
     event_status: string
+    event_ends_at: string | null
+    event_voided_at: string | null
     fees_collected: number  // current total fees on this event
     spread_collected: number  // current total spread on this event
   }
@@ -444,11 +450,18 @@ export function Portafolio() {
     // Fetch event info + market fees for each event
     const eventIds = [...new Set(deposits.map(d => d.event_id))]
     const [evRes, mktRes] = await Promise.all([
-      supabase.from('events').select('id, question, status').in('id', eventIds),
+      supabase.from('events').select('id, question, status, ends_at, voided_at').in('id', eventIds),
       supabase.from('event_markets').select('event_id, fees_collected, spread_collected').in('event_id', eventIds),
     ])
-    const evMap: Record<string, { question: string; status: string }> = {}
-    if (evRes.data) for (const e of evRes.data) evMap[e.id] = { question: e.question, status: e.status }
+    const evMap: Record<string, { question: string; status: string; ends_at: string | null; voided_at: string | null }> = {}
+    if (evRes.data) for (const e of evRes.data as Array<{ id: string; question: string; status: string; ends_at?: string | null; voided_at?: string | null }>) {
+      evMap[e.id] = {
+        question: e.question,
+        status: e.status,
+        ends_at: e.ends_at ?? null,
+        voided_at: e.voided_at ?? null,
+      }
+    }
     const feesMap: Record<string, number> = {}
     const spreadMap: Record<string, number> = {}
     // event_markets.spread_collected is not in the curated Database type
@@ -468,9 +481,11 @@ export function Portafolio() {
       ...d,
       fees_at_deposit: d.fees_at_deposit || 0,
       spread_at_deposit: d.spread_at_deposit || 0,
-      event_question: evMap[d.event_id]?.question || d.event_id.slice(0, 8),
-      event_status: evMap[d.event_id]?.status || 'open',
-      fees_collected: feesMap[d.event_id] || 0,
+      event_question:  evMap[d.event_id]?.question  || d.event_id.slice(0, 8),
+      event_status:    evMap[d.event_id]?.status    || 'open',
+      event_ends_at:   evMap[d.event_id]?.ends_at   ?? null,
+      event_voided_at: evMap[d.event_id]?.voided_at ?? null,
+      fees_collected:  feesMap[d.event_id]   || 0,
       spread_collected: spreadMap[d.event_id] || 0,
     })))
     setLpLoading(false)
@@ -1030,7 +1045,7 @@ export function Portafolio() {
             Capital LP
           </p>
 
-          {/* LP Summary cards */}
+          {/* Summary cards — math unchanged from prior version. */}
           {(() => {
             const totalDeposited = lpPositions.reduce((s, lp) => s + lp.amount, 0)
             const activeDeposits = lpPositions.filter(lp => lp.status === 'active')
@@ -1050,81 +1065,272 @@ export function Portafolio() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px' }}>
                 <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '12px 14px' }}>
                   <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '3px' }}>Capital activo</p>
-                  <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: '#C4B5FD', letterSpacing: '-0.5px' , fontVariantNumeric: 'tabular-nums'}}>${fmt(totalActiveCapital)}</p>
+                  <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: '#C4B5FD', letterSpacing: '-0.5px', fontVariantNumeric: 'tabular-nums' }}>${fmt(totalActiveCapital)}</p>
                   <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginTop: '2px' }}>{activeDeposits.length} evento{activeDeposits.length !== 1 ? 's' : ''}</p>
                 </div>
                 <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '12px 14px' }}>
                   <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '3px' }}>Ganancia estimada</p>
-                  <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: totalProfit >= 0 ? 'var(--b1n0-si)' : 'var(--b1n0-no)', letterSpacing: '-0.5px' , fontVariantNumeric: 'tabular-nums'}}>
+                  <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: totalProfit >= 0 ? 'var(--b1n0-si)' : 'var(--b1n0-no)', letterSpacing: '-0.5px', fontVariantNumeric: 'tabular-nums' }}>
                     {totalProfit >= 0 ? '+' : ''}${fmt(totalProfit)}
                   </p>
                   <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginTop: '2px' }}>Fees ganados como LP</p>
                 </div>
                 <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '12px 14px' }}>
                   <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '3px' }}>Total depositado</p>
-                  <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.5px' , fontVariantNumeric: 'tabular-nums'}}>${fmt(totalDeposited)}</p>
+                  <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.5px', fontVariantNumeric: 'tabular-nums' }}>${fmt(totalDeposited)}</p>
                 </div>
                 <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '12px 14px' }}>
                   <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '3px' }}>Cobrado</p>
-                  <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: 'var(--b1n0-si)', letterSpacing: '-0.5px' , fontVariantNumeric: 'tabular-nums'}}>${fmt(totalPaidOut)}</p>
+                  <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: 'var(--b1n0-si)', letterSpacing: '-0.5px', fontVariantNumeric: 'tabular-nums' }}>${fmt(totalPaidOut)}</p>
                   <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginTop: '2px' }}>{returnedDeposits.length} resuelto{returnedDeposits.length !== 1 ? 's' : ''}</p>
                 </div>
               </div>
             )
           })()}
 
-          {/* Individual LP positions */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {lpPositions.map((lp) => {
-              const totalMargins = lp.fees_collected + lp.spread_collected
-              const marginsAtDeposit = lp.fees_at_deposit + lp.spread_at_deposit
-              const deltaMargins = Math.max(totalMargins - marginsAtDeposit, 0)
-              const estimatedEarning = Math.round(lp.return_pct * deltaMargins * 100) / 100
-              const isActive = lp.status === 'active'
-              const isReturned = lp.status === 'returned'
-              const statusColor = isActive ? '#C4B5FD' : isReturned ? 'var(--b1n0-si)' : 'var(--b1n0-no)'
-              const statusLabel = isActive ? 'Activo' : isReturned ? 'Retornado' : 'Pérdida parcial'
-              const fmt = (v: number) => v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+          {/* ── Sub-tab toggle: Activos / Resueltos ──
+               Slim segmented control with sliding teal underline,
+               matching the auth-modal tab pattern. Counts live
+               in the label so the user knows what's hiding before
+               they click. */}
+          {(() => {
+            const activeCount = lpPositions.filter(lp => lp.status === 'active').length
+            const resolvedCount = lpPositions.filter(lp => lp.status !== 'active').length
+            return (
+              <div style={{ position: 'relative', display: 'flex', marginBottom: '14px', borderBottom: '1px solid var(--b1n0-border)' }}>
+                {(['active', 'resolved'] as const).map((t) => {
+                  const isOn = lpTab === t
+                  const labelText = t === 'active'
+                    ? `Activos (${activeCount})`
+                    : `Resueltos (${resolvedCount})`
+                  return (
+                    <button
+                      key={t}
+                      onClick={() => setLpTab(t)}
+                      style={{
+                        flex: 1,
+                        padding: '10px 4px',
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        fontFamily: F,
+                        fontWeight: 600,
+                        fontSize: '13px',
+                        color: isOn ? 'var(--b1n0-text-1)' : 'var(--b1n0-muted)',
+                        transition: 'color var(--duration-fast) var(--ease-out)',
+                      }}
+                    >
+                      {labelText}
+                    </button>
+                  )
+                })}
+                <span
+                  aria-hidden
+                  style={{
+                    position: 'absolute',
+                    bottom: -1,
+                    left: lpTab === 'active' ? 0 : '50%',
+                    width: '50%',
+                    height: 2,
+                    background: 'var(--b1n0-si)',
+                    borderRadius: '2px 2px 0 0',
+                    transition: 'left var(--duration-base) var(--ease-out)',
+                  }}
+                />
+              </div>
+            )
+          })()}
 
+          {/* ── Filtered LP list ── */}
+          {(() => {
+            const filtered = lpPositions.filter(lp =>
+              lpTab === 'active' ? lp.status === 'active' : lp.status !== 'active'
+            )
+
+            if (filtered.length === 0) {
               return (
-                <div key={lp.id} style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '14px 16px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 600, color: 'var(--b1n0-text-1)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginRight: '8px' }}>
-                      {lp.event_question}
-                    </p>
-                    <span style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: statusColor, background: `${statusColor}15`, padding: '3px 8px', borderRadius: 'var(--radius-sm)', whiteSpace: 'nowrap' }}>
-                      {statusLabel}
-                    </span>
-                  </div>
-                  <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-                    <div>
-                      <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.3px' }}>Capital</p>
-                      <p style={{ fontFamily: D, fontWeight: 700, fontSize: '14px', color: 'var(--b1n0-text-1)' }}>${fmt(lp.amount)}</p>
-                    </div>
-                    <div>
-                      <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.3px' }}>% de fees</p>
-                      <p style={{ fontFamily: D, fontWeight: 700, fontSize: '14px', color: '#C4B5FD' }}>{(lp.return_pct * 100).toFixed(0)}%</p>
-                    </div>
-                    <div>
-                      <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.3px' }}>Fees post-depósito</p>
-                      <p style={{ fontFamily: D, fontWeight: 700, fontSize: '14px', color: 'var(--b1n0-text-1)' }}>${fmt(deltaMargins)}</p>
-                    </div>
-                    <div>
-                      <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.3px' }}>
-                        {isActive ? 'Ganancia est.' : 'Cobrado'}
-                      </p>
-                      <p style={{ fontFamily: D, fontWeight: 700, fontSize: '14px', color: 'var(--b1n0-si)' }}>
-                        {isActive ? `+Q${fmt(estimatedEarning)}` : `Q${fmt(lp.payout || 0)}`}
-                      </p>
-                    </div>
-                  </div>
-                  <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginTop: '6px' }}>
-                    Depositado {new Date(lp.created_at).toLocaleString('es-GT', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                <div style={{ padding: '32px 16px', textAlign: 'center' }}>
+                  <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)' }}>
+                    {lpTab === 'active'
+                      ? 'No tenés capital LP activo en este momento.'
+                      : 'Todavía no hay LP resueltos.'}
                   </p>
                 </div>
               )
-            })}
-          </div>
+            }
+
+            const fmt = (v: number) => v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+
+            return (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {filtered.map((lp) => {
+                  const totalMargins = lp.fees_collected + lp.spread_collected
+                  const marginsAtDeposit = lp.fees_at_deposit + lp.spread_at_deposit
+                  const deltaMargins = Math.max(totalMargins - marginsAtDeposit, 0)
+                  const estimatedEarning = Math.round(lp.return_pct * deltaMargins * 100) / 100
+
+                  // Outcome triage. event_status='voided' takes priority
+                  // because the LP could have been refunded via the void
+                  // path even before the lp_deposits.status flipped.
+                  const isActive = lp.status === 'active'
+                  const isVoided = lp.event_status === 'voided' || lp.event_voided_at != null
+                  const isPartialLoss = lp.status === 'partial_loss'
+                  // outcome label + accent stripe + small icon
+                  const outcome: 'active' | 'voided' | 'settled' | 'partial_loss' =
+                    isActive ? 'active'
+                    : isPartialLoss ? 'partial_loss'
+                    : isVoided ? 'voided'
+                    : 'settled'
+
+                  const accentByOutcome: Record<typeof outcome, string> = {
+                    active: '#C4B5FD',
+                    settled: 'var(--b1n0-si)',
+                    voided: 'var(--b1n0-orange-500)',
+                    partial_loss: 'var(--b1n0-no)',
+                  }
+                  const badgeBg: Record<typeof outcome, string> = {
+                    active: 'rgba(196,181,253,0.15)',
+                    settled: 'var(--b1n0-si-bg)',
+                    voided: 'rgba(255,212,116,0.18)',
+                    partial_loss: 'var(--b1n0-no-bg)',
+                  }
+                  const badgeFg = accentByOutcome[outcome]
+                  const badgeIcon: Record<typeof outcome, string> = {
+                    active: '●',
+                    settled: '✓',
+                    voided: '↺',
+                    partial_loss: '✕',
+                  }
+                  const badgeLabel: Record<typeof outcome, string> = {
+                    active: 'Activo',
+                    settled: 'Cobrado',
+                    voided: 'Anulado',
+                    partial_loss: 'Pérdida parcial',
+                  }
+
+                  // Subtitle line: shows event lifecycle context.
+                  // For active: shows close mode (manual or end date).
+                  // For settled/voided: shows what happened in plain words.
+                  let subtitle = ''
+                  if (isActive) {
+                    if (lp.event_ends_at) {
+                      const ends = new Date(lp.event_ends_at)
+                      const now = new Date()
+                      const ms = ends.getTime() - now.getTime()
+                      if (ms <= 0) {
+                        subtitle = 'Esperando resolución'
+                      } else {
+                        const days = Math.floor(ms / 86400000)
+                        const hours = Math.floor((ms % 86400000) / 3600000)
+                        subtitle = days > 0
+                          ? `Termina en ${days} día${days !== 1 ? 's' : ''}`
+                          : `Termina en ${hours}h`
+                      }
+                    } else {
+                      subtitle = 'Cierre manual'
+                    }
+                  } else if (outcome === 'voided') {
+                    subtitle = 'Evento anulado — capital devuelto'
+                  } else if (outcome === 'settled') {
+                    const earned = (lp.payout || 0) - lp.amount
+                    subtitle = earned > 0
+                      ? `Cobraste $${fmt(earned)} en fees`
+                      : 'Capital devuelto sin fees (sin volumen)'
+                  } else {
+                    subtitle = 'Recuperación parcial'
+                  }
+
+                  // Right-side primary metric per outcome.
+                  const rightLabel = isActive ? 'Ganancia est.' : 'Cobrado'
+                  const rightValue = isActive ? estimatedEarning : (lp.payout || 0)
+                  const rightPrefix = isActive ? '+' : ''
+                  const rightColor = isActive ? '#C4B5FD' : 'var(--b1n0-si)'
+
+                  return (
+                    <div
+                      key={lp.id}
+                      style={{
+                        background: 'var(--b1n0-card)',
+                        border: '1px solid var(--b1n0-border)',
+                        borderLeft: `3px solid ${accentByOutcome[outcome]}`,
+                        borderRadius: 'var(--radius-lg)',
+                        padding: '14px 16px',
+                      }}
+                    >
+                      {/* Top row: question + outcome badge */}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px', gap: '8px' }}>
+                        <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 600, color: 'var(--b1n0-text-1)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {lp.event_question}
+                        </p>
+                        <span
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            fontFamily: F,
+                            fontSize: '10px',
+                            fontWeight: 700,
+                            color: badgeFg,
+                            background: badgeBg[outcome],
+                            padding: '3px 8px',
+                            borderRadius: 'var(--radius-pill)',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.5px',
+                            whiteSpace: 'nowrap',
+                            flexShrink: 0,
+                          }}
+                        >
+                          <span style={{ fontSize: '9px' }}>{badgeIcon[outcome]}</span>
+                          {badgeLabel[outcome]}
+                        </span>
+                      </div>
+
+                      {/* Subtitle: event lifecycle context */}
+                      <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', marginBottom: '12px' }}>
+                        {subtitle}
+                      </p>
+
+                      {/* Stats row */}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: '16px' }}>
+                        <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+                          <div>
+                            <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Capital</p>
+                            <p style={{ fontFamily: D, fontWeight: 700, fontSize: '14px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.3px', fontVariantNumeric: 'tabular-nums' }}>
+                              ${fmt(lp.amount)}
+                            </p>
+                          </div>
+                          <div>
+                            <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>% de fees</p>
+                            <p style={{ fontFamily: D, fontWeight: 700, fontSize: '14px', color: '#C4B5FD', letterSpacing: '-0.3px', fontVariantNumeric: 'tabular-nums' }}>
+                              {(lp.return_pct * 100).toFixed(0)}%
+                            </p>
+                          </div>
+                          {isActive && (
+                            <div>
+                              <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Fees post-depósito</p>
+                              <p style={{ fontFamily: D, fontWeight: 700, fontSize: '14px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.3px', fontVariantNumeric: 'tabular-nums' }}>
+                                ${fmt(deltaMargins)}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                          <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{rightLabel}</p>
+                          <p style={{ fontFamily: D, fontWeight: 700, fontSize: '15px', color: rightColor, letterSpacing: '-0.4px', fontVariantNumeric: 'tabular-nums' }}>
+                            {rightPrefix}${fmt(rightValue)}
+                          </p>
+                        </div>
+                      </div>
+
+                      <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginTop: '10px', paddingTop: '8px', borderTop: '1px solid var(--b1n0-border)' }}>
+                        Depositado {new Date(lp.created_at).toLocaleString('es-GT', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                      </p>
+                    </div>
+                  )
+                })}
+              </div>
+            )
+          })()}
         </div>
       )}
     </div>
