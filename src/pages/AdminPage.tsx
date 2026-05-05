@@ -10,6 +10,7 @@ import { UsersPanel } from '../components/admin/UsersPanel'
 import { TreasuryPanel } from '../components/admin/TreasuryPanel'
 import { EventManager } from '../components/admin/EventManager'
 import { HealthPanel } from '../components/admin/HealthPanel'
+import { AuditPanel } from '../components/admin/AuditPanel'
 
 const F = 'var(--font-body)'
 const D = 'var(--font-display)'
@@ -46,7 +47,7 @@ export function AdminPage() {
   const { refetch } = useEvents()
   const navigate = useNavigate()
 
-  const [view, setView] = useState<'manage' | 'revenue' | 'rates' | 'users' | 'treasury' | 'health'>('manage')
+  const [view, setView] = useState<'manage' | 'revenue' | 'rates' | 'users' | 'treasury' | 'health' | 'audit'>('manage')
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
   // Hidden Sentry-trigger button — surfaces only in dev or with the
@@ -107,24 +108,61 @@ export function AdminPage() {
 
       {/* Compact header: tabs left, date filter right */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', marginBottom: '14px', flexWrap: 'wrap' }}>
-        <div style={{ display: 'inline-flex', background: 'var(--b1n0-card)', borderRadius: 'var(--radius-lg)', padding: '2px', gap: '1px' }}>
-          {([['manage', 'Gestionar'], ['revenue', 'Ingresos'], ['rates', 'Tarifas'], ['users', 'Usuarios'], ['treasury', 'Tesorería'], ['health', 'Salud']] as const).map(([v, label]) => (
-            <button
-              key={v}
-              onClick={() => { setView(v) }}
-              style={{
-                padding: '6px 14px', borderRadius: 'var(--radius-md)', border: 'none', cursor: 'pointer',
-                fontFamily: F, fontWeight: 600, fontSize: '12px',
-                background: view === v ? 'var(--b1n0-text-1)' : 'transparent',
-                color: view === v ? 'var(--b1n0-bg)' : 'var(--b1n0-muted)',
-                transition: 'all 0.15s',
-                ...(view === v ? { boxShadow: '0 1px 3px var(--b1n0-border)' } : {}),
-              }}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
+        {/* Admin tabs — slim sliding-underline (canonical), horizontally
+             scrollable on narrow viewports so the new Auditoría tab
+             doesn't push the date filter offscreen. */}
+        {(() => {
+          const tabs: ReadonlyArray<readonly [typeof view, string]> = [
+            ['manage', 'Gestionar'],
+            ['revenue', 'Ingresos'],
+            ['rates', 'Tarifas'],
+            ['users', 'Usuarios'],
+            ['treasury', 'Tesorería'],
+            ['health', 'Salud'],
+            ['audit', 'Auditoría'],
+          ] as const
+          const idx = Math.max(0, tabs.findIndex(([v]) => v === view))
+          return (
+            <div style={{ position: 'relative', display: 'flex', borderBottom: '1px solid var(--b1n0-border)', flex: '1 1 auto', minWidth: 0, overflowX: 'auto', scrollbarWidth: 'none' }}>
+              {tabs.map(([v, label]) => (
+                <button
+                  key={v}
+                  onClick={() => { setView(v) }}
+                  style={{
+                    flex: '1 1 0',
+                    minWidth: 92,
+                    padding: '10px 12px',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontFamily: F,
+                    fontWeight: 600,
+                    fontSize: '12px',
+                    color: view === v ? 'var(--b1n0-text-1)' : 'var(--b1n0-muted)',
+                    letterSpacing: 'var(--tracking-tight)',
+                    whiteSpace: 'nowrap',
+                    transition: 'color var(--duration-fast) var(--ease-out)',
+                  }}
+                >
+                  {label}
+                </button>
+              ))}
+              <span
+                aria-hidden
+                style={{
+                  position: 'absolute',
+                  bottom: -1,
+                  left: `${(idx / tabs.length) * 100}%`,
+                  width: `${(1 / tabs.length) * 100}%`,
+                  height: 2,
+                  background: 'var(--b1n0-si)',
+                  borderRadius: '2px 2px 0 0',
+                  transition: 'left var(--duration-base) var(--ease-out)',
+                }}
+              />
+            </div>
+          )
+        })()}
         {/* Date range filter — visible on Ingresos + Tesorería */}
         {(view === 'revenue' || view === 'treasury') && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -183,6 +221,9 @@ export function AdminPage() {
 
       {/* ════════ PLATFORM HEALTH ════════ */}
       {view === 'health' && <HealthPanel />}
+
+      {/* ════════ ADMIN ACTIONS AUDIT ════════ */}
+      {view === 'audit' && <AuditPanel />}
 
       {/* ── Hidden Sentry verification trigger (dev / ?debug=sentry) ── */}
       {showSentryTrigger && (

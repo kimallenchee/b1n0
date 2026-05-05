@@ -423,6 +423,22 @@ export function Portafolio() {
   // already carry voided_at on the events row; settled events need
   // a separate fetch from admin_actions where action_type='settle_event'.
   const [lpReturnTimes, setLpReturnTimes] = useState<Record<string, string>>({})
+
+  // Events available for public LP deposit (lp_public=true, status='open').
+  // Surfaces in the 'Eventos disponibles para LP' feed at the top of the
+  // Capital LP tab so the user can see opportunities without leaving Portafolio.
+  interface LpAvailable {
+    id: string
+    question: string
+    category: string
+    pool_total: number
+    lp_capital: number
+    bet_pool: number
+    lp_return_pct: number
+    fees_collected: number
+    ends_at: string | null
+  }
+  const [lpAvailable, setLpAvailable] = useState<LpAvailable[]>([])
   const [sellingId, setSellingId] = useState<string | null>(null)
   const [sellError, setSellError] = useState<string | null>(null)
 
@@ -519,6 +535,58 @@ export function Portafolio() {
       }
     }
     setLpReturnTimes(returnTimes)
+
+    // Fetch events open to public LP deposit. Cheap join-style: pull
+    // the events first, then enrich with event_markets in one batch.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: openEvents } = await (supabase as any)
+      .from('events')
+      .select('id, question, category, ends_at')
+      .eq('lp_public', true)
+      .eq('status', 'open')
+      .order('created_at', { ascending: false })
+      .limit(20)
+    if (openEvents && openEvents.length > 0) {
+      const openIds = openEvents.map((e: { id: string }) => e.id)
+      const { data: markets } = await supabase
+        .from('event_markets')
+        .select('event_id, pool_total, lp_capital, bet_pool, fees_collected, lp_return_pct')
+        .in('event_id', openIds)
+      const mktMap: Record<string, {
+        pool_total: number; lp_capital: number; bet_pool: number;
+        fees_collected: number; lp_return_pct: number
+      }> = {}
+      if (markets) {
+        for (const m of markets as Array<{
+          event_id: string;
+          pool_total: number | null; lp_capital: number | null;
+          bet_pool: number | null; fees_collected: number | null;
+          lp_return_pct: number | null
+        }>) {
+          mktMap[m.event_id] = {
+            pool_total:     Number(m.pool_total)     || 0,
+            lp_capital:     Number(m.lp_capital)     || 0,
+            bet_pool:       Number(m.bet_pool)       || 0,
+            fees_collected: Number(m.fees_collected) || 0,
+            lp_return_pct:  Number(m.lp_return_pct)  || 0.08,
+          }
+        }
+      }
+      setLpAvailable(openEvents.map((e: { id: string; question: string; category: string; ends_at: string | null }) => ({
+        id: e.id,
+        question: e.question,
+        category: e.category,
+        ends_at: e.ends_at,
+        pool_total:     mktMap[e.id]?.pool_total     ?? 0,
+        lp_capital:     mktMap[e.id]?.lp_capital     ?? 0,
+        bet_pool:       mktMap[e.id]?.bet_pool       ?? 0,
+        fees_collected: mktMap[e.id]?.fees_collected ?? 0,
+        lp_return_pct:  mktMap[e.id]?.lp_return_pct  ?? 0.08,
+      })))
+    } else {
+      setLpAvailable([])
+    }
+
     setLpLoading(false)
   }, [session?.user?.id])
 
@@ -1153,12 +1221,138 @@ export function Portafolio() {
       {/* ────────────────── CAPITAL LP TAB ────────────────── */}
       {topTab === 'lp' && (
         <div style={{ marginTop: '4px', marginBottom: '16px' }}>
-          {lpPositions.length === 0 ? (
-            <div style={{ padding: '64px 16px', textAlign: 'center' }}>
-              <p style={{ fontFamily: F, fontSize: '14px', color: 'var(--b1n0-muted)', lineHeight: 1.5, maxWidth: 320, margin: '0 auto' }}>
-                Todavía no has aportado capital LP. Cuando un evento abra ronda de LP, vas a poder participar y ganar fees como LP.
-              </p>
+
+          {/* ── Eventos disponibles para LP — horizontal scroll row ──
+               Surfaces every event with lp_public=true and status='open'
+               so the user can see deposit opportunities without leaving
+               Portafolio. Cards show pool composition, offered return
+               rate, and fees-so-far. CTA navigates to the event detail
+               page (the user-deposit flow itself is future work). */}
+          {lpAvailable.length > 0 && (
+            <div style={{ marginBottom: '18px' }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '10px' }}>
+                <p style={{ fontFamily: D, fontWeight: 700, fontSize: '15px', color: 'var(--b1n0-text-1)' }}>
+                  Eventos disponibles para LP
+                </p>
+                <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>
+                  {lpAvailable.length} evento{lpAvailable.length !== 1 ? 's' : ''}
+                </p>
+              </div>
+              <div className="scroll-x" style={{ display: 'flex', gap: '10px', overflowX: 'auto', scrollbarWidth: 'none', paddingBottom: '4px', marginLeft: '-16px', marginRight: '-16px', paddingLeft: '16px', paddingRight: '16px' }}>
+                {lpAvailable.map((ev) => {
+                  const fmt = (v: number) => v.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+                  const returnPct = ev.lp_return_pct < 1 ? ev.lp_return_pct * 100 : ev.lp_return_pct
+                  // Days until close (only if ends_at set)
+                  let countdown = ''
+                  if (ev.ends_at) {
+                    const ms = new Date(ev.ends_at).getTime() - Date.now()
+                    if (ms > 0) {
+                      const days = Math.floor(ms / 86400000)
+                      const hrs = Math.floor((ms % 86400000) / 3600000)
+                      countdown = days > 0 ? `${days}d` : `${hrs}h`
+                    }
+                  }
+                  return (
+                    <button
+                      key={ev.id}
+                      onClick={() => navigate(`/eventos/${ev.id}`)}
+                      style={{
+                        flex: '0 0 260px',
+                        background: 'var(--b1n0-card)',
+                        border: '1px solid var(--b1n0-border)',
+                        borderLeft: '3px solid #C4B5FD',
+                        borderRadius: 'var(--radius-lg)',
+                        padding: '14px 16px',
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '8px',
+                        transition: 'border-color var(--duration-fast) var(--ease-out)',
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--b1n0-text-2)')}
+                      onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--b1n0-border)')}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '8px' }}>
+                        <span style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                          {categoryLabels[ev.category] || ev.category}
+                        </span>
+                        {countdown && (
+                          <span style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)' }}>
+                            {countdown}
+                          </span>
+                        )}
+                      </div>
+                      <p style={{
+                        fontFamily: D,
+                        fontWeight: 600,
+                        fontSize: '13px',
+                        color: 'var(--b1n0-text-1)',
+                        lineHeight: 1.35,
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden',
+                        minHeight: '36px',
+                      }}>
+                        {ev.question}
+                      </p>
+                      {/* Pool composition strip — proportional split between
+                           LP capital (purple) and user bets (teal). */}
+                      <div style={{ marginTop: '4px' }}>
+                        <div style={{ display: 'flex', height: 4, borderRadius: 'var(--radius-pill)', overflow: 'hidden', background: 'var(--b1n0-surface)' }}>
+                          <div style={{ width: ev.pool_total > 0 ? `${(ev.lp_capital / ev.pool_total) * 100}%` : '50%', background: '#C4B5FD' }} />
+                          <div style={{ width: ev.pool_total > 0 ? `${(ev.bet_pool / ev.pool_total) * 100}%` : '0%', background: 'var(--b1n0-si)' }} />
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px' }}>
+                          <span style={{ fontFamily: F, fontSize: '10px', color: '#C4B5FD', fontWeight: 600 }}>
+                            LP ${fmt(ev.lp_capital)}
+                          </span>
+                          <span style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)' }}>
+                            Pool ${fmt(ev.pool_total)}
+                          </span>
+                        </div>
+                      </div>
+                      {/* Bottom row: offered return rate + fees-so-far */}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px', paddingTop: '8px', borderTop: '1px solid var(--b1n0-border)' }}>
+                        <div>
+                          <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                            Retorno LP
+                          </p>
+                          <p style={{ fontFamily: 'var(--font-num)', fontWeight: 700, fontSize: '13px', color: '#C4B5FD', fontVariantNumeric: 'tabular-nums' }}>
+                            {returnPct.toFixed(0)}%
+                          </p>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                          <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                            Fees acumulados
+                          </p>
+                          <p style={{ fontFamily: 'var(--font-num)', fontWeight: 700, fontSize: '13px', color: 'var(--b1n0-si)', fontVariantNumeric: 'tabular-nums' }}>
+                            ${fmt(ev.fees_collected)}
+                          </p>
+                        </div>
+                      </div>
+                    </button>
+                  )
+                })}
+              </div>
             </div>
+          )}
+
+          {lpPositions.length === 0 ? (
+            lpAvailable.length === 0 ? (
+              <div style={{ padding: '64px 16px', textAlign: 'center' }}>
+                <p style={{ fontFamily: F, fontSize: '14px', color: 'var(--b1n0-muted)', lineHeight: 1.5, maxWidth: 320, margin: '0 auto' }}>
+                  Todavía no has aportado capital LP, y no hay eventos abiertos para LP en este momento.
+                </p>
+              </div>
+            ) : (
+              <div style={{ padding: '32px 16px', textAlign: 'center' }}>
+                <p style={{ fontFamily: F, fontSize: '14px', color: 'var(--b1n0-muted)', lineHeight: 1.5, maxWidth: 320, margin: '0 auto' }}>
+                  Aportá capital LP a alguno de los eventos arriba y empezá a ganar fees.
+                </p>
+              </div>
+            )
           ) : (
           <>
 

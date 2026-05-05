@@ -115,6 +115,7 @@ interface CreateForm {
   ends_at: string
   country: string
   launch_mode: 'public' | 'private'
+  lp_public: boolean
   lp_return_pct: number
   lp_commitments: { user_id: string; amount: number; return_pct: number }[]
 }
@@ -135,6 +136,7 @@ interface EditForm {
   ends_at: string
   status: 'open' | 'closed' | 'resolved' | 'private' | 'voided' | 'archived'
   country: string
+  lp_public: boolean
   lp_return_pct: number
 }
 
@@ -157,6 +159,7 @@ interface AdminEvent {
   tier_required: number
   ends_at: string | null
   country: string | null
+  lp_public: boolean
 }
 
 const CREATE_DEFAULT: CreateForm = {
@@ -166,7 +169,7 @@ const CREATE_DEFAULT: CreateForm = {
   considerations: '', sponsor_amount: 0,
   min_entry: 1, max_entry: 1000, tier_required: 1,
   is_live: false, close_mode: 'manual', ends_at: '',
-  country: 'GT', launch_mode: 'public', lp_return_pct: 8,
+  country: 'GT', launch_mode: 'public', lp_public: false, lp_return_pct: 8,
   lp_commitments: [],
 }
 
@@ -366,7 +369,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
     setManageLoading(true)
     const { data } = await supabase
       .from('events')
-      .select('id, question, category, event_type, status, is_live, pool_size, created_at, sponsor_name, sponsor_amount, image_url, considerations, options, min_entry, max_entry, tier_required, ends_at, country')
+      .select('id, question, category, event_type, status, is_live, pool_size, created_at, sponsor_name, sponsor_amount, image_url, considerations, options, min_entry, max_entry, tier_required, ends_at, country, lp_public')
       .neq('status', 'archived')
       .order('created_at', { ascending: false })
     setAllEvents((data as AdminEvent[]) ?? [])
@@ -433,6 +436,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
       status: form.launch_mode === 'private' ? 'private' : 'open',
       ends_at: form.close_mode === 'date' ? (form.ends_at || null) : null,
       country: form.country || 'GT',
+      lp_public: form.lp_public,
     })
 
     if (err) {
@@ -618,6 +622,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
           status: 'open',
           ends_at: endsAt ? String(endsAt) : null,
           country,
+          lp_public: false,
         })
 
         if (insertErr) {
@@ -674,6 +679,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
       ends_at: ev.ends_at ? ev.ends_at.slice(0, 16) : '',
       status: ev.status as 'open' | 'closed' | 'resolved' | 'private',
       country: ev.country ?? 'GT',
+      lp_public: ev.lp_public ?? false,
       lp_return_pct: 8,
     })
     const { data: mkt } = await supabase
@@ -727,6 +733,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
       status: editForm.status,
       ends_at: editForm.close_mode === 'date' ? (editForm.ends_at || null) : null,
       country: editForm.country || 'GT',
+      lp_public: editForm.lp_public,
     }).eq('id', editingId)
 
     if (err) {
@@ -1106,6 +1113,23 @@ export function EventManager({ platformRates }: EventManagerProps) {
                   EN VIVO
                 </label>
               </div>
+
+              {/* Public LP toggle. When on, the event surfaces in the
+                   user-facing 'Eventos disponibles para LP' feed in the
+                   Capital LP tab of Portafolio. Off by default. */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <input type="checkbox" id="lp_public_e" checked={editForm.lp_public}
+                  onChange={(e) => setE('lp_public', e.target.checked)}
+                  style={{ width: 16, height: 16, accentColor: '#C4B5FD', cursor: 'pointer' }} />
+                <label htmlFor="lp_public_e" style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-text-1)', cursor: 'pointer' }}>
+                  Abierto para LP público
+                </label>
+              </div>
+              {editForm.lp_public && (
+                <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', marginTop: '-4px', marginLeft: '24px', lineHeight: 1.4 }}>
+                  Los usuarios pueden aportar capital LP a este evento desde su Portafolio.
+                </p>
+              )}
 
               {editError && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', padding: '8px 10px', background: 'rgba(248,113,113,0.08)', borderRadius: 'var(--radius-lg)' }}>{editError}</p>}
               {editSuccess && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-si)', padding: '8px 10px', background: 'rgba(74,222,128,0.08)', borderRadius: 'var(--radius-lg)' }}>✓ {editSuccess}</p>}
@@ -1891,6 +1915,21 @@ export function EventManager({ platformRates }: EventManagerProps) {
                   Marcar como EN VIVO
                 </label>
               </div>
+
+              {/* Public LP toggle on the create form. Default: false. */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <input type="checkbox" id="lp_public_c" checked={form.lp_public}
+                  onChange={(e) => setC('lp_public', e.target.checked)}
+                  style={{ width: 16, height: 16, accentColor: '#C4B5FD', cursor: 'pointer' }} />
+                <label htmlFor="lp_public_c" style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-text-1)', cursor: 'pointer' }}>
+                  Abierto para LP público
+                </label>
+              </div>
+              {form.lp_public && (
+                <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', marginTop: '-4px', marginLeft: '24px', lineHeight: 1.4 }}>
+                  Los usuarios podrán aportar capital LP a este evento desde su Portafolio.
+                </p>
+              )}
             </div>
           </div>
 
