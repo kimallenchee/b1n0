@@ -521,23 +521,45 @@ export function Historial() {
         </p>
       </div>
 
-      {/* Tab switcher */}
-      <div style={{ display: 'flex', background: 'var(--b1n0-card)', borderRadius: 'var(--radius-lg)', padding: '3px', marginBottom: '12px' }}>
-        {(['votos', 'movimientos'] as const).map((t) => (
-          <button
-            key={t}
-            onClick={() => setTab(t)}
-            style={{
-              flex: 1, padding: '9px', borderRadius: '9px', border: 'none', cursor: 'pointer',
-              fontFamily: F, fontWeight: 600, fontSize: '13px',
-              background: tab === t ? 'var(--b1n0-text-1)' : 'transparent',
-              color: tab === t ? 'var(--b1n0-bg)' : 'var(--b1n0-muted)',
-              transition: 'background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out)',
-            }}
-          >
-            {t === 'votos' ? 'Mis Votos' : 'Movimientos'}
-          </button>
-        ))}
+      {/* Tab switcher — slim sliding-underline pattern (canonical) */}
+      <div style={{ position: 'relative', display: 'flex', marginBottom: '14px', borderBottom: '1px solid var(--b1n0-border)' }}>
+        {(['votos', 'movimientos'] as const).map((t) => {
+          const isOn = tab === t
+          return (
+            <button
+              key={t}
+              onClick={() => setTab(t)}
+              style={{
+                flex: 1,
+                padding: '10px 4px',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                fontFamily: F,
+                fontWeight: 600,
+                fontSize: '13px',
+                color: isOn ? 'var(--b1n0-text-1)' : 'var(--b1n0-muted)',
+                letterSpacing: 'var(--tracking-tight)',
+                transition: 'color var(--duration-fast) var(--ease-out)',
+              }}
+            >
+              {t === 'votos' ? 'Mis Votos' : 'Movimientos'}
+            </button>
+          )
+        })}
+        <span
+          aria-hidden
+          style={{
+            position: 'absolute',
+            bottom: -1,
+            left: tab === 'votos' ? 0 : '50%',
+            width: '50%',
+            height: 2,
+            background: 'var(--b1n0-si)',
+            borderRadius: '2px 2px 0 0',
+            transition: 'left var(--duration-base) var(--ease-out)',
+          }}
+        />
       </div>
 
       {/* Summary strip — different shape per tab */}

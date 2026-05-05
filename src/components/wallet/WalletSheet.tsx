@@ -196,24 +196,45 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
               />
             </div>
 
-            {/* Deposit / Withdraw toggle */}
-            <div style={{ display: 'flex', background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-lg)', padding: '3px', marginBottom: '16px' }}>
-              {(['depositar', 'retirar'] as const).map((t) => (
-                <button
-                  key={t}
-                  onClick={() => switchTab(t)}
-                  style={{
-                    flex: 1, padding: '10px', borderRadius: 'var(--radius-lg)', border: 'none',
-                    background: tab === t ? 'var(--b1n0-card)' : 'transparent',
-                    boxShadow: tab === t ? '0 1px 3px var(--b1n0-border)' : 'none',
-                    cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '13px',
-                    color: tab === t ? 'var(--b1n0-text-1)' : 'var(--b1n0-muted)',
-                    transition: 'all 0.15s',
-                  }}
-                >
-                  {t === 'depositar' ? '↓ Depositar' : '↑ Retirar'}
-                </button>
-              ))}
+            {/* Deposit / Withdraw toggle — slim sliding-underline (canonical) */}
+            <div style={{ position: 'relative', display: 'flex', marginBottom: '18px', borderBottom: '1px solid var(--b1n0-border)' }}>
+              {(['depositar', 'retirar'] as const).map((t) => {
+                const isOn = tab === t
+                return (
+                  <button
+                    key={t}
+                    onClick={() => switchTab(t)}
+                    style={{
+                      flex: 1,
+                      padding: '10px 4px',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontFamily: F,
+                      fontWeight: 600,
+                      fontSize: '13px',
+                      color: isOn ? 'var(--b1n0-text-1)' : 'var(--b1n0-muted)',
+                      letterSpacing: 'var(--tracking-tight)',
+                      transition: 'color var(--duration-fast) var(--ease-out)',
+                    }}
+                  >
+                    {t === 'depositar' ? '↓ Depositar' : '↑ Retirar'}
+                  </button>
+                )
+              })}
+              <span
+                aria-hidden
+                style={{
+                  position: 'absolute',
+                  bottom: -1,
+                  left: tab === 'depositar' ? 0 : '50%',
+                  width: '50%',
+                  height: 2,
+                  background: 'var(--b1n0-si)',
+                  borderRadius: '2px 2px 0 0',
+                  transition: 'left var(--duration-base) var(--ease-out)',
+                }}
+              />
             </div>
 
             {/* Method list */}

@@ -291,16 +291,9 @@ export function Tabla() {
 
   return (
     <div className="feed-scroll" style={{ height: '100%', padding: 'var(--space-3) var(--space-5) var(--space-5)' }}>
-      {/* Tabs — Phosphor icons add semantic clarity */}
-      <div
-        style={{
-          display: 'flex',
-          marginBottom: 'var(--space-5)',
-          background: 'var(--b1n0-surface)',
-          borderRadius: 'var(--radius-md)',
-          padding: '4px',
-        }}
-      >
+      {/* Tabs — slim sliding-underline pattern (canonical), Phosphor
+           icons inline for semantic clarity */}
+      <div style={{ position: 'relative', display: 'flex', marginBottom: 'var(--space-5)', borderBottom: '1px solid var(--b1n0-border)' }}>
         {(
           [
             { id: 'general', label: 'General', Icon: Trophy },
@@ -314,20 +307,20 @@ export function Tabla() {
               onClick={() => setTab(t.id)}
               style={{
                 flex: 1,
-                padding: 'var(--space-3)',
-                borderRadius: 'var(--radius-md)',
+                padding: 'var(--space-3) 4px',
+                background: 'none',
                 border: 'none',
                 cursor: 'pointer',
                 fontFamily: F,
                 fontWeight: 600,
                 fontSize: 'var(--text-sm)',
-                background: active ? 'var(--b1n0-card)' : 'transparent',
                 color: active ? 'var(--b1n0-text-1)' : 'var(--b1n0-muted)',
+                letterSpacing: 'var(--tracking-tight)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: 'var(--space-2)',
-                transition: 'background var(--duration-fast) var(--ease-out)',
+                transition: 'color var(--duration-fast) var(--ease-out)',
               }}
             >
               <t.Icon size={14} weight={active ? 'fill' : 'regular'} />
@@ -335,6 +328,19 @@ export function Tabla() {
             </button>
           )
         })}
+        <span
+          aria-hidden
+          style={{
+            position: 'absolute',
+            bottom: -1,
+            left: tab === 'general' ? 0 : '50%',
+            width: '50%',
+            height: 2,
+            background: 'var(--b1n0-si)',
+            borderRadius: '2px 2px 0 0',
+            transition: 'left var(--duration-base) var(--ease-out)',
+          }}
+        />
       </div>
 
       {tab === 'general' && (
