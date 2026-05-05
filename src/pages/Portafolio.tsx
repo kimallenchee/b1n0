@@ -408,10 +408,21 @@ export function Portafolio() {
   const [tab, setTab] = useState<'active' | 'resolved'>('active')
   const [filter, setFilter] = useState<string>('all')
   const [sortBy, setSortBy] = useState<SortKey>('pnl')
+  // Top-level toggle for the Portafolio page: predictions vs LP
+  // capital. The two domains have very different summary metrics
+  // and lifecycle, so each gets its own dedicated view rather than
+  // sharing a column on the same page.
+  const [topTab, setTopTab] = useState<'predictions' | 'lp'>('predictions')
+
   // Capital LP sub-tab — separate from the main `tab` state above
   // (which controls user-position positions vs resolved). LPs have
   // their own activos/resueltos split.
   const [lpTab, setLpTab] = useState<'active' | 'resolved'>('active')
+
+  // Per-event resolution timestamps for the LP chart. Voided events
+  // already carry voided_at on the events row; settled events need
+  // a separate fetch from admin_actions where action_type='settle_event'.
+  const [lpReturnTimes, setLpReturnTimes] = useState<Record<string, string>>({})
   const [sellingId, setSellingId] = useState<string | null>(null)
   const [sellError, setSellError] = useState<string | null>(null)
 
@@ -488,6 +499,26 @@ export function Portafolio() {
       fees_collected:  feesMap[d.event_id]   || 0,
       spread_collected: spreadMap[d.event_id] || 0,
     })))
+
+    // Fetch settle_event timestamps from admin_actions so the chart
+    // has accurate return times for settled (non-voided) events.
+    // Voided events already have voided_at on the events row.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: actions } = await (supabase as any)
+      .from('admin_actions')
+      .select('target_id, created_at, action_type')
+      .in('target_id', eventIds)
+      .eq('action_type', 'settle_event')
+    const returnTimes: Record<string, string> = {}
+    if (actions) {
+      for (const a of actions as Array<{ target_id: string; created_at: string }>) {
+        // Keep the LATEST settle action per event (in case of re-settle).
+        if (!returnTimes[a.target_id] || a.created_at > returnTimes[a.target_id]) {
+          returnTimes[a.target_id] = a.created_at
+        }
+      }
+    }
+    setLpReturnTimes(returnTimes)
     setLpLoading(false)
   }, [session?.user?.id])
 
@@ -846,6 +877,59 @@ export function Portafolio() {
         </div>
       </div>
 
+      {/* ── Top-level tab: Mis Llamados / Capital LP ──
+           Splits the page into two domains. Predictions live in their
+           own tab with their own summary tiles + sub-tab + filters;
+           LP capital lives in its own tab with the chart strip and
+           its own sub-tab. Avoids the prior visual collision of two
+           Activos/Resueltos toggles on the same screen. */}
+      <div style={{ position: 'relative', display: 'flex', marginTop: '14px', marginBottom: '18px', borderBottom: '1px solid var(--b1n0-border)' }}>
+        {(['predictions', 'lp'] as const).map((t) => {
+          const isOn = topTab === t
+          const labelText = t === 'predictions'
+            ? `Mis Llamados (${predictions.length})`
+            : `Capital LP (${lpPositions.length})`
+          return (
+            <button
+              key={t}
+              onClick={() => setTopTab(t)}
+              style={{
+                flex: 1,
+                padding: '10px 4px',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                fontFamily: F,
+                fontWeight: 700,
+                fontSize: '13px',
+                color: isOn ? 'var(--b1n0-text-1)' : 'var(--b1n0-muted)',
+                letterSpacing: 'var(--tracking-tight)',
+                transition: 'color var(--duration-fast) var(--ease-out)',
+              }}
+            >
+              {labelText}
+            </button>
+          )
+        })}
+        <span
+          aria-hidden
+          style={{
+            position: 'absolute',
+            bottom: -1,
+            left: topTab === 'predictions' ? 0 : '50%',
+            width: '50%',
+            height: 2,
+            background: 'var(--b1n0-si)',
+            borderRadius: '2px 2px 0 0',
+            transition: 'left var(--duration-base) var(--ease-out)',
+          }}
+        />
+      </div>
+
+      {/* ──────────────────── PREDICTIONS TAB ──────────────────── */}
+      {topTab === 'predictions' && (
+      <>
+
       {/* Summary cards */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', margin: '20px 0 8px' }}>
         <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '14px 16px' }}>
@@ -1038,11 +1122,102 @@ export function Portafolio() {
         </div>
       )}
 
-      {/* ═══════════════ LP DASHBOARD ═══════════════ */}
-      {lpPositions.length > 0 && (
-        <div style={{ marginTop: '24px', marginBottom: '16px' }}>
+      </>
+      )}
+
+      {/* ────────────────── CAPITAL LP TAB ────────────────── */}
+      {topTab === 'lp' && (
+        <div style={{ marginTop: '4px', marginBottom: '16px' }}>
+          {lpPositions.length === 0 ? (
+            <div style={{ padding: '64px 16px', textAlign: 'center' }}>
+              <p style={{ fontFamily: F, fontSize: '14px', color: 'var(--b1n0-muted)', lineHeight: 1.5, maxWidth: 320, margin: '0 auto' }}>
+                Todavía no has aportado capital LP. Cuando un evento abra ronda de LP, vas a poder participar y ganar fees como LP.
+              </p>
+            </div>
+          ) : (
+          <>
+
+          {/* ── LP capital chart strip ──
+               Inline SVG sparkline showing total active LP capital
+               over time. Each deposit is a step-up at created_at,
+               each return is a step-down at the corresponding
+               admin_action timestamp (settle) or events.voided_at
+               (void). For settled events without an admin_actions
+               row (pre-audit-log resolutions), we fall back to the
+               deposit timestamp + 1 day as a rough estimate so the
+               chart still renders something coherent. */}
+          {(() => {
+            type Evt = { time: number; delta: number }
+            const evts: Evt[] = []
+            for (const lp of lpPositions) {
+              evts.push({ time: new Date(lp.created_at).getTime(), delta: +lp.amount })
+              if (lp.status !== 'active') {
+                let returnTime: number | null = null
+                if (lp.event_voided_at) {
+                  returnTime = new Date(lp.event_voided_at).getTime()
+                } else if (lpReturnTimes[lp.event_id]) {
+                  returnTime = new Date(lpReturnTimes[lp.event_id]).getTime()
+                }
+                if (returnTime == null) {
+                  // Pre-audit-log fallback: assume returned ~1 day after deposit
+                  returnTime = new Date(lp.created_at).getTime() + 86400000
+                }
+                evts.push({ time: returnTime, delta: -lp.amount })
+              }
+            }
+            if (evts.length === 0) return null
+            evts.sort((a, b) => a.time - b.time)
+
+            // Walk events to build the running-total series.
+            type Pt = { t: number; v: number }
+            const series: Pt[] = []
+            let running = 0
+            for (const e of evts) {
+              series.push({ t: e.time, v: running })  // pre-event point (creates step)
+              running += e.delta
+              series.push({ t: e.time, v: running })  // post-event point
+            }
+            // Tail point at "now" so active capital extends to the right edge
+            series.push({ t: Date.now(), v: running })
+
+            const minT = series[0].t
+            const maxT = series[series.length - 1].t
+            const maxV = Math.max(...series.map(p => p.v), 1)
+            const W = 320, H = 64, PAD_X = 4, PAD_Y = 6
+            const xScale = (t: number) => PAD_X + ((t - minT) / Math.max(maxT - minT, 1)) * (W - 2 * PAD_X)
+            const yScale = (v: number) => H - PAD_Y - (v / maxV) * (H - 2 * PAD_Y)
+            const pathD = series.map((p, i) => `${i === 0 ? 'M' : 'L'} ${xScale(p.t).toFixed(1)} ${yScale(p.v).toFixed(1)}`).join(' ')
+            const areaD = `${pathD} L ${xScale(maxT).toFixed(1)} ${(H - PAD_Y).toFixed(1)} L ${xScale(minT).toFixed(1)} ${(H - PAD_Y).toFixed(1)} Z`
+
+            const fmt = (v: number) => v.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+
+            return (
+              <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '14px 16px', marginBottom: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '8px' }}>
+                  <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    Capital LP en el tiempo
+                  </p>
+                  <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>
+                    Pico ${fmt(maxV)} · Hoy ${fmt(running)}
+                  </p>
+                </div>
+                <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" style={{ width: '100%', height: H, display: 'block' }}>
+                  <defs>
+                    <linearGradient id="lp-area-grad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#C4B5FD" stopOpacity="0.35" />
+                      <stop offset="100%" stopColor="#C4B5FD" stopOpacity="0" />
+                    </linearGradient>
+                  </defs>
+                  <path d={areaD} fill="url(#lp-area-grad)" />
+                  <path d={pathD} fill="none" stroke="#C4B5FD" strokeWidth={1.5} strokeLinejoin="round" strokeLinecap="round" />
+                </svg>
+              </div>
+            )
+          })()}
+
+          {/* ═══════════════ LP DASHBOARD ═══════════════ */}
           <p style={{ fontFamily: D, fontWeight: 700, fontSize: '16px', color: 'var(--b1n0-text-1)', marginBottom: '12px' }}>
-            Capital LP
+            Resumen
           </p>
 
           {/* Summary cards — math unchanged from prior version. */}
@@ -1331,6 +1506,8 @@ export function Portafolio() {
               </div>
             )
           })()}
+          </>
+          )}
         </div>
       )}
     </div>
