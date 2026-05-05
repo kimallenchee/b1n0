@@ -412,15 +412,33 @@ export function Perfil() {
         <p style={{ fontFamily: F, fontSize: 'var(--text-2xs)', fontWeight: 700, color: 'var(--b1n0-muted)', letterSpacing: 'var(--tracking-caps)', textTransform: 'uppercase', marginBottom: 'var(--space-3)' }}>
           Saldo
         </p>
-        <div
+        {/* Whole saldo card is the wallet trigger. Tap anywhere on it
+             — number, label, cobrado row — and the WalletSheet opens
+             with its Depositar / Retirar tabs. Matches the affordance
+             of the Saldo tile on Inicio so the wallet entry point
+             feels consistent platform-wide. Rendered as a <button>
+             for keyboard + screen-reader accessibility, styled to
+             read as a card. Hover state brightens the border so the
+             interactivity is discoverable without screaming. */}
+        <button
+          type="button"
+          onClick={() => setWalletOpen(true)}
+          aria-label="Abrir billetera"
           style={{
             position: 'relative',
+            display: 'block',
+            width: '100%',
+            textAlign: 'left',
             background: 'var(--b1n0-card)',
             border: '1px solid var(--b1n0-border)',
             borderRadius: 'var(--radius-lg)',
             padding: 'var(--space-6) var(--space-6)',
             overflow: 'hidden',
+            cursor: 'pointer',
+            transition: 'border-color var(--duration-fast) var(--ease-out), background var(--duration-fast) var(--ease-out)',
           }}
+          onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--b1n0-text-2)' }}
+          onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--b1n0-border)' }}
         >
           {/* Decorative gradient strip — top edge */}
           <span
@@ -434,10 +452,26 @@ export function Perfil() {
               background: 'linear-gradient(90deg, var(--b1n0-si) 0%, var(--b1n0-gold) 50%, var(--b1n0-si) 100%)',
             }}
           />
-          {/* Balance heading: Disponible (hero number + label).
-               Cobrado moves below as a slim hairline-divided row so it
-               can't compete with or get clipped by the $510.49 number
-               on narrow viewports. One column, top-down hierarchy. */}
+
+          {/* Top-right chevron — quietly signals 'this opens something'
+               without needing a screaming CTA button. */}
+          <span
+            aria-hidden
+            style={{
+              position: 'absolute',
+              top: 'var(--space-4)',
+              right: 'var(--space-5)',
+              fontFamily: F,
+              fontSize: 'var(--text-md)',
+              fontWeight: 600,
+              color: 'var(--b1n0-muted)',
+              lineHeight: 1,
+            }}
+          >
+            ›
+          </span>
+
+          {/* Disponible — hero number + label */}
           <div>
             <AnimatedNumber
               value={profile?.balance ?? 0}
@@ -459,8 +493,7 @@ export function Perfil() {
             </p>
           </div>
 
-          {/* Cobrado row — slim line under the main number, separated by
-               a hairline so the two values don't visually compete. */}
+          {/* Cobrado row — slim hairline-separated below the hero */}
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginTop: 'var(--space-4)', paddingTop: 'var(--space-3)', borderTop: '1px solid var(--b1n0-border)' }}>
             <span style={{ fontFamily: F, fontSize: 'var(--text-2xs)', fontWeight: 600, color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: 'var(--tracking-caps)' }}>
               Cobrado
@@ -469,19 +502,7 @@ export function Perfil() {
               ${user.totalCobrado.toLocaleString(undefined, { minimumFractionDigits: 2 })}
             </span>
           </div>
-
-          {/* Single Billetera CTA — opens the WalletSheet which has its
-               own Depositar/Retirar tabs internally. Same flow as
-               clicking the Saldo tile from Inicio, so the wallet opens
-               consistently from anywhere on the platform. */}
-          <button
-            onClick={() => setWalletOpen(true)}
-            className="btn-primary"
-            style={{ width: '100%', padding: 'var(--space-4)', fontSize: 'var(--text-sm)', marginTop: 'var(--space-5)' }}
-          >
-            Billetera
-          </button>
-        </div>
+        </button>
 
         {/* Tier progress CTA — only when not at max */}
         {(user.tier ?? 1) < 3 && (
