@@ -988,26 +988,51 @@ export function Portafolio() {
         </div>
       </div>
 
-      {/* Tab bar */}
-      <div style={{ display: 'flex', background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-lg)', padding: '3px', marginBottom: '12px' }}>
+      {/* Sub-tab bar — slim segmented control with sliding teal underline,
+           matching the top-level tab and the LP sub-tab. Replaces the
+           prior heavy "pill on surface" treatment for visual consistency
+           across the page. */}
+      <div style={{ position: 'relative', display: 'flex', marginBottom: '14px', borderBottom: '1px solid var(--b1n0-border)' }}>
         {([
           ['active', `Activos (${active.length})`],
           ['resolved', `Resueltos (${resolved.length})`],
-        ] as const).map(([t, label]) => (
-          <button
-            key={t}
-            onClick={() => setTab(t)}
-            style={{
-              flex: 1, padding: '9px', borderRadius: '7px', border: 'none',
-              cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '13px',
-              background: tab === t ? 'var(--b1n0-card)' : 'transparent',
-              color: tab === t ? 'var(--b1n0-text-1)' : 'var(--b1n0-muted)',
-              transition: 'all 0.15s',
-            }}
-          >
-            {label}
-          </button>
-        ))}
+        ] as const).map(([t, label]) => {
+          const isOn = tab === t
+          return (
+            <button
+              key={t}
+              onClick={() => setTab(t)}
+              style={{
+                flex: 1,
+                padding: '10px 4px',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                fontFamily: F,
+                fontWeight: 600,
+                fontSize: '13px',
+                color: isOn ? 'var(--b1n0-text-1)' : 'var(--b1n0-muted)',
+                letterSpacing: 'var(--tracking-tight)',
+                transition: 'color var(--duration-fast) var(--ease-out)',
+              }}
+            >
+              {label}
+            </button>
+          )
+        })}
+        <span
+          aria-hidden
+          style={{
+            position: 'absolute',
+            bottom: -1,
+            left: tab === 'active' ? 0 : '50%',
+            width: '50%',
+            height: 2,
+            background: 'var(--b1n0-si)',
+            borderRadius: '2px 2px 0 0',
+            transition: 'left var(--duration-base) var(--ease-out)',
+          }}
+        />
       </div>
 
       {/* Filters + sort */}
