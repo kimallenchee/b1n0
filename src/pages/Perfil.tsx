@@ -21,8 +21,7 @@ import { useAuth } from '../context/AuthContext'
 import { useVotes } from '../context/VoteContext'
 import { supabase } from '../lib/supabase'
 import { KYCSheet } from '../components/wallet/KYCSheet'
-import { DepositSheet } from '../components/wallet/DepositSheet'
-import { RetiroSheet } from '../components/wallet/RetiroSheet'
+import { WalletSheet } from '../components/wallet/WalletSheet'
 import { useTheme, type ThemeMode } from '../context/ThemeContext'
 import { usePageMeta } from '../hooks/usePageMeta'
 
@@ -107,8 +106,7 @@ export function Perfil() {
     ? { ...mockUser, name: profile.name, tier: profile.tier, balance: profile.balance, totalPredictions: totalVotes, correctPredictions: correctVotes, totalCobrado }
     : mockUser
 
-  const [depositOpen, setDepositOpen] = useState(false)
-  const [retiroOpen, setRetiroOpen] = useState(false)
+  const [walletOpen, setWalletOpen] = useState(false)
   const [kycOpen, setKycOpen] = useState(false)
   const [notifOpen, setNotifOpen] = useState(false)
 
@@ -436,52 +434,53 @@ export function Perfil() {
               background: 'linear-gradient(90deg, var(--b1n0-si) 0%, var(--b1n0-gold) 50%, var(--b1n0-si) 100%)',
             }}
           />
-          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 'var(--space-5)', gap: 'var(--space-4)' }}>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <AnimatedNumber
-                value={profile?.balance ?? 0}
-                prefix="$"
-                decimals={2}
-                duration={650}
-                style={{
-                  display: 'block',
-                  fontFamily: 'var(--font-hero)',
-                  fontWeight: 800,
-                  fontSize: 'var(--text-2xl)',
-                  color: 'var(--b1n0-text-1)',
-                  letterSpacing: 'var(--tracking-tight)',
-                  lineHeight: 1,
-                }}
-              />
-              <p style={{ fontFamily: F, fontSize: 'var(--text-2xs)', fontWeight: 600, color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: 'var(--tracking-caps)', marginTop: 'var(--space-2)' }}>
-                Disponible
-              </p>
-            </div>
-            <div style={{ textAlign: 'right' }}>
-              <p style={{ fontFamily: 'var(--font-num)', fontSize: 'var(--text-md)', fontWeight: 700, color: 'var(--b1n0-text-1)', fontVariantNumeric: 'tabular-nums', letterSpacing: 'var(--tracking-tight)' }}>
-                ${user.totalCobrado.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-              </p>
-              <p style={{ fontFamily: F, fontSize: 'var(--text-2xs)', fontWeight: 600, color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: 'var(--tracking-caps)', marginTop: 'var(--space-2)' }}>
-                Cobrado total
-              </p>
-            </div>
+          {/* Balance heading: Disponible (hero number + label).
+               Cobrado moves below as a slim hairline-divided row so it
+               can't compete with or get clipped by the $510.49 number
+               on narrow viewports. One column, top-down hierarchy. */}
+          <div>
+            <AnimatedNumber
+              value={profile?.balance ?? 0}
+              prefix="$"
+              decimals={2}
+              duration={650}
+              style={{
+                display: 'block',
+                fontFamily: 'var(--font-hero)',
+                fontWeight: 800,
+                fontSize: 'var(--text-2xl)',
+                color: 'var(--b1n0-text-1)',
+                letterSpacing: 'var(--tracking-tight)',
+                lineHeight: 1,
+              }}
+            />
+            <p style={{ fontFamily: F, fontSize: 'var(--text-2xs)', fontWeight: 600, color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: 'var(--tracking-caps)', marginTop: 'var(--space-2)' }}>
+              Disponible
+            </p>
           </div>
-          <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
-            <button
-              onClick={() => setDepositOpen(true)}
-              className="btn-primary"
-              style={{ flex: 1, padding: 'var(--space-4)', fontSize: 'var(--text-sm)' }}
-            >
-              Depositar
-            </button>
-            <button
-              onClick={() => setRetiroOpen(true)}
-              className="btn-secondary"
-              style={{ flex: 1, padding: 'var(--space-4)', fontSize: 'var(--text-sm)' }}
-            >
-              Retirar
-            </button>
+
+          {/* Cobrado row — slim line under the main number, separated by
+               a hairline so the two values don't visually compete. */}
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginTop: 'var(--space-4)', paddingTop: 'var(--space-3)', borderTop: '1px solid var(--b1n0-border)' }}>
+            <span style={{ fontFamily: F, fontSize: 'var(--text-2xs)', fontWeight: 600, color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: 'var(--tracking-caps)' }}>
+              Cobrado
+            </span>
+            <span style={{ fontFamily: 'var(--font-num)', fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--b1n0-text-1)', fontVariantNumeric: 'tabular-nums', letterSpacing: 'var(--tracking-tight)' }}>
+              ${user.totalCobrado.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+            </span>
           </div>
+
+          {/* Single Billetera CTA — opens the WalletSheet which has its
+               own Depositar/Retirar tabs internally. Same flow as
+               clicking the Saldo tile from Inicio, so the wallet opens
+               consistently from anywhere on the platform. */}
+          <button
+            onClick={() => setWalletOpen(true)}
+            className="btn-primary"
+            style={{ width: '100%', padding: 'var(--space-4)', fontSize: 'var(--text-sm)', marginTop: 'var(--space-5)' }}
+          >
+            Billetera
+          </button>
         </div>
 
         {/* Tier progress CTA — only when not at max */}
@@ -493,8 +492,7 @@ export function Perfil() {
         )}
       </div>
 
-      <DepositSheet open={depositOpen} onClose={() => setDepositOpen(false)} />
-      <RetiroSheet open={retiroOpen} onClose={() => setRetiroOpen(false)} />
+      <WalletSheet open={walletOpen} onClose={() => setWalletOpen(false)} />
 
       {/* Portfolio CTA — now with content preview: active position count
           and total exposure. Shows up immediately whether the user has
