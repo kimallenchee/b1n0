@@ -255,7 +255,7 @@ function OptionRows({ options, onChange, maxPool = 0 }: {
             <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', flexShrink: 0 }}>Pool:</span>
             <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)', flexShrink: 0 }}>$</span>
             <input
-              type="number" min={0} step={100}
+              type="number" min={0} step="any"
               value={opt.pool}
               onChange={(e) => update(i, 'pool', e.target.value)}
               style={{ ...inputStyle, width: '110px', padding: '6px 8px', fontSize: '12px' }}
