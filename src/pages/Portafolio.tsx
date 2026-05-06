@@ -623,6 +623,10 @@ export function Portafolio() {
   const [contractsMap, setContractsMap] = useState<Record<string, number>>({})
   // Per-position contracts: positionId → contracts (for accurate sell preview)
   const [positionContractsMap, setPositionContractsMap] = useState<Record<string, number>>({})
+  // Real total $ contributed per side ACROSS ALL USERS (eventId+side → gross sum).
+  // Used by getParimutuelValueForSide to split the pool by real money instead
+  // of AMM share counts (which include phantom synthetic seed liquidity).
+  const [sideAmountMap, setSideAmountMap] = useState<Record<string, number>>({})
   // Entry prices from positions table
   const [entryPrices, setEntryPrices] = useState<Record<string, number>>({})
   // Sale proceeds: position_id → net_to_pool (what user received)
@@ -641,11 +645,16 @@ export function Portafolio() {
     const eventIds = [...new Set(predictions.map((p) => p.eventId))]
     if (eventIds.length === 0) return
 
-    const [emRes, omRes, posRes, saleRes] = await Promise.all([
+    const [emRes, omRes, posRes, saleRes, allPosRes] = await Promise.all([
       supabase.from('event_markets').select('event_id, yes_shares, no_shares, pool_total, lp_capital, bet_pool').in('event_id', eventIds),
       supabase.from('option_markets').select('event_id, option_label, yes_shares, no_shares').in('event_id', eventIds).eq('status', 'open'),
       supabase.from('positions').select('id, event_id, price_at_purchase, contracts, side, status').eq('user_id', uid).in('event_id', eventIds),
       supabase.from('market_transactions').select('position_id, net_to_pool').eq('user_id', uid).eq('tx_type', 'sale'),
+      // All-user position aggregates for parimutuel side-totals. The
+      // positions table has a permissive read policy (positions_read_for_leaderboard)
+      // so this works without an RPC. We only need event_id, side, and
+      // gross_amount; sum client-side per (event, side).
+      supabase.from('positions').select('event_id, side, gross_amount').in('event_id', eventIds).eq('status', 'active'),
     ])
 
     // Binary prices + parimutuel pool data
@@ -715,6 +724,20 @@ export function Portafolio() {
       }
     }
     setSaleProceeds(sales)
+
+    // Per-side gross-amount totals across ALL users (active positions only).
+    // Key shape: `${eventId}::${side}` → sum of gross_amount.
+    // This is the denominator in the parimutuel split — using real $
+    // contributions instead of AMM share counts means seed/phantom
+    // liquidity doesn't dilute winners' claims.
+    const sideTotals: Record<string, number> = {}
+    if (allPosRes.data) {
+      for (const row of allPosRes.data as { event_id: string; side: string; gross_amount: number }[]) {
+        const key = `${row.event_id}::${row.side}`
+        sideTotals[key] = (sideTotals[key] || 0) + Number(row.gross_amount)
+      }
+    }
+    setSideAmountMap(sideTotals)
   }, [session?.user?.id, predictions.length])
 
   useEffect(() => { fetchLiveData() }, [fetchLiveData])
@@ -817,44 +840,45 @@ export function Portafolio() {
     // The bet-pool trigger increments `bet_pool` on every purchase but does
     // NOT touch `pool_total` (pool_total snapshots LP capital deposits).
     // So early in an event, pool_total === lp_capital and the subtraction
-    // yields 0 even though there's real bet money to distribute. Using
-    // bet_pool as the floor keeps valuations accurate during that window;
-    // once pool_total has been kept in sync (LP-margin contributions, etc.)
-    // it can exceed bet_pool and we use the higher number.
+    // yields 0 even though there's real bet money to distribute.
     const distributable = Math.max(pool.betPool, pool.poolTotal - pool.lpCapital)
+    if (distributable <= 0) return null
+
     const isBinary = eventType !== 'open'
+    if (!isBinary) return null
 
-    if (isBinary) {
-      const contractKey = `${eventId}::${side}`
-      const myShares = contractsMap[contractKey]
-      if (!myShares || myShares <= 0) return null
+    // Parimutuel proportioning is in REAL DOLLARS, not AMM share counts.
+    // pricing.ts seeds new markets with 1000 synthetic shares of virtual
+    // liquidity for the AMM pricing curve. Those phantom shares aren't
+    // backed by money and shouldn't dilute real bettors' winning claims.
+    // sideAmountMap tracks the actual sum of position.gross_amount per
+    // (event, side) across ALL users — that's the proper denominator.
+    const sideKey = `${eventId}::${side}`
+    const totalSideAmount = sideAmountMap[sideKey] ?? 0
+    if (totalSideAmount <= 0) return null
 
-      const sideShares = (side === 'yes' || (!side.includes('::') && side !== 'no'))
-        ? pool.yesShares
-        : pool.noShares
-      if (sideShares <= 0) return null
-      return (myShares / sideShares) * distributable
-    }
-    return null
+    // In a parimutuel game, the entire distributable pool goes to winners
+    // on the winning side. Per-position proportioning happens in
+    // getParimutuelValue below using user_amount / totalSideAmount.
+    return distributable
   }
 
-  // Per-prediction value: proportional share of side value based on this prediction's contracts
+  // Per-prediction value: proportional share of side value based on real $ stakes.
+  // sideValue = entire distributable pool (goes to winning side in parimutuel).
+  // This pred's slice = pred.amount / total$onSideAcrossAllUsers.
   function getParimutuelValue(pred: UserPrediction): number | null {
     const sideValue = getParimutuelValueForSide(pred.eventId, pred.side, pred.event.eventType ?? 'binary')
     if (sideValue === null) return null
 
-    // This prediction's share of the side (based on contracts ratio)
-    const contractKey = `${pred.eventId}::${pred.side}`
-    const totalMyShares = contractsMap[contractKey]
-    if (!totalMyShares || totalMyShares <= 0) return null
+    // Use the all-users side total from sideAmountMap (not the user-only
+    // predictions filter). That keeps the math correct when other bettors
+    // are also on this side: their stakes dilute the user's parimutuel
+    // claim proportionally, exactly as a real settlement would.
+    const sideKey = `${pred.eventId}::${pred.side}`
+    const totalSideAmount = sideAmountMap[sideKey] ?? 0
+    if (totalSideAmount <= 0) return null
 
-    // pred.potentialCobro represents this prediction's contracts proportion
-    // Use gross_amount ratio as proxy for share of the side
-    const allSidePreds = predictions.filter(p => p.eventId === pred.eventId && p.side === pred.side && p.status === 'active')
-    const totalSideInvested = allSidePreds.reduce((s, p) => s + p.amount, 0)
-    if (totalSideInvested <= 0) return null
-
-    return sideValue * (pred.amount / totalSideInvested)
+    return sideValue * (pred.amount / totalSideAmount)
   }
 
   // Compute unrealized P&L for a position (parimutuel model)
@@ -879,8 +903,12 @@ export function Portafolio() {
   const totalInvested = active.reduce((s, p) => s + p.amount, 0)
 
   // ── Parimutuel-aware aggregation: group by event, pick best-case side per event ──
-  // For each event, calculate what you'd get if YES wins vs NO wins,
+  // For each event, calculate what THE USER would get if YES wins vs NO wins,
   // then take the better outcome. You can't win on BOTH sides.
+  //
+  // Note: getParimutuelValueForSide now returns the WHOLE distributable
+  // (entire side payout pool), not the user-specific slice. We have to
+  // proportion by user's $ on side here ourselves.
   const uniqueEventIds = [...new Set(active.map(p => p.eventId))]
   let totalCurrentValue = 0
   let totalPotentialReturn = 0
@@ -889,19 +917,27 @@ export function Portafolio() {
     const eventPreds = active.filter(p => p.eventId === eid)
     const eventType = eventPreds[0]?.event.eventType ?? 'binary'
 
-    const yesVal = getParimutuelValueForSide(eid, 'yes', eventType) ?? 0
-    const noVal = getParimutuelValueForSide(eid, 'no', eventType) ?? 0
+    const sideValYes = getParimutuelValueForSide(eid, 'yes', eventType) ?? 0
+    const sideValNo  = getParimutuelValueForSide(eid, 'no',  eventType) ?? 0
     const pool = poolDataMap[eid]
 
-    // Best case: whichever side wins gives you more
-    totalPotentialReturn += Math.max(yesVal, noVal)
+    // User's $ on each side (binary). Parimutuel: user's slice = sideValue × (userOnSide / totalOnSide).
+    const userYes  = eventPreds.filter(p => p.side === 'yes').reduce((s, p) => s + p.amount, 0)
+    const userNo   = eventPreds.filter(p => p.side === 'no' ).reduce((s, p) => s + p.amount, 0)
+    const totalYes = sideAmountMap[`${eid}::yes`] || userYes
+    const totalNo  = sideAmountMap[`${eid}::no`]  || userNo
+    const userYesPayout = totalYes > 0 ? sideValYes * (userYes / totalYes) : 0
+    const userNoPayout  = totalNo  > 0 ? sideValNo  * (userNo  / totalNo ) : 0
 
-    // Current value: weight by probability
+    // Best case: whichever side wins gives the user more
+    totalPotentialReturn += Math.max(userYesPayout, userNoPayout)
+
+    // Current value: weight by AMM-implied probability
     if (pool && pool.yesShares + pool.noShares > 0) {
       const yesProb = pool.yesShares / (pool.yesShares + pool.noShares)
-      totalCurrentValue += (yesVal * yesProb) + (noVal * (1 - yesProb))
+      totalCurrentValue += (userYesPayout * yesProb) + (userNoPayout * (1 - yesProb))
     } else {
-      totalCurrentValue += Math.max(yesVal, noVal) * 0.5
+      totalCurrentValue += Math.max(userYesPayout, userNoPayout) * 0.5
     }
   }
 
