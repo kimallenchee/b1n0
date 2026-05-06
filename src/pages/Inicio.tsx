@@ -21,8 +21,17 @@ import { usePullToRefresh } from '../hooks/usePullToRefresh'
 const F = 'var(--font-body)'
 const D = 'var(--font-display)'
 
+// Country code → short label shown on event card. Anything missing
+// here renders no pill — keep this in sync with the country dropdown
+// in the EventManager admin form so every supported event country
+// gets a visible badge.
 const COUNTRY_FLAGS: Record<string, string> = {
-  GT: 'GT', SV: 'SV', HN: 'HN', US: 'US', MX: 'MX', GLOBAL: 'GL',
+  // Centroamérica
+  GT: 'GT', SV: 'SV', HN: 'HN', NI: 'NI', CR: 'CR', PA: 'PA', BZ: 'BZ',
+  // Vecinos relevantes
+  US: 'US', MX: 'MX', CO: 'CO', VE: 'VE', CU: 'CU', AR: 'AR', BR: 'BR',
+  // Catch-all
+  GLOBAL: 'GL',
 }
 
 const categoryColors: Record<string, { bg: string; text: string }> = {
