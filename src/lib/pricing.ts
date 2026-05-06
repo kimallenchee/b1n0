@@ -21,6 +21,7 @@ export let FEE_RATE    = 0.025   // legacy — buy fee now dynamic, this is fall
 export let FEE_FLOOR   = 0.01   // min buy fee
 export let FEE_CEILING = 0.05   // max buy fee
 export let SELL_FEE_RATE = 0.02 // flat sell fee
+export let RESOLUTION_SKIM = 0.05 // platform take from winning payouts at settlement
 export let DEPTH_THRESHOLD = 50000
 export let MIN_PRICE   = 0.01
 export let MAX_PRICE   = 0.99
@@ -31,7 +32,7 @@ export let SPREAD_HIGH = 0.02   // default, overridden by platform_config
 export function setPricingRates(rates: {
   spreadLow?: number; spreadHigh?: number; feeRate?: number;
   feeFloor?: number; feeCeiling?: number; sellFeeRate?: number;
-  depthThreshold?: number;
+  resolutionSkim?: number; depthThreshold?: number;
 }) {
   if (rates.spreadLow !== undefined) SPREAD_LOW = rates.spreadLow
   if (rates.spreadHigh !== undefined) SPREAD_HIGH = rates.spreadHigh
@@ -39,6 +40,7 @@ export function setPricingRates(rates: {
   if (rates.feeFloor !== undefined) FEE_FLOOR = rates.feeFloor
   if (rates.feeCeiling !== undefined) FEE_CEILING = rates.feeCeiling
   if (rates.sellFeeRate !== undefined) SELL_FEE_RATE = rates.sellFeeRate
+  if (rates.resolutionSkim !== undefined) RESOLUTION_SKIM = rates.resolutionSkim
   if (rates.depthThreshold !== undefined) DEPTH_THRESHOLD = rates.depthThreshold
 }
 

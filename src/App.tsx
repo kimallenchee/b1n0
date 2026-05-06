@@ -246,6 +246,7 @@ function AppContent() {
         feeFloor: map.fee_floor_pct !== undefined ? map.fee_floor_pct / 100 : undefined,
         feeCeiling: map.fee_ceiling_pct !== undefined ? map.fee_ceiling_pct / 100 : undefined,
         sellFeeRate: map.sell_fee_pct !== undefined ? map.sell_fee_pct / 100 : undefined,
+        resolutionSkim: map.resolution_skim_pct !== undefined ? map.resolution_skim_pct / 100 : undefined,
         depthThreshold: map.depth_threshold,
       })
     })
