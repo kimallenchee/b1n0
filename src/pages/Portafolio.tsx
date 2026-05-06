@@ -785,14 +785,20 @@ export function Portafolio() {
       }
       let gross = round2(myContracts * currentBid)
 
-      // Cap: sell net can't exceed parimutuel value for this position
+      // Cap: sell net can't exceed parimutuel value for this position.
+      // Only apply when pmVal is a real positive number — pmVal=0 means
+      // "distributable pool data isn't flowing yet" (e.g. fresh event,
+      // pool_total not synced with bet_pool). Capping to a phantom zero
+      // would zero out the entire sell breakdown and leave the user with
+      // a $0 quote even though their position has real bid liquidity.
       const pmVal = getParimutuelValue(pred)
-      if (pmVal !== null && gross > pmVal) gross = round2(pmVal)
+      if (pmVal !== null && pmVal > 0 && gross > pmVal) gross = round2(pmVal)
 
       const fee = round2(gross * SELL_FEE_RATE)
       let net = round2(gross - fee)
-      // Final cap: net sell can never exceed parimutuel win value
-      if (pmVal !== null && net > pmVal) net = round2(pmVal)
+      // Final cap: net sell can never exceed parimutuel win value (same
+      // "ignore phantom zero" guard as above)
+      if (pmVal !== null && pmVal > 0 && net > pmVal) net = round2(pmVal)
       sell = { contracts: myContracts, bidPrice: currentBid, gross, fee, net }
     }
 
@@ -807,9 +813,15 @@ export function Portafolio() {
     const pool = poolDataMap[eventId]
     if (!pool || pool.betPool <= 0) return null
 
-    // Distributable = pool_total minus LP capital (sponsor money IS prize money)
-    // When no sponsor, pool_total = bet_pool. When sponsor exists, it's prize money.
-    const distributable = pool.poolTotal - pool.lpCapital
+    // Distributable = the bigger of (pool_total - lp_capital) or bet_pool.
+    // The bet-pool trigger increments `bet_pool` on every purchase but does
+    // NOT touch `pool_total` (pool_total snapshots LP capital deposits).
+    // So early in an event, pool_total === lp_capital and the subtraction
+    // yields 0 even though there's real bet money to distribute. Using
+    // bet_pool as the floor keeps valuations accurate during that window;
+    // once pool_total has been kept in sync (LP-margin contributions, etc.)
+    // it can exceed bet_pool and we use the higher number.
+    const distributable = Math.max(pool.betPool, pool.poolTotal - pool.lpCapital)
     const isBinary = eventType !== 'open'
 
     if (isBinary) {

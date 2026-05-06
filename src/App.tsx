@@ -33,6 +33,10 @@ const EventDetailPage = lazy(() => import('./pages/EventDetailPage').then(m => (
 const TermsPage = lazy(() => import('./pages/Legal').then(m => ({ default: m.TermsPage })))
 const PrivacyPage = lazy(() => import('./pages/Legal').then(m => ({ default: m.PrivacyPage })))
 
+// Public partnership pitch — bypasses the app chrome entirely so the URL
+// b1n0.com/prensa-libre is shareable as a clean, standalone marketing page.
+const PrensaLibre = lazy(() => import('./pages/PrensaLibre').then(m => ({ default: m.PrensaLibre })))
+
 function LazyFallback() {
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '200px' }}>
@@ -262,32 +266,52 @@ function AppContent() {
   return isDesktop ? <DesktopLayout /> : <MobileLayout />
 }
 
+// Strips the app shell (TopBar, Dock, auth gate, providers) so a route can
+// render as a standalone full-bleed page. Used for marketing / pitch URLs.
+function StandalonePage ({ children }: { children: React.ReactNode }) {
+  return (
+    <ThemeProvider>
+      <Suspense fallback={<LazyFallback />}>{children}</Suspense>
+    </ThemeProvider>
+  )
+}
+
 export default function App() {
   // Root-level ErrorBoundary catches anything outside the route tree
   // (provider init crashes, theme bootstrap, etc.). Per-layout
   // boundaries below catch route render crashes so the chrome stays.
+  //
+  // The /prensa-libre route lives ABOVE the auth/provider stack so it
+  // loads instantly as a public landing — no Supabase calls, no toast
+  // provider, no app chrome. Everything else falls through to the
+  // fully-instrumented app shell.
   return (
     <ErrorBoundary>
       <BrowserRouter>
-        <ThemeProvider>
-        <AuthProvider>
-          <ToastProvider>
-            <NowProvider>
-              <EventsProvider>
-                <VoteProvider>
-                  <NotificationProvider>
-                    <AuthModalProvider>
-                      <AppContent />
-                      <AuthModal />
-                      <InstallPrompt />
-                    </AuthModalProvider>
-                  </NotificationProvider>
-                </VoteProvider>
-              </EventsProvider>
-            </NowProvider>
-          </ToastProvider>
-        </AuthProvider>
-        </ThemeProvider>
+        <Routes>
+          <Route path="/prensa-libre" element={<StandalonePage><PrensaLibre /></StandalonePage>} />
+          <Route path="*" element={
+            <ThemeProvider>
+              <AuthProvider>
+                <ToastProvider>
+                  <NowProvider>
+                    <EventsProvider>
+                      <VoteProvider>
+                        <NotificationProvider>
+                          <AuthModalProvider>
+                            <AppContent />
+                            <AuthModal />
+                            <InstallPrompt />
+                          </AuthModalProvider>
+                        </NotificationProvider>
+                      </VoteProvider>
+                    </EventsProvider>
+                  </NowProvider>
+                </ToastProvider>
+              </AuthProvider>
+            </ThemeProvider>
+          } />
+        </Routes>
       </BrowserRouter>
     </ErrorBoundary>
   )
