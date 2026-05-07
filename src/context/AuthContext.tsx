@@ -91,6 +91,22 @@ function rowToProfile(row: Record<string, unknown>): Profile {
   }
 }
 
+
+/**
+ * Read the admin claim from the JWT's app_metadata. Server-controlled,
+ * tamper-proof (Supabase signs the JWT), and synchronous — no RPC.
+ * Migration 20260507_admin_claim_to_app_metadata copies profiles.is_admin
+ * into auth.users.raw_app_meta_data.is_admin and keeps them in sync via
+ * trigger. Reading from the JWT instead of profiles.is_admin closes the
+ * cosmetic leak where any user could SELECT their own profile and read
+ * the admin flag — even though the buttons wouldn't have worked, the
+ * surface area was visible.
+ */
+function isAdminFromSession (s: Session | null): boolean {
+  const claim = s?.user?.app_metadata?.is_admin
+  return claim === true || claim === 'true'
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
@@ -107,7 +123,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       logger.error('AuthContext: fetchProfile failed', { user_id: userId, error: error.message })
       return
     }
-    if (data) setProfile(rowToProfile(data as unknown as Record<string, unknown>))
+    if (data) {
+      const p = rowToProfile(data as unknown as Record<string, unknown>)
+      // Override DB is_admin with the JWT app_metadata claim.
+      // The JWT is signed by Supabase and trustworthy; the DB row is
+      // user-readable via RLS. Migration 20260507 keeps the two in sync
+      // via trigger. JWT wins if they ever diverge.
+      p.isAdmin = isAdminFromSession(session)
+      setProfile(p)
+    }
   }
 
   async function refreshProfile() {
@@ -173,7 +197,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         'postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'profiles', filter: `id=eq.${uid}` },
         (payload) => {
-          setProfile(rowToProfile(payload.new as Record<string, unknown>))
+          const p = rowToProfile(payload.new as Record<string, unknown>)
+          // Same JWT override as fetchProfile — realtime updates would
+          // otherwise restore the DB's is_admin and overwrite the claim.
+          p.isAdmin = isAdminFromSession(session)
+          setProfile(p)
         }
       )
       .subscribe()
