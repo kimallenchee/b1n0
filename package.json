@@ -5,9 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node scripts/check-truncation.mjs",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "check:truncation": "node scripts/check-truncation.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
