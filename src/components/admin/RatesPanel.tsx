@@ -361,4 +361,22 @@ export function RatesPanel() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <input type="number" min={0} max={5} step={0.1} value={ratesDraft.skew_bump_pct ?? 0.5} onChange={(e) => setRatesDraft((d) => ({ ...d, skew_bump_pct: parseFloat(e.target.value) || 0 }))} style={compactInput} />
                   <span style={{ fontFamily: D, fontSize: '14px', fontWeight: 700, color: 'var(--b1n0-text-1)' }}>%</span>
-                  <button onClick={() => saveRate('skew_bump_pct', ratesDraft.skew_bum
+                  <button onClick={() => saveRate('skew_bump_pct', ratesDraft.skew_bump_pct ?? 0.5)} disabled={ratesSaving.skew_bump_pct || ratesDraft.skew_bump_pct === platformRates.skew_bump_pct} style={btnStyle('skew_bump_pct')}>
+                    {btnLabel('skew_bump_pct')}
+                  </button>
+                </div>
+                {ratesDraft.skew_bump_pct !== platformRates.skew_bump_pct && (
+                  <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-gold)', marginTop: '4px' }}>DB: {platformRates.skew_bump_pct}%</p>
+                )}
+              </div>
+            </div>
+            <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', marginTop: '10px', lineHeight: 1.5 }}>
+              Bet #1–{ratesDraft.maker_rebate_count ?? 10}: <strong style={{ color: '#4ade80' }}>0%</strong> · Bet posterior, $1K vol: <strong style={{ color: 'var(--b1n0-text-1)' }}>~{(((ratesDraft.fee_floor_pct ?? 1) + ((ratesDraft.fee_ceiling_pct ?? 5) - (ratesDraft.fee_floor_pct ?? 1)) * Math.min(1000 / (ratesDraft.volume_factor_threshold ?? 5000), 1))).toFixed(2)}%</strong> · Pool maduro: <strong style={{ color: 'var(--b1n0-text-1)' }}>{ratesDraft.fee_ceiling_pct ?? 5}%</strong> · Skew bump: <strong style={{ color: 'var(--b1n0-text-1)' }}>+{ratesDraft.skew_bump_pct ?? 0.5}%</strong>
+            </p>
+          </div>
+
+        </div>
+      )}
+    </div>
+  )
+}
