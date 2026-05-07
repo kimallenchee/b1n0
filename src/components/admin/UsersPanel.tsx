@@ -339,10 +339,10 @@ export function UsersPanel() {
                       </div>
                     </div>
                     <span style={{ fontFamily: D, fontSize: '13px', fontWeight: 700, color: 'var(--b1n0-text-1)' }}>
-                      ${user.balance.toLocaleString('es-GT', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                      ${user.balance.toLocaleString('es-GT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </span>
                     <span style={{ fontFamily: D, fontSize: '13px', fontWeight: 600, color: user.total_cobrado > 0 ? 'var(--b1n0-si)' : 'var(--b1n0-muted)' }}>
-                      ${user.total_cobrado.toLocaleString('es-GT', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                      ${user.total_cobrado.toLocaleString('es-GT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </span>
                     <span style={{ fontFamily: D, fontSize: '13px', fontWeight: 600, color: 'var(--b1n0-text-2)' }}>
                       {user.total_predictions}

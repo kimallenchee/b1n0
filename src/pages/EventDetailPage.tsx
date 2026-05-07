@@ -322,7 +322,7 @@ function EventDetailInner({ event }: { event: AppEvent }) {
   const [panelSide, setPanelSide] = useState<'yes' | 'no'>('yes')
   const [panelOption, setPanelOption] = useState<string | null>(null) // for open events: "El Salvador", "Honduras", etc.
   const [panelAmount, setPanelAmount] = useState('')
-  const [panelPreview, setPanelPreview] = useState<{ fee: number; net: number; payout: number; feeRate: number; price: number; contracts: number } | null>(null)
+  const [panelPreview, setPanelPreview] = useState<{ fee: number; net: number; payout: number; feeRate: number; price: number; contracts: number; makerRebate: boolean } | null>(null)
   const [panelSubmitting, setPanelSubmitting] = useState(false)
   const [panelError, setPanelError] = useState<string | null>(null)
   const [userBalance, setUserBalance] = useState(0)
@@ -383,6 +383,9 @@ function EventDetailInner({ event }: { event: AppEvent }) {
           feeRate: Number(data.fee_rate || 0) * 100,
           price: Number(data.price),
           contracts: Number(data.contracts || data.payout_if_win || data.est_payout),
+          // Maker rebate flag — true when this bet is within the
+          // first N positions on the event (free fee window).
+          makerRebate: Boolean(data.maker_rebate),
         })
       }
     }, 300)
@@ -965,6 +968,23 @@ function EventDetailInner({ event }: { event: AppEvent }) {
                       {/* Divider */}
                       <div style={{ borderTop: '1px solid var(--b1n0-border)', margin: '0 0 8px' }} />
 
+                      {/* Maker rebate badge — only renders when preview tells us
+                          this bet falls within the free-fee window. Pulls focus
+                          away from the muted-text fee row so super users notice. */}
+                      {panelPreview?.makerRebate && (
+                        <div style={{
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                          padding: '7px 10px', marginBottom: '8px',
+                          background: 'var(--b1n0-si-bg)',
+                          border: '1px solid var(--b1n0-si-border)',
+                          borderRadius: 'var(--radius-md)',
+                          fontFamily: F, fontSize: '11px', fontWeight: 700,
+                          color: 'var(--b1n0-si)', letterSpacing: '0.04em',
+                        }}>
+                          ✦ SIN COMISIÓN — ENTRADA TEMPRANA
+                        </div>
+                      )}
+
                       {/* Full breakdown */}
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', marginBottom: '8px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -977,8 +997,8 @@ function EventDetailInner({ event }: { event: AppEvent }) {
                           <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)' }}>
                             Comisión ({panelPreview ? `${panelPreview.feeRate.toFixed(1)}%` : '—'})
                           </span>
-                          <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)' }}>
-                            {panelPreview ? `−${event.currency}${panelPreview.fee.toFixed(2)}` : '—'}
+                          <span style={{ fontFamily: F, fontSize: '12px', color: panelPreview?.makerRebate ? 'var(--b1n0-si)' : 'var(--b1n0-muted)', fontWeight: panelPreview?.makerRebate ? 700 : 400 }}>
+                            {panelPreview ? (panelPreview.makerRebate ? 'GRATIS' : `−${event.currency}${panelPreview.fee.toFixed(2)}`) : '—'}
                           </span>
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>

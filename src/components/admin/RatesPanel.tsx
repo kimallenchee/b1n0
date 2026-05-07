@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import { logger } from '../../lib/logger'
 import { callRpc } from '../../lib/rpc'
+import { setPricingRates } from '../../lib/pricing'
 
 const F = 'var(--font-body)'
 const D = 'var(--font-display)'
@@ -30,6 +31,11 @@ export function RatesPanel() {
     sell_fee_pct: 2,
     depth_threshold: 50000,
     resolution_skim_pct: 5,
+    // ── Volume-aware fee curve dials (added by 20260506_unified_fees migration)
+    maker_rebate_count: 10,        // first N bets/event get fee=0
+    volume_factor_threshold: 5000, // bet_pool $ at which fee hits ceiling
+    skew_bump_threshold: 0.30,     // |mid-0.5| above which bump applies
+    skew_bump_pct: 0.5,            // extra % fee on lopsided markets
   }
 
   const [platformRates, setPlatformRates] = useState(defaultRates)
@@ -66,6 +72,10 @@ export function RatesPanel() {
           sell_fee_pct: map.sell_fee_pct ?? 2,
           depth_threshold: map.depth_threshold ?? 50000,
           resolution_skim_pct: map.resolution_skim_pct ?? 5,
+          maker_rebate_count: map.maker_rebate_count ?? 10,
+          volume_factor_threshold: map.volume_factor_threshold ?? 5000,
+          skew_bump_threshold: map.skew_bump_threshold ?? 0.30,
+          skew_bump_pct: map.skew_bump_pct ?? 0.5,
         }
         setPlatformRates(merged)
         setRatesDraft(merged)
@@ -85,7 +95,24 @@ export function RatesPanel() {
     if (error) {
       setRatesError(`No se pudo guardar ${key}: ${error.message}`)
     } else {
-      setPlatformRates((r) => ({ ...r, [key]: value }))
+      setPlatformRates((r) => {
+        const next = { ...r, [key]: value }
+        // Hot-reload the in-app pricing tokens so FEE_RATE / SELL_FEE_RATE
+        // / RESOLUTION_SKIM in pricing.ts pick up the new value immediately
+        // — no page reload needed. Mirrors what App.tsx does at boot,
+        // scoped to the keys that pricing.ts actually consumes.
+        setPricingRates({
+          spreadLow:      next.spread_low_pct      != null ? Number(next.spread_low_pct)      / 100 : undefined,
+          spreadHigh:     next.spread_high_pct     != null ? Number(next.spread_high_pct)     / 100 : undefined,
+          feeRate:        next.tx_fee_pct          != null ? Number(next.tx_fee_pct)          / 100 : undefined,
+          feeFloor:       next.fee_floor_pct       != null ? Number(next.fee_floor_pct)       / 100 : undefined,
+          feeCeiling:     next.fee_ceiling_pct     != null ? Number(next.fee_ceiling_pct)     / 100 : undefined,
+          sellFeeRate:    next.sell_fee_pct        != null ? Number(next.sell_fee_pct)        / 100 : undefined,
+          resolutionSkim: next.resolution_skim_pct != null ? Number(next.resolution_skim_pct) / 100 : undefined,
+          depthThreshold: next.depth_threshold     != null ? Number(next.depth_threshold)         : undefined,
+        })
+        return next
+      })
       setRatesSaved((s) => ({ ...s, [key]: true }))
       setTimeout(() => setRatesSaved((s) => ({ ...s, [key]: false })), 2500)
     }
@@ -273,13 +300,65 @@ export function RatesPanel() {
                   <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-gold)', marginTop: '4px' }}>DB: {platformRates[key]}%</p>
                 )}
                 <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', marginTop: '6px' }}>
-                  Q1,000 cobro → descuento <strong style={{ color: '#14b8a6' }}>${((ratesDraft[key] ?? 5) * 10).toFixed(0)}</strong> · usuario recibe <strong style={{ color: 'var(--b1n0-text-1)' }}>${(1000 - (ratesDraft[key] ?? 5) * 10).toFixed(0)}</strong>
+                  Q1,000 cobro → descuento <strong style={{ color: '#14b8a6' }}>${(((ratesDraft[key] ?? 5) * 10)).toFixed(0)}</strong> · usuario recibe <strong style={{ color: 'var(--b1n0-text-1)' }}>${(1000 - (ratesDraft[key] ?? 5) * 10).toFixed(0)}</strong>
                 </p>
               </div>
             )
           })()}
-        </div>
-      )}
-    </div>
-  )
-}
+
+          {/* ── Cut 5 — Maker rebate + volume scaling + skew bump ── */}
+          {/* Full-width card. Four dials feed the unified fee curve every
+              time preview_purchase or execute_purchase runs. Each has its
+              own save button so you can tune one knob without dirtying
+              the others. */}
+          <div style={{ gridColumn: '1 / -1', background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '14px', borderLeft: '3px solid #4ade80' }}>
+            <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: '#4ade80', letterSpacing: '0.8px', textTransform: 'uppercase', marginBottom: '4px' }}>
+              Cut 5 — Maker rebate y skew
+            </p>
+            <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginBottom: '12px', lineHeight: 1.5 }}>
+              Las primeras N entradas de cada evento son sin comisión. Después, la comisión escala con el volumen y sube en mercados muy desequilibrados.
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+              <div>
+                <label style={{ ...labelStyle, fontSize: '9px' }}>Maker rebate (entradas gratis)</label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <input type="number" min={0} max={100} step={1} value={ratesDraft.maker_rebate_count ?? 10} onChange={(e) => setRatesDraft((d) => ({ ...d, maker_rebate_count: parseInt(e.target.value, 10) || 0 }))} style={compactInput} />
+                  <button onClick={() => saveRate('maker_rebate_count', ratesDraft.maker_rebate_count ?? 10)} disabled={ratesSaving.maker_rebate_count || ratesDraft.maker_rebate_count === platformRates.maker_rebate_count} style={btnStyle('maker_rebate_count')}>
+                    {btnLabel('maker_rebate_count')}
+                  </button>
+                </div>
+                {ratesDraft.maker_rebate_count !== platformRates.maker_rebate_count && (
+                  <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-gold)', marginTop: '4px' }}>DB: {platformRates.maker_rebate_count}</p>
+                )}
+              </div>
+              <div>
+                <label style={{ ...labelStyle, fontSize: '9px' }}>Umbral volumen ($)</label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span style={{ fontFamily: D, fontSize: '14px', fontWeight: 700, color: 'var(--b1n0-text-1)' }}>$</span>
+                  <input type="number" min={100} max={100000} step={100} value={ratesDraft.volume_factor_threshold ?? 5000} onChange={(e) => setRatesDraft((d) => ({ ...d, volume_factor_threshold: parseFloat(e.target.value) || 0 }))} style={{ ...compactInput, width: '85px' }} />
+                  <button onClick={() => saveRate('volume_factor_threshold', ratesDraft.volume_factor_threshold ?? 5000)} disabled={ratesSaving.volume_factor_threshold || ratesDraft.volume_factor_threshold === platformRates.volume_factor_threshold} style={btnStyle('volume_factor_threshold')}>
+                    {btnLabel('volume_factor_threshold')}
+                  </button>
+                </div>
+                {ratesDraft.volume_factor_threshold !== platformRates.volume_factor_threshold && (
+                  <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-gold)', marginTop: '4px' }}>DB: ${Number(platformRates.volume_factor_threshold).toLocaleString()}</p>
+                )}
+              </div>
+              <div>
+                <label style={{ ...labelStyle, fontSize: '9px' }}>Umbral skew (|mid−0.5|)</label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <input type="number" min={0} max={0.5} step={0.05} value={ratesDraft.skew_bump_threshold ?? 0.30} onChange={(e) => setRatesDraft((d) => ({ ...d, skew_bump_threshold: parseFloat(e.target.value) || 0 }))} style={compactInput} />
+                  <button onClick={() => saveRate('skew_bump_threshold', ratesDraft.skew_bump_threshold ?? 0.30)} disabled={ratesSaving.skew_bump_threshold || ratesDraft.skew_bump_threshold === platformRates.skew_bump_threshold} style={btnStyle('skew_bump_threshold')}>
+                    {btnLabel('skew_bump_threshold')}
+                  </button>
+                </div>
+                {ratesDraft.skew_bump_threshold !== platformRates.skew_bump_threshold && (
+                  <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-gold)', marginTop: '4px' }}>DB: {platformRates.skew_bump_threshold}</p>
+                )}
+              </div>
+              <div>
+                <label style={{ ...labelStyle, fontSize: '9px' }}>Bump skew (%)</label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <input type="number" min={0} max={5} step={0.1} value={ratesDraft.skew_bump_pct ?? 0.5} onChange={(e) => setRatesDraft((d) => ({ ...d, skew_bump_pct: parseFloat(e.target.value) || 0 }))} style={compactInput} />
+                  <span style={{ fontFamily: D, fontSize: '14px', fontWeight: 700, color: 'var(--b1n0-text-1)' }}>%</span>
+                  <button onClick={() => saveRate('skew_bump_pct', ratesDraft.skew_bum

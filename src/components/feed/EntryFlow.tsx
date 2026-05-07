@@ -413,6 +413,25 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
 
           {amountNum > 0 && (
             <div style={{ background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-lg)', padding: '12px 14px', marginBottom: '10px', border: '1px solid var(--b1n0-border)' }}>
+              {/* Maker rebate badge — fires when preview returned fee=0 on
+                  a non-zero amount, which means this bet is inside the
+                  free-fee window. Fee is the cleanest signal we have here
+                  without threading the maker_rebate flag through the
+                  shared PurchasePreview type. */}
+              {fee === 0 && amountNum > 0 && (
+                <div style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                  padding: '7px 10px', marginBottom: '10px',
+                  background: 'var(--b1n0-si-bg)',
+                  border: '1px solid var(--b1n0-si-border)',
+                  borderRadius: 'var(--radius-md)',
+                  fontFamily: F, fontSize: '11px', fontWeight: 700,
+                  color: 'var(--b1n0-si)', letterSpacing: '0.04em',
+                }}>
+                  ✦ SIN COMISIÓN — ENTRADA TEMPRANA
+                </div>
+              )}
+
               {/* Breakdown table */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', marginBottom: '8px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -422,7 +441,9 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
                 {fee !== null && (
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)' }}>Comisión ({feeRatePct}%)</span>
-                    <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)' }}>−{event.currency}{fee.toFixed(2)}</span>
+                    <span style={{ fontFamily: F, fontSize: '12px', color: fee === 0 ? 'var(--b1n0-si)' : 'var(--b1n0-muted)', fontWeight: fee === 0 ? 700 : 400 }}>
+                      {fee === 0 ? 'GRATIS' : `−${event.currency}${fee.toFixed(2)}`}
+                    </span>
                   </div>
                 )}
                 {fee !== null && (
@@ -532,7 +553,9 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
               {fee !== null && (
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <span style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)' }}>Comisión ({feeRatePct}%)</span>
-                  <span style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)' }}>−{event.currency}{fee.toFixed(2)}</span>
+                  <span style={{ fontFamily: F, fontSize: '13px', color: fee === 0 ? 'var(--b1n0-si)' : 'var(--b1n0-muted)', fontWeight: fee === 0 ? 700 : 400 }}>
+                    {fee === 0 ? 'GRATIS' : `−${event.currency}${fee.toFixed(2)}`}
+                  </span>
                 </div>
               )}
               {fee !== null && (
