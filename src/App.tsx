@@ -37,6 +37,12 @@ const PrivacyPage = lazy(() => import('./pages/Legal').then(m => ({ default: m.P
 // b1n0.com/prensa-libre is shareable as a clean, standalone marketing page.
 const PrensaLibre = lazy(() => import('./pages/PrensaLibre').then(m => ({ default: m.PrensaLibre })))
 
+// Public sponsor / LP capital explainer. Walks prospective sponsors
+// through the four outcome scenarios with worked examples, before any
+// consent / deposit conversation. Outside the auth chrome so the URL
+// b1n0.com/sponsor is shareable as a leave-behind.
+const Sponsor = lazy(() => import('./pages/Sponsor').then(m => ({ default: m.Sponsor })))
+
 function LazyFallback() {
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '200px' }}>
@@ -291,6 +297,7 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/prensa-libre" element={<StandalonePage><PrensaLibre /></StandalonePage>} />
+          <Route path="/sponsor" element={<StandalonePage><Sponsor /></StandalonePage>} />
           <Route path="*" element={
             <ThemeProvider>
               <AuthProvider>
