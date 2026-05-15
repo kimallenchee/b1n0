@@ -44,7 +44,7 @@ export function TopBar({ user }: TopBarProps) {
           }}
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
         >
-          <img src="/b1n0-logov2.png" alt="b1n0" style={{ height: '24px', width: 'auto', objectFit: 'contain', display: 'block' }} />
+          <img src="/brand/b1n0-logo-white.svg" alt="b1n0" style={{ height: '24px', width: 'auto', objectFit: 'contain', display: 'block' }} />
         </button>
 
         {/* Right side */}

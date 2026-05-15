@@ -34,7 +34,7 @@ interface UserPosition {
 
 const ROLES = [
   { value: 'user', label: 'Usuario', color: 'var(--b1n0-muted)', desc: 'Usuario estándar — paga fees normales' },
-  { value: 'market_maker', label: 'Market Maker', color: '#C4B5FD', desc: 'Sin comisiones de compra/venta — provee liquidez' },
+  { value: 'market_maker', label: 'Market Maker', color: 'var(--b1n0-gold)', desc: 'Sin comisiones de compra/venta — provee liquidez' },
   { value: 'lp', label: 'LP', color: 'var(--b1n0-si)', desc: 'Proveedor de liquidez — puede depositar capital' },
   { value: 'sponsor', label: 'Sponsor', color: 'var(--b1n0-gold)', desc: 'Patrocinador — sin fees, puede fondear eventos' },
   { value: 'admin', label: 'Admin', color: 'var(--b1n0-no)', desc: 'Acceso total al panel de administración' },
@@ -164,12 +164,12 @@ export function UsersPanel() {
       </div>
 
       {userError && (
-        <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', background: 'rgba(248,113,113,0.08)', padding: '8px 12px', borderRadius: 'var(--radius-lg)', marginBottom: '12px' }}>
+        <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', background: 'rgba(255,223,80,0.08)', padding: '8px 12px', borderRadius: 'var(--radius-lg)', marginBottom: '12px' }}>
           {userError}
         </p>
       )}
       {userSuccess && (
-        <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-si)', background: 'rgba(74,222,128,0.08)', padding: '8px 12px', borderRadius: 'var(--radius-lg)', marginBottom: '12px' }}>
+        <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-si)', background: 'rgba(6,212,127,0.08)', padding: '8px 12px', borderRadius: 'var(--radius-lg)', marginBottom: '12px' }}>
           {userSuccess}
         </p>
       )}
@@ -182,7 +182,7 @@ export function UsersPanel() {
           <div style={{ display: 'flex', gap: '4px', marginBottom: '8px', flexWrap: 'wrap' }}>
             {[
               { label: 'Total', val: adminUsers.length, color: 'var(--b1n0-text-1)', filter: null as string | null },
-              { label: 'MM', val: adminUsers.filter((u) => u.role === 'market_maker').length, color: '#C4B5FD', filter: 'market_maker' },
+              { label: 'MM', val: adminUsers.filter((u) => u.role === 'market_maker').length, color: 'var(--b1n0-gold)', filter: 'market_maker' },
               { label: 'LPs', val: adminUsers.filter((u) => u.role === 'lp').length, color: 'var(--b1n0-si)', filter: 'lp' },
               { label: 'Sponsors', val: adminUsers.filter((u) => u.role === 'sponsor').length, color: 'var(--b1n0-gold)', filter: 'sponsor' },
               { label: 'Admins', val: adminUsers.filter((u) => u.is_admin).length, color: 'var(--b1n0-no)', filter: 'admin' },
@@ -294,7 +294,7 @@ export function UsersPanel() {
                     borderRadius: 'var(--radius-lg)',
                     overflow: 'hidden',
                     transition: 'box-shadow 0.15s',
-                    boxShadow: isEditing ? '0 0 0 1.5px #6366f1' : 'none',
+                    boxShadow: isEditing ? '0 0 0 1.5px var(--b1n0-si)' : 'none',
                   }}
                 >
                   {/* Main row */}
@@ -585,7 +585,7 @@ export function UsersPanel() {
                                 padding: '6px 12px',
                                 borderRadius: 'var(--radius-md)',
                                 border: '1px solid #fecaca',
-                                background: 'rgba(248,113,113,0.08)',
+                                background: 'rgba(255,223,80,0.08)',
                                 fontFamily: F,
                                 fontSize: '11px',
                                 fontWeight: 600,
@@ -730,7 +730,7 @@ export function UsersPanel() {
                           padding: '3px 6px',
                           borderRadius: 'var(--radius-sm)',
                           border: '1px solid #fecaca',
-                          background: 'rgba(248,113,113,0.08)',
+                          background: 'rgba(255,223,80,0.08)',
                           fontFamily: F,
                           fontSize: '9px',
                           fontWeight: 600,

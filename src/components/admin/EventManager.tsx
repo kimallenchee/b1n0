@@ -53,7 +53,7 @@ const COUNTRIES = [
 ] as const
 
 const categoryColors: Record<string, string> = {
-  deportes: '#93C5FD', politica: '#C4B5FD', economia: 'var(--b1n0-gold)',
+  deportes: '#93C5FD', politica: 'var(--b1n0-gold)', economia: 'var(--b1n0-gold)',
   geopolitica: 'var(--b1n0-no)', cultura: '#F9A8D4', tecnologia: '#7DD3FC',
   finanzas: '#6EE7B7', otro: 'var(--b1n0-muted)',
 }
@@ -286,7 +286,7 @@ function OptionRows({ options, onChange, maxPool = 0 }: {
         </div>
       </div>
       {poolOver && (
-        <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-no)', marginTop: '6px', padding: '6px 8px', background: 'rgba(248,113,113,0.08)', borderRadius: 'var(--radius-md)' }}>
+        <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-no)', marginTop: '6px', padding: '6px 8px', background: 'rgba(255,223,80,0.08)', borderRadius: 'var(--radius-md)' }}>
           El pool de opciones excede el Pool inicial (${maxPool.toLocaleString()}). Reducí los montos o aumentá el pool total.
         </p>
       )}
@@ -1061,8 +1061,8 @@ export function EventManager({ platformRates }: EventManagerProps) {
                   )}
                   {[
                     { label: 'Pool total', value: eventMarket?.pool_total ?? 0, color: 'var(--b1n0-si)' },
-                    { label: 'Entradas en pool', value: eventMarket?.bet_pool ?? 0, color: '#93C5FD' },
-                    { label: 'Capital LP', value: eventMarket?.lp_capital ?? 0, color: '#C4B5FD' },
+                    { label: 'Entradas en pool', value: eventMarket?.bet_pool ?? 0, color: 'var(--b1n0-mint)' },
+                    { label: 'Capital LP', value: eventMarket?.lp_capital ?? 0, color: 'var(--b1n0-gold)' },
                     { label: 'Fees colectados', value: eventMarket?.fees_collected ?? 0, color: 'var(--b1n0-muted)' },
                   ].map(({ label, value, color }) => (
                     <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid var(--b1n0-border)' }}>
@@ -1120,7 +1120,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <input type="checkbox" id="lp_public_e" checked={editForm.lp_public}
                   onChange={(e) => setE('lp_public', e.target.checked)}
-                  style={{ width: 16, height: 16, accentColor: '#C4B5FD', cursor: 'pointer' }} />
+                  style={{ width: 16, height: 16, accentColor: 'var(--b1n0-gold)', cursor: 'pointer' }} />
                 <label htmlFor="lp_public_e" style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-text-1)', cursor: 'pointer' }}>
                   Abierto para LP público
                 </label>
@@ -1131,8 +1131,8 @@ export function EventManager({ platformRates }: EventManagerProps) {
                 </p>
               )}
 
-              {editError && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', padding: '8px 10px', background: 'rgba(248,113,113,0.08)', borderRadius: 'var(--radius-lg)' }}>{editError}</p>}
-              {editSuccess && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-si)', padding: '8px 10px', background: 'rgba(74,222,128,0.08)', borderRadius: 'var(--radius-lg)' }}>✓ {editSuccess}</p>}
+              {editError && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', padding: '8px 10px', background: 'rgba(255,223,80,0.08)', borderRadius: 'var(--radius-lg)' }}>{editError}</p>}
+              {editSuccess && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-si)', padding: '8px 10px', background: 'rgba(6,212,127,0.08)', borderRadius: 'var(--radius-lg)' }}>✓ {editSuccess}</p>}
 
               <button onClick={handleEditSave} disabled={editLoading}
                 style={{ width: '100%', padding: '13px', borderRadius: 'var(--radius-lg)', border: 'none', background: editLoading ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)', fontFamily: F, fontWeight: 600, fontSize: '13px', cursor: editLoading ? 'default' : 'pointer' }}>
@@ -1151,7 +1151,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                       navigator.clipboard.writeText(url)
                       setEditSuccess('Enlace copiado: ' + url)
                     }}
-                    style={{ width: '100%', padding: '10px', borderRadius: 'var(--radius-lg)', border: '1px solid #C4B5FD', background: 'rgba(196,181,253,0.12)', color: '#C4B5FD', fontFamily: F, fontWeight: 600, fontSize: '12px', cursor: 'pointer', marginBottom: '8px' }}
+                    style={{ width: '100%', padding: '10px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--b1n0-gold)', background: 'rgba(255,212,116,0.12)', color: 'var(--b1n0-gold)', fontFamily: F, fontWeight: 600, fontSize: '12px', cursor: 'pointer', marginBottom: '8px' }}
                   >
                     Copiar enlace para LPs
                   </button>
@@ -1184,9 +1184,9 @@ export function EventManager({ platformRates }: EventManagerProps) {
                       {lpDeposits.map((lp) => {
                         const userName = lpUsers.find(u => u.id === lp.user_id)?.name || lp.user_id.slice(0, 8)
                         return (
-                          <div key={lp.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 10px', background: 'rgba(196,181,253,0.08)', borderRadius: 'var(--radius-lg)', border: '1px solid rgba(124,58,237,0.1)' }}>
+                          <div key={lp.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 10px', background: 'rgba(255,212,116,0.08)', borderRadius: 'var(--radius-lg)', border: '1px solid rgba(124,58,237,0.1)' }}>
                             <div>
-                              <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 600, color: '#C4B5FD' }}>{userName}</span>
+                              <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 600, color: 'var(--b1n0-gold)' }}>{userName}</span>
                               <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', marginLeft: '8px' }}>
                                 ${lp.amount.toLocaleString()} · {(lp.return_pct * 100).toFixed(0)}%
                               </span>
@@ -1228,19 +1228,19 @@ export function EventManager({ platformRates }: EventManagerProps) {
                       />
                     </div>
                     {lpForm.user_id && lpForm.amount && (
-                      <p style={{ fontFamily: F, fontSize: '10px', color: '#C4B5FD' }}>
+                      <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-gold)' }}>
                         LP recibe capital ${parseFloat(lpForm.amount).toLocaleString()} + {lpForm.return_pct}% de fees netos al resolver
                       </p>
                     )}
                     <button
                       onClick={handleLpDeposit}
                       disabled={lpLoading || !lpForm.user_id || !lpForm.amount}
-                      style={{ width: '100%', padding: '10px', borderRadius: 'var(--radius-lg)', border: 'none', background: lpLoading ? 'var(--b1n0-border)' : '#C4B5FD', color: '#fff', fontFamily: F, fontWeight: 600, fontSize: '12px', cursor: lpLoading ? 'default' : 'pointer' }}
+                      style={{ width: '100%', padding: '10px', borderRadius: 'var(--radius-lg)', border: 'none', background: lpLoading ? 'var(--b1n0-border)' : 'var(--b1n0-gold)', color: '#fff', fontFamily: F, fontWeight: 600, fontSize: '12px', cursor: lpLoading ? 'default' : 'pointer' }}
                     >
                       {lpLoading ? 'Procesando...' : 'Agregar Capital LP →'}
                     </button>
-                    {lpError && <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-no)', padding: '6px 8px', background: 'rgba(248,113,113,0.08)', borderRadius: 'var(--radius-md)' }}>{lpError}</p>}
-                    {lpSuccess && <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-si)', padding: '6px 8px', background: 'rgba(74,222,128,0.08)', borderRadius: 'var(--radius-md)' }}>✓ {lpSuccess}</p>}
+                    {lpError && <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-no)', padding: '6px 8px', background: 'rgba(255,223,80,0.08)', borderRadius: 'var(--radius-md)' }}>{lpError}</p>}
+                    {lpSuccess && <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-si)', padding: '6px 8px', background: 'rgba(6,212,127,0.08)', borderRadius: 'var(--radius-md)' }}>✓ {lpSuccess}</p>}
                   </div>
                 </div>
               )}
@@ -1279,8 +1279,8 @@ export function EventManager({ platformRates }: EventManagerProps) {
                       ))}
                     </div>
                   )}
-                  {resolveError && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', marginTop: '8px', padding: '8px 10px', background: 'rgba(248,113,113,0.08)', borderRadius: 'var(--radius-lg)' }}>{resolveError}</p>}
-                  {resolveSuccess && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-si)', marginTop: '8px', padding: '8px 10px', background: 'rgba(74,222,128,0.08)', borderRadius: 'var(--radius-lg)' }}>✓ {resolveSuccess}</p>}
+                  {resolveError && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', marginTop: '8px', padding: '8px 10px', background: 'rgba(255,223,80,0.08)', borderRadius: 'var(--radius-lg)' }}>{resolveError}</p>}
+                  {resolveSuccess && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-si)', marginTop: '8px', padding: '8px 10px', background: 'rgba(6,212,127,0.08)', borderRadius: 'var(--radius-lg)' }}>✓ {resolveSuccess}</p>}
                 </div>
               )}
 
@@ -1334,7 +1334,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                   </button>
                 ) : (
                   /* Preview + confirm: show what will happen, require a reason. */
-                  <div style={{ background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.25)', borderRadius: 'var(--radius-lg)', padding: '14px' }}>
+                  <div style={{ background: 'rgba(255,223,80,0.08)', border: '1px solid rgba(255,223,80,0.25)', borderRadius: 'var(--radius-lg)', padding: '14px' }}>
                     <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 700, color: 'var(--b1n0-no)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                       Anular evento
                     </p>
@@ -1579,7 +1579,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
         </div>
 
         {bulkResult && (
-          <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--b1n0-border)', background: bulkResult.fail > 0 ? 'rgba(248,113,113,0.08)' : 'rgba(74,222,128,0.08)' }}>
+          <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--b1n0-border)', background: bulkResult.fail > 0 ? 'rgba(255,223,80,0.08)' : 'rgba(6,212,127,0.08)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: bulkResult.errors.length > 0 ? '8px' : 0 }}>
               <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-text-1)' }}>
                 <strong>{bulkResult.ok}</strong> creado{bulkResult.ok !== 1 ? 's' : ''}
@@ -1609,7 +1609,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
           const color = categoryColors[ev.category] || 'var(--b1n0-muted)'
           const isEditing = editingId === ev.id
           const isSelected = selectedIds.has(ev.id)
-          const statusColor = ev.status === 'open' ? 'var(--b1n0-si)' : ev.status === 'private' ? '#C4B5FD' : ev.status === 'closed' ? 'var(--b1n0-no)' : 'var(--b1n0-muted)'
+          const statusColor = ev.status === 'open' ? 'var(--b1n0-si)' : ev.status === 'private' ? 'var(--b1n0-gold)' : ev.status === 'closed' ? 'var(--b1n0-no)' : 'var(--b1n0-muted)'
           return (
             <div
               key={ev.id}
@@ -1669,14 +1669,14 @@ export function EventManager({ platformRates }: EventManagerProps) {
               style={{
                 padding: '7px 16px', borderRadius: 'var(--radius-lg)', border: '1px solid rgba(185,28,28,0.4)',
                 background: 'rgba(185,28,28,0.15)', cursor: 'pointer',
-                fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'rgba(248,113,113,0.3)',
+                fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'rgba(255,223,80,0.3)',
               }}
             >
               Archivar ({selectedIds.size})
             </button>
           ) : (
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontFamily: F, fontSize: '11px', color: 'rgba(248,113,113,0.3)' }}>¿Seguro?</span>
+              <span style={{ fontFamily: F, fontSize: '11px', color: 'rgba(255,223,80,0.3)' }}>¿Seguro?</span>
               <button
                 onClick={handleBulkDelete}
                 disabled={bulkDeleteLoading}
@@ -1820,8 +1820,8 @@ export function EventManager({ platformRates }: EventManagerProps) {
                     {form.lp_commitments.map((lp, i) => {
                       const u = lpUsers.find(u => u.id === lp.user_id)
                       return (
-                        <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 10px', background: 'rgba(196,181,253,0.08)', borderRadius: 'var(--radius-lg)', border: '1px solid rgba(124,58,237,0.1)' }}>
-                          <span style={{ fontFamily: F, fontSize: '12px', color: '#C4B5FD', fontWeight: 600 }}>
+                        <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 10px', background: 'rgba(255,212,116,0.08)', borderRadius: 'var(--radius-lg)', border: '1px solid rgba(124,58,237,0.1)' }}>
+                          <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-gold)', fontWeight: 600 }}>
                             {u?.name || lp.user_id.slice(0, 8)} — ${lp.amount.toLocaleString()} · {lp.return_pct}% de fees
                           </span>
                           <button onClick={() => setC('lp_commitments', form.lp_commitments.filter((_, j) => j !== i))}
@@ -1831,7 +1831,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                     })}
                     <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 10px' }}>
                       <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>Total LP capital</span>
-                      <span style={{ fontFamily: D, fontWeight: 700, fontSize: '12px', color: '#C4B5FD' }}>
+                      <span style={{ fontFamily: D, fontWeight: 700, fontSize: '12px', color: 'var(--b1n0-gold)' }}>
                         ${form.lp_commitments.reduce((s, lp) => s + lp.amount, 0).toLocaleString()}
                       </span>
                     </div>
@@ -1867,7 +1867,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                       }])
                       sel.value = ''; amt.value = ''
                     }}
-                    style={{ padding: '8px', borderRadius: 'var(--radius-lg)', border: '1px solid rgba(124,58,237,0.2)', background: 'rgba(196,181,253,0.08)', color: '#C4B5FD', fontFamily: F, fontWeight: 600, fontSize: '11px', cursor: 'pointer' }}
+                    style={{ padding: '8px', borderRadius: 'var(--radius-lg)', border: '1px solid rgba(255,212,116,0.25)', background: 'rgba(255,212,116,0.08)', color: 'var(--b1n0-gold)', fontFamily: F, fontWeight: 600, fontSize: '11px', cursor: 'pointer' }}
                   >
                     + Agregar LP
                   </button>
@@ -1920,7 +1920,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <input type="checkbox" id="lp_public_c" checked={form.lp_public}
                   onChange={(e) => setC('lp_public', e.target.checked)}
-                  style={{ width: 16, height: 16, accentColor: '#C4B5FD', cursor: 'pointer' }} />
+                  style={{ width: 16, height: 16, accentColor: 'var(--b1n0-gold)', cursor: 'pointer' }} />
                 <label htmlFor="lp_public_c" style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-text-1)', cursor: 'pointer' }}>
                   Abierto para LP público
                 </label>
@@ -1933,9 +1933,9 @@ export function EventManager({ platformRates }: EventManagerProps) {
             </div>
           </div>
 
-          {createError && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', padding: '8px 10px', background: 'rgba(248,113,113,0.08)', borderRadius: 'var(--radius-lg)', marginTop: '12px' }}>{createError}</p>}
+          {createError && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', padding: '8px 10px', background: 'rgba(255,223,80,0.08)', borderRadius: 'var(--radius-lg)', marginTop: '12px' }}>{createError}</p>}
           {createSuccess && (
-            <div style={{ padding: '10px', background: 'rgba(74,222,128,0.08)', borderRadius: 'var(--radius-lg)', marginTop: '12px' }}>
+            <div style={{ padding: '10px', background: 'rgba(6,212,127,0.08)', borderRadius: 'var(--radius-lg)', marginTop: '12px' }}>
               <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-si)', fontWeight: 600 }}>✓ {createSuccess}</p>
             </div>
           )}

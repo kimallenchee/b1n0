@@ -140,7 +140,7 @@ export function RatesPanel() {
             fontFamily: F,
             fontSize: '12px',
             color: 'var(--b1n0-no)',
-            background: 'rgba(248,113,113,0.08)',
+            background: 'rgba(255,223,80,0.08)',
             padding: '8px 12px',
             borderRadius: 'var(--radius-lg)',
             marginBottom: '10px',
@@ -156,8 +156,8 @@ export function RatesPanel() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
 
           {/* ── Dynamic Buy Fee ── */}
-          <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '14px', borderLeft: '3px solid #C4B5FD' }}>
-            <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: '#C4B5FD', letterSpacing: '0.8px', textTransform: 'uppercase', marginBottom: '4px' }}>
+          <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '14px', borderLeft: '3px solid var(--b1n0-gold)' }}>
+            <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: 'var(--b1n0-gold)', letterSpacing: '0.8px', textTransform: 'uppercase', marginBottom: '4px' }}>
               Cut 2 — Comisión compras
             </p>
             <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginBottom: '10px', lineHeight: 1.5 }}>
@@ -276,10 +276,10 @@ export function RatesPanel() {
           {(() => {
             const key = 'resolution_skim_pct'
             return (
-              <div style={{ gridColumn: '1 / -1', background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '14px', borderLeft: '3px solid #14b8a6' }}>
+              <div style={{ gridColumn: '1 / -1', background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '14px', borderLeft: '3px solid var(--b1n0-si)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
                   <div>
-                    <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: '#14b8a6', letterSpacing: '0.8px', textTransform: 'uppercase', marginBottom: '4px' }}>
+                    <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: 'var(--b1n0-si)', letterSpacing: '0.8px', textTransform: 'uppercase', marginBottom: '4px' }}>
                       Cut 4 — Resolución
                     </p>
                     <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', lineHeight: 1.5 }}>
@@ -300,7 +300,7 @@ export function RatesPanel() {
                   <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-gold)', marginTop: '4px' }}>DB: {platformRates[key]}%</p>
                 )}
                 <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', marginTop: '6px' }}>
-                  Q1,000 cobro → descuento <strong style={{ color: '#14b8a6' }}>${(((ratesDraft[key] ?? 5) * 10)).toFixed(0)}</strong> · usuario recibe <strong style={{ color: 'var(--b1n0-text-1)' }}>${(1000 - (ratesDraft[key] ?? 5) * 10).toFixed(0)}</strong>
+                  Q1,000 cobro → descuento <strong style={{ color: 'var(--b1n0-si)' }}>${(((ratesDraft[key] ?? 5) * 10)).toFixed(0)}</strong> · usuario recibe <strong style={{ color: 'var(--b1n0-text-1)' }}>${(1000 - (ratesDraft[key] ?? 5) * 10).toFixed(0)}</strong>
                 </p>
               </div>
             )
@@ -311,8 +311,8 @@ export function RatesPanel() {
               time preview_purchase or execute_purchase runs. Each has its
               own save button so you can tune one knob without dirtying
               the others. */}
-          <div style={{ gridColumn: '1 / -1', background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '14px', borderLeft: '3px solid #4ade80' }}>
-            <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: '#4ade80', letterSpacing: '0.8px', textTransform: 'uppercase', marginBottom: '4px' }}>
+          <div style={{ gridColumn: '1 / -1', background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '14px', borderLeft: '3px solid var(--b1n0-si)' }}>
+            <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: 'var(--b1n0-si)', letterSpacing: '0.8px', textTransform: 'uppercase', marginBottom: '4px' }}>
               Cut 5 — Maker rebate y skew
             </p>
             <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginBottom: '12px', lineHeight: 1.5 }}>
@@ -371,7 +371,7 @@ export function RatesPanel() {
               </div>
             </div>
             <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', marginTop: '10px', lineHeight: 1.5 }}>
-              Bet #1–{ratesDraft.maker_rebate_count ?? 10}: <strong style={{ color: '#4ade80' }}>0%</strong> · Bet posterior, $1K vol: <strong style={{ color: 'var(--b1n0-text-1)' }}>~{(((ratesDraft.fee_floor_pct ?? 1) + ((ratesDraft.fee_ceiling_pct ?? 5) - (ratesDraft.fee_floor_pct ?? 1)) * Math.min(1000 / (ratesDraft.volume_factor_threshold ?? 5000), 1))).toFixed(2)}%</strong> · Pool maduro: <strong style={{ color: 'var(--b1n0-text-1)' }}>{ratesDraft.fee_ceiling_pct ?? 5}%</strong> · Skew bump: <strong style={{ color: 'var(--b1n0-text-1)' }}>+{ratesDraft.skew_bump_pct ?? 0.5}%</strong>
+              Bet #1–{ratesDraft.maker_rebate_count ?? 10}: <strong style={{ color: 'var(--b1n0-si)' }}>0%</strong> · Bet posterior, $1K vol: <strong style={{ color: 'var(--b1n0-text-1)' }}>~{(((ratesDraft.fee_floor_pct ?? 1) + ((ratesDraft.fee_ceiling_pct ?? 5) - (ratesDraft.fee_floor_pct ?? 1)) * Math.min(1000 / (ratesDraft.volume_factor_threshold ?? 5000), 1))).toFixed(2)}%</strong> · Pool maduro: <strong style={{ color: 'var(--b1n0-text-1)' }}>{ratesDraft.fee_ceiling_pct ?? 5}%</strong> · Skew bump: <strong style={{ color: 'var(--b1n0-text-1)' }}>+{ratesDraft.skew_bump_pct ?? 0.5}%</strong>
             </p>
           </div>
 

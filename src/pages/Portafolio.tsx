@@ -998,7 +998,7 @@ export function Portafolio() {
           </p>
         </div>
 
-        <div style={{ background: 'var(--b1n0-card)', border: `1px solid ${isPortfolioUp ? 'rgba(74,222,128,0.2)' : 'rgba(248,113,113,0.2)'}`, borderRadius: 'var(--radius-lg)', padding: '14px 16px' }}>
+        <div style={{ background: 'var(--b1n0-card)', border: `1px solid ${isPortfolioUp ? 'rgba(6,212,127,0.2)' : 'rgba(255,223,80,0.2)'}`, borderRadius: 'var(--radius-lg)', padding: '14px 16px' }}>
           <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>
             P&L no realizado
           </p>
@@ -1569,7 +1569,7 @@ export function Portafolio() {
                     partial_loss: 'var(--b1n0-no)',
                   }
                   const badgeBg: Record<typeof outcome, string> = {
-                    active: 'rgba(196,181,253,0.15)',
+                    active: 'rgba(255,212,116,0.15)',
                     settled: 'var(--b1n0-si-bg)',
                     voided: 'rgba(255,212,116,0.18)',
                     partial_loss: 'var(--b1n0-no-bg)',

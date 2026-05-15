@@ -408,7 +408,7 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
   const filtered = filter === 'all' ? viewTxs : viewTxs.filter((t) => t.status === filter)
   const visible = filtered.slice(0, limit)
 
-  const statusColor = (s: string) => s === 'won' ? 'var(--b1n0-si)' : s === 'lost' ? 'var(--b1n0-muted)' : s === 'sold' ? '#C4B5FD' : 'var(--b1n0-gold)'
+  const statusColor = (s: string) => s === 'won' ? 'var(--b1n0-si)' : s === 'lost' ? 'var(--b1n0-muted)' : s === 'sold' ? 'var(--b1n0-gold)' : 'var(--b1n0-gold)'
   const statusLabel = (s: string) => s === 'won' ? 'Ganado' : s === 'lost' ? 'Perdido' : s === 'sold' ? 'Vendido' : 'Activo'
 
   const fmtQ = (v: number) => v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
@@ -425,7 +425,7 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
             fontFamily: F,
             fontSize: '12px',
             color: 'var(--b1n0-no)',
-            background: 'rgba(248,113,113,0.08)',
+            background: 'rgba(255,223,80,0.08)',
             padding: '8px 12px',
             borderRadius: 'var(--radius-lg)',
             marginBottom: '10px',
@@ -446,10 +446,10 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
         {[
           { label: 'Eventos', val: `${resolvedCount}/${totalEvents}` },
           { label: 'Posiciones', val: String(positions.length) },
-          { label: 'Ventas', val: String(saleTxs.length), color: '#C4B5FD' },
+          { label: 'Ventas', val: String(saleTxs.length), color: 'var(--b1n0-gold)' },
           { label: 'Vol. compras', val: `$${fmtQ(buyVolume)}` },
           { label: 'Pagado', val: `$${fmtQ(totalPaidOut)}` },
-          { label: 'Bruto', val: `$${fmtQ(cut2Total + cut3Est + skimTotal)}`, color: '#C4B5FD' },
+          { label: 'Bruto', val: `$${fmtQ(cut2Total + cut3Est + skimTotal)}`, color: 'var(--b1n0-gold)' },
         ].map(({ label, val, color }) => (
           <div key={label} style={{ minWidth: '70px' }}>
             <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.3px', marginBottom: '1px' }}>{label}</p>
@@ -484,7 +484,7 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
           {lpExpanded && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '4px' }}>
               {lpCommissionByEvent.map((ev) => (
-                <div key={ev.eventId} style={{ background: 'rgba(248,113,113,0.08)', borderRadius: 'var(--radius-md)', padding: '8px' }}>
+                <div key={ev.eventId} style={{ background: 'rgba(255,223,80,0.08)', borderRadius: 'var(--radius-md)', padding: '8px' }}>
                   <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--b1n0-text-1)', marginBottom: '4px' }}>{ev.question}</p>
                   <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginBottom: '4px' }}>
                     Fees totales: ${fmtQ(ev.totalMargins)} · Comisión LP: ${fmtQ(ev.commission)}
@@ -511,15 +511,15 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
         {/* Cut 2 — Transaction Fee */}
         <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '14px', borderLeft: '3px solid #C4B5FD', minWidth: 0 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: '#C4B5FD', letterSpacing: '0.8px', textTransform: 'uppercase' }}>CUT 2 — COMISIÓN</p>
+            <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: 'var(--b1n0-gold)', letterSpacing: '0.8px', textTransform: 'uppercase' }}>CUT 2 — COMISIÓN</p>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '2px' }}>
               <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>$</span>
-              <span style={{ fontFamily: D, fontSize: '22px', fontWeight: 700, color: '#C4B5FD', letterSpacing: '-0.5px' , fontVariantNumeric: 'tabular-nums'}}>{fmtQ(cut2Total)}</span>
+              <span style={{ fontFamily: D, fontSize: '22px', fontWeight: 700, color: 'var(--b1n0-gold)', letterSpacing: '-0.5px' , fontVariantNumeric: 'tabular-nums'}}>{fmtQ(cut2Total)}</span>
             </div>
           </div>
           <div style={{ display: 'flex', gap: '12px', fontSize: '10px', fontFamily: F, color: 'var(--b1n0-muted)', marginBottom: '4px' }}>
             <span>Vol: <strong style={{ color: 'var(--b1n0-text-1)' }}>${fmtQ(cut2Volume)}</strong></span>
-            <span>Tasa: <strong style={{ color: '#C4B5FD' }}>{rates.fee_floor_pct ?? 1}%–{rates.fee_ceiling_pct ?? 5}%</strong></span>
+            <span>Tasa: <strong style={{ color: 'var(--b1n0-gold)' }}>{rates.fee_floor_pct ?? 1}%–{rates.fee_ceiling_pct ?? 5}%</strong></span>
             <span>Txs: <strong style={{ color: 'var(--b1n0-text-1)' }}>{cut2Count}</strong></span>
           </div>
           {(() => {
@@ -528,7 +528,7 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
             return saleFees > 0 ? (
               <div style={{ display: 'flex', gap: '12px', fontSize: '10px', fontFamily: F, color: 'var(--b1n0-muted)' }}>
                 <span>Compras: <strong style={{ color: 'var(--b1n0-text-1)' }}>${fmtQ(purchaseFees)}</strong></span>
-                <span>Ventas: <strong style={{ color: '#C4B5FD' }}>${fmtQ(saleFees)}</strong></span>
+                <span>Ventas: <strong style={{ color: 'var(--b1n0-gold)' }}>${fmtQ(saleFees)}</strong></span>
               </div>
             ) : null
           })()}
@@ -545,7 +545,7 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
           </div>
           <div style={{ display: 'flex', gap: '12px', fontSize: '10px', fontFamily: F, color: 'var(--b1n0-muted)', marginBottom: '4px' }}>
             <span>Compras: <strong style={{ color: 'var(--b1n0-si)' }}>${fmtQ(cut3Purchases)}</strong></span>
-            <span>Ventas: <strong style={{ color: '#C4B5FD' }}>${fmtQ(cut3Sales)}</strong></span>
+            <span>Ventas: <strong style={{ color: 'var(--b1n0-gold)' }}>${fmtQ(cut3Sales)}</strong></span>
             <span>Rango: <strong style={{ color: 'var(--b1n0-gold)' }}>{rates.spread_low_pct}%–{rates.spread_high_pct}%</strong></span>
           </div>
           {!cut3IsReal && <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', fontStyle: 'italic' }}>Estimado</p>}
@@ -554,15 +554,15 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
         {/* Cut 4 — Resolution Skim */}
         <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '14px', borderLeft: '3px solid #14b8a6', minWidth: 0 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: '#14b8a6', letterSpacing: '0.8px', textTransform: 'uppercase' }}>CUT 4 — RESOLUCIÓN</p>
+            <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: 'var(--b1n0-si)', letterSpacing: '0.8px', textTransform: 'uppercase' }}>CUT 4 — RESOLUCIÓN</p>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '2px' }}>
               <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>$</span>
-              <span style={{ fontFamily: D, fontSize: '22px', fontWeight: 700, color: '#14b8a6', letterSpacing: '-0.5px' , fontVariantNumeric: 'tabular-nums'}}>{fmtQ(skimTotal)}</span>
+              <span style={{ fontFamily: D, fontSize: '22px', fontWeight: 700, color: 'var(--b1n0-si)', letterSpacing: '-0.5px' , fontVariantNumeric: 'tabular-nums'}}>{fmtQ(skimTotal)}</span>
             </div>
           </div>
           <div style={{ display: 'flex', gap: '12px', fontSize: '10px', fontFamily: F, color: 'var(--b1n0-muted)' }}>
             <span>Resueltos: <strong style={{ color: 'var(--b1n0-text-1)' }}>{resolvedCount}</strong></span>
-            <span>Promedio: <strong style={{ color: '#14b8a6' }}>${resolvedCount > 0 ? fmtQ(skimTotal / resolvedCount) : '0'}</strong></span>
+            <span>Promedio: <strong style={{ color: 'var(--b1n0-si)' }}>${resolvedCount > 0 ? fmtQ(skimTotal / resolvedCount) : '0'}</strong></span>
             <span>5% → <strong style={{ color: 'var(--b1n0-si)' }}>Tesorería</strong></span>
           </div>
         </div>
@@ -585,7 +585,7 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
                   style={{
                     padding: '6px 14px', borderRadius: 'var(--radius-md)', border: 'none', cursor: 'pointer',
                     fontFamily: F, fontWeight: 600, fontSize: '12px',
-                    background: txView === v ? (v === 'purchases' ? 'var(--b1n0-si)' : '#C4B5FD') : 'transparent',
+                    background: txView === v ? (v === 'purchases' ? 'var(--b1n0-si)' : 'var(--b1n0-gold)') : 'transparent',
                     color: txView === v ? 'var(--b1n0-text-1)' : 'var(--b1n0-muted)',
                     transition: 'all 0.15s',
                   }}
@@ -627,7 +627,7 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '14px' }}>
               {[
                 { label: 'Volumen ventas', val: `$${fmtQ(totalSaleGross)}`, color: 'var(--b1n0-text-1)' },
-                { label: 'Fee cobrado', val: `$${fmtQ(totalSaleFee)}`, color: '#C4B5FD' },
+                { label: 'Fee cobrado', val: `$${fmtQ(totalSaleFee)}`, color: 'var(--b1n0-gold)' },
                 { label: 'Spread capturado', val: `$${fmtQ(totalSaleSpread)}`, color: 'var(--b1n0-gold)' },
                 { label: 'Revenue total ventas', val: `$${fmtQ(totalSaleRevenue)}`, color: 'var(--b1n0-si)' },
               ].map(({ label, val, color }) => (
@@ -690,7 +690,7 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
                     <td style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', padding: '5px 4px', whiteSpace: 'nowrap' }}>
                       ${fmtQ(t.cobro)}
                     </td>
-                    <td style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: '#C4B5FD', padding: '5px 4px', whiteSpace: 'nowrap' }}>
+                    <td style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-gold)', padding: '5px 4px', whiteSpace: 'nowrap' }}>
                       ${fmtQ(t.fee)}
                     </td>
                     <td style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-gold)', padding: '5px 4px', whiteSpace: 'nowrap' }}>
@@ -792,7 +792,7 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
                       <td style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', padding: '5px 4px', whiteSpace: 'nowrap' }}>
                         {t.midPrice > 0 ? t.midPrice.toFixed(3) : '—'}
                       </td>
-                      <td style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: '#C4B5FD', padding: '5px 4px', whiteSpace: 'nowrap' }}>
+                      <td style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-gold)', padding: '5px 4px', whiteSpace: 'nowrap' }}>
                         {t.bidPrice > 0 ? t.bidPrice.toFixed(3) : '—'}
                       </td>
                       <td style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-gold)', padding: '5px 4px', whiteSpace: 'nowrap' }}>
@@ -801,7 +801,7 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
                       <td style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-text-1)', padding: '5px 4px', whiteSpace: 'nowrap' }}>
                         ${fmtQ(t.amount)}
                       </td>
-                      <td style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: '#C4B5FD', padding: '5px 4px', whiteSpace: 'nowrap' }}>
+                      <td style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-gold)', padding: '5px 4px', whiteSpace: 'nowrap' }}>
                         ${fmtQ(t.fee)}
                       </td>
                       <td style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-gold)', padding: '5px 4px', whiteSpace: 'nowrap' }}>

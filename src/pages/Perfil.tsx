@@ -318,7 +318,7 @@ export function Perfil() {
             left: 'calc(var(--space-5) * -1)',
             right: 'calc(var(--space-5) * -1)',
             height: 96,
-            background: 'linear-gradient(135deg, rgba(74, 222, 128, 0.16) 0%, rgba(255, 212, 116, 0.10) 50%, rgba(99, 102, 241, 0.10) 100%)',
+            background: 'linear-gradient(135deg, rgba(6,212,127, 0.16) 0%, rgba(255, 212, 116, 0.10) 50%, rgba(99, 102, 241, 0.10) 100%)',
             borderBottom: '1px solid var(--b1n0-border)',
           }}
         />
@@ -766,7 +766,7 @@ export function Perfil() {
           <SettingsRow
             icon={<Bell size={16} weight="regular" />}
             label="Notificaciones"
-            iconBg="rgba(74, 222, 128, 0.14)"
+            iconBg="rgba(6,212,127, 0.14)"
             iconColor="var(--b1n0-si)"
             open={notifOpen}
             onToggle={() => setNotifOpen((o) => !o)}
@@ -866,7 +866,7 @@ export function Perfil() {
           <SettingsRow
             icon={<Lifebuoy size={16} weight="regular" />}
             label="Soporte"
-            iconBg="rgba(248, 113, 113, 0.14)"
+            iconBg="rgba(255,223,80, 0.14)"
             iconColor="var(--b1n0-no)"
             open={soporteOpen}
             onToggle={() => setSoporteOpen((o) => !o)}

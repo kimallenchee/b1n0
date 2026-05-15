@@ -1,55 +1,6 @@
 @import "tailwindcss";
 
 /* ═══════════════════════════════════════════════════════════════
-   @font-face — Inter (variable + display variant)
-   Files live in /public/fonts/. Variable fonts ship one woff2 for
-   the entire weight axis, so a single declaration covers all
-   font-weight values. InterDisplay is the optical-display variant
-   used for hero numerals + display copy (replaces the old Geist
-   role; brand spec is Inter throughout).
-   ═══════════════════════════════════════════════════════════════ */
-
-@font-face {
-  font-family: "Inter";
-  src: url("/fonts/InterVariable.woff2") format("woff2-variations"),
-       url("/fonts/InterVariable.woff2") format("woff2");
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Inter";
-  src: url("/fonts/InterVariable-Italic.woff2") format("woff2-variations"),
-       url("/fonts/InterVariable-Italic.woff2") format("woff2");
-  font-weight: 100 900;
-  font-style: italic;
-  font-display: swap;
-}
-@font-face {
-  font-family: "InterDisplay";
-  src: url("/fonts/InterDisplay-Bold.woff2") format("woff2");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "InterDisplay";
-  src: url("/fonts/InterDisplay-ExtraBold.woff2") format("woff2");
-  font-weight: 800;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "InterDisplay";
-  src: url("/fonts/InterDisplay-Black.woff2") format("woff2");
-  font-weight: 900;
-  font-style: normal;
-  font-display: swap;
-}
-
-
-
-/* ═══════════════════════════════════════════════════════════════
    b1n0 Design System — CSS Custom Properties
    Dark is the default (works without JS).
    Light mode opt-in via [data-theme="light"] on <html>.
@@ -119,14 +70,14 @@
   --focus-ring: 0 0 0 2px var(--b1n0-bg), 0 0 0 4px var(--b1n0-si);
 
   /* ── Brand Accent Colors (identical in both themes) ── */
-  --b1n0-mint:     #73F9B0;
+  --b1n0-mint:     #4ade80;
   --b1n0-gold:     #FFD474;
-  --b1n0-teal-50:  #DCFCE7;
-  --b1n0-teal-100: #73F9B0;
-  --b1n0-teal-300: #4ADE80;
-  --b1n0-teal-500: #06D47F;
-  --b1n0-teal-700: #04B86C;
-  --b1n0-teal-900: #024A2C;
+  --b1n0-teal-50:  #E8F5F0;
+  --b1n0-teal-100: #B0DFD0;
+  --b1n0-teal-300: #5CBFA0;
+  --b1n0-teal-500: #4ade80;
+  --b1n0-teal-700: #0F6E56;
+  --b1n0-teal-900: #083D30;
   --b1n0-orange-50:  #FFF3E8;
   --b1n0-orange-100: #FFD4A8;
   --b1n0-orange-300: #FFA94D;
@@ -135,54 +86,37 @@
   --b1n0-orange-900: #6B300A;
 
   /* ── Position Colors (core stays same across themes) ── */
-  --b1n0-si:       #06D47F;
-  --b1n0-si-bright:#06D47F;
-  --b1n0-si-bg:    rgba(6,212,127,0.12);
-  --b1n0-si-dark:  #04B86C;
-  --b1n0-si-hover: #04B86C;
-  --b1n0-no:       #FFDF50;
-  --b1n0-no-bg:    rgba(255,223,80,0.12);
-  --b1n0-no-dark:  #F0CC3E;
-  --b1n0-no-hover: #F0CC3E;
-
-  /* ── Brand yellow (separate semantic token, same value as --b1n0-no) ──
-     Used when we want "brand yellow" as a positive accent (highlights,
-     jackpot tags) and don't want to conflate with "NO side" semantics. */
-  --b1n0-yellow:    #FFDF50;
-  --b1n0-yellow-bg: rgba(255,223,80,0.12);
-  --b1n0-yellow-border: rgba(255,223,80,0.32);
-
-  /* ── Error red (off-brand, semantic only) ──
-     Reserved for system-level destructive states: validation errors,
-     saldo insuficiente, void confirmations, P&L loss. NOT a brand color
-     per the brandbook — the brand palette is green + yellow + grays
-     only — but UX needs a "stop, you did something wrong" signal that
-     yellow can't carry. Use sparingly and only on system surfaces. */
-  --b1n0-error:     #DC2626;
-  --b1n0-error-bg:  rgba(220,38,38,0.10);
-  --b1n0-error-border: rgba(220,38,38,0.32);
+  --b1n0-si:       #4ade80;
+  --b1n0-si-bright:#4ade80;
+  --b1n0-si-bg:    rgba(74,222,128,0.12);
+  --b1n0-si-dark:  #4ade80;
+  --b1n0-si-hover: #3cc970;
+  --b1n0-no:       #f87171;
+  --b1n0-no-bg:    rgba(248,113,113,0.10);
+  --b1n0-no-dark:  #f87171;
+  --b1n0-no-hover: #e05555;
 
   /* ── Text that sits ON accent buttons (constant across themes) ── */
   --b1n0-on-accent: #0d0d0d;
 
   /* ── Semantic surfaces — dark-first defaults ── */
-  --b1n0-bg:       #0D0D0D;
-  --b1n0-surface:  #1A2226;
-  --b1n0-card:     #141A1E;
-  --b1n0-border:   #243038;
-  --b1n0-muted:    #5C6573;
-  --b1n0-text-2:   #99A1AF;
-  --b1n0-text-1:   #FFFFFF;
+  --b1n0-bg:       #0d0d0d;
+  --b1n0-surface:  #1c1c1c;
+  --b1n0-card:     #141414;
+  --b1n0-border:   #2a2724;
+  --b1n0-muted:    #5e5a54;
+  --b1n0-text-2:   #a09a90;
+  --b1n0-text-1:   #f2efea;
 
   /* ── Hover / elevation tints ── */
   --b1n0-hover-overlay:  rgba(255,255,255,0.04);
-  --b1n0-card-hover-border: #5C6573;
+  --b1n0-card-hover-border: #5e5a54;
   --b1n0-shadow-modal:   0 24px 80px rgba(0,0,0,0.5);
 
   /* ── Sidebar ── */
-  --b1n0-sidebar-bg:        #0D0D0D;
-  --b1n0-sidebar-text:      #5C6573;
-  --b1n0-sidebar-active-bg: rgba(6,212,127,0.10);
+  --b1n0-sidebar-bg:        #0d0d0d;
+  --b1n0-sidebar-text:      #5e5a54;
+  --b1n0-sidebar-active-bg: rgba(74,222,128,0.10);
   --b1n0-sidebar-hover-bg:  rgba(255,255,255,0.04);
 
   /* ── Category badges (dark-optimized) ── */
@@ -197,42 +131,42 @@
 
   /* ── Status badges ── */
   --status-enjuego-bg:  rgba(255,212,116,0.15); --status-enjuego-text:  #FFD474;
-  --status-ganado-bg:   rgba(6,212,127,0.15);   --status-ganado-text:   #06D47F;
-  --status-perdido-bg:  rgba(220,38,38,0.12);   --status-perdido-text:  #DC2626;
-  --status-vendido-bg:  #1A2226;                --status-vendido-text:  #5C6573;
-  --status-resuelto-bg: rgba(6,212,127,0.08);   --status-resuelto-text: #06D47F;
+  --status-ganado-bg:   rgba(115,249,176,0.15); --status-ganado-text:   #4ade80;
+  --status-perdido-bg:  rgba(255,82,82,0.12);   --status-perdido-text:  #ff5252;
+  --status-vendido-bg:  #1c1c1c;                --status-vendido-text:  #5e5a54;
+  --status-resuelto-bg: rgba(115,249,176,0.08); --status-resuelto-text: #4ade80;
 
   /* ── Inputs ── */
-  --b1n0-input-bg:     #1A2226;
-  --b1n0-input-border: #243038;
-  --b1n0-input-focus:  #06D47F;
+  --b1n0-input-bg:     #1c1c1c;
+  --b1n0-input-border: #2a2724;
+  --b1n0-input-focus:  #4ade80;
 
   /* ── Stats bar ── */
-  --b1n0-stats-bg:     #141A1E;
-  --b1n0-stats-border: #243038;
-  --b1n0-stats-label:  #99A1AF;
-  --b1n0-stats-value:  #FFFFFF;
+  --b1n0-stats-bg:     #141414;
+  --b1n0-stats-border: #2a2724;
+  --b1n0-stats-label:  #8a8580;
+  --b1n0-stats-value:  #f2efea;
 
   /* ── Filter pills ── */
   --b1n0-pill-bg:         transparent;
-  --b1n0-pill-border:     #243038;
-  --b1n0-pill-text:       #5C6573;
-  --b1n0-pill-active-bg:  #06D47F;
-  --b1n0-pill-active-text:#0D0D0D;
+  --b1n0-pill-border:     #2a2724;
+  --b1n0-pill-text:       #5e5a54;
+  --b1n0-pill-active-bg:  #4ade80;
+  --b1n0-pill-active-text:#0d0d0d;
 
   /* ── Notifications ── */
-  --b1n0-notif-bg:     #141A1E;
-  --b1n0-notif-unread: #1A2226;
+  --b1n0-notif-bg:     #141414;
+  --b1n0-notif-unread: #1c1c1c;
 
-  --b1n0-scrollbar-thumb: #243038;
+  --b1n0-scrollbar-thumb: #2a2724;
 
   /* ── TOW (tug-of-war) bar hover tints ── */
-  --b1n0-si-bg-hover:  rgba(6,212,127,0.20);
-  --b1n0-no-bg-hover:  rgba(255,223,80,0.20);
+  --b1n0-si-bg-hover:  rgba(74,222,128,0.20);
+  --b1n0-no-bg-hover:  rgba(248,113,113,0.18);
 
   /* ── Translucent accent borders ── */
-  --b1n0-si-border:   rgba(6,212,127,0.32);
-  --b1n0-no-border:   rgba(255,223,80,0.32);
+  --b1n0-si-border:   rgba(74,222,128,0.25);
+  --b1n0-no-border:   rgba(248,113,113,0.25);
 
   /* ── Disabled button bg ── */
   --b1n0-disabled-bg: rgba(255,255,255,0.12);
@@ -246,6 +180,84 @@
   --color-cat-tecnologia-bg: var(--badge-tecnologia-bg); --color-cat-tecnologia: var(--badge-tecnologia-text);
   --color-cat-finanzas-bg: var(--badge-finanzas-bg); --color-cat-finanzas: var(--badge-finanzas-text);
   --color-cat-otro-bg: var(--badge-otro-bg); --color-cat-otro: var(--badge-otro-text);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   LIGHT MODE — warm paper palette (keeps b1n0's warm aesthetic)
+   Opt in by setting data-theme="light" on <html>.
+   ══════════════════════════════════════════════════════════════════ */
+[data-theme="light"] {
+  /* Semantic surfaces — paper-based */
+  --b1n0-bg:       #f5f2ec;   /* warm paper base */
+  --b1n0-surface:  #ffffff;   /* elevated modals / sheets */
+  --b1n0-card:     #fbf9f4;   /* cards sit between bg and surface */
+  --b1n0-border:   #e5dfd4;   /* warm tan border */
+  --b1n0-muted:    #908a80;   /* lightest readable */
+  --b1n0-text-2:   #5e5a54;   /* mid text (our old muted becomes mid) */
+  --b1n0-text-1:   #1a1712;   /* deep warm near-black */
+
+  /* Hover / elevation tints — inverted for light */
+  --b1n0-hover-overlay:      rgba(0,0,0,0.04);
+  --b1n0-card-hover-border:  #b8b0a2;
+  --b1n0-shadow-modal:       0 16px 48px rgba(40,30,15,0.12);
+
+  /* Position accent backgrounds need more alpha to register on white */
+  --b1n0-si-bg:        rgba(34,160,70,0.12);
+  --b1n0-si-bg-hover:  rgba(34,160,70,0.20);
+  --b1n0-no-bg:        rgba(220,60,60,0.10);
+  --b1n0-no-bg-hover:  rgba(220,60,60,0.18);
+  --b1n0-si-border:    rgba(34,160,70,0.32);
+  --b1n0-no-border:    rgba(220,60,60,0.32);
+
+  /* Disabled button bg — needs dark tint on light */
+  --b1n0-disabled-bg: rgba(0,0,0,0.08);
+
+  /* Sidebar */
+  --b1n0-sidebar-bg:        #efeae1;
+  --b1n0-sidebar-text:      #7a7468;
+  --b1n0-sidebar-active-bg: rgba(34,160,70,0.14);
+  --b1n0-sidebar-hover-bg:  rgba(0,0,0,0.04);
+
+  /* Category badges — light-optimized (light bg, dark text) */
+  --badge-deportes-bg:    #DCE9F7; --badge-deportes-text:    #1E3A5F;
+  --badge-politica-bg:    #F7DCDC; --badge-politica-text:    #7A1E1E;
+  --badge-economia-bg:    #F7E8CC; --badge-economia-text:    #5F3A0E;
+  --badge-geopolitica-bg: #E4DCF7; --badge-geopolitica-text: #2E1065;
+  --badge-cultura-bg:     #F7DCEA; --badge-cultura-text:     #5F1039;
+  --badge-tecnologia-bg:  #D6EAF5; --badge-tecnologia-text:  #0C3A5A;
+  --badge-finanzas-bg:    #D6F0E5; --badge-finanzas-text:    #064E3B;
+  --badge-otro-bg:        #ece7dc; --badge-otro-text:        #5e5a54;
+
+  /* Status badges — deepen text, lighten bg */
+  --status-enjuego-bg:  rgba(200,140,20,0.14);  --status-enjuego-text:  #9a6b00;
+  --status-ganado-bg:   rgba(34,160,70,0.14);   --status-ganado-text:   #1a8c3a;
+  --status-perdido-bg:  rgba(220,60,60,0.12);   --status-perdido-text:  #b93030;
+  --status-vendido-bg:  #ece7dc;                --status-vendido-text:  #7a7468;
+  --status-resuelto-bg: rgba(34,160,70,0.10);   --status-resuelto-text: #1a8c3a;
+
+  /* Inputs */
+  --b1n0-input-bg:     #ffffff;
+  --b1n0-input-border: #e5dfd4;
+  --b1n0-input-focus:  #22a046;
+
+  /* Stats bar */
+  --b1n0-stats-bg:     #fbf9f4;
+  --b1n0-stats-border: #e5dfd4;
+  --b1n0-stats-label:  #908a80;
+  --b1n0-stats-value:  #1a1712;
+
+  /* Filter pills */
+  --b1n0-pill-bg:          transparent;
+  --b1n0-pill-border:      #d4cdbf;
+  --b1n0-pill-text:        #7a7468;
+  --b1n0-pill-active-bg:   #22a046;
+  --b1n0-pill-active-text: #ffffff;
+
+  /* Notifications */
+  --b1n0-notif-bg:     #ffffff;
+  --b1n0-notif-unread: #fbf5e8;
+
+  --b1n0-scrollbar-thumb: #d4cdbf;
 }
 
 /* Also support an explicit dark attribute (symmetry with light) */
@@ -296,11 +308,11 @@
   /* Type system tokens (referenced from inline styles too).
      Body/UI: Inter. Numbers + UI display: Geist. Mono: Geist Mono.
      Hero: Syne. Each has a single, deliberate role. */
-  --font-body:    "Inter", "InterVariable", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-display: "InterDisplay", "Inter", system-ui, sans-serif;
-  --font-num:     "InterDisplay", "Inter", system-ui, sans-serif;
+  --font-body:    "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Geist", "Inter", system-ui, sans-serif;
+  --font-num:     "Geist", "Inter", system-ui, sans-serif;
   --font-mono:    "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
-  --font-hero:    "InterDisplay", "Inter", system-ui, sans-serif;
+  --font-hero:    "Syne", "Geist", "Inter", system-ui, sans-serif;
 
   /* Tailwind-ish aliases so existing references keep working. */
   --font-family-display: var(--font-hero);
@@ -406,6 +418,12 @@ body::before {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
+/* Light theme: grain is darker so it's visible on warm paper */
+[data-theme="light"] body::before {
+  opacity: 0.05;
+  mix-blend-mode: multiply;
+}
+
 /* Numerical content uses tabular figures so columns line up across
    cards and balances stay rock-steady when they tick. */
 .num,
@@ -426,7 +444,7 @@ input[type="number"] {
 
 /* Selection — uses brand accent at low alpha so it never fights content. */
 ::selection {
-  background: rgba(6, 212, 127, 0.25);
+  background: rgba(74, 222, 128, 0.25);
   color: var(--b1n0-text-1);
 }
 
@@ -566,8 +584,8 @@ input[type="number"] {
    pulse only modulates the right side via box-shadow ring; the base
    border stays static so layout doesn't shift. */
 @keyframes heatPulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(6, 212, 127, 0); }
-  50%      { box-shadow: 0 0 0 1px rgba(6, 212, 127, 0.35); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+  50%      { box-shadow: 0 0 0 1px rgba(74, 222, 128, 0.35); }
 }
 .event-card.is-live {
   animation: heatPulse 3.2s var(--ease-in-out) infinite;

@@ -233,7 +233,7 @@ export function AdminPage() {
             padding: '12px',
             border: '1px dashed var(--b1n0-border)',
             borderRadius: 'var(--radius-lg)',
-            background: 'rgba(248,113,113,0.04)',
+            background: 'rgba(255,223,80,0.04)',
           }}
         >
           <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', marginBottom: '8px' }}>
@@ -269,7 +269,7 @@ export function AdminPage() {
                 padding: '6px 12px',
                 borderRadius: 'var(--radius-md)',
                 border: '1px solid #fecaca',
-                background: 'rgba(248,113,113,0.08)',
+                background: 'rgba(255,223,80,0.08)',
                 fontFamily: F,
                 fontSize: '11px',
                 fontWeight: 600,

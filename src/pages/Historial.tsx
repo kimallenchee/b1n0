@@ -129,7 +129,7 @@ function VoteCard({ p }: { p: UserPrediction }) {
     : isWon
       ? 'var(--status-ganado-bg)'
       : isSold
-        ? 'rgba(196,181,253,0.15)'
+        ? 'rgba(255,212,116,0.15)'
         : 'var(--status-perdido-bg)'
   const statusFg = isActive
     ? 'var(--status-enjuego-text)'
@@ -184,7 +184,7 @@ function VoteCard({ p }: { p: UserPrediction }) {
           <span
             style={{
               fontFamily: D, fontWeight: 800, fontSize: '12px', color: 'var(--b1n0-text-1)',
-              background: userPickedYes ? 'rgba(74,222,128,0.14)' : 'rgba(255,212,116,0.16)',
+              background: userPickedYes ? 'rgba(6,212,127,0.14)' : 'rgba(255,212,116,0.16)',
               padding: '3px 8px', borderRadius: 'var(--radius-md)', letterSpacing: '0.3px',
             }}
           >

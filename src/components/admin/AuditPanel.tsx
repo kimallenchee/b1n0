@@ -32,11 +32,11 @@ interface AuditRow {
 const ACTION_META: Record<string, { icon: string; tint: string; label: string }> = {
   void_event:     { icon: '↺', tint: 'var(--b1n0-orange-500)', label: 'Anulación' },
   settle_event:   { icon: '✓', tint: 'var(--b1n0-si)',         label: 'Resolución' },
-  adjust_balance: { icon: '±', tint: '#C4B5FD',                label: 'Ajuste saldo' },
+  adjust_balance: { icon: '±', tint: 'var(--b1n0-gold)',                label: 'Ajuste saldo' },
   update_config:  { icon: '⚙',  tint: 'var(--b1n0-muted)',     label: 'Configuración' },
   create_event:   { icon: '+', tint: 'var(--b1n0-si)',         label: 'Evento creado' },
   edit_event:     { icon: '✎', tint: 'var(--b1n0-muted)',      label: 'Evento editado' },
-  lp_deposit:     { icon: '$', tint: '#C4B5FD',                label: 'Depósito LP' },
+  lp_deposit:     { icon: '$', tint: 'var(--b1n0-gold)',                label: 'Depósito LP' },
   bulk_archive:   { icon: '✕', tint: 'var(--b1n0-muted)',      label: 'Archivo masivo' },
 }
 
@@ -189,7 +189,7 @@ export function AuditPanel() {
       )}
 
       {error && (
-        <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', padding: '10px 12px', background: 'rgba(248,113,113,0.08)', borderRadius: 'var(--radius-lg)', marginBottom: '12px' }}>
+        <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', padding: '10px 12px', background: 'rgba(255,223,80,0.08)', borderRadius: 'var(--radius-lg)', marginBottom: '12px' }}>
           {error}
         </p>
       )}

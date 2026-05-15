@@ -141,7 +141,7 @@ export function TreasuryPanel() {
             fontFamily: F,
             fontSize: '12px',
             color: 'var(--b1n0-no)',
-            background: 'rgba(248,113,113,0.08)',
+            background: 'rgba(255,223,80,0.08)',
             padding: '8px 12px',
             borderRadius: 'var(--radius-lg)',
             margin: 0,
