@@ -591,9 +591,9 @@ export function AuthModal() {
             <input type="email" placeholder="Confirmar correo *" value={form.emailConfirm} onChange={e => setField('emailConfirm', e.target.value)} style={inputStyle} />
             <input type="password" placeholder="Contraseña *" value={form.password} onChange={e => setField('password', e.target.value)} style={inputStyle} />
             <input type="password" placeholder="Confirmar contraseña *" value={form.passwordConfirm} onChange={e => setField('passwordConfirm', e.target.value)} style={inputStyle} />
-            {error && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', textAlign: 'center' }}>{error}</p>}
+            {error && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-error)', textAlign: 'center' }}>{error}</p>}
             {touched.firstName && Object.keys(errors).length > 0 && (
-              <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-no)', lineHeight: 1.4 }}>
+              <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-error)', lineHeight: 1.4 }}>
                 {Object.values(errors).slice(0, 3).join(' · ')}
               </p>
             )}

@@ -231,7 +231,7 @@ export function DepositSheet({ open, onClose }: DepositSheetProps) {
             )}
 
             {error && (
-              <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', marginBottom: '12px', textAlign: 'center' }}>{error}</p>
+              <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-error)', marginBottom: '12px', textAlign: 'center' }}>{error}</p>
             )}
 
             <button
@@ -327,7 +327,7 @@ export function DepositSheet({ open, onClose }: DepositSheetProps) {
             </div>
 
             {error && (
-              <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', marginBottom: '12px', textAlign: 'center' }}>{error}</p>
+              <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-error)', marginBottom: '12px', textAlign: 'center' }}>{error}</p>
             )}
 
             <button

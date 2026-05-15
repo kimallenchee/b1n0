@@ -33,16 +33,6 @@ const EventDetailPage = lazy(() => import('./pages/EventDetailPage').then(m => (
 const TermsPage = lazy(() => import('./pages/Legal').then(m => ({ default: m.TermsPage })))
 const PrivacyPage = lazy(() => import('./pages/Legal').then(m => ({ default: m.PrivacyPage })))
 
-// Public partnership pitch — bypasses the app chrome entirely so the URL
-// b1n0.com/prensa-libre is shareable as a clean, standalone marketing page.
-const PrensaLibre = lazy(() => import('./pages/PrensaLibre').then(m => ({ default: m.PrensaLibre })))
-
-// Public sponsor / LP capital explainer. Walks prospective sponsors
-// through the four outcome scenarios with worked examples, before any
-// consent / deposit conversation. Outside the auth chrome so the URL
-// b1n0.com/sponsor is shareable as a leave-behind.
-const Sponsor = lazy(() => import('./pages/Sponsor').then(m => ({ default: m.Sponsor })))
-
 function LazyFallback() {
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '200px' }}>
@@ -204,7 +194,7 @@ function ForceChangePassword() {
           <form onSubmit={handleChange} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <input type="password" placeholder="Nueva contraseña" value={pw} onChange={(e) => setPw(e.target.value)} required minLength={6} style={inputStyle} />
             <input type="password" placeholder="Confirmar contraseña" value={pw2} onChange={(e) => setPw2(e.target.value)} required minLength={6} style={inputStyle} />
-            {error && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', textAlign: 'center' }}>{error}</p>}
+            {error && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-error)', textAlign: 'center' }}>{error}</p>}
             <button type="submit" disabled={loading} style={{
               width: '100%', padding: '13px', borderRadius: 'var(--radius-lg)', border: 'none',
               background: loading ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)',
@@ -273,31 +263,14 @@ function AppContent() {
   return isDesktop ? <DesktopLayout /> : <MobileLayout />
 }
 
-// Strips the app shell (TopBar, Dock, auth gate, providers) so a route can
-// render as a standalone full-bleed page. Used for marketing / pitch URLs.
-function StandalonePage ({ children }: { children: React.ReactNode }) {
-  return (
-    <ThemeProvider>
-      <Suspense fallback={<LazyFallback />}>{children}</Suspense>
-    </ThemeProvider>
-  )
-}
-
 export default function App() {
   // Root-level ErrorBoundary catches anything outside the route tree
   // (provider init crashes, theme bootstrap, etc.). Per-layout
   // boundaries below catch route render crashes so the chrome stays.
-  //
-  // The /prensa-libre route lives ABOVE the auth/provider stack so it
-  // loads instantly as a public landing — no Supabase calls, no toast
-  // provider, no app chrome. Everything else falls through to the
-  // fully-instrumented app shell.
   return (
     <ErrorBoundary>
       <BrowserRouter>
         <Routes>
-          <Route path="/prensa-libre" element={<StandalonePage><PrensaLibre /></StandalonePage>} />
-          <Route path="/sponsor" element={<StandalonePage><Sponsor /></StandalonePage>} />
           <Route path="*" element={
             <ThemeProvider>
               <AuthProvider>

@@ -1131,7 +1131,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                 </p>
               )}
 
-              {editError && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', padding: '8px 10px', background: 'rgba(255,223,80,0.08)', borderRadius: 'var(--radius-lg)' }}>{editError}</p>}
+              {editError && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-error)', padding: '8px 10px', background: 'var(--b1n0-error-bg)', borderRadius: 'var(--radius-lg)' }}>{editError}</p>}
               {editSuccess && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-si)', padding: '8px 10px', background: 'rgba(6,212,127,0.08)', borderRadius: 'var(--radius-lg)' }}>✓ {editSuccess}</p>}
 
               <button onClick={handleEditSave} disabled={editLoading}
@@ -1239,7 +1239,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                     >
                       {lpLoading ? 'Procesando...' : 'Agregar Capital LP →'}
                     </button>
-                    {lpError && <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-no)', padding: '6px 8px', background: 'rgba(255,223,80,0.08)', borderRadius: 'var(--radius-md)' }}>{lpError}</p>}
+                    {lpError && <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-error)', padding: '6px 8px', background: 'var(--b1n0-error-bg)', borderRadius: 'var(--radius-md)' }}>{lpError}</p>}
                     {lpSuccess && <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-si)', padding: '6px 8px', background: 'rgba(6,212,127,0.08)', borderRadius: 'var(--radius-md)' }}>✓ {lpSuccess}</p>}
                   </div>
                 </div>
@@ -1279,7 +1279,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                       ))}
                     </div>
                   )}
-                  {resolveError && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', marginTop: '8px', padding: '8px 10px', background: 'rgba(255,223,80,0.08)', borderRadius: 'var(--radius-lg)' }}>{resolveError}</p>}
+                  {resolveError && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-error)', marginTop: '8px', padding: '8px 10px', background: 'var(--b1n0-error-bg)', borderRadius: 'var(--radius-lg)' }}>{resolveError}</p>}
                   {resolveSuccess && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-si)', marginTop: '8px', padding: '8px 10px', background: 'rgba(6,212,127,0.08)', borderRadius: 'var(--radius-lg)' }}>✓ {resolveSuccess}</p>}
                 </div>
               )}
@@ -1588,7 +1588,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
               <button onClick={() => setBulkResult(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)' }}>✕</button>
             </div>
             {bulkResult.errors.length > 0 && (
-              <div style={{ maxHeight: '120px', overflowY: 'auto', fontSize: '11px', fontFamily: F, color: 'var(--b1n0-no)', lineHeight: 1.5 }}>
+              <div style={{ maxHeight: '120px', overflowY: 'auto', fontSize: '11px', fontFamily: F, color: 'var(--b1n0-error)', lineHeight: 1.5 }}>
                 {bulkResult.errors.map((err, i) => <p key={i}>{err}</p>)}
               </div>
             )}
@@ -1933,7 +1933,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
             </div>
           </div>
 
-          {createError && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', padding: '8px 10px', background: 'rgba(255,223,80,0.08)', borderRadius: 'var(--radius-lg)', marginTop: '12px' }}>{createError}</p>}
+          {createError && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-error)', padding: '8px 10px', background: 'var(--b1n0-error-bg)', borderRadius: 'var(--radius-lg)', marginTop: '12px' }}>{createError}</p>}
           {createSuccess && (
             <div style={{ padding: '10px', background: 'rgba(6,212,127,0.08)', borderRadius: 'var(--radius-lg)', marginTop: '12px' }}>
               <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-si)', fontWeight: 600 }}>✓ {createSuccess}</p>

@@ -524,7 +524,7 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
             {confirming ? 'Procesando...' : `Comprar ${side ? displaySide(side) : ''} — ${event.currency}${amount || '0'}`}
           </button>
           {confirmError && (
-            <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-no)', textAlign: 'center', marginBottom: '6px' }}>{confirmError}</p>
+            <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-error)', textAlign: 'center', marginBottom: '6px' }}>{confirmError}</p>
           )}
           <button onClick={onClose} style={{ width: '100%', padding: '10px', background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)' }}>
             Cerrar
@@ -591,7 +591,7 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
           </div>
 
           {confirmError && (
-            <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', marginBottom: '12px', padding: '8px 10px', background: 'var(--b1n0-no-bg)', borderRadius: 'var(--radius-lg)' }}>
+            <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-error)', marginBottom: '12px', padding: '8px 10px', background: 'var(--b1n0-error-bg)', borderRadius: 'var(--radius-lg)' }}>
               {confirmError}
             </p>
           )}

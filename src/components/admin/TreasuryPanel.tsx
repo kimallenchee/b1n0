@@ -140,8 +140,8 @@ export function TreasuryPanel() {
             gridColumn: '1 / -1',
             fontFamily: F,
             fontSize: '12px',
-            color: 'var(--b1n0-no)',
-            background: 'rgba(255,223,80,0.08)',
+            color: 'var(--b1n0-error)',
+            background: 'var(--b1n0-error-bg)',
             padding: '8px 12px',
             borderRadius: 'var(--radius-lg)',
             margin: 0,
@@ -157,7 +157,7 @@ export function TreasuryPanel() {
           <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: 'var(--b1n0-muted)', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '4px' }}>Saldo</p>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '3px', marginBottom: '12px' }}>
             <span style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)' }}>$</span>
-            <span style={{ fontFamily: D, fontSize: '36px', fontWeight: 700, color: treasuryBalance >= 0 ? 'var(--b1n0-text-1)' : 'var(--b1n0-no)', letterSpacing: '-1.5px' , fontVariantNumeric: 'tabular-nums'}}>
+            <span style={{ fontFamily: D, fontSize: '36px', fontWeight: 700, color: treasuryBalance >= 0 ? 'var(--b1n0-text-1)' : 'var(--b1n0-error)', letterSpacing: '-1.5px' , fontVariantNumeric: 'tabular-nums'}}>
               {treasuryLoading ? '...' : fmtQ2(treasuryBalance)}
             </span>
           </div>

@@ -1087,7 +1087,7 @@ function EventDetailInner({ event }: { event: AppEvent }) {
 
                       {/* Error message */}
                       {panelError && (
-                        <div style={{ marginTop: '8px', padding: '8px 10px', background: 'var(--b1n0-no-bg)', border: '1px solid var(--b1n0-no)', borderRadius: 'var(--radius-lg)' }}>
+                        <div style={{ marginTop: '8px', padding: '8px 10px', background: 'var(--b1n0-error-bg)', border: '1px solid var(--b1n0-error-border)', borderRadius: 'var(--radius-lg)' }}>
                           <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-no-dark)' }}>
                             {panelError}
                           </p>

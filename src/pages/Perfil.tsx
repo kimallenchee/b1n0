@@ -374,7 +374,7 @@ export function Perfil() {
           </p>
           <p style={{ fontFamily: D, fontWeight: 800, fontSize: 'var(--text-xl)', color: 'var(--b1n0-text-1)', letterSpacing: 'var(--tracking-tight)' }}>{user.name}</p>
           {avatarUploadError && (
-            <p style={{ fontFamily: F, fontSize: 'var(--text-xs)', color: 'var(--b1n0-no)', marginTop: 'var(--space-2)' }}>{avatarUploadError}</p>
+            <p style={{ fontFamily: F, fontSize: 'var(--text-xs)', color: 'var(--b1n0-error)', marginTop: 'var(--space-2)' }}>{avatarUploadError}</p>
           )}
         </div>
       </div>

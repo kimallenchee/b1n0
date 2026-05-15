@@ -187,7 +187,7 @@ export function AuthPage() {
   }
 
   const inputErrorStyle: React.CSSProperties = {
-    ...inputStyle, border: '1px solid var(--b1n0-no)',
+    ...inputStyle, border: '1px solid var(--b1n0-error-border)',
   }
 
   const labelStyle: React.CSSProperties = {
@@ -196,7 +196,7 @@ export function AuthPage() {
   }
 
   const errorTextStyle: React.CSSProperties = {
-    fontFamily: F, fontSize: '11px', color: 'var(--b1n0-no)',
+    fontFamily: F, fontSize: '11px', color: 'var(--b1n0-error)',
     marginTop: '3px', lineHeight: 1.3,
   }
 
@@ -204,7 +204,7 @@ export function AuthPage() {
     const showErr = touched[name] && errors[name]
     return (
       <div data-field={name} style={{ marginBottom: '12px' }}>
-        <label style={labelStyle}>{label}{required && <span style={{ color: 'var(--b1n0-no)' }}> *</span>}</label>
+        <label style={labelStyle}>{label}{required && <span style={{ color: 'var(--b1n0-error)' }}> *</span>}</label>
         {children}
         {showErr && <p style={errorTextStyle}>{errors[name]}</p>}
       </div>
@@ -321,7 +321,7 @@ export function AuthPage() {
             </p>
             <form onSubmit={handleReset} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <input type="email" placeholder="Correo electrónico" value={loginEmail} onChange={e => setLoginEmail(e.target.value)} required style={inputStyle} />
-              {error && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', textAlign: 'center' }}>{error}</p>}
+              {error && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-error)', textAlign: 'center' }}>{error}</p>}
               <button type="submit" disabled={loading} style={{ width: '100%', padding: '13px', borderRadius: 'var(--radius-lg)', border: 'none', background: loading ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)', fontFamily: F, fontWeight: 600, fontSize: '14px', cursor: loading ? 'default' : 'pointer', marginTop: '4px' }}>
                 {loading ? 'Generando...' : 'Generar contraseña'}
               </button>
@@ -496,7 +496,7 @@ export function AuthPage() {
               )}
               <input type="email" placeholder="Correo electrónico" value={loginEmail} onChange={e => setLoginEmail(e.target.value)} required style={inputStyle} />
               <input type="password" placeholder="Contraseña" value={loginPw} onChange={e => setLoginPw(e.target.value)} required minLength={6} style={inputStyle} />
-              {error && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', textAlign: 'center', padding: '0 4px' }}>{error}</p>}
+              {error && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-error)', textAlign: 'center', padding: '0 4px' }}>{error}</p>}
               <button type="submit" disabled={loading} style={{
                 width: '100%', padding: '13px', borderRadius: 'var(--radius-lg)', border: 'none',
                 background: loading ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-si)', color: 'var(--b1n0-on-accent)',
@@ -603,7 +603,7 @@ export function AuthPage() {
               </Field>
 
               {/* Server error */}
-              {error && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', textAlign: 'center', padding: '4px 0' }}>{error}</p>}
+              {error && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-error)', textAlign: 'center', padding: '4px 0' }}>{error}</p>}
 
               {/* Submit */}
               <button type="submit" disabled={loading} style={{

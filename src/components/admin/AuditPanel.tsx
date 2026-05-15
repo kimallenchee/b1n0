@@ -189,7 +189,7 @@ export function AuditPanel() {
       )}
 
       {error && (
-        <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', padding: '10px 12px', background: 'rgba(255,223,80,0.08)', borderRadius: 'var(--radius-lg)', marginBottom: '12px' }}>
+        <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-error)', padding: '10px 12px', background: 'var(--b1n0-error-bg)', borderRadius: 'var(--radius-lg)', marginBottom: '12px' }}>
           {error}
         </p>
       )}

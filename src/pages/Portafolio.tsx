@@ -1145,8 +1145,8 @@ export function Portafolio() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px', marginBottom: '12px' }}>
           {[
             { label: 'Correctos', value: String(won.length), color: 'var(--b1n0-si)' },
-            { label: 'Incorrectos', value: String(resolved.length - won.length), color: 'var(--b1n0-no)' },
-            { label: 'Historial P&L', value: `${historicalPL >= 0 ? '+' : ''}Q${Math.abs(historicalPL).toFixed(2)}`, color: historicalPL >= 0 ? 'var(--b1n0-si)' : 'var(--b1n0-no)' },
+            { label: 'Incorrectos', value: String(resolved.length - won.length), color: 'var(--b1n0-error)' },
+            { label: 'Historial P&L', value: `${historicalPL >= 0 ? '+' : ''}Q${Math.abs(historicalPL).toFixed(2)}`, color: historicalPL >= 0 ? 'var(--b1n0-si)' : 'var(--b1n0-error)' },
           ].map((s) => (
             <div key={s.label} style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '12px', textAlign: 'center' }}>
               <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: s.color, letterSpacing: '-0.5px' , fontVariantNumeric: 'tabular-nums'}}>{s.value}</p>
@@ -1179,7 +1179,7 @@ export function Portafolio() {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           {sellError && (
-            <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', textAlign: 'center', padding: '8px', background: 'var(--b1n0-no-bg)', borderRadius: 'var(--radius-lg)' }}>
+            <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-error)', textAlign: 'center', padding: '8px', background: 'var(--b1n0-error-bg)', borderRadius: 'var(--radius-lg)' }}>
               {sellError}
             </p>
           )}
@@ -1566,7 +1566,7 @@ export function Portafolio() {
                     active: '#C4B5FD',
                     settled: 'var(--b1n0-si)',
                     voided: 'var(--b1n0-orange-500)',
-                    partial_loss: 'var(--b1n0-no)',
+                    partial_loss: 'var(--b1n0-error)',
                   }
                   const badgeBg: Record<typeof outcome, string> = {
                     active: 'rgba(255,212,116,0.15)',

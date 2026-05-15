@@ -326,7 +326,7 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
             {!validDepositAmount && amount.length > 0 && (
               <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', marginBottom: '10px', textAlign: 'center' }}>Mínimo Q25 por depósito.</p>
             )}
-            {error && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', marginBottom: '10px', textAlign: 'center' }}>{error}</p>}
+            {error && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-error)', marginBottom: '10px', textAlign: 'center' }}>{error}</p>}
 
             <button
               onClick={handleDepositAmountNext}
@@ -386,7 +386,7 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
               </div>
               <input type="text" value={cardName} onChange={(e) => setCardName(e.target.value)} placeholder="Nombre en la tarjeta" style={inputStyle} />
             </div>
-            {error && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', marginBottom: '10px', textAlign: 'center' }}>{error}</p>}
+            {error && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-error)', marginBottom: '10px', textAlign: 'center' }}>{error}</p>}
             <button
               onClick={handleDeposit}
               disabled={!cardValid || loading}
@@ -468,7 +468,7 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
             {!validRetiroAmount && amount.length > 0 && (
               <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', marginBottom: '10px', textAlign: 'center' }}>Mínimo Q50 por retiro.</p>
             )}
-            {error && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', marginBottom: '10px', textAlign: 'center' }}>{error}</p>}
+            {error && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-error)', marginBottom: '10px', textAlign: 'center' }}>{error}</p>}
 
             <button
               onClick={handleRetiroAmountNext}
@@ -510,7 +510,7 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
               <input type="text" value={bankAccount} onChange={(e) => setBankAccount(e.target.value)} placeholder="Número de cuenta" style={inputStyle} />
               <input type="text" value={bankHolder} onChange={(e) => setBankHolder(e.target.value)} placeholder="Titular de la cuenta" style={inputStyle} />
             </div>
-            {error && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-no)', marginBottom: '10px', textAlign: 'center' }}>{error}</p>}
+            {error && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-error)', marginBottom: '10px', textAlign: 'center' }}>{error}</p>}
             <button
               onClick={handleWithdraw}
               disabled={!bankValid || loading}

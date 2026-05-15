@@ -95,7 +95,7 @@ const sectionHead: React.CSSProperties = {
 const STATUS_COLOR: Record<ReconciliationLogEntry['status'], string> = {
   ok: 'var(--b1n0-si)',
   warning: 'var(--b1n0-gold)',
-  critical: 'var(--b1n0-no)',
+  critical: 'var(--b1n0-error)',
 }
 
 /**
@@ -502,8 +502,8 @@ export function HealthPanel() {
           style={{
             fontFamily: F,
             fontSize: '12px',
-            color: 'var(--b1n0-no)',
-            background: 'rgba(255,223,80,0.08)',
+            color: 'var(--b1n0-error)',
+            background: 'var(--b1n0-error-bg)',
             padding: '8px 12px',
             borderRadius: 'var(--radius-lg)',
             margin: 0,
@@ -539,8 +539,8 @@ export function HealthPanel() {
               fontWeight: 700,
               padding: '3px 8px',
               borderRadius: 'var(--radius-lg)',
-              background: reconcileOk ? 'rgba(6,212,127,0.12)' : 'rgba(255,223,80,0.12)',
-              color: reconcileOk ? 'var(--b1n0-si)' : 'var(--b1n0-no)',
+              background: reconcileOk ? 'var(--b1n0-si-bg)' : 'var(--b1n0-error-bg)',
+              color: reconcileOk ? 'var(--b1n0-si)' : 'var(--b1n0-error)',
             }}
           >
             {reconcileOk ? 'OK' : 'Δ Q' + fmtQ(ledgerDelta)}
@@ -575,7 +575,7 @@ export function HealthPanel() {
           </span>
         </p>
         {!reconcileOk && (
-          <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-no)', margin: 0 }}>
+          <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-error)', margin: 0 }}>
             Δ ${fmtQ(ledgerDelta)} entre <code>sum(balance_ledger)</code> y <code>sum(profile.balance)</code>. El ledger no concuerda con los saldos — revisá entradas recientes antes de mover fondos.
           </p>
         )}
@@ -633,7 +633,7 @@ export function HealthPanel() {
               </p>
             )}
             {reconRuns[0]?.notes && (
-              <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-no)', margin: 0 }}>
+              <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-error)', margin: 0 }}>
                 {reconRuns[0].notes}
               </p>
             )}
@@ -853,7 +853,7 @@ export function HealthPanel() {
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', gap: '8px', alignItems: 'baseline' }}>
-                  <span style={{ fontWeight: 600, color: 'var(--b1n0-no)' }}>{e.source}</span>
+                  <span style={{ fontWeight: 600, color: 'var(--b1n0-error)' }}>{e.source}</span>
                   <span style={{ color: 'var(--b1n0-muted)', fontSize: '10px' }}>
                     {new Date(e.created_at).toLocaleString('es-GT')}
                   </span>

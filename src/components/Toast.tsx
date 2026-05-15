@@ -110,7 +110,7 @@ function ToastContainer({ toasts, onRemove }: { toasts: Toast[]; onRemove: (id: 
 
 const intentMeta: Record<ToastType, { Icon: typeof CheckCircle; color: string; bg: string }> = {
   success: { Icon: CheckCircle,    color: 'var(--b1n0-si)',     bg: 'var(--b1n0-si-bg)' },
-  error:   { Icon: WarningCircle,  color: 'var(--b1n0-no)',     bg: 'var(--b1n0-no-bg)' },
+  error:   { Icon: WarningCircle,  color: 'var(--b1n0-error)',     bg: 'var(--b1n0-error-bg)' },
   info:    { Icon: Info,           color: 'var(--b1n0-text-2)', bg: 'var(--b1n0-surface)' },
 }
 
