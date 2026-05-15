@@ -110,27 +110,6 @@ export function Perfil() {
   const [kycOpen, setKycOpen] = useState(false)
   const [notifOpen, setNotifOpen] = useState(false)
 
-  // Dark mode
-  const [darkMode, setDarkMode] = useState(() => {
-    const saved = localStorage.getItem('b1n0-theme')
-    if (saved) return saved === 'dark'
-    return document.documentElement.classList.contains('dark')
-  })
-
-  useEffect(() => {
-    const html = document.documentElement
-    if (darkMode) {
-      html.classList.add('dark')
-      html.setAttribute('data-theme', 'dark')
-      localStorage.setItem('b1n0-theme', 'dark')
-    } else {
-      html.classList.remove('dark')
-      html.setAttribute('data-theme', 'light')
-      localStorage.setItem('b1n0-theme', 'light')
-    }
-    const meta = document.querySelector('meta[name="theme-color"]')
-    if (meta) meta.setAttribute('content', darkMode ? '#121210' : 'var(--b1n0-surface)')
-  }, [darkMode])
   const [cuentaOpen, setCuentaOpen] = useState(false)
   const [aparienciaOpen, setAparienciaOpen] = useState(false)
   const [soporteOpen, setSoporteOpen] = useState(false)

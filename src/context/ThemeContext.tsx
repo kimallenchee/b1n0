@@ -34,15 +34,34 @@ function resolveTheme(mode: ThemeMode): ResolvedTheme {
   return mode
 }
 
+// Keep <meta name="theme-color"> in sync with the resolved theme so
+// the mobile browser chrome (Safari/Chrome address bar, Android nav
+// bar) matches the app background. Uses literal hex values that
+// mirror --b1n0-bg in index.css; a CSS var() reference here would
+// not work — browsers parse this meta value as a raw CSS color.
+const THEME_COLOR: Record<ResolvedTheme, string> = {
+  dark:  '#0D0D0D',
+  light: '#F5F2EC',
+}
+function syncThemeColorMeta(theme: ResolvedTheme) {
+  if (typeof document === 'undefined') return
+  const meta = document.querySelector('meta[name="theme-color"]')
+  if (meta) meta.setAttribute('content', THEME_COLOR[theme])
+}
+
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [mode, setModeState] = useState<ThemeMode>(() => readStoredMode())
   const [resolved, setResolved] = useState<ResolvedTheme>(() => resolveTheme(readStoredMode()))
 
-  // Apply resolved theme to <html data-theme="...">
+  // Apply resolved theme to <html data-theme="..."> and update the
+  // mobile-browser chrome via <meta name="theme-color">. Both side
+  // effects live here so there's a single source of truth — anywhere
+  // else that wrote data-theme or theme-color would race with this.
   useEffect(() => {
     const next = resolveTheme(mode)
     setResolved(next)
     document.documentElement.setAttribute('data-theme', next)
+    syncThemeColorMeta(next)
   }, [mode])
 
   // Listen for OS theme changes when in system mode
@@ -53,6 +72,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       const next: ResolvedTheme = mq.matches ? 'light' : 'dark'
       setResolved(next)
       document.documentElement.setAttribute('data-theme', next)
+      syncThemeColorMeta(next)
     }
     mq.addEventListener('change', handler)
     return () => mq.removeEventListener('change', handler)
