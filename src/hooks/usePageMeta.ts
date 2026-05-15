@@ -40,7 +40,7 @@ export interface PageMeta {
 const DEFAULT_TITLE = 'b1n0'
 const DEFAULT_DESCRIPTION =
   'b1n0 — La plataforma de opinión donde demostrás que sabés más que todos. Hacé tu llamado en fútbol, economía y cultura de Centroamérica.'
-const DEFAULT_OG_IMAGE = '/og-image.png'
+const DEFAULT_OG_IMAGE = '/brand/icon-1.png'
 
 function setMetaContent(selector: string, content: string) {
   const el = document.querySelector(selector)

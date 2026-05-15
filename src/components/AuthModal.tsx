@@ -312,7 +312,7 @@ export function AuthModal() {
           }}
         >
           <img
-            src="/b1n0-logov2.png"
+            src="/brand/b1n0-logo-white.svg"
             alt="b1n0"
             style={{
               height: '38px',

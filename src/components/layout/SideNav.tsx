@@ -54,7 +54,7 @@ export function SideNav() {
           cursor: 'pointer',
         }}
       >
-        <img src="/b1n0-logov2.png" alt="b1n0 — Ir al inicio" style={{ height: '22px', objectFit: 'contain' }} />
+        <img src="/brand/b1n0-logo-white.svg" alt="b1n0 — Ir al inicio" style={{ height: '22px', objectFit: 'contain' }} />
       </button>
 
       {/* Nav */}

@@ -136,14 +136,11 @@
 
   /* ── Position Colors (core stays same across themes) ── */
   --b1n0-si:       #06D47F;
-  --b1n0-si-bright:#06D47F;
   --b1n0-si-bg:    rgba(6,212,127,0.12);
-  --b1n0-si-dark:  #04B86C;
-  --b1n0-si-hover: #04B86C;
+  --b1n0-si-hover: #04B86C;  /* darker shade for :hover / :active */
   --b1n0-no:       #FFDF50;
   --b1n0-no-bg:    rgba(255,223,80,0.12);
-  --b1n0-no-dark:  #F0CC3E;
-  --b1n0-no-hover: #F0CC3E;
+  --b1n0-no-hover: #F0CC3E;  /* darker shade for :hover / :active */
 
   /* ── Brand yellow (separate semantic token, same value as --b1n0-no) ──
      Used when we want "brand yellow" as a positive accent (highlights,
@@ -286,11 +283,9 @@
 
   --color-si:       var(--b1n0-si);
   --color-si-bg:    var(--b1n0-si-bg);
-  --color-si-dark:  var(--b1n0-si-dark);
   --color-si-hover: var(--b1n0-si-hover);
   --color-no:       var(--b1n0-no);
   --color-no-bg:    var(--b1n0-no-bg);
-  --color-no-dark:  var(--b1n0-no-dark);
   --color-no-hover: var(--b1n0-no-hover);
 
   /* Legacy aliases */
@@ -301,17 +296,13 @@
   --color-surface2:  var(--b1n0-surface);
 
   /* Type system tokens (referenced from inline styles too).
-     Body/UI: Inter. Numbers + UI display: Geist. Mono: Geist Mono.
-     Hero: Syne. Each has a single, deliberate role. */
+     Brand spec: Inter + InterDisplay only. Body uses Inter (variable),
+     display surfaces (hero numbers, balance, event questions) use
+     InterDisplay (bold/extrabold/black). Both self-hosted via
+     @font-face above — no network call. */
   --font-body:    "Inter", "InterVariable", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-display: "InterDisplay", "Inter", system-ui, sans-serif;
   --font-num:     "InterDisplay", "Inter", system-ui, sans-serif;
-  --font-mono:    "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
-  --font-hero:    "InterDisplay", "Inter", system-ui, sans-serif;
-
-  /* Tailwind-ish aliases so existing references keep working. */
-  --font-family-display: var(--font-hero);
-  --font-family-body:    var(--font-body);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -347,11 +338,9 @@
 
   --color-si:       var(--b1n0-si);
   --color-si-bg:    var(--b1n0-si-bg);
-  --color-si-dark:  var(--b1n0-si-dark);
   --color-si-hover: var(--b1n0-si-hover);
   --color-no:       var(--b1n0-no);
   --color-no-bg:    var(--b1n0-no-bg);
-  --color-no-dark:  var(--b1n0-no-dark);
   --color-no-hover: var(--b1n0-no-hover);
 
   --color-teal:      var(--b1n0-teal-500);
@@ -670,27 +659,8 @@ input[type="number"] {
 .btn-primary:active { background: var(--b1n0-si-hover); }
 .btn-primary:disabled { opacity: 0.4; cursor: default; }
 
-.btn-secondary {
-  background: transparent; color: var(--b1n0-text-1);
-  border: 1px solid var(--b1n0-border); border-radius: var(--radius-md);
-  padding: var(--space-4) var(--space-7);
-  font-family: var(--font-body);
-  font-weight: 600; font-size: var(--text-base);
-  letter-spacing: var(--tracking-tight);
-  cursor: pointer;
-  transition: border-color var(--duration-fast) var(--ease-out),
-              background var(--duration-fast) var(--ease-out);
-}
-.btn-secondary:hover { background: var(--b1n0-surface); border-color: var(--b1n0-muted); }
-
-/* Toast animation */
-@keyframes toast-slide-in {
-  from { opacity: 0; transform: translateY(-12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* Skeleton shimmer */
-@keyframes shimmer {
-  0%   { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
+/* ── Global keyboard focus ──
+   Applies to any interactive element when reached via keyboard
+   (Tab navigation). :focus-visible suppresses the ring on mouse
+   clicks, so it only shows up when the user actually needs it.
+  
