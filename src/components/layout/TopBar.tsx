@@ -4,6 +4,7 @@ import type { User } from '../../types'
 import { useToast } from '../Toast'
 import { useAuth } from '../../context/AuthContext'
 import { useAuthModal } from '../../context/AuthModalContext'
+import { useTheme } from '../../context/ThemeContext'
 
 interface TopBarProps {
   user: User
@@ -11,12 +12,20 @@ interface TopBarProps {
 
 const F = 'var(--font-body)'
 
+// Logo variant per theme. White wordmark for dark surfaces, full-color
+// (brand green + yellow) for light surfaces. Centralized here so all
+// logo placements stay in sync.
+function logoSrcFor(theme: 'dark' | 'light'): string {
+  return theme === 'light' ? '/brand/b1n0-logo-fullcolor.svg' : '/brand/b1n0-logo-white.svg'
+}
+
 export function TopBar({ user }: TopBarProps) {
   const navigate = useNavigate()
   const location = useLocation()
   const toast = useToast()
   const { session } = useAuth()
   const { openAuth } = useAuthModal()
+  const { resolved } = useTheme()
   const isLoggedIn = !!session
 
   return (
@@ -44,7 +53,7 @@ export function TopBar({ user }: TopBarProps) {
           }}
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
         >
-          <img src="/brand/b1n0-logo-white.svg" alt="b1n0" style={{ height: '24px', width: 'auto', objectFit: 'contain', display: 'block' }} />
+          <img src={logoSrcFor(resolved)} alt="b1n0" style={{ height: '24px', width: 'auto', objectFit: 'contain', display: 'block' }} />
         </button>
 
         {/* Right side */}

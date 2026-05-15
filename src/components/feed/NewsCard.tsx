@@ -52,9 +52,9 @@ export function NewsCard({ article, onBridgeTap }: NewsCardProps) {
             <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
               {article.category}
             </span>
-            <span style={{ color: 'rgba(255,255,255,0.08)', fontSize: '10px' }}>·</span>
+            <span style={{ color: 'var(--b1n0-muted)', fontSize: '10px' }}>·</span>
             <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>{article.source}</span>
-            <span style={{ color: 'rgba(255,255,255,0.08)', fontSize: '10px' }}>·</span>
+            <span style={{ color: 'var(--b1n0-muted)', fontSize: '10px' }}>·</span>
             <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>{article.timeAgo}</span>
           </div>
         )}
@@ -71,7 +71,7 @@ export function NewsCard({ article, onBridgeTap }: NewsCardProps) {
         {article.imageUrl && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: article.relatedEventId ? '12px' : 0 }}>
             <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>{article.timeAgo}</span>
-            <span style={{ color: 'rgba(255,255,255,0.08)', fontSize: '10px' }}>·</span>
+            <span style={{ color: 'var(--b1n0-muted)', fontSize: '10px' }}>·</span>
             <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
               {article.category}
             </span>

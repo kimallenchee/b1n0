@@ -52,7 +52,7 @@ export function EnVivo() {
               {liveEvents.length}
             </p>
           </div>
-          <div style={{ width: '1px', background: 'rgba(255,255,255,0.06)' }} />
+          <div style={{ width: '1px', background: 'var(--b1n0-border)' }} />
           <div>
             <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', marginBottom: '2px' }}>Pool total en juego</p>
             <p style={{ fontFamily: D, fontWeight: 700, fontSize: '20px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.5px', lineHeight: 1 , fontVariantNumeric: 'tabular-nums'}}>

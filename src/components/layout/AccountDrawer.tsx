@@ -104,7 +104,7 @@ export function AccountDrawer({ onClose }: AccountDrawerProps) {
                 </button>
                 <button
                   onClick={() => setRetiroOpen(true)}
-                  style={{ width: '100%', padding: '12px', borderRadius: "var(--radius-lg)", border: '1px solid rgba(255,255,255,0.08)', background: 'transparent', cursor: 'pointer', fontFamily: F, fontWeight: 500, fontSize: '13px', color: 'var(--b1n0-text-1)' }}
+                  style={{ width: '100%', padding: '12px', borderRadius: "var(--radius-lg)", border: '1px solid var(--b1n0-border)', background: 'transparent', cursor: 'pointer', fontFamily: F, fontWeight: 500, fontSize: '13px', color: 'var(--b1n0-text-1)' }}
                 >
                   Retirar
                 </button>
@@ -140,7 +140,7 @@ export function AccountDrawer({ onClose }: AccountDrawerProps) {
           {/* Sign out */}
           <button
             onClick={() => { onClose(); signOut() }}
-            style={{ width: '100%', padding: '13px', borderRadius: 'var(--radius-lg)', border: '1px solid rgba(255,255,255,0.08)', background: 'transparent', cursor: 'pointer', fontFamily: F, fontWeight: 500, fontSize: '13px', color: 'var(--b1n0-muted)' }}
+            style={{ width: '100%', padding: '13px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--b1n0-border)', background: 'transparent', cursor: 'pointer', fontFamily: F, fontWeight: 500, fontSize: '13px', color: 'var(--b1n0-muted)' }}
           >
             Cerrar sesión
           </button>

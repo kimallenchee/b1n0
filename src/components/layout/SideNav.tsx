@@ -6,6 +6,7 @@ import { useNotifications } from '../../context/NotificationContext'
 import { useAuthModal } from '../../context/AuthModalContext'
 import { NotificationDrawer } from './NotificationDrawer'
 import { HowItWorks } from '../HowItWorks'
+import { useTheme } from '../../context/ThemeContext'
 
 const F = 'var(--font-body)'
 const NUM_FONT = 'var(--font-num)'
@@ -54,7 +55,7 @@ export function SideNav() {
           cursor: 'pointer',
         }}
       >
-        <img src="/brand/b1n0-logo-white.svg" alt="b1n0 — Ir al inicio" style={{ height: '22px', objectFit: 'contain' }} />
+        <img src={resolved === 'light' ? '/brand/b1n0-logo-fullcolor.svg' : '/brand/b1n0-logo-white.svg'} alt="b1n0 — Ir al inicio" style={{ height: '22px', objectFit: 'contain' }} />
       </button>
 
       {/* Nav */}

@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { Envelope, X, Lock, Eye, EyeSlash, GoogleLogo, AppleLogo } from '@phosphor-icons/react'
 import { useAuth } from '../context/AuthContext'
+import { useTheme } from '../context/ThemeContext'
 import { useAuthModal } from '../context/AuthModalContext'
 
 const F = 'var(--font-body)'
@@ -312,7 +313,7 @@ export function AuthModal() {
           }}
         >
           <img
-            src="/brand/b1n0-logo-white.svg"
+            src={resolved === 'light' ? '/brand/b1n0-logo-fullcolor.svg' : '/brand/b1n0-logo-white.svg'}
             alt="b1n0"
             style={{
               height: '38px',

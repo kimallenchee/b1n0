@@ -529,7 +529,7 @@ export function Inicio() {
                       {parseOptionItems(featured.options).slice(0, 4).map((opt) => (
                         <span key={opt.label} style={{
                           fontFamily: F, fontSize: '12px', fontWeight: 600, color: 'var(--b1n0-text-1)',
-                          background: 'rgba(255,255,255,0.04)', borderRadius: 'var(--radius-md)', padding: '4px 10px',
+                          background: 'var(--b1n0-hover-overlay)', borderRadius: 'var(--radius-md)', padding: '4px 10px',
                         }}>
                           {opt.label} <span style={{ color: 'var(--b1n0-muted)' }}>{midPctToAsk(liveOptMap[featured.id]?.[opt.label] ?? opt.pct).toFixed(2)}</span>
                         </span>

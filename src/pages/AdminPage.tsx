@@ -190,7 +190,7 @@ export function AdminPage() {
             {(dateFrom || dateTo) && (
               <button
                 onClick={() => { setDateFrom(''); setDateTo('') }}
-                style={{ padding: '4px 8px', borderRadius: 'var(--radius-md)', border: 'none', background: 'rgba(255,255,255,0.08)', color: 'var(--b1n0-muted)', fontFamily: F, fontSize: '10px', cursor: 'pointer' }}
+                style={{ padding: '4px 8px', borderRadius: 'var(--radius-md)', border: 'none', background: 'var(--b1n0-hover-overlay)', color: 'var(--b1n0-muted)', fontFamily: F, fontSize: '10px', cursor: 'pointer' }}
               >
                 ✕
               </button>

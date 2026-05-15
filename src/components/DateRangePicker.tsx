@@ -89,7 +89,7 @@ export function DateRangePicker({ value, onChange }: Props) {
                 onChange={(e) => onChange({ ...value, from: e.target.value })}
                 style={{
                   width: '100%', padding: '8px 10px', borderRadius: 'var(--radius-lg)',
-                  border: '1px solid rgba(255,255,255,0.08)', background: 'var(--b1n0-bg)',
+                  border: '1px solid var(--b1n0-border)', background: 'var(--b1n0-bg)',
                   fontFamily: F, fontSize: '13px', color: 'var(--b1n0-text-1)', outline: 'none',
                   boxSizing: 'border-box',
                 }}
@@ -106,7 +106,7 @@ export function DateRangePicker({ value, onChange }: Props) {
                 onChange={(e) => onChange({ ...value, to: e.target.value })}
                 style={{
                   width: '100%', padding: '8px 10px', borderRadius: 'var(--radius-lg)',
-                  border: '1px solid rgba(255,255,255,0.08)', background: 'var(--b1n0-bg)',
+                  border: '1px solid var(--b1n0-border)', background: 'var(--b1n0-bg)',
                   fontFamily: F, fontSize: '13px', color: 'var(--b1n0-text-1)', outline: 'none',
                   boxSizing: 'border-box',
                 }}
@@ -116,7 +116,7 @@ export function DateRangePicker({ value, onChange }: Props) {
               {hasRange && (
                 <button
                   onClick={clear}
-                  style={{ flex: 1, padding: '8px', borderRadius: 'var(--radius-lg)', border: '1px solid rgba(255,255,255,0.08)', background: 'transparent', cursor: 'pointer', fontFamily: F, fontWeight: 500, fontSize: '12px', color: 'var(--b1n0-muted)' }}
+                  style={{ flex: 1, padding: '8px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--b1n0-border)', background: 'transparent', cursor: 'pointer', fontFamily: F, fontWeight: 500, fontSize: '12px', color: 'var(--b1n0-muted)' }}
                 >
                   Limpiar
                 </button>

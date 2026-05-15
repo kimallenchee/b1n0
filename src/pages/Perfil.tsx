@@ -552,7 +552,7 @@ export function Perfil() {
 
           {/* Search dropdown */}
           {friendInput.trim() && (
-            <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'var(--b1n0-card)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 'var(--radius-lg)', marginTop: '4px', zIndex: 10, maxHeight: '200px', overflow: 'auto', boxShadow: '0 4px 12px var(--b1n0-border)' }}>
+            <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', marginTop: '4px', zIndex: 10, maxHeight: '200px', overflow: 'auto', boxShadow: '0 4px 12px var(--b1n0-border)' }}>
               {searching ? (
                 <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)', padding: '12px 14px' }}>Buscando...</p>
               ) : searchResults.length === 0 ? (
@@ -709,7 +709,7 @@ export function Perfil() {
                       <button
                         onClick={() => rejectOrRemove(f.id)}
                         disabled={friendActionLoading === f.id}
-                        style={{ padding: '6px 12px', borderRadius: 'var(--radius-lg)', border: '1px solid rgba(255,255,255,0.08)', background: 'transparent', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-muted)', opacity: friendActionLoading === f.id ? 0.5 : 1 }}
+                        style={{ padding: '6px 12px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--b1n0-border)', background: 'transparent', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-muted)', opacity: friendActionLoading === f.id ? 0.5 : 1 }}
                       >
                         Rechazar
                       </button>
@@ -735,7 +735,7 @@ export function Perfil() {
                     <button
                       onClick={() => rejectOrRemove(f.id)}
                       disabled={friendActionLoading === f.id}
-                      style={{ padding: '6px 12px', borderRadius: 'var(--radius-lg)', border: '1px solid rgba(255,255,255,0.08)', background: 'transparent', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-muted)', opacity: friendActionLoading === f.id ? 0.5 : 1 }}
+                      style={{ padding: '6px 12px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--b1n0-border)', background: 'transparent', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-muted)', opacity: friendActionLoading === f.id ? 0.5 : 1 }}
                     >
                       Cancelar
                     </button>
