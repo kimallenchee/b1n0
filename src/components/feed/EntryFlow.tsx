@@ -309,7 +309,7 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
                 onClick={() => handleSideSelect('yes')}
                 style={{ flex: 1, padding: '12px 0', borderRadius: 'var(--radius-lg)', border: 'none', cursor: 'pointer',
                   fontFamily: F, fontSize: '14px', fontWeight: 700, transition: 'all 0.15s',
-                  background: 'var(--b1n0-si)', color: '#fff',
+                  background: 'var(--b1n0-si)', color: 'var(--b1n0-si-fg)',
                 }}
               >
                 SÍ {midPctToAsk(yesDisplayPct).toFixed(2)}
@@ -318,7 +318,7 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
                 onClick={() => handleSideSelect('no')}
                 style={{ flex: 1, padding: '12px 0', borderRadius: 'var(--radius-lg)', border: 'none', cursor: 'pointer',
                   fontFamily: F, fontSize: '14px', fontWeight: 700, transition: 'all 0.15s',
-                  background: 'var(--b1n0-no)', color: '#fff',
+                  background: 'var(--b1n0-no)', color: 'var(--b1n0-no-fg)',
                 }}
               >
                 NO {midPctToAsk(noDisplayPct).toFixed(2)}
@@ -343,7 +343,7 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
                 style={{ flex: 1, padding: '10px 0', borderRadius: 'var(--radius-lg)', border: 'none', cursor: 'pointer',
                   fontFamily: F, fontSize: '13px', fontWeight: 700, transition: 'all 0.15s',
                   background: side === 'yes' ? 'var(--b1n0-si)' : 'var(--b1n0-si-bg)',
-                  color: side === 'yes' ? '#fff' : 'var(--b1n0-si)',
+                  color: side === 'yes' ? 'var(--b1n0-si-fg)' : 'var(--b1n0-si)',
                 }}
               >
                 SÍ {midPctToAsk(yesDisplayPct).toFixed(2)}
@@ -353,7 +353,7 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
                 style={{ flex: 1, padding: '10px 0', borderRadius: 'var(--radius-lg)', border: 'none', cursor: 'pointer',
                   fontFamily: F, fontSize: '13px', fontWeight: 700, transition: 'all 0.15s',
                   background: side === 'no' ? 'var(--b1n0-no)' : 'var(--b1n0-no-bg)',
-                  color: side === 'no' ? '#fff' : 'var(--b1n0-no)',
+                  color: side === 'no' ? 'var(--b1n0-no-fg)' : 'var(--b1n0-no)',
                 }}
               >
                 NO {midPctToAsk(noDisplayPct).toFixed(2)}
@@ -517,7 +517,7 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
               width: '100%', padding: '14px', borderRadius: 'var(--radius-lg)', border: 'none',
               background: !amountValid || confirming ? 'var(--b1n0-border)' : (side === 'no' || side?.endsWith('::no')) ? 'var(--b1n0-no)' : 'var(--b1n0-si)',
               cursor: amountValid && !confirming ? 'pointer' : 'not-allowed',
-              fontFamily: F, fontWeight: 700, fontSize: '14px', color: amountValid && !confirming ? '#fff' : 'var(--b1n0-muted)', marginBottom: '8px',
+              fontFamily: F, fontWeight: 700, fontSize: '14px', color: !amountValid || confirming ? 'var(--b1n0-muted)' : (side === 'no' || side?.endsWith('::no')) ? 'var(--b1n0-no-fg)' : 'var(--b1n0-si-fg)', marginBottom: '8px',
               transition: 'all 0.15s',
             }}
           >

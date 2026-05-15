@@ -162,8 +162,15 @@
   --b1n0-error-bg:  rgba(220,38,38,0.10);
   --b1n0-error-border: rgba(220,38,38,0.32);
 
-  /* ── Text that sits ON accent buttons (constant across themes) ── */
-  --b1n0-on-accent: #0d0d0d;
+  /* ── Paired foregrounds for accent backgrounds ──
+     Brand yellow #FFDF50 is too light for white text — it MUST pair with
+     a near-black foreground. Brand green #06D47F is dark enough for white.
+     Use these any time the background is var(--b1n0-no) or var(--b1n0-si)
+     so the foreground stays legible without per-site #fff/#000 decisions. */
+  --b1n0-no-fg:     #0D0D0D;  /* near-black on yellow NO */
+  --b1n0-si-fg:     #FFFFFF;  /* white on green SI */
+  --b1n0-yellow-fg: #0D0D0D;  /* alias of --b1n0-no-fg for brand-yellow surfaces */
+  --b1n0-on-accent: #0D0D0D;  /* legacy alias — prefer --b1n0-no-fg / --b1n0-si-fg */
 
   /* ── Semantic surfaces — dark-first defaults ── */
   --b1n0-bg:       #0D0D0D;

@@ -1260,7 +1260,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                       <button
                         onClick={() => handleResolve('no')}
                         disabled={resolveLoading}
-                        style={{ flex: 1, padding: '10px', borderRadius: 'var(--radius-lg)', border: 'none', background: resolveLoading ? 'var(--b1n0-border)' : 'var(--b1n0-no)', cursor: resolveLoading ? 'default' : 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: '#fff' }}
+                        style={{ flex: 1, padding: '10px', borderRadius: 'var(--radius-lg)', border: 'none', background: resolveLoading ? 'var(--b1n0-border)' : 'var(--b1n0-no)', cursor: resolveLoading ? 'default' : 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-no-fg)' }}
                       >
                         NO ganó
                       </button>
@@ -1416,7 +1416,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                           fontFamily: F,
                           fontWeight: 600,
                           fontSize: '12px',
-                          color: '#fff',
+                          color: voidReason.trim().length < 3 || voidLoading ? 'var(--b1n0-muted)' : 'var(--b1n0-no-fg)',
                         }}
                       >
                         {voidLoading ? 'Anulando...' : `Anular y reembolsar $${voidPreview.grand_total.toFixed(2)}`}
@@ -1683,7 +1683,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                 style={{
                   padding: '7px 14px', borderRadius: 'var(--radius-lg)', border: 'none',
                   background: 'var(--b1n0-no)', cursor: bulkDeleteLoading ? 'default' : 'pointer',
-                  fontFamily: F, fontWeight: 600, fontSize: '12px', color: '#fff',
+                  fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-no-fg)',
                 }}
               >
                 {bulkDeleteLoading ? 'Archivando...' : 'Sí, archivar'}

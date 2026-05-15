@@ -204,7 +204,7 @@ export function TreasuryPanel() {
                 borderRadius: 'var(--radius-lg)',
                 border: 'none',
                 background: 'var(--b1n0-no)',
-                color: '#fff',
+                color: 'var(--b1n0-no-fg)',
                 fontFamily: F,
                 fontWeight: 600,
                 fontSize: '13px',

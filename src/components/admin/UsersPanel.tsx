@@ -765,7 +765,7 @@ export function UsersPanel() {
                         borderRadius: 'var(--radius-sm)',
                         border: 'none',
                         background: 'var(--b1n0-no)',
-                        color: '#fff',
+                        color: 'var(--b1n0-no-fg)',
                         fontFamily: F,
                         fontSize: '9px',
                         fontWeight: 600,

@@ -532,7 +532,7 @@ export function Perfil() {
             Amigos ({acceptedFriends.length})
           </p>
           {pendingReceived.length > 0 && (
-            <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: '#fff', background: 'var(--b1n0-no)', borderRadius: 'var(--radius-lg)', padding: '2px 8px' }}>
+            <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-no-fg)', background: 'var(--b1n0-no)', borderRadius: 'var(--radius-lg)', padding: '2px 8px' }}>
               {pendingReceived.length} nueva{pendingReceived.length > 1 ? 's' : ''}
             </span>
           )}
