@@ -266,7 +266,7 @@ function VoteCard({ p }: { p: UserPrediction }) {
                 fontVariantNumeric: 'tabular-nums',
               }}
             >
-              {isActive ? 'Ganancia ' : ''}
+              {isActive ? 'Cobro ' : ''}
               {netPL >= 0 ? '+' : '−'}${Math.abs(netPL).toFixed(2)}
               {Number.isFinite(pctPL) && p.amount > 0 && (
                 <span style={{ color: 'var(--b1n0-muted)', fontWeight: 500 }}>

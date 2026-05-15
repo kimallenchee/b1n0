@@ -103,7 +103,7 @@ function PositionCard({
   const sideColor = noSide ? 'var(--b1n0-no)' : 'var(--b1n0-si)'
   const sideBg = noSide ? 'var(--b1n0-no-bg)' : 'var(--b1n0-si-bg)'
 
-  const statusColor = pred.status === 'won' ? 'var(--b1n0-si)' : pred.status === 'lost' ? 'var(--b1n0-no)' : 'var(--b1n0-si)'
+  const statusColor = pred.status === 'won' ? 'var(--b1n0-si)' : pred.status === 'lost' ? 'var(--b1n0-error)' : 'var(--b1n0-si)'
   const statusLabel = pred.status === 'won' ? 'Correcto' : pred.status === 'lost' ? 'Incorrecto' : 'Activo'
 
   // Entry price: net / contracts = (amount * 0.975) / potentialCobro
@@ -205,7 +205,7 @@ function PositionCard({
               <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px' }}>
                 {pred.status === 'active' ? 'Actual' : pred.status === 'won' ? 'Ganó' : 'Final'}
               </p>
-              <p style={{ fontFamily: D, fontWeight: 700, fontSize: '17px', color: pred.status === 'won' ? 'var(--b1n0-si)' : pred.status === 'lost' ? 'var(--b1n0-no)' : 'var(--b1n0-text-1)', letterSpacing: '-0.5px' }}>
+              <p style={{ fontFamily: D, fontWeight: 700, fontSize: '17px', color: pred.status === 'won' ? 'var(--b1n0-si)' : pred.status === 'lost' ? 'var(--b1n0-error)' : 'var(--b1n0-text-1)', letterSpacing: '-0.5px' }}>
                 {pred.status === 'active' ? currentPrice.toFixed(2) : pred.status === 'won' ? '✓' : '✗'}
               </p>
             </div>
@@ -218,7 +218,7 @@ function PositionCard({
             </p>
             <p style={{
               fontFamily: D, fontWeight: 700, fontSize: '17px',
-              color: pred.status === 'active' ? (isUp ? 'var(--b1n0-si)' : 'var(--b1n0-no)') : (pred.status === 'won' ? 'var(--b1n0-si)' : 'var(--b1n0-no)'),
+              color: pred.status === 'active' ? (isUp ? 'var(--b1n0-si)' : 'var(--b1n0-error)') : (pred.status === 'won' ? 'var(--b1n0-si)' : 'var(--b1n0-error)'),
               letterSpacing: '-0.5px',
             }}>
               {isUp ? '+' : ''}${pnl.toFixed(2)}
@@ -248,12 +248,12 @@ function PositionCard({
                 value: pred.status === 'won' ? `Q${(pred.potentialCobro || 0).toFixed(2)}`
                   : pred.status === 'lost' ? 'Q0.00'
                   : pred.status === 'active' ? `Q${currentValue.toFixed(2)}` : '—',
-                color: pred.status === 'won' ? 'var(--b1n0-si)' : pred.status === 'lost' ? 'var(--b1n0-no)' : 'var(--b1n0-text-1)' },
+                color: pred.status === 'won' ? 'var(--b1n0-si)' : pred.status === 'lost' ? 'var(--b1n0-error)' : 'var(--b1n0-text-1)' },
               { label: pred.status === 'active' ? 'Si gana' : 'Cobrado',
                 value: pred.status === 'won' ? `Q${(pred.potentialCobro || 0).toFixed(2)}`
                   : pred.status === 'lost' ? 'Q0.00'
                   : `Q${(potentialPayout || pred.potentialCobro).toFixed(2)}`,
-                color: pred.status === 'won' ? 'var(--b1n0-si)' : pred.status === 'lost' ? 'var(--b1n0-no)' : 'var(--b1n0-si)',
+                color: pred.status === 'won' ? 'var(--b1n0-si)' : pred.status === 'lost' ? 'var(--b1n0-error)' : 'var(--b1n0-si)',
                 sub: pred.status === 'active' ? `+${(invested > 0 ? (((potentialPayout || pred.potentialCobro) / invested) - 1) * 100 : 0).toFixed(0)}%` : undefined },
             ].map((item) => (
               <div key={item.label}>
@@ -360,7 +360,7 @@ function PositionCard({
                 const diff = round2(livePrice.sell.net - pred.amount)
                 const isGain = diff >= 0
                 return (
-                  <p style={{ fontFamily: F, fontSize: '11px', color: isGain ? 'var(--b1n0-si)' : 'var(--b1n0-no)', marginTop: '6px', textAlign: 'right' }}>
+                  <p style={{ fontFamily: F, fontSize: '11px', color: isGain ? 'var(--b1n0-si)' : 'var(--b1n0-error)', marginTop: '6px', textAlign: 'right' }}>
                     {isGain ? '+' : ''}${diff.toFixed(2)} vs tu entrada de ${pred.amount.toFixed(2)}
                   </p>
                 )
@@ -1004,12 +1004,12 @@ export function Portafolio() {
           </p>
           <p style={{
             fontFamily: D, fontWeight: 800, fontSize: '22px',
-            color: active.length === 0 ? 'var(--b1n0-muted)' : isPortfolioUp ? 'var(--b1n0-si)' : 'var(--b1n0-no)',
+            color: active.length === 0 ? 'var(--b1n0-muted)' : isPortfolioUp ? 'var(--b1n0-si)' : 'var(--b1n0-error)',
             letterSpacing: '-0.5px', fontVariantNumeric: 'tabular-nums'}}>
             {active.length > 0 ? `${isPortfolioUp ? '+' : ''}Q${totalUnrealizedPnl.toFixed(2)}` : '—'}
           </p>
           {active.length > 0 && (
-            <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: isPortfolioUp ? 'var(--b1n0-si)' : 'var(--b1n0-no)', marginTop: '2px' }}>
+            <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: isPortfolioUp ? 'var(--b1n0-si)' : 'var(--b1n0-error)', marginTop: '2px' }}>
               {isPortfolioUp ? '+' : ''}{totalUnrealizedPct.toFixed(1)}% si tu lado gana
             </p>
           )}
@@ -1450,7 +1450,7 @@ export function Portafolio() {
                 </div>
                 <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '12px 14px' }}>
                   <p style={{ fontFamily: F, fontSize: '9px', color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '3px' }}>Ganancia estimada</p>
-                  <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: totalProfit >= 0 ? 'var(--b1n0-si)' : 'var(--b1n0-no)', letterSpacing: '-0.5px', fontVariantNumeric: 'tabular-nums' }}>
+                  <p style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: totalProfit >= 0 ? 'var(--b1n0-si)' : 'var(--b1n0-error)', letterSpacing: '-0.5px', fontVariantNumeric: 'tabular-nums' }}>
                     {totalProfit >= 0 ? '+' : ''}${fmt(totalProfit)}
                   </p>
                   <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginTop: '2px' }}>Fees ganados como LP</p>

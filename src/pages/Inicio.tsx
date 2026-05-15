@@ -484,7 +484,7 @@ export function Inicio() {
         ) : filtered.length === 0 ? (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '60%', padding: '40px 20px', textAlign: 'center' }}>
             <p style={{ fontFamily: F, fontSize: '15px', color: 'var(--b1n0-muted)', lineHeight: 1.5, fontStyle: 'italic' }}>
-              {search ? 'Sin resultados para esta búsqueda.' : 'No hay eventos activos por ahora.'}
+              {search ? 'Sin resultados para esta búsqueda.' : 'No hay llamados activos. Volvé más tarde — esto se pone bueno.'}
             </p>
           </div>
         ) : (

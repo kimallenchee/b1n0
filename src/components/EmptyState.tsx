@@ -160,7 +160,7 @@ function DefaultIllustration() {
 export function ErrorState({ message, onRetry }: { message: string; onRetry?: () => void }) {
   return (
     <EmptyState
-      icon={<Warning size={56} weight="regular" color="var(--b1n0-no)" />}
+      icon={<Warning size={56} weight="regular" color="var(--b1n0-error)" />}
       title="Algo salió mal"
       subtitle={message}
       action={onRetry ? { label: 'Reintentar', onClick: onRetry } : undefined}

@@ -637,7 +637,7 @@ export function UsersPanel() {
                             <tbody>
                               {userPositions.map((pos) => {
                                 const evName = allEvents.find((e) => e.id === pos.event_id)?.question || pos.event_id.slice(0, 12)
-                                const statusColor = pos.status === 'won' ? 'var(--b1n0-si)' : pos.status === 'lost' ? 'var(--b1n0-no)' : pos.status === 'sold' ? '#C4B5FD' : 'var(--b1n0-gold)'
+                                const statusColor = pos.status === 'won' ? 'var(--b1n0-si)' : pos.status === 'lost' ? 'var(--b1n0-error)' : pos.status === 'sold' ? '#C4B5FD' : 'var(--b1n0-gold)'
                                 return (
                                   <tr key={pos.id} style={{ borderBottom: '1px solid var(--b1n0-border)' }}>
                                     <td

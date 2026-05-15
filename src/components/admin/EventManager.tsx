@@ -1191,7 +1191,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
                                 ${lp.amount.toLocaleString()} · {(lp.return_pct * 100).toFixed(0)}%
                               </span>
                             </div>
-                            <span style={{ fontFamily: F, fontSize: '10px', color: lp.status === 'active' ? '#C4B5FD' : lp.status === 'returned' ? 'var(--b1n0-si)' : 'var(--b1n0-no)', fontWeight: 600, textTransform: 'uppercase' }}>
+                            <span style={{ fontFamily: F, fontSize: '10px', color: lp.status === 'active' ? '#C4B5FD' : lp.status === 'returned' ? 'var(--b1n0-si)' : 'var(--b1n0-error)', fontWeight: 600, textTransform: 'uppercase' }}>
                               {lp.status === 'active' ? 'Activo' : lp.status === 'returned' ? `Pagado Q${(lp.payout ?? 0).toLocaleString()}` : 'Pérdida parcial'}
                             </span>
                           </div>

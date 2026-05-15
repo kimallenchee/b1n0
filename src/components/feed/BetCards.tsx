@@ -11,7 +11,7 @@ const F = 'var(--font-body)'
 
 /**
  * BetCards — Tinted card pair for event detail / betting modal.
- * Shows SÍ and NO as side-by-side cards with price, payout, and sentiment bar.
+ * Shows SÍ and NO as side-by-side cards with price, cobro, and sentiment bar.
  */
 export function BetCards({ siPrice, noPrice, onSelect, selected = null }: BetCardsProps) {
   const [hovering, setHovering] = useState<'si' | 'no' | null>(null)
@@ -47,7 +47,7 @@ export function BetCards({ siPrice, noPrice, onSelect, selected = null }: BetCar
             {siPrice.toFixed(2)}
           </p>
           <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--color-si)', opacity: 0.8 }}>
-            Payout ${siPayout} por Q1
+            Cobro ${siPayout} por Q1
           </p>
         </button>
 
@@ -71,7 +71,7 @@ export function BetCards({ siPrice, noPrice, onSelect, selected = null }: BetCar
             {noPrice.toFixed(2)}
           </p>
           <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--color-no)', opacity: 0.8 }}>
-            Payout ${noPayout} por Q1
+            Cobro ${noPayout} por Q1
           </p>
         </button>
       </div>

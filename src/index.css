@@ -260,6 +260,119 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   Light mode — brand-aligned palette
+   ───────────────────────────────────────────────────────────────
+   Base: warm cream (#F5F2EC) drawn from the brand's cream tones,
+   not a flat white. Cards lift to pure white so they pop.
+
+   Yellow flips to darker amber (#B89200) for text/border use —
+   bright #FFDF50 is unreadable on cream backgrounds. The original
+   bright yellow is still available via --b1n0-yellow for hero
+   accents and jackpot fills that need to pop.
+
+   Error red darkens slightly (#B91C1C) for stronger contrast on
+   light surfaces. Brand green #06D47F is dark enough to stay as-is.
+   ═══════════════════════════════════════════════════════════════ */
+[data-theme="light"] {
+  /* Surfaces */
+  --b1n0-bg:       #F5F2EC;
+  --b1n0-surface:  #FBFAF6;
+  --b1n0-card:     #FFFFFF;
+  --b1n0-border:   #E5DFD2;
+  --b1n0-muted:    #8B8F9A;
+  --b1n0-text-2:   #5C6573;
+  --b1n0-text-1:   #143338;
+
+  /* SI side — brand green unchanged; bgs need slightly more opacity on cream */
+  --b1n0-si:          #06D47F;
+  --b1n0-si-bg:       rgba(6,212,127,0.15);
+  --b1n0-si-hover:    #04B86C;
+  --b1n0-si-fg:       #FFFFFF;
+  --b1n0-si-bg-hover: rgba(6,212,127,0.22);
+  --b1n0-si-border:   rgba(6,212,127,0.42);
+
+  /* NO side — darker amber for text/border legibility on cream.
+     The bright yellow #FFDF50 is preserved separately as --b1n0-yellow
+     for hero accents that need to pop (jackpot tags, highlight fills). */
+  --b1n0-no:          #B89200;
+  --b1n0-no-bg:       rgba(184,146,0,0.12);
+  --b1n0-no-hover:    #997900;
+  --b1n0-no-fg:       #FFFFFF;
+  --b1n0-no-bg-hover: rgba(184,146,0,0.22);
+  --b1n0-no-border:   rgba(184,146,0,0.42);
+
+  /* Brand yellow (accent only) — kept bright for hero fills */
+  --b1n0-yellow:        #FFDF50;
+  --b1n0-yellow-bg:     rgba(255,223,80,0.30);
+  --b1n0-yellow-border: rgba(184,146,0,0.50);
+  --b1n0-yellow-fg:     #0D0D0D;
+
+  /* Error red — slightly darker for cream-bg contrast */
+  --b1n0-error:        #B91C1C;
+  --b1n0-error-bg:     rgba(185,28,28,0.08);
+  --b1n0-error-border: rgba(185,28,28,0.30);
+
+  /* Gold — darker variant for light surfaces */
+  --b1n0-gold:     #C09445;
+
+  /* Hover / elevation tints — dark overlays on light bg */
+  --b1n0-hover-overlay:     rgba(0,0,0,0.04);
+  --b1n0-card-hover-border: #BBB1A0;
+  --b1n0-shadow-modal:      0 24px 60px rgba(20,51,56,0.15);
+
+  /* Sidebar */
+  --b1n0-sidebar-bg:        #F5F2EC;
+  --b1n0-sidebar-text:      #5C6573;
+  --b1n0-sidebar-active-bg: rgba(6,212,127,0.10);
+  --b1n0-sidebar-hover-bg:  rgba(0,0,0,0.04);
+
+  /* Category badges — softer light variants */
+  --badge-deportes-bg:    #DBEAFE; --badge-deportes-text:    #1E40AF;
+  --badge-politica-bg:    #FEE2E2; --badge-politica-text:    #991B1B;
+  --badge-economia-bg:    #FEF3C7; --badge-economia-text:    #92400E;
+  --badge-geopolitica-bg: #EDE9FE; --badge-geopolitica-text: #5B21B6;
+  --badge-cultura-bg:     #FCE7F3; --badge-cultura-text:     #9D174D;
+  --badge-tecnologia-bg:  #E0F2FE; --badge-tecnologia-text:  #0C4A6E;
+  --badge-finanzas-bg:    #D1FAE5; --badge-finanzas-text:    #065F46;
+  --badge-otro-bg:        #E5DFD2; --badge-otro-text:        #5C6573;
+
+  /* Status badges — keep semantic colors, lighten bg tints */
+  --status-enjuego-bg:  rgba(192,148,69,0.18);   --status-enjuego-text:  #8B6A1F;
+  --status-ganado-bg:   rgba(6,212,127,0.18);    --status-ganado-text:   #058753;
+  --status-perdido-bg:  rgba(185,28,28,0.10);    --status-perdido-text:  #B91C1C;
+  --status-vendido-bg:  #F5F2EC;                 --status-vendido-text:  #5C6573;
+  --status-resuelto-bg: rgba(6,212,127,0.10);    --status-resuelto-text: #058753;
+
+  /* Inputs */
+  --b1n0-input-bg:     #FFFFFF;
+  --b1n0-input-border: #E5DFD2;
+  --b1n0-input-focus:  #06D47F;
+
+  /* Stats bar */
+  --b1n0-stats-bg:     #FBFAF6;
+  --b1n0-stats-border: #E5DFD2;
+  --b1n0-stats-label:  #5C6573;
+  --b1n0-stats-value:  #143338;
+
+  /* Filter pills */
+  --b1n0-pill-bg:          transparent;
+  --b1n0-pill-border:      #E5DFD2;
+  --b1n0-pill-text:        #5C6573;
+  --b1n0-pill-active-bg:   #06D47F;
+  --b1n0-pill-active-text: #FFFFFF;
+
+  /* Notifications */
+  --b1n0-notif-bg:     #FFFFFF;
+  --b1n0-notif-unread: #FBFAF6;
+
+  --b1n0-scrollbar-thumb: #BBB1A0;
+
+  /* Disabled */
+  --b1n0-disabled-bg: rgba(0,0,0,0.06);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
    Tailwind @theme — maps b1n0 vars into Tailwind token system
    ═══════════════════════════════════════════════════════════════ */
 @theme {
