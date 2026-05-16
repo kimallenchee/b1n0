@@ -34,14 +34,14 @@ src/
 ├── pages/                      # Route-level pages
 │   ├── Inicio.tsx              # Main feed (events + news)
 │   ├── MisLlamados.tsx         # User's active predictions (Mis Votos)
-│   ├── Tabla.tsx               # Leaderboard
 │   ├── Perfil.tsx              # Account, wallet, KYC, friends
 │   ├── Portafolio.tsx          # Active positions with live P/L
 │   ├── Historial.tsx           # Transaction history + vote history
 │   ├── EventDetailPage.tsx     # Full event view with comments + purchase
 │   ├── AdminPage.tsx           # 5-panel admin suite
 │   ├── AuthPage.tsx            # Login / signup standalone page
-│   └── Legal.tsx               # Terms + privacy
+│   ├── Legal.tsx               # Terms + privacy
+│   └── Documentacion.tsx       # User-facing docs page
 ├── components/
 │   ├── layout/
 │   │   ├── TopBar.tsx          # Fixed top: balance + avatar + tier badge
@@ -232,5 +232,4 @@ The Didit API key never touches the browser — all Didit calls go through the e
 ```
 VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-key-here
-VITE_SENTRY_DSN=              # Optional: leave empty to skip Sentry
-```
+VITE_SENTRY_DSN=              # Optional: leave empty to skip S
