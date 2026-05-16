@@ -47,9 +47,20 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS_HEADERS })
   if (req.method !== 'POST') return json({ error: 'method_not_allowed' }, 405)
 
-  // Service-role auth only — this function should not be callable from the browser
+  // Service-role auth only — this function should not be callable from the browser.
+  // Supabase's gateway already validates the JWT is signed by this project; we
+  // additionally confirm the role claim is `service_role` so anon JWTs can't
+  // reach this code path.
   const authHeader = req.headers.get('Authorization') ?? ''
-  if (!authHeader.includes(Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '___')) {
+  const token = authHeader.replace(/^Bearer\s+/i, '').trim()
+  let claimedRole = ''
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1] ?? ''))
+    claimedRole = String(payload.role ?? '')
+  } catch {
+    return json({ error: 'invalid_jwt' }, 401)
+  }
+  if (claimedRole !== 'service_role') {
     return json({ error: 'service_role_required' }, 401)
   }
 

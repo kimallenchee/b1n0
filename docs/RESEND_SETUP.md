@@ -83,9 +83,16 @@ UPDATE platform_config
 SET    value_text = 'https://<project-ref>.supabase.co/functions/v1/send-resolution-email'
 WHERE  key = 'resolution_email_url';
 
--- 2. Bearer token (from Supabase Dashboard → Settings → API → service_role)
+-- 2. Bearer token — MUST be the LEGACY service_role JWT (eyJ... format),
+--    NOT the new sb_secret_... key. Supabase's edge function gateway
+--    requires a JWT in the Authorization header; the sb_secret_... format
+--    is a different system and gets rejected upstream with
+--    UNAUTHORIZED_INVALID_JWT_FORMAT.
+--
+--    Find it: Supabase Dashboard → Settings → API Keys →
+--    "Legacy anon, service_role API keys" tab → reveal service_role.
 UPDATE platform_config
-SET    value_text = 'eyJhbGciOi...your_service_role_jwt...'
+SET    value_text = 'eyJhbGciOi...your_legacy_service_role_jwt...'
 WHERE  key = 'resolution_email_token';
 ```
 
