@@ -124,6 +124,7 @@ function validateSignup(f: SignupForm): Record<string, string> {
 
 export function AuthPage() {
   const { signIn, signUp, resetPassword } = useAuth()
+  const { resolved } = useTheme()
   const [tab, setTab] = useState<'login' | 'signup'>('login')
   const [confirmed, setConfirmed] = useState(false)
 

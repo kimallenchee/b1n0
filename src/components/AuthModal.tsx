@@ -182,6 +182,7 @@ function OAuthButton({
 export function AuthModal() {
   const { isOpen, closeAuth, initialTab } = useAuthModal()
   const { signIn, signUp, session } = useAuth()
+  const { resolved } = useTheme()
   const [tab, setTab] = useState<'login' | 'signup'>('login')
   const [loginEmail, setLoginEmail] = useState('')
   const [loginPw, setLoginPw] = useState('')
