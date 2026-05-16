@@ -123,8 +123,12 @@ function PositionCard({
 
   const isSold = pred.status === 'sold'
 
+  // Won-side P&L uses potentialPayout (post-skim) — pred.potentialCobro
+  // is contracts × $1 *before* the 5% resolution skim, so subtracting
+  // it from invested would overstate winnings by ~5% of the payout.
+  // potentialPayout = getPositionPayout(pred) passed from the parent.
   const pnl = pred.status === 'won'
-    ? pred.potentialCobro - invested
+    ? potentialPayout - invested
     : isSold
     ? saleNet - invested
     : pred.status === 'lost'
@@ -247,12 +251,12 @@ function PositionCard({
               { label: 'Invertido', value: `Q${invested.toFixed(2)}`, color: 'var(--b1n0-text-1)' },
               { label: 'Contratos', value: contracts.toFixed(2), color: 'var(--b1n0-text-1)' },
               { label: pred.status === 'active' ? 'Valor actual' : 'Resultado',
-                value: pred.status === 'won' ? `Q${(pred.potentialCobro || 0).toFixed(2)}`
+                value: pred.status === 'won' ? `Q${(potentialPayout || 0).toFixed(2)}`
                   : pred.status === 'lost' ? 'Q0.00'
                   : pred.status === 'active' ? `Q${currentValue.toFixed(2)}` : '—',
                 color: pred.status === 'won' ? 'var(--b1n0-si)' : pred.status === 'lost' ? 'var(--b1n0-error)' : 'var(--b1n0-text-1)' },
               { label: pred.status === 'active' ? 'Si gana' : 'Cobrado',
-                value: pred.status === 'won' ? `Q${(pred.potentialCobro || 0).toFixed(2)}`
+                value: pred.status === 'won' ? `Q${(potentialPayout || 0).toFixed(2)}`
                   : pred.status === 'lost' ? 'Q0.00'
                   : `Q${(potentialPayout || pred.potentialCobro).toFixed(2)}`,
                 color: pred.status === 'won' ? 'var(--b1n0-si)' : pred.status === 'lost' ? 'var(--b1n0-error)' : 'var(--b1n0-si)',
@@ -919,13 +923,15 @@ export function Portafolio() {
     // Best case: one side wins; take the highest payout among the user's sides
     totalPotentialReturn += Math.max(0, ...sidePayouts.values())
 
-    // Mark-to-market current value: contracts × mid price for each position
+    // Mark-to-market current value: contracts × mid price for each position.
+    // Uses per-position contracts (p.potentialCobro). Earlier this read
+    // contractsMap[eventId::side], which is the SUM across all your
+    // positions on that side — so with N positions you'd add the full
+    // sum N times, inflating P&L NO REALIZADO by Nx. Fixed.
     for (const p of eventPreds) {
       const lp = getLivePrice(p)
       if (lp) {
-        const ck = `${p.eventId}::${p.side}`
-        const c = contractsMap[ck] ?? p.potentialCobro
-        totalCurrentValue += c * lp.currentMid
+        totalCurrentValue += p.potentialCobro * lp.currentMid
       }
     }
   }
@@ -1061,7 +1067,7 @@ export function Portafolio() {
           </p>
           {active.length > 0 && (
             <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: isPortfolioUp ? 'var(--b1n0-si)' : 'var(--b1n0-error)', marginTop: '2px' }}>
-              {isPortfolioUp ? '+' : ''}{totalUnrealizedPct.toFixed(1)}% si tu lado gana
+              {isPortfolioUp ? '+' : ''}{totalUnrealizedPct.toFixed(1)}% si lo vendés ahora
             </p>
           )}
         </div>
