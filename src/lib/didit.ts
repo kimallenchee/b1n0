@@ -43,13 +43,25 @@ export async function startDiditSession(targetTier: 2 | 3): Promise<KycSessionRe
     body: { target_tier: targetTier },
   })
   if (error) {
-    throw new Error(`KYC session creation failed: ${error.message ?? 'unknown'}`)
+    // FunctionsHttpError carries the response body — try to extract it
+    let detail = error.message ?? 'unknown'
+    try {
+      const ctx = (error as { context?: { body?: unknown } }).context
+      if (ctx?.body) {
+        const bodyText = typeof ctx.body === 'string' ? ctx.body : JSON.stringify(ctx.body)
+        detail = `${error.message} — ${bodyText}`
+      }
+    } catch { /* noop */ }
+    throw new Error(`KYC session creation failed: ${detail}`)
   }
-  const result = data as { verification_url: string; session_id: string }
+  const result = data as { verification_url?: string; session_id?: string; error?: string; detail?: string }
+  if (result?.error) {
+    throw new Error(`Didit error: ${result.error}${result.detail ? ' — ' + result.detail : ''}`)
+  }
   if (!result?.verification_url) {
-    throw new Error('KYC session response missing verification_url')
+    throw new Error(`KYC session response missing verification_url. Response: ${JSON.stringify(result).slice(0, 300)}`)
   }
-  return { verificationUrl: result.verification_url, sessionId: result.session_id }
+  return { verificationUrl: result.verification_url, sessionId: result.session_id! }
 }
 
 /**
