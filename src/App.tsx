@@ -32,6 +32,7 @@ const Historial = lazy(() => import('./pages/Historial').then(m => ({ default: m
 const EventDetailPage = lazy(() => import('./pages/EventDetailPage').then(m => ({ default: m.EventDetailPage })))
 const TermsPage = lazy(() => import('./pages/Legal').then(m => ({ default: m.TermsPage })))
 const PrivacyPage = lazy(() => import('./pages/Legal').then(m => ({ default: m.PrivacyPage })))
+const Documentacion = lazy(() => import('./pages/Documentacion').then(m => ({ default: m.Documentacion })))
 
 function LazyFallback() {
   return (
@@ -55,6 +56,7 @@ const routes = (
     <Route path="/eventos/:id" element={<Suspense fallback={<LazyFallback />}><EventDetailPage /></Suspense>} />
     <Route path="/terminos" element={<Suspense fallback={<LazyFallback />}><TermsPage /></Suspense>} />
     <Route path="/privacidad" element={<Suspense fallback={<LazyFallback />}><PrivacyPage /></Suspense>} />
+    <Route path="/documentacion" element={<Suspense fallback={<LazyFallback />}><Documentacion /></Suspense>} />
   </Routes>
 )
 
