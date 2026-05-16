@@ -867,7 +867,7 @@ export function Perfil() {
           <a href="/privacidad" style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', textDecoration: 'underline' }}>Privacidad</a>
         </div>
         <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', textAlign: 'center', marginTop: '8px', marginBottom: '16px' }}>
-          b1n0 v0.1.0 · Hecho en Guatemala
+          b1n0 v0.1.0 · Hecho en Centroamérica
         </p>
       </div>
     </div>

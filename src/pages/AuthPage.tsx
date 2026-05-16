@@ -623,7 +623,7 @@ export function AuthPage() {
       {/* ════════ FOOTER ════════ */}
       <footer style={{ padding: '30px 24px', textAlign: 'center', borderTop: '1px solid var(--b1n0-border)' }}>
         <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>
-          b1n0 v0.1.0 · Hecho en Guatemala
+          b1n0 v0.1.0 · Hecho en Centroamérica
         </p>
       </footer>
       </section>

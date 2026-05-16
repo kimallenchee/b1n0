@@ -93,7 +93,7 @@ export function Ajustes() {
 
       {/* About */}
       <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', textAlign: 'center', marginTop: '24px' }}>
-        b1n0 v0.1.0 · Hecho en Guatemala
+        b1n0 v0.1.0 · Hecho en Centroamérica
       </p>
     </div>
   )
