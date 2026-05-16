@@ -6,13 +6,13 @@
  * for the client to redirect to (or embed via iframe).
  *
  * Env vars (set via `supabase secrets set`):
- *   DIDIT_API_KEY               — from Didit Console > Settings > API Keys
- *   DIDIT_WORKFLOW_ID_T2        — workflow ID for Nivel 2 KYC
- *   DIDIT_WORKFLOW_ID_T3        — workflow ID for Nivel 3 KYC
- *   APP_URL                     — e.g. https://www.b1n0.com
+ *   DIDIT_API_KEY
+ *   DIDIT_WORKFLOW_ID_T2
+ *   DIDIT_WORKFLOW_ID_T3
+ *   APP_URL
  *
  * Request:    POST  with JSON body { target_tier: 2 | 3 }
- * Response:   200   { verification_url, session_id, expires_at }
+ * Response:   200   { verification_url, session_id }
  *             400   { error }
  *             401   { error: 'unauthorized' }
  */
@@ -21,11 +21,25 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const DIDIT_API = 'https://verification.didit.me/v3/session/'
 
+// CORS headers applied to EVERY response (including preflight + errors).
+// Browsers refuse to read responses that lack these headers, even error responses.
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Max-Age': '86400',
+}
+
 interface CreateBody { target_tier: 2 | 3 }
 
 Deno.serve(async (req) => {
+  // CORS preflight
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: CORS_HEADERS })
+  }
+
   if (req.method !== 'POST') {
-    return new Response('Method Not Allowed', { status: 405 })
+    return new Response('Method Not Allowed', { status: 405, headers: CORS_HEADERS })
   }
 
   // 1. Auth — extract user from JWT
@@ -71,7 +85,7 @@ Deno.serve(async (req) => {
     body: JSON.stringify({
       workflow_id: workflowId,
       callback: `${appUrl}/perfil?kyc=complete`,
-      vendor_data: user.id,        // returned in webhook so we can find the user
+      vendor_data: user.id,
       metadata: { target_tier: targetTier, source: 'b1n0-web' },
       contact_details: user.email ? { email: user.email, email_lang: 'es' } : undefined,
     }),
@@ -101,7 +115,6 @@ Deno.serve(async (req) => {
     })
   if (insErr) {
     console.error('kyc_sessions insert failed', insErr)
-    // Continue — Didit session exists, only our audit row failed
   }
 
   return json({
@@ -113,6 +126,9 @@ Deno.serve(async (req) => {
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+    headers: {
+      'Content-Type': 'application/json',
+      ...CORS_HEADERS,
+    },
   })
 }

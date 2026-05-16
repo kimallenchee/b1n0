@@ -13,38 +13,40 @@
  * Request headers (set by Didit):
  *   x-signature-v2   — hex HMAC-SHA256 of the raw body
  *   x-timestamp      — unix seconds (reject if > 300s old)
- *
- * Response:  200 { received: true }
- *            401 { error: 'invalid_signature' | 'stale_timestamp' }
  */
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'content-type, x-signature-v2, x-timestamp',
+}
+
 Deno.serve(async (req) => {
-  if (req.method !== 'POST') return new Response('Method Not Allowed', { status: 405 })
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: CORS_HEADERS })
+  }
+  if (req.method !== 'POST') return new Response('Method Not Allowed', { status: 405, headers: CORS_HEADERS })
 
   const signature = req.headers.get('x-signature-v2') ?? ''
   const timestamp = req.headers.get('x-timestamp') ?? ''
   const secret = Deno.env.get('DIDIT_WEBHOOK_SECRET')
   if (!secret) return json({ error: 'webhook_not_configured' }, 500)
 
-  // Read raw body (must hash exact bytes Didit sent)
   const rawBody = await req.text()
 
-  // 1. Timestamp freshness check (Didit recommends 5 minutes)
   const now = Math.floor(Date.now() / 1000)
   const ts = parseInt(timestamp, 10)
   if (!ts || Math.abs(now - ts) > 300) {
     return json({ error: 'stale_timestamp' }, 401)
   }
 
-  // 2. HMAC verify
   const expected = await hmacSha256Hex(secret, rawBody)
   if (!timingSafeEqual(expected, signature)) {
     return json({ error: 'invalid_signature' }, 401)
   }
 
-  // 3. Parse payload
   let payload: {
     session_id: string
     status: string
@@ -58,7 +60,6 @@ Deno.serve(async (req) => {
     return json({ error: 'missing_fields' }, 400)
   }
 
-  // 4. Update the matching kyc_sessions row
   const supabase = createClient(
     Deno.env.get('SUPABASE_URL')!,
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
@@ -79,11 +80,9 @@ Deno.serve(async (req) => {
     return json({ error: 'db_error' }, 500)
   }
 
-  // The kyc_sessions_promote trigger handles profile.tier promotion.
   return json({ received: true }, 200)
 })
 
-// ── helpers ──────────────────────────────────────────────────
 async function hmacSha256Hex(secret: string, message: string): Promise<string> {
   const enc = new TextEncoder()
   const key = await crypto.subtle.importKey(
@@ -106,6 +105,6 @@ function timingSafeEqual(a: string, b: string): boolean {
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
   })
 }
