@@ -75,8 +75,21 @@ function DiditFlow({ targetTier, onClose }: { targetTier: 2 | 3; onClose: () => 
       // Redirect to Didit's hosted flow; user comes back to /perfil?kyc=complete
       window.location.href = verificationUrl
     } catch (err) {
-      logger.error('KYC: Didit session failed', { error: err })
-      setState({ kind: 'error', message: 'No pudimos iniciar la verificación. Intentá de nuevo.' })
+      // Extract the most useful error info we can — Error objects serialize
+      // to {} via JSON.stringify, so log the message + name + stringified form.
+      const e = err as Error
+      const detail = {
+        message: e?.message ?? String(err),
+        name: e?.name,
+        stringified: String(err),
+      }
+      logger.error('KYC: Didit session failed', detail)
+      // Also surface to browser console for easy debugging in the network tab
+      console.error('KYC Didit session failed:', err)
+      setState({
+        kind: 'error',
+        message: `No pudimos iniciar la verificación: ${e?.message ?? 'error desconocido'}`,
+      })
     }
   }
 
