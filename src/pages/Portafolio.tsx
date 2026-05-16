@@ -510,17 +510,66 @@ export function Portafolio() {
       }
     }
 
-    setLpPositions(deposits.map(d => ({
-      ...d,
-      fees_at_deposit: d.fees_at_deposit || 0,
-      spread_at_deposit: d.spread_at_deposit || 0,
-      event_question:  evMap[d.event_id]?.question  || d.event_id.slice(0, 8),
-      event_status:    evMap[d.event_id]?.status    || 'open',
-      event_ends_at:   evMap[d.event_id]?.ends_at   ?? null,
-      event_voided_at: evMap[d.event_id]?.voided_at ?? null,
-      fees_collected:  feesMap[d.event_id]   || 0,
-      spread_collected: spreadMap[d.event_id] || 0,
-    })))
+    // Fetch market_transactions for these events so we can compute LP
+    // earnings the same way the admin Revenue panel does — by summing the
+    // fees + spread on transactions that happened AFTER each LP's deposit.
+    // This bypasses event_markets.fees_collected (which is a cached counter
+    // that can drift) and always matches the admin numbers.
+    const { data: txns } = await supabase
+      .from('market_transactions')
+      .select('event_id, fee_deducted, spread_captured, created_at, success, tx_type')
+      .in('event_id', eventIds)
+      .eq('success', true)
+      .neq('tx_type', 'payout')          // payouts are settlement-time, not LP-earning
+    type TxRow = { event_id: string; fee_deducted: number | null; spread_captured: number | null; created_at: string }
+    const txByEvent: Record<string, TxRow[]> = {}
+    if (txns) {
+      for (const t of txns as TxRow[]) {
+        if (!txByEvent[t.event_id]) txByEvent[t.event_id] = []
+        txByEvent[t.event_id].push(t)
+      }
+    }
+    // Per-LP-deposit accumulator: fees+spread on this event AFTER the deposit timestamp.
+    const liveMarginsByDeposit: Record<string, number> = {}
+    for (const d of deposits) {
+      const events = txByEvent[d.event_id] || []
+      const sinceDeposit = events.filter(t => t.created_at >= d.created_at)
+      const sum = sinceDeposit.reduce(
+        (acc, t) => acc + (Number(t.fee_deducted) || 0) + (Number(t.spread_captured) || 0),
+        0,
+      )
+      liveMarginsByDeposit[d.id] = sum
+    }
+
+    setLpPositions(deposits.map(d => {
+      // Use live computation when available; fall back to the cached delta
+      // (fees_collected - fees_at_deposit) for compatibility with old data.
+      const liveDelta = liveMarginsByDeposit[d.id]
+      const cachedTotal = (feesMap[d.event_id] || 0) + (spreadMap[d.event_id] || 0)
+      const cachedAtDeposit = (d.fees_at_deposit || 0) + (d.spread_at_deposit || 0)
+      const cachedDelta = Math.max(cachedTotal - cachedAtDeposit, 0)
+      // Pick whichever produced a non-zero result — the live count is the
+      // authoritative one but if no transactions matched (edge case) we
+      // fall back to the cached snapshot math.
+      const useLive = liveDelta > 0 || cachedDelta === 0
+      const effectiveDelta = useLive ? liveDelta : cachedDelta
+
+      // Surface this as fees_collected - fees_at_deposit so the downstream
+      // delta calculation works without changing the rendering code.
+      // We split the effective delta into "fees" and "spread" buckets only
+      // to fit the existing shape; the consumer sums them anyway.
+      return {
+        ...d,
+        fees_at_deposit: d.fees_at_deposit || 0,
+        spread_at_deposit: d.spread_at_deposit || 0,
+        event_question:  evMap[d.event_id]?.question  || d.event_id.slice(0, 8),
+        event_status:    evMap[d.event_id]?.status    || 'open',
+        event_ends_at:   evMap[d.event_id]?.ends_at   ?? null,
+        event_voided_at: evMap[d.event_id]?.voided_at ?? null,
+        fees_collected:  (d.fees_at_deposit || 0) + effectiveDelta,
+        spread_collected: d.spread_at_deposit || 0,
+      }
+    }))
 
     // Fetch settle_event timestamps from admin_actions so the chart
     // has accurate return times for settled (non-voided) events.
