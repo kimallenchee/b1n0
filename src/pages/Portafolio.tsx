@@ -116,8 +116,9 @@ function PositionCard({
   const contracts = positionContractsMap[pred.id] ?? pred.potentialCobro
 
   // Mark-to-market value: contracts × current mid price.
-  // potentialPayout (Kalshi: contracts × $0.95) is what they'd get if their
-  // side wins, NOT the current value — those are different mental models.
+  // potentialPayout = contracts × $1 × (1 − resolution_skim) — the
+  // NET cobro they'd receive at settlement, NOT the current value.
+  // Two different mental models: mark-to-market vs "if my side wins".
   const currentValue = contracts * (livePrice?.currentMid ?? entryPrice)
   const invested = pred.amount
 

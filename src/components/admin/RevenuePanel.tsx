@@ -221,7 +221,13 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
     lpByEvent[lp.event_id].totalPct += lp.return_pct
     lpByEvent[lp.event_id].lps.push({ user_id: lp.user_id, return_pct: lp.return_pct, amount: lp.amount, fees_at_deposit: lp.fees_at_deposit || 0, created_at: lp.created_at })
   }
-  // ── CUT 2: Transaction fees (positions are source of truth — no prediction double-count) ──
+  // ── CUT 2: Transaction fees ──
+  // Source of truth: market_transactions.fee_deducted (per LEDGER_INVARIANTS.md).
+  // Fallback to positions.fee_paid is for legacy events created before
+  // the market_transactions table existed (~April 2026 unified-fees
+  // migration). On modern events both columns agree; the fallback
+  // only kicks in if cut2FromTx is 0, which means no transactions
+  // were recorded — older event, treat positions as authoritative.
   const successTx = transactions.filter(t => t.success)
   const cut2FromTx = successTx.reduce((s, t) => s + (t.fee_deducted || 0), 0)
   const cut2FromPos = positions.reduce((s, p) => s + (p.fee_paid || 0), 0)

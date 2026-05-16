@@ -469,6 +469,13 @@ BEGIN
   v_net              := p_gross - v_fee;
   v_contracts        := ROUND(v_net / v_ask, 4);
   v_contracts_at_mid := ROUND(v_net / v_mid, 4);
+  -- Spread capture: the buyer pays the ask but the "fair" price is the
+  -- mid. The platform pockets the difference. Computed in dollars as
+  -- (extra contracts the buyer would have gotten at mid - actual
+  -- contracts at ask) × mid. Mid is used as the marker price because
+  -- 1 contract = $1 at settlement, so converting contracts → dollars
+  -- at mid gives the EV of the spread profit if the event resolves
+  -- against random side ordering. This number is swept to treasury.
   v_spread_captured  := ROUND((v_contracts_at_mid - v_contracts) * v_mid, 2);
   v_payout           := ROUND(v_contracts, 2);  -- Kalshi: 1 contract = $1
 
