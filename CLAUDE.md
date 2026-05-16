@@ -180,6 +180,45 @@ Currency is **USD** platform-wide. Sponsor model removed — pools are funded ex
 - KYC upsell: *"Subí a Nivel 2 para participar hasta $250. Solo tarda 2 minutos."*
 - Leaderboard: *"Los que más saben este mes"*
 
+## KYC — Didit Integration
+
+KYC verification is provider-pluggable. Set `VITE_KYC_PROVIDER=didit` to use Didit; leave unset / `manual` for the legacy flow.
+
+**Setup steps:**
+
+1. Create a Didit account at https://business.didit.me
+2. In the Didit Console, create two **Workflows**:
+   - **Tier 2** — KYC base template, document + liveness + face match
+   - **Tier 3** — KYC base template + AML/PEP screening + database validation
+3. Copy your API Key, Webhook Secret, and both Workflow IDs
+4. Set them as Supabase Edge Function secrets:
+   ```bash
+   supabase secrets set DIDIT_API_KEY=...
+   supabase secrets set DIDIT_WEBHOOK_SECRET=...
+   supabase secrets set DIDIT_WORKFLOW_ID_T2=...
+   supabase secrets set DIDIT_WORKFLOW_ID_T3=...
+   supabase secrets set APP_URL=https://www.b1n0.com
+   ```
+5. Deploy the two edge functions:
+   ```bash
+   supabase functions deploy kyc-create-session
+   supabase functions deploy kyc-webhook
+   ```
+6. In the Didit Console → Webhooks, configure the webhook URL:
+   `https://YOUR_PROJECT.supabase.co/functions/v1/kyc-webhook`
+7. Run the migration `20260516_kyc_sessions.sql`
+8. Flip the client flag: `VITE_KYC_PROVIDER=didit` in production env
+9. Test end-to-end with a test user
+
+**Architecture:**
+
+- Client (`src/lib/didit.ts`) → edge function (`kyc-create-session`) → Didit API
+- Didit webhook → edge function (`kyc-webhook`) → updates `kyc_sessions`
+- DB trigger (`kyc_session_promote_tier`) auto-promotes `profiles.tier` on Approved
+- Realtime subscription in `KYCSheet` fires the success state when status flips
+
+The Didit API key never touches the browser — all Didit calls go through the edge function.
+
 ## Known Gaps (as of April 2026)
 
 - **Payment processor not integrated** — DepositSheet and RetiroSheet are stubs (TODO comments). Balances adjust via RPC but no real money moves.
