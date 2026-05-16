@@ -47,7 +47,7 @@ function TxCard({ tx }: { tx: Transaction }) {
           width: 36,
           height: 36,
           borderRadius: 'var(--radius-lg)',
-          background: positive ? 'rgba(255,255,255,0.04)' : 'transparent',
+          background: positive ? 'var(--b1n0-hover-overlay)' : 'transparent',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',

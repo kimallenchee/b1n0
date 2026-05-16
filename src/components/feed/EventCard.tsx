@@ -278,14 +278,6 @@ export function EventCard({ event }: EventCardProps) {
                   </span>
                 )}
               </div>
-              <div style={{ textAlign: 'right' }}>
-                {event.sponsor?.name && (
-                  <>
-                    <p style={{ fontFamily: F, fontSize: '8px', color: 'rgba(255,255,255,0.6)', marginBottom: '2px', letterSpacing: '0.3px', textTransform: 'uppercase' }}>Presentado por</p>
-                    <span style={{ fontFamily: F, fontWeight: 600, fontSize: '11px', color: '#fff', lineHeight: 1 }}>{event.sponsor.name}</span>
-                  </>
-                )}
-              </div>
             </div>
           </div>
         ) : (

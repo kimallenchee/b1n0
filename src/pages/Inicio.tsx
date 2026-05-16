@@ -212,7 +212,7 @@ function MiniCard({ event, now, stats, liveOptPcts, liveBinary }: { event: Event
             }}>
               <span style={{
                 fontFamily: F, fontWeight: 700, fontSize: '13px',
-                color: isResolved && event.result === 'yes' ? '#fff' : 'var(--b1n0-si-dark)',
+                color: isResolved && event.result === 'yes' ? 'var(--b1n0-si-fg)' : 'var(--b1n0-si)',
               }}>
                 SÍ {midPctToAsk(liveBinary?.yes ?? event.yesPercent).toFixed(2)}
               </span>
@@ -224,7 +224,7 @@ function MiniCard({ event, now, stats, liveOptPcts, liveBinary }: { event: Event
             }}>
               <span style={{
                 fontFamily: F, fontWeight: 700, fontSize: '13px',
-                color: isResolved && event.result === 'no' ? '#fff' : 'var(--b1n0-no-dark)',
+                color: isResolved && event.result === 'no' ? 'var(--b1n0-no-fg)' : 'var(--b1n0-no)',
               }}>
                 NO {midPctToAsk(liveBinary?.no ?? event.noPercent).toFixed(2)}
               </span>

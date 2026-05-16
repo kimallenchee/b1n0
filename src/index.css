@@ -497,22 +497,39 @@ body {
 
 /*
   Grain texture overlay.
-  An inline SVG noise pattern, opacity 3%, applied as a fixed pseudo-element
-  that covers the entire viewport. Imperceptible at the pixel level but
-  transforms a "pristine" dark UI into something that reads as textured
-  and considered. Linear, Vercel dashboards, Stripe Atlas all do this.
-  pointer-events: none so it never intercepts clicks. mix-blend-mode:
-  overlay so it doesn't tint colors, only modulates luminance.
+  A pre-baked PNG noise pattern, opacity 3.5%, applied as a fixed
+  pseudo-element that covers the entire viewport. Imperceptible at the
+  pixel level but transforms a "pristine" dark UI into something that
+  reads as textured and considered. Linear, Vercel dashboards, Stripe
+  Atlas all do this.
+
+  Why a PNG instead of inline SVG: the original implementation used
+  an SVG feTurbulence filter which the browser re-rasterized on every
+  layout pass. Combined with mix-blend-mode: overlay (forces software
+  compositing) and a fullscreen fixed layer, this locked up the GPU on
+  low-end devices (and the Chrome CDP screenshot tool). PNG = single
+  network request, cached forever, GPU-cheap to composite.
+
+  Disabled on `prefers-reduced-motion` for users who opt out.
+  pointer-events: none so it never intercepts clicks.
 */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   pointer-events: none;
+  /* High z-index so the texture sits above cards/UI like the original
+     mix-blend-mode version did. Safe without the blend mode because
+     the browser promotes this to its own composite layer and reuses
+     it across frames — no per-frame rasterization. */
   z-index: 9999;
   opacity: 0.035;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-image: url("/grain.png");
+  background-repeat: repeat;
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  body::before { display: none; }
 }
 
 /* Numerical content uses tabular figures so columns line up across
