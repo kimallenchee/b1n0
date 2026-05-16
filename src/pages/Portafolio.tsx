@@ -78,7 +78,7 @@ function PositionCard({
   pred,
   livePrice,
   potentialPayout,
-  contractsMap,
+  positionContractsMap,
   expanded,
   onToggle,
   onClick,
@@ -89,7 +89,7 @@ function PositionCard({
   pred: UserPrediction
   livePrice: LivePrice | null
   potentialPayout: number
-  contractsMap: Record<string, number>
+  positionContractsMap: Record<string, number>
   expanded: boolean
   onToggle: () => void
   onClick: () => void
@@ -109,9 +109,11 @@ function PositionCard({
   // Entry price: net / contracts = (amount * 0.975) / potentialCobro
   const entryPrice = livePrice?.entryAsk ?? (pred.potentialCobro > 0 ? (pred.amount * 0.975) / pred.potentialCobro : 0)
   const currentPrice = livePrice?.currentAsk ?? entryPrice
-  // Use actual contracts from positions, fall back to potentialCobro for resolved
-  const contractKey = `${pred.eventId}::${pred.side}`
-  const contracts = contractsMap[contractKey] ?? pred.potentialCobro
+  // Per-position contracts (keyed by position id, not event::side).
+  // Using the event-level total here would make every card on the same
+  // event+side display identical P&L — which was the bug shipped in
+  // the earlier Kalshi-revert pass.
+  const contracts = positionContractsMap[pred.id] ?? pred.potentialCobro
 
   // Mark-to-market value: contracts × current mid price.
   // potentialPayout (Kalshi: contracts × $0.95) is what they'd get if their
@@ -1074,7 +1076,7 @@ export function Portafolio() {
             {active.length > 0 ? `Q${totalPotentialReturn.toFixed(0)}` : '—'}
           </p>
           <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-muted)', marginTop: '2px' }}>
-            {active.length > 0 && totalInvested > 0 ? `+${((totalPotentialReturn / totalInvested - 1) * 100).toFixed(0)}% retorno parimutuel` : active.length > 0 ? 'Retorno parimutuel' : 'Sin posiciones'}
+            {active.length > 0 && totalInvested > 0 ? `+${((totalPotentialReturn / totalInvested - 1) * 100).toFixed(0)}% si todo sale` : active.length > 0 ? 'Cobro si todo sale' : 'Sin posiciones'}
           </p>
         </div>
 
@@ -1238,7 +1240,7 @@ export function Portafolio() {
               pred={pred}
               livePrice={getLivePrice(pred)}
               potentialPayout={getPositionPayout(pred)}
-              contractsMap={contractsMap}
+              positionContractsMap={positionContractsMap}
               expanded={expandedId === pred.id}
               onToggle={() => setExpandedId(expandedId === pred.id ? null : pred.id)}
               onClick={() => navigate(`/eventos/${pred.eventId}`)}
