@@ -493,6 +493,7 @@ export function Perfil() {
       </div>
 
       <WalletSheet open={walletOpen} onClose={() => setWalletOpen(false)} />
+      <KYCSheet open={kycOpen} onClose={() => setKycOpen(false)} targetTier={Math.min(3, (user.tier ?? 1) + 1) as 2 | 3} />
 
       {/* Portfolio CTA — now with content preview: active position count
           and total exposure. Shows up immediately whether the user has
