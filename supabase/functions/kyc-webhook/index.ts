@@ -11,8 +11,17 @@
  *   DIDIT_WEBHOOK_SECRET — from Didit Console > Settings > Webhook Secret
  *
  * Request headers (set by Didit):
- *   x-signature-v2   — hex HMAC-SHA256 of the raw body
- *   x-timestamp      — unix seconds (reject if > 300s old)
+ *   x-signature        — same as x-signature-v2 in current Didit
+ *   x-signature-v2     — hex HMAC-SHA256, may include timestamp in the signing data
+ *   x-signature-simple — hex HMAC-SHA256 of the raw body alone
+ *   x-timestamp        — unix seconds (reject if > 300s old)
+ *
+ * We accept the webhook if EITHER the simple signature matches
+ * `HMAC(secret, body)` OR the v2 signature matches the Stripe-style
+ * `HMAC(secret, "${timestamp}.${body}")`. This is defensive because
+ * Didit's signing algorithm has shifted between versions and we
+ * don't want a future change on their side to silently break
+ * tier promotions.
  */
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
@@ -20,7 +29,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'content-type, x-signature-v2, x-timestamp',
+  'Access-Control-Allow-Headers': 'content-type, x-signature, x-signature-v2, x-signature-simple, x-timestamp',
 }
 
 Deno.serve(async (req) => {
@@ -29,21 +38,39 @@ Deno.serve(async (req) => {
   }
   if (req.method !== 'POST') return new Response('Method Not Allowed', { status: 405, headers: CORS_HEADERS })
 
-  const signature = req.headers.get('x-signature-v2') ?? ''
+  const sigV2     = req.headers.get('x-signature-v2') ?? req.headers.get('x-signature') ?? ''
+  const sigSimple = req.headers.get('x-signature-simple') ?? ''
   const timestamp = req.headers.get('x-timestamp') ?? ''
-  const secret = Deno.env.get('DIDIT_WEBHOOK_SECRET')
+  const secret    = Deno.env.get('DIDIT_WEBHOOK_SECRET')
   if (!secret) return json({ error: 'webhook_not_configured' }, 500)
 
   const rawBody = await req.text()
 
   const now = Math.floor(Date.now() / 1000)
-  const ts = parseInt(timestamp, 10)
+  const ts  = parseInt(timestamp, 10)
   if (!ts || Math.abs(now - ts) > 300) {
-    return json({ error: 'stale_timestamp' }, 401)
+    return json({ error: 'stale_timestamp', sent: ts, server: now }, 401)
   }
 
-  const expected = await hmacSha256Hex(secret, rawBody)
-  if (!timingSafeEqual(expected, signature)) {
+  // Try both signature formats. Didit sends multiple sigs:
+  //   x-signature-simple  = HMAC(secret, body)
+  //   x-signature-v2      = HMAC(secret, `${timestamp}.${body}`) (Stripe-style)
+  // We accept either. If the algorithm changes again in the future,
+  // failed attempts log enough context to diagnose without redeploying.
+  const expectSimple = await hmacSha256Hex(secret, rawBody)
+  const expectV2     = await hmacSha256Hex(secret, `${timestamp}.${rawBody}`)
+
+  const okSimple = sigSimple && timingSafeEqual(expectSimple, sigSimple)
+  const okV2     = sigV2     && timingSafeEqual(expectV2,     sigV2)
+
+  if (!okSimple && !okV2) {
+    console.error('invalid_signature', {
+      sigV2_in:     sigV2.slice(0, 12),
+      sigSimple_in: sigSimple.slice(0, 12),
+      expectV2:     expectV2.slice(0, 12),
+      expectSimple: expectSimple.slice(0, 12),
+      ts,
+    })
     return json({ error: 'invalid_signature' }, 401)
   }
 
