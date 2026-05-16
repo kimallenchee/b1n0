@@ -36,21 +36,20 @@ export async function startDiditSession(targetTier: 2 | 3): Promise<KycSessionRe
   const { data: { session } } = await supabase.auth.getSession()
   if (!session?.access_token) throw new Error('No active session')
 
-  const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/kyc-create-session`
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${session.access_token}`,
-    },
-    body: JSON.stringify({ target_tier: targetTier }),
+  // supabase.functions.invoke wires up both the apikey AND Authorization
+  // headers correctly. Hand-rolled fetch() was missing the apikey header
+  // which made the Supabase gateway reject with UNAUTHORIZED_NO_AUTH_HEADER.
+  const { data, error } = await supabase.functions.invoke('kyc-create-session', {
+    body: { target_tier: targetTier },
   })
-  if (!res.ok) {
-    const text = await res.text().catch(() => '')
-    throw new Error(`KYC session creation failed (${res.status}): ${text.slice(0, 200)}`)
+  if (error) {
+    throw new Error(`KYC session creation failed: ${error.message ?? 'unknown'}`)
   }
-  const data = await res.json() as { verification_url: string; session_id: string }
-  return { verificationUrl: data.verification_url, sessionId: data.session_id }
+  const result = data as { verification_url: string; session_id: string }
+  if (!result?.verification_url) {
+    throw new Error('KYC session response missing verification_url')
+  }
+  return { verificationUrl: result.verification_url, sessionId: result.session_id }
 }
 
 /**
