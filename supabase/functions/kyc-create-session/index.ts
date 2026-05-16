@@ -96,11 +96,34 @@ Deno.serve(async (req) => {
     console.error('Didit session create failed', diditRes.status, text)
     return json({ error: 'provider_error', detail: text.slice(0, 200) }, 502)
   }
-  const session = await diditRes.json() as {
-    session_id: string
-    verification_url: string
-    status: string
+  const session = await diditRes.json() as Record<string, unknown>
+
+  // Log the FULL response so we can see what Didit actually returns.
+  // Their docs claim `verification_url` but in practice the field name
+  // varies — could be `url`, `verification_link`, or embedded in `session_token`.
+  console.log('Didit session response:', JSON.stringify(session))
+
+  // Try several possible field names Didit might use for the URL.
+  const verificationUrl =
+    (session.verification_url as string | undefined) ??
+    (session.url as string | undefined) ??
+    (session.verification_link as string | undefined) ??
+    (session.session_url as string | undefined) ??
+    // Fallback: construct from session_id if Didit uses a predictable URL pattern
+    (session.session_id ? `https://verify.didit.me/session/${session.session_id}` : undefined)
+
+  if (!verificationUrl) {
+    console.error('Didit response missing URL — full payload:', JSON.stringify(session))
+    return json({
+      error: 'didit_response_no_url',
+      detail: 'Didit returned a session but no verification URL field could be found',
+      didit_response_keys: Object.keys(session),
+      didit_response: session,
+    }, 502)
   }
+
+  const sessionId = session.session_id as string
+  const sessionStatus = (session.status as string) ?? 'Not Started'
 
   // 5. Persist session row (idempotent via UNIQUE constraint)
   const { error: insErr } = await supabase
@@ -109,17 +132,19 @@ Deno.serve(async (req) => {
       user_id: user.id,
       target_tier: targetTier,
       provider: 'didit',
-      provider_session_id: session.session_id,
-      verification_url: session.verification_url,
-      status: session.status,
+      provider_session_id: sessionId,
+      verification_url: verificationUrl,
+      status: sessionStatus,
     })
-  if (insErr) {
+  if (insErr && insErr.code !== '23505') {
+    // Ignore duplicate-key violations — that just means user clicked Retry
+    // and Didit reused the same session. The row already exists.
     console.error('kyc_sessions insert failed', insErr)
   }
 
   return json({
-    verification_url: session.verification_url,
-    session_id: session.session_id,
+    verification_url: verificationUrl,
+    session_id: sessionId,
   }, 200)
 })
 
