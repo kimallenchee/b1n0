@@ -26,6 +26,13 @@ export interface Profile {
   isAdmin: boolean
   mustChangePassword: boolean
   avatarUrl: string | null
+  /**
+   * True when the user was auto-promoted to Tier 3 by hitting the
+   * cumulative deposit threshold but hasn't yet completed the Didit
+   * T3 verification (which runs AML/PEP screening). Cleared by the
+   * kyc_session_promote_tier trigger on Didit T3 approval.
+   */
+  needsAmlReview: boolean
 }
 
 export interface SignupMeta {
@@ -88,6 +95,7 @@ function rowToProfile(row: Record<string, unknown>): Profile {
     isAdmin: (row.is_admin as boolean) ?? false,
     mustChangePassword: (row.must_change_password as boolean) ?? false,
     avatarUrl: (row.avatar_url as string) ?? null,
+    needsAmlReview: (row.needs_aml_review as boolean) ?? false,
   }
 }
 
