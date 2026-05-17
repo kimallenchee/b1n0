@@ -73,7 +73,7 @@ export function Footer() {
             src={logoSrcFor(resolved)}
             alt="b1n0"
             style={{
-              height: 22,
+              height: 24,  // matches TopBar wordmark size
               width: 'auto',
               display: 'block',
               margin: '0 auto',
@@ -95,29 +95,44 @@ export function Footer() {
           Mercado de opciones sobre eventos.
         </p>
 
-        {/* ── Inline link row — flat, no columns ───────────────── */}
+        {/* ── Link row — responsive grid for clean mobile wrap.
+            On desktop (≥ 560px): one flex row, all 6 inline.
+            On mobile: 3-column grid, 2 rows of 3 — even and tidy.
+            Dot separators dropped — at low opacity they were nearly
+            invisible on mobile and added clutter without helping
+            visual flow. Spacing alone reads cleaner. */}
         <nav
           style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            justifyContent: 'center',
-            gap: '14px',
-            rowGap: '8px',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, 1fr)',
+            columnGap: '12px',
+            rowGap: '12px',
+            justifyItems: 'center',
             marginBottom: 'var(--space-6)',
           }}
+          className="footer-links"
         >
           <FooterLinkButton onClick={openTour}>Cómo jugar</FooterLinkButton>
-          <Dot />
           <FooterLink to="/inicio">Eventos</FooterLink>
-          <Dot />
           <FooterLink to="/documentacion">Documentación</FooterLink>
-          <Dot />
           <FooterAnchor href="mailto:soporte@b1n0.com">Soporte</FooterAnchor>
-          <Dot />
           <FooterLink to="/terminos">Términos</FooterLink>
-          <Dot />
           <FooterLink to="/privacidad">Privacidad</FooterLink>
         </nav>
+
+        {/* Inline media query so the grid flips to a single inline
+            row on screens ≥ 560px without needing a CSS file. The
+            scoped class avoids leaking the rule app-wide. */}
+        <style>{`
+          @media (min-width: 560px) {
+            .footer-links {
+              display: flex !important;
+              flex-wrap: wrap;
+              justify-content: center;
+              gap: 22px !important;
+            }
+          }
+        `}</style>
 
         {/* ── Combined disclaimer + corporate paragraph ─────────
             Kim's call: collapse risk warning + Tres33 registration +
@@ -137,12 +152,9 @@ export function Footer() {
         >
           Los llamados implican riesgo de pérdida del capital. Solo para mayores
           de 18 años. Los participantes son responsables de cumplir las leyes
-          aplicables en su jurisdicción.{' '}
-          <span style={{ color: 'var(--b1n0-text-1)', fontWeight: 500 }}>
-            Tres33 SAS de CV
-          </span>{' '}
-          está registrado en El Salvador. Tokenización de contratos y activos
-          digitales bajo el marco regulatorio CNAD de El Salvador.
+          aplicables en su jurisdicción. Tres33 SAS de CV está registrado en El
+          Salvador. Tokenización de contratos y activos digitales bajo el marco
+          regulatorio CNAD de El Salvador.
         </p>
 
         {/* ── Hairline divider before copyright ────────────────── */}
@@ -169,23 +181,6 @@ export function Footer() {
         </p>
       </div>
     </footer>
-  )
-}
-
-// ── Inline dot separator between links ────────────────────────
-function Dot() {
-  return (
-    <span
-      aria-hidden
-      style={{
-        color: 'var(--b1n0-muted)',
-        fontSize: 13,
-        opacity: 0.4,
-        userSelect: 'none',
-      }}
-    >
-      ·
-    </span>
   )
 }
 
