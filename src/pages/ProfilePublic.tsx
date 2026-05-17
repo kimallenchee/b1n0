@@ -79,6 +79,12 @@ export function ProfilePublic() {
   const [relationship, setRelationship] = useState<Relationship>('none')
   const [friendshipId, setFriendshipId] = useState<string | null>(null)
   const [actionLoading, setActionLoading] = useState(false)
+  // Preview-as-guest: lets the owner see exactly what an anon viewer
+  // sees, respecting their own privacy_prefs as if they were a stranger.
+  // Toggling this off restores owner-only views (everything visible).
+  // Reset whenever the profile changes (don't carry across navigations).
+  const [previewAsGuest, setPreviewAsGuest] = useState(false)
+  useEffect(() => { setPreviewAsGuest(false) }, [username])
 
   usePageMeta({
     title: profile ? `@${profile.username} · b1n0` : 'Perfil · b1n0',
@@ -219,20 +225,25 @@ export function ProfilePublic() {
 
   // ── Resolve privacy ────────────────────────────────────────
   // Missing keys default to true (public).
+  // effectiveIsOwner short-circuits all the privacy gates: an owner
+  // always sees their own fields UNLESS they've toggled previewAsGuest
+  // — then we treat them as a stranger so they can verify their privacy
+  // settings actually do what they expect.
   const pp = profile.privacy_prefs ?? {}
   const isOwner = relationship === 'self'
-  const showTier = isOwner || (pp.show_tier ?? true)
-  const showTotalCobrado = isOwner || (pp.show_total_cobrado ?? true)
-  const showAccuracy = isOwner || (pp.show_accuracy_rate ?? true)
-  const showTotalPredictions = isOwner || (pp.show_total_predictions ?? true)
-  const showFullName = isOwner || (pp.show_full_name ?? true)
-  const showJoinDate = isOwner || (pp.show_join_date ?? true)
-  const showAvatar = isOwner || (pp.show_avatar ?? true)
+  const effectiveIsOwner = isOwner && !previewAsGuest
+  const showTier = effectiveIsOwner || (pp.show_tier ?? true)
+  const showTotalCobrado = effectiveIsOwner || (pp.show_total_cobrado ?? true)
+  const showAccuracy = effectiveIsOwner || (pp.show_accuracy_rate ?? true)
+  const showTotalPredictions = effectiveIsOwner || (pp.show_total_predictions ?? true)
+  const showFullName = effectiveIsOwner || (pp.show_full_name ?? true)
+  const showJoinDate = effectiveIsOwner || (pp.show_join_date ?? true)
+  const showAvatar = effectiveIsOwner || (pp.show_avatar ?? true)
   // Activity-feed gates. Both default to ON; the "show amount on llamado"
   // toggle defaults to OFF — users opt in to flex their stake size.
-  const showActivityLlamados = isOwner || (pp.show_activity_llamados ?? true)
-  const showActivityComments = isOwner || (pp.show_activity_comments ?? true)
-  const showActivityLlamadoAmount = isOwner || (pp.show_activity_llamado_amount ?? false)
+  const showActivityLlamados = effectiveIsOwner || (pp.show_activity_llamados ?? true)
+  const showActivityComments = effectiveIsOwner || (pp.show_activity_comments ?? true)
+  const showActivityLlamadoAmount = effectiveIsOwner || (pp.show_activity_llamado_amount ?? false)
 
   const accuracy =
     profile.totalPredictions > 0
@@ -241,6 +252,48 @@ export function ProfilePublic() {
 
   return (
     <div className="feed-scroll" style={{ padding: '24px 16px', maxWidth: 720, margin: '0 auto' }}>
+      {/* ── Preview-as-guest banner ─────────────────────────
+          Visible only while the owner has toggled "Ver como visitante".
+          The whole rest of the page renders with effectiveIsOwner=false,
+          so this is the only affordance to get back to owner-view. */}
+      {isOwner && previewAsGuest && (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 12,
+            padding: '10px 14px',
+            marginBottom: 16,
+            background: 'var(--b1n0-card)',
+            border: '1px solid var(--b1n0-indigo)',
+            borderRadius: 'var(--radius-lg)',
+          }}
+        >
+          <p style={{ fontFamily: F, fontSize: 12, color: 'var(--b1n0-text-1)', margin: 0 }}>
+            <span style={{ color: 'var(--b1n0-indigo)', fontWeight: 700 }}>Vista de visitante.</span>
+            {' '}Así te ven los demás.
+          </p>
+          <button
+            onClick={() => setPreviewAsGuest(false)}
+            style={{
+              padding: '6px 12px',
+              borderRadius: 'var(--radius-pill)',
+              background: 'transparent',
+              border: '1px solid var(--b1n0-border)',
+              color: 'var(--b1n0-text-1)',
+              fontFamily: F,
+              fontSize: 12,
+              fontWeight: 600,
+              cursor: 'pointer',
+              flexShrink: 0,
+            }}
+          >
+            Volver a mi vista
+          </button>
+        </div>
+      )}
+
       {/* ── Hero: avatar + name + tier + CTA ──────────────── */}
       <div
         style={{
@@ -335,15 +388,19 @@ export function ProfilePublic() {
           )}
         </div>
 
-        {/* Relationship CTA */}
+        {/* Relationship CTA.
+            In preview-as-guest, we pass relationship=guest so the owner
+            sees the same CTA a logged-out viewer would. The banner up
+            top owns the "exit preview" affordance. */}
         <RelationshipCta
-          relationship={relationship}
+          relationship={previewAsGuest ? 'guest' : relationship}
           actionLoading={actionLoading}
           onSendRequest={sendRequest}
           onAcceptRequest={acceptRequest}
           onRejectRequest={rejectRequest}
           onGoToOwnProfile={() => navigate('/perfil')}
           onGoToLogin={() => navigate('/auth')}
+          onPreviewAsGuest={() => setPreviewAsGuest(true)}
         />
       </div>
 
@@ -457,6 +514,7 @@ function RelationshipCta({
   onRejectRequest,
   onGoToOwnProfile,
   onGoToLogin,
+  onPreviewAsGuest,
 }: {
   relationship: Relationship
   actionLoading: boolean
@@ -465,6 +523,7 @@ function RelationshipCta({
   onRejectRequest: () => void
   onGoToOwnProfile: () => void
   onGoToLogin: () => void
+  onPreviewAsGuest: () => void
 }) {
   const baseBtn: React.CSSProperties = {
     padding: '8px 14px',
@@ -477,10 +536,30 @@ function RelationshipCta({
   }
 
   if (relationship === 'self') {
+    // Owner view: primary action is "Editar mi perfil"; subordinate
+    // link beneath it lets them flip into preview-as-guest mode to
+    // verify their privacy settings.
     return (
-      <button onClick={onGoToOwnProfile} style={{ ...baseBtn, background: 'var(--b1n0-card)', color: 'var(--b1n0-text-1)', border: '1px solid var(--b1n0-border)' }}>
-        Editar mi perfil
-      </button>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
+        <button onClick={onGoToOwnProfile} style={{ ...baseBtn, background: 'var(--b1n0-card)', color: 'var(--b1n0-text-1)', border: '1px solid var(--b1n0-border)' }}>
+          Editar mi perfil
+        </button>
+        <button
+          onClick={onPreviewAsGuest}
+          style={{
+            background: 'transparent',
+            border: 'none',
+            padding: 0,
+            fontFamily: F,
+            fontSize: 11,
+            color: 'var(--b1n0-muted)',
+            textDecoration: 'underline',
+            cursor: 'pointer',
+          }}
+        >
+          Ver como visitante
+        </button>
+      </div>
     )
   }
   if (relationship === 'guest') {

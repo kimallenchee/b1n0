@@ -112,44 +112,31 @@ export function ActivityFeed({
       }
 
       // Comments
-      // Note: comments.event_id has no declared FK to events(id), so
-      // we can't use supabase's auto-join (events(question) returns
-      // null silently). Two queries instead: fetch comments first,
-      // then fetch the events for the unique event_ids and merge.
+      // Uses get_public_user_comments() RPC — a SECURITY DEFINER
+      // function that:
+      //   - Lets anon viewers read comments (the comments table RLS
+      //     doesn't grant SELECT to anon).
+      //   - Enforces the target user's privacy_prefs.show_activity_comments
+      //     server-side (the owner always sees their own).
+      //   - JOINs events so the event_question comes back in one
+      //     roundtrip — no need to batch-fetch events client-side.
       if (showComments) {
         queries.push(
           supabase
-            .from('comments')
-            .select('id, event_id, text, created_at')
-            .eq('user_id', userId)
-            .order('created_at', { ascending: false })
-            .limit(10)
-            .then(async ({ data }) => {
-              if (!data || data.length === 0) return []
-              const rows = data as Array<{
+            .rpc('get_public_user_comments', { p_user_id: userId })
+            .then(({ data }) => {
+              if (!data) return []
+              return (data as Array<{
                 id: string
                 event_id: string
+                event_question: string | null
                 text: string
                 created_at: string
-              }>
-
-              // Fetch event questions in one batch for the unique
-              // event_ids we just saw.
-              const eventIds = Array.from(new Set(rows.map((r) => r.event_id)))
-              const { data: evRows } = await supabase
-                .from('events')
-                .select('id, question')
-                .in('id', eventIds)
-              const eventMap = new Map<string, string>()
-              for (const ev of (evRows ?? []) as Array<{ id: string; question: string }>) {
-                eventMap.set(ev.id, ev.question)
-              }
-
-              return rows.map((c): CommentItem => ({
+              }>).map((c): CommentItem => ({
                 kind: 'comment',
                 id: c.id,
                 event_id: c.event_id,
-                event_question: eventMap.get(c.event_id) ?? 'Evento',
+                event_question: c.event_question ?? 'Evento',
                 text: c.text,
                 created_at: c.created_at,
                 timestamp: new Date(c.created_at).getTime(),
