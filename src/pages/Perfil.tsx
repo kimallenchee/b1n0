@@ -17,6 +17,7 @@ import {
 } from '@phosphor-icons/react'
 import { Link } from 'react-router-dom'
 import { useConfirm } from '../components/ConfirmModal'
+import { useToast } from '../components/Toast'
 import { useNavigate } from 'react-router-dom'
 import { AnimatedNumber } from '../components/AnimatedNumber'
 import { mockUser } from '../data/mockEvents'
@@ -134,6 +135,7 @@ export function Perfil() {
     show_activity_llamado_amount: false,
   })
   const confirm = useConfirm()
+  const toast = useToast()
   const { mode: themeMode, setMode: setThemeMode } = useTheme()
   const [notifPrefs, setNotifPrefs] = useState<Record<string, boolean>>({
     evento_resuelto: true,
@@ -173,10 +175,40 @@ export function Perfil() {
     })
   }, [userId])
 
-  const togglePrivacy = (key: string) => {
+  const togglePrivacy = async (key: string) => {
+    if (!userId) return
+    // Optimistic update — UI flips immediately so the user gets
+    // instant feedback. We revert on error below.
+    const previous = privacyPrefs
     const updated = { ...privacyPrefs, [key]: !privacyPrefs[key] }
     setPrivacyPrefs(updated)
-    if (userId) supabase.from('profiles').update({ privacy_prefs: updated }).eq('id', userId)
+
+    const { error } = await supabase
+      .from('profiles')
+      .update({ privacy_prefs: updated })
+      .eq('id', userId)
+
+    if (error) {
+      // Revert the optimistic flip and surface the failure. Without
+      // this, a silent RLS denial or network drop would leave the
+      // UI showing the new value while the DB still had the old —
+      // which was the 'toggles off by themselves' bug Kim hit.
+      setPrivacyPrefs(previous)
+      toast.showError('No se pudo guardar el cambio. Probá de nuevo.')
+      return
+    }
+
+    // Re-fetch to guarantee state mirrors DB. Belt-and-suspenders
+    // against any backend-side coercion (e.g., a trigger normalizing
+    // the JSONB). Cheap — one row, one column.
+    const { data } = await supabase
+      .from('profiles')
+      .select('privacy_prefs')
+      .eq('id', userId)
+      .single()
+    if (data?.privacy_prefs) {
+      setPrivacyPrefs(prev => ({ ...prev, ...(data.privacy_prefs as Record<string, boolean>) }))
+    }
   }
 
   const [avatarUploading, setAvatarUploading] = useState(false)

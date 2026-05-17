@@ -112,27 +112,44 @@ export function ActivityFeed({
       }
 
       // Comments
+      // Note: comments.event_id has no declared FK to events(id), so
+      // we can't use supabase's auto-join (events(question) returns
+      // null silently). Two queries instead: fetch comments first,
+      // then fetch the events for the unique event_ids and merge.
       if (showComments) {
         queries.push(
           supabase
             .from('comments')
-            .select('id, event_id, text, created_at, events(question)')
+            .select('id, event_id, text, created_at')
             .eq('user_id', userId)
             .order('created_at', { ascending: false })
             .limit(10)
-            .then(({ data }) => {
-              if (!data) return []
-              return (data as Array<{
+            .then(async ({ data }) => {
+              if (!data || data.length === 0) return []
+              const rows = data as Array<{
                 id: string
                 event_id: string
                 text: string
                 created_at: string
-                events: { question: string } | null
-              }>).map((c): CommentItem => ({
+              }>
+
+              // Fetch event questions in one batch for the unique
+              // event_ids we just saw.
+              const eventIds = Array.from(new Set(rows.map((r) => r.event_id)))
+              const { data: evRows } = await supabase
+                .from('events')
+                .select('id, question')
+                .in('id', eventIds)
+              const eventMap = new Map<string, string>()
+              for (const ev of (evRows ?? []) as Array<{ id: string; question: string }>) {
+                eventMap.set(ev.id, ev.question)
+              }
+
+              return rows.map((c): CommentItem => ({
                 kind: 'comment',
                 id: c.id,
                 event_id: c.event_id,
-                event_question: c.events?.question ?? 'Evento',
+                event_question: eventMap.get(c.event_id) ?? 'Evento',
                 text: c.text,
                 created_at: c.created_at,
                 timestamp: new Date(c.created_at).getTime(),
