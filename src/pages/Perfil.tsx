@@ -788,6 +788,7 @@ export function Perfil() {
               <ToggleRow label="Saldo bajo" description="Tu saldo está por debajo del mínimo" value={notifPrefs.saldo_bajo} onChange={() => toggleNotif('saldo_bajo')} />
 
               <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--b1n0-muted)', letterSpacing: '0.5px', textTransform: 'uppercase', marginTop: '12px', marginBottom: '4px' }}>Cuenta</p>
+              <ToggleRow label="Subiste de nivel" description="Cambios en tu nivel KYC (N1 → N2 → N3)" value={notifPrefs.nivel_subio} onChange={() => toggleNotif('nivel_subio')} />
             </div>
           )}
 
@@ -870,9 +871,46 @@ export function Perfil() {
           />
           {soporteOpen && (
             <>
-              <LinkRow label="Centro de ayuda" />
-              <LinkRow label="Reportar un problema" />
-              <LinkRow label="Términos y condiciones" />
+              <LinkRow
+                label="Centro de ayuda"
+                onPress={() => navigate('/documentacion')}
+              />
+              <LinkRow
+                label="Reportar un problema"
+                onPress={() => {
+                  const subject = encodeURIComponent('Reporte de problema en b1n0')
+                  const body = encodeURIComponent(
+                    `Hola equipo de b1n0,\n\nQuiero reportar lo siguiente:\n\n[describí el problema aquí]\n\nUsuario: ${profile?.username ?? userId ?? 'desconocido'}\n`
+                  )
+                  window.location.href = `mailto:soporte@b1n0.com?subject=${subject}&body=${body}`
+                }}
+              />
+              <LinkRow
+                label="Términos y condiciones"
+                onPress={() => navigate('/terminos')}
+              />
+              <LinkRow
+                label="Descargar mis datos"
+                onPress={() => {
+                  if (!window.confirm('Te vamos a conectar con soporte para procesar tu solicitud de descarga de datos. ¿Continuamos?')) return
+                  const subject = encodeURIComponent('Solicitud: descargar mis datos')
+                  const body = encodeURIComponent(
+                    `Hola,\n\nQuiero solicitar una copia de mis datos personales registrados en b1n0.\n\nUsuario: ${profile?.username ?? userId ?? 'desconocido'}\n\nGracias.\n`
+                  )
+                  window.location.href = `mailto:soporte@b1n0.com?subject=${subject}&body=${body}`
+                }}
+              />
+              <LinkRow
+                label="Eliminar mi cuenta"
+                onPress={() => {
+                  if (!window.confirm('Eliminar tu cuenta es permanente — perdés saldo, llamados activos e historial. Te vamos a conectar con soporte para procesarlo manualmente. ¿Continuamos?')) return
+                  const subject = encodeURIComponent('Solicitud: eliminar mi cuenta')
+                  const body = encodeURIComponent(
+                    `Hola,\n\nQuiero solicitar la eliminación permanente de mi cuenta en b1n0.\n\nUsuario: ${profile?.username ?? userId ?? 'desconocido'}\n\nEntiendo que esta acción es irreversible.\n`
+                  )
+                  window.location.href = `mailto:soporte@b1n0.com?subject=${subject}&body=${body}`
+                }}
+              />
             </>
           )}
 

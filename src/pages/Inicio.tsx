@@ -18,6 +18,7 @@ import { SkeletonFeed } from '../components/Skeleton'
 import { ErrorState } from '../components/EmptyState'
 import { PullIndicator } from '../components/PullIndicator'
 import { usePullToRefresh } from '../hooks/usePullToRefresh'
+import { LastUpdated } from '../components/LastUpdated'
 
 const F = 'var(--font-body)'
 const D = 'var(--font-display)'
@@ -284,6 +285,7 @@ export function Inicio() {
   const [liveOptMap, setLiveOptMap] = useState<Record<string, Record<string, number>>>({})
   // Live binary prices: eventId → { yes, no } (0-100)
   const [liveBinaryMap, setLiveBinaryMap] = useState<Record<string, { yes: number; no: number }>>({})
+  const [lastFetched, setLastFetched] = useState<number | null>(null)
 
   // Batch-fetch social stats for all visible events
   const allEvents = [...events, ...resolvedEvents]
@@ -346,6 +348,7 @@ export function Inicio() {
       }
     }
     setLiveBinaryMap(binMap)
+    setLastFetched(Date.now())
   }, [eventIds.join(',')])
 
   useEffect(() => { fetchStats() }, [fetchStats])
@@ -402,6 +405,13 @@ export function Inicio() {
           ))}
         </div>
       </div>}
+
+      {/* Last updated indicator — subtle, under header */}
+      {lastFetched && (
+        <div style={{ padding: '8px 16px 0', flexShrink: 0 }}>
+          <LastUpdated timestamp={lastFetched} variant="rolling" />
+        </div>
+      )}
 
       {/* Search */}
       <div style={{ padding: '10px 16px 6px', flexShrink: 0 }}>

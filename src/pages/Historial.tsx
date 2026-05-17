@@ -26,6 +26,7 @@ import { useAuth } from '../context/AuthContext'
 import { usePageMeta } from '../hooks/usePageMeta'
 import { Footer } from '../components/layout/Footer'
 import { EmptyState } from '../components/EmptyState'
+import { LastUpdated } from '../components/LastUpdated'
 
 const F = 'var(--font-body)'
 const D = 'var(--font-display)'
@@ -459,6 +460,9 @@ export function Historial() {
   const [txRange, setTxRange] = useState<DateRange>({ from: '', to: '' })
   const [voteFilter, setVoteFilter] = useState<VoteFilter>('todos')
   const [ledgerTx, setLedgerTx] = useState<TxRow[]>([])
+  // Snapshot timestamp: set when transactions + votes have loaded.
+  // Historial is a snapshot view (timestamp variant), not a rolling live feed.
+  const [lastFetched, setLastFetched] = useState<number | null>(null)
 
   // Fetch from balance_ledger — now also captures running balance
   useEffect(() => {
@@ -479,6 +483,7 @@ export function Historial() {
           date: (r.created_at as string).split('T')[0],
           balanceAfter: r.balance_after !== null && r.balance_after !== undefined ? Number(r.balance_after) : undefined,
         })))
+        setLastFetched(Date.now())
       })
   }, [session?.user?.id, tab])
 
@@ -521,6 +526,9 @@ export function Historial() {
         <p style={{ fontFamily: D, fontWeight: 800, fontSize: '22px', color: 'var(--b1n0-text-1)', letterSpacing: '-0.5px', fontVariantNumeric: 'tabular-nums' }}>
           Historial
         </p>
+        <div style={{ marginTop: '6px' }}>
+          <LastUpdated timestamp={lastFetched} variant="timestamp" />
+        </div>
       </div>
 
       {/* Tab switcher — slim sliding-underline pattern (canonical) */}

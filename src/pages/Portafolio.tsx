@@ -8,6 +8,7 @@ import type { UserPrediction } from '../types'
 import { usePageMeta } from '../hooks/usePageMeta'
 import { Footer } from '../components/layout/Footer'
 import { EmptyState } from '../components/EmptyState'
+import { LastUpdated } from '../components/LastUpdated'
 
 const F = 'var(--font-body)'
 const D = 'var(--font-display)'
@@ -652,6 +653,7 @@ export function Portafolio() {
     }
 
     setLpLoading(false)
+    setLastFetched(Date.now())
   }, [session?.user?.id])
 
   useEffect(() => { fetchLpPositions() }, [fetchLpPositions])
@@ -693,6 +695,9 @@ export function Portafolio() {
   const [entryPrices, setEntryPrices] = useState<Record<string, number>>({})
   // Sale proceeds: position_id → net_to_pool (what user received)
   const [saleProceeds, setSaleProceeds] = useState<Record<string, number>>({})
+  // Timestamp of last successful data fetch (positions + LP). Drives the
+  // <LastUpdated /> indicator near the page header.
+  const [lastFetched, setLastFetched] = useState<number | null>(null)
 
   useEffect(() => {
     refreshPredictions()
@@ -781,6 +786,7 @@ export function Portafolio() {
       }
     }
     setSaleProceeds(sales)
+    setLastFetched(Date.now())
   }, [session?.user?.id, predictions.length])
 
   useEffect(() => { fetchLiveData() }, [fetchLiveData])
@@ -989,6 +995,11 @@ export function Portafolio() {
             <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)', marginTop: '2px' }}>{profile.name}</p>
           )}
         </div>
+      </div>
+
+      {/* Last updated indicator — live positions + LP refresh on 10s tick */}
+      <div style={{ marginBottom: 'var(--space-3)', marginTop: '6px' }}>
+        <LastUpdated timestamp={lastFetched} variant="rolling" />
       </div>
 
       {/* ── Top-level tab: Mis Llamados / Capital LP ──
