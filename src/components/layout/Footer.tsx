@@ -24,14 +24,22 @@
 
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useTour } from '../../context/TourContext'
+import { useTheme } from '../../context/ThemeContext'
 
-const F_BODY    = 'var(--font-body)'
-const F_DISPLAY = 'var(--font-display)'
+const F_BODY = 'var(--font-body)'
+
+// Logo variant per theme — same source-of-truth as TopBar. White
+// wordmark on dark surfaces, full-color on light, so the footer
+// matches the chrome users already see at the top of the app.
+function logoSrcFor(theme: 'dark' | 'light'): string {
+  return theme === 'light' ? '/brand/b1n0-logo-fullcolor.svg' : '/brand/b1n0-logo-white.svg'
+}
 
 export function Footer() {
   const navigate = useNavigate()
   const location = useLocation()
   const { startTour } = useTour()
+  const { resolved } = useTheme()
 
   function openTour() {
     if (location.pathname !== '/inicio') navigate('/inicio')
@@ -53,21 +61,18 @@ export function Footer() {
         fontFamily: F_BODY,
       }}
     >
-      {/* ── Brand row: wordmark + descriptor ──────────────────── */}
+      {/* ── Brand row: real wordmark asset + descriptor ───────── */}
       <div style={{ maxWidth: 960, margin: '0 auto', marginBottom: 'var(--space-7)' }}>
-        <p
+        <img
+          src={logoSrcFor(resolved)}
+          alt="b1n0"
           style={{
-            fontFamily: F_DISPLAY,
-            fontSize: 22,
-            fontWeight: 800,
-            letterSpacing: '-0.5px',
-            color: 'var(--b1n0-text-1)',
-            margin: 0,
-            marginBottom: 6,
+            height: 26,
+            width: 'auto',
+            display: 'block',
+            marginBottom: 8,
           }}
-        >
-          b1n0
-        </p>
+        />
         <p
           style={{
             fontSize: 12,
@@ -142,7 +147,7 @@ export function Footer() {
           Tokenización de contratos y activos digitales bajo el marco regulatorio CNAD de El Salvador
         </p>
         <p style={{ margin: 0, marginTop: 'var(--space-3)' }}>
-          © {new Date().getFullYear()} b1n0
+          © {new Date().getFullYear()} b1n0 · una marca de Tres33 SAS de CV · Todos los derechos reservados
         </p>
       </div>
     </footer>
