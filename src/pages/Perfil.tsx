@@ -102,11 +102,21 @@ export function Perfil() {
   useEffect(() => { refreshProfile(); refreshPredictions() }, [])
 
   // Compute stats from positions
+  //
+  // Status taxonomy: 'active' = pending (event not yet resolved),
+  // 'won'/'lost' = resolved, 'sold' = exited early via Salida Anticipada.
+  //
+  // totalVotes counts every llamado (participation metric — that's what
+  // the "Votos" tile shows). ACIERTO uses won / (won + lost) so the
+  // percent reflects calls you let ride to resolution. Pending llamados
+  // shouldn't drag your accuracy down before the event even resolves.
   const totalVotes = predictions.length
   const won = predictions.filter((p) => p.status === 'won')
+  const lost = predictions.filter((p) => p.status === 'lost')
   const correctVotes = won.length
+  const resolvedVotes = won.length + lost.length
   const totalCobrado = won.reduce((s, p) => s + p.potentialCobro, 0)
-  const accuracy = totalVotes > 0 ? Math.round((correctVotes / totalVotes) * 100) : 0
+  const accuracy = resolvedVotes > 0 ? Math.round((correctVotes / resolvedVotes) * 100) : 0
 
   const user = profile
     ? { ...mockUser, name: profile.name, tier: profile.tier, balance: profile.balance, totalPredictions: totalVotes, correctPredictions: correctVotes, totalCobrado }
@@ -484,7 +494,16 @@ export function Perfil() {
           label="Acierto"
           value={accuracy}
           suffix="%"
-          accent={accuracy >= 60 ? 'var(--b1n0-si)' : accuracy >= 40 ? 'var(--b1n0-orange-500)' : 'var(--b1n0-no)'}
+          accent={
+            // Mute the icon when nothing's resolved yet — otherwise a
+            // user with only pending llamados sees a red "0%" tile and
+            // thinks they're bad at this. resolvedVotes guards that.
+            resolvedVotes === 0
+              ? 'var(--b1n0-muted)'
+              : accuracy >= 60 ? 'var(--b1n0-si)'
+              : accuracy >= 40 ? 'var(--b1n0-orange-500)'
+              : 'var(--b1n0-no)'
+          }
         />
       </div>
 

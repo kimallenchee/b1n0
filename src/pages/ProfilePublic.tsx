@@ -48,8 +48,9 @@ interface PublicProfile {
   // read from profiles.total_predictions / correct_predictions —
   // those counter columns aren't kept in sync by any trigger, so
   // they're stale. positions is the source of truth.
-  totalPredictions: number
-  correctPredictions: number
+  totalPredictions: number     // every position (won+lost+active+sold) — "Llamados" count
+  resolvedPredictions: number  // won+lost only — denominator for accuracy
+  correctPredictions: number   // won — numerator for accuracy + base of totalCobrado
   totalCobrado: number
 }
 
@@ -126,17 +127,26 @@ export function ProfilePublic() {
       // profile we use the same approximation as Perfil (gross of skim
       // is fine for headline stats — the skim shows up in Historial /
       // Mi Portafolio with full fidelity).
+      //
+      // Status taxonomy: 'active' = pending (event not yet resolved),
+      // 'won'/'lost' = resolved, 'sold' = exited early via Salida Anticipada.
+      // ACIERTO = won / (won + lost). Pending and sold are excluded
+      // from the denominator — pending isn't a call yet, sold isn't a
+      // call you let ride to resolution.
       const totalPredictions = positions.length
       const won = positions.filter((p) => p.status === 'won')
+      const lost = positions.filter((p) => p.status === 'lost')
       const correctPredictions = won.length
+      const resolvedPredictions = won.length + lost.length
       const totalCobrado = won.reduce(
         (sum, p) => sum + (Number(p.payout_if_win) || 0),
         0,
       )
 
       setProfile({
-        ...(row as Omit<PublicProfile, 'totalPredictions' | 'correctPredictions' | 'totalCobrado'>),
+        ...(row as Omit<PublicProfile, 'totalPredictions' | 'resolvedPredictions' | 'correctPredictions' | 'totalCobrado'>),
         totalPredictions,
+        resolvedPredictions,
         correctPredictions,
         totalCobrado,
       })
@@ -245,9 +255,11 @@ export function ProfilePublic() {
   const showActivityComments = effectiveIsOwner || (pp.show_activity_comments ?? true)
   const showActivityLlamadoAmount = effectiveIsOwner || (pp.show_activity_llamado_amount ?? false)
 
+  // ACIERTO denominator is resolved llamados only. A dash is shown when
+  // there's nothing resolved yet (rather than a misleading "0%").
   const accuracy =
-    profile.totalPredictions > 0
-      ? Math.round((profile.correctPredictions / profile.totalPredictions) * 100)
+    profile.resolvedPredictions > 0
+      ? Math.round((profile.correctPredictions / profile.resolvedPredictions) * 100)
       : 0
 
   return (
@@ -417,7 +429,7 @@ export function ProfilePublic() {
           <StatCard label="Llamados" value={profile.totalPredictions.toString()} />
         )}
         {showAccuracy && (
-          <StatCard label="Acierto" value={profile.totalPredictions > 0 ? `${accuracy}%` : '—'} />
+          <StatCard label="Acierto" value={profile.resolvedPredictions > 0 ? `${accuracy}%` : '—'} />
         )}
         {showTotalCobrado && (
           <StatCard
