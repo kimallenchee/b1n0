@@ -24,6 +24,8 @@ import { useVotes } from '../context/VoteContext'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { usePageMeta } from '../hooks/usePageMeta'
+import { Footer } from '../components/layout/Footer'
+import { EmptyState } from '../components/EmptyState'
 
 const F = 'var(--font-body)'
 const D = 'var(--font-display)'
@@ -636,14 +638,10 @@ export function Historial() {
             </div>
           )}
           {active.length === 0 && prior.length === 0 && (
-            <div style={{ textAlign: 'center', marginTop: '48px', padding: '0 24px' }}>
-              <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)', marginBottom: '6px' }}>
-                Todavía no tenés votos en este rango.
-              </p>
-              <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)' }}>
-                Participá en el feed y tus votos aparecen acá.
-              </p>
-            </div>
+            <EmptyState
+              title="Sin movimientos todavía"
+              subtitle="Tus depósitos, retiros, llamados y cobros van a aparecer acá."
+            />
           )}
         </>
       ) : (
@@ -672,17 +670,14 @@ export function Historial() {
             </div>
           ))}
           {allTx.length === 0 && (
-            <div style={{ textAlign: 'center', marginTop: '48px', padding: '0 24px' }}>
-              <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)', marginBottom: '6px' }}>
-                Sin movimientos en este rango.
-              </p>
-              <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)' }}>
-                Tus depósitos, retiros y cobros aparecen acá.
-              </p>
-            </div>
+            <EmptyState
+              title="Sin movimientos todavía"
+              subtitle="Tus depósitos, retiros, llamados y cobros van a aparecer acá."
+            />
           )}
         </div>
       )}
+      <Footer />
     </div>
   )
 }

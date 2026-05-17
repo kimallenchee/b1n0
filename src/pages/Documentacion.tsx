@@ -14,6 +14,7 @@ import { CaretDown } from '@phosphor-icons/react'
 import { DOC_SECTIONS, DOC_LAST_UPDATED, type DocSection, type DocBlock } from '../content/documentation'
 import { useIsDesktop } from '../hooks/useIsDesktop'
 import { usePageMeta } from '../hooks/usePageMeta'
+import { Footer } from '../components/layout/Footer'
 
 const F = 'var(--font-body)'
 const D = 'var(--font-display)'
@@ -297,17 +298,8 @@ export function Documentacion() {
           </div>
         )}
 
-        {/* Footer */}
-        <footer style={{ marginTop: '64px', paddingTop: '24px', borderTop: '1px solid var(--b1n0-border)', display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'space-between', alignItems: 'center' }}>
-          <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)', margin: 0 }}>
-            Tres33 SAS de CV · Ciudad de Guatemala
-          </p>
-          <div style={{ display: 'flex', gap: '16px' }}>
-            <a href="/terminos" style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)', textDecoration: 'underline' }}>Términos</a>
-            <a href="/privacidad" style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)', textDecoration: 'underline' }}>Privacidad</a>
-          </div>
-        </footer>
       </div>
+      <Footer />
     </div>
   )
 }

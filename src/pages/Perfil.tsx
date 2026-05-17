@@ -24,6 +24,8 @@ import { KYCSheet } from '../components/wallet/KYCSheet'
 import { WalletSheet } from '../components/wallet/WalletSheet'
 import { useTheme, type ThemeMode } from '../context/ThemeContext'
 import { usePageMeta } from '../hooks/usePageMeta'
+import { Footer } from '../components/layout/Footer'
+import { EmptyState } from '../components/EmptyState'
 
 const F = 'var(--font-body)'
 const D = 'var(--font-display)'
@@ -650,7 +652,10 @@ export function Perfil() {
         {friendsTab === 'amigos' ? (
           /* Accepted friends */
           acceptedFriends.length === 0 ? (
-            <FriendsEmpty userId={userId} />
+            <EmptyState
+              title="Agregá amigos para verlos acá"
+              subtitle="Buscá usuarios por nombre o username para hacer la primera conexión."
+            />
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
               {acceptedFriends.map((f) => (
@@ -882,6 +887,7 @@ export function Perfil() {
           b1n0 v0.1.0 · Hecho en Centroamérica
         </p>
       </div>
+      <Footer />
     </div>
   )
 }

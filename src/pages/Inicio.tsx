@@ -12,6 +12,7 @@ import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
 import { midPctToAsk } from '../lib/pricing'
 import { WalletSheet } from '../components/wallet/WalletSheet'
+import { Footer } from '../components/layout/Footer'
 import { SplitBar } from '../components/feed/SplitBar'
 import { SkeletonFeed } from '../components/Skeleton'
 import { ErrorState } from '../components/EmptyState'
@@ -576,6 +577,7 @@ export function Inicio() {
             </div>
           </>
         )}
+        <Footer />
       </div>
       <WalletSheet open={walletOpen} onClose={() => setWalletOpen(false)} />
     </div>

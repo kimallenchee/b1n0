@@ -6,6 +6,8 @@ import { supabase } from '../lib/supabase'
 import { midPctToAsk, midPctToBid, SELL_FEE_RATE, RESOLUTION_SKIM, round2 } from '../lib/pricing'
 import type { UserPrediction } from '../types'
 import { usePageMeta } from '../hooks/usePageMeta'
+import { Footer } from '../components/layout/Footer'
+import { EmptyState } from '../components/EmptyState'
 
 const F = 'var(--font-body)'
 const D = 'var(--font-display)'
@@ -1216,24 +1218,22 @@ export function Portafolio() {
 
       {/* Position list */}
       {sorted.length === 0 ? (
-        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '48px 24px', textAlign: 'center' }}>
-          <p style={{ fontFamily: D, fontWeight: 700, fontSize: '17px', color: 'var(--b1n0-text-1)', marginBottom: '8px' }}>
-            {tab === 'active' ? 'Sin posiciones activas' : 'Sin eventos resueltos'}
-          </p>
-          <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)', lineHeight: 1.5, marginBottom: '20px' }}>
-            {tab === 'active'
-              ? 'Cuando participás en un evento, tu posición aparece aquí.'
-              : 'Los eventos que se cierren y resuelvan mostrarán tus resultados.'}
-          </p>
-          {tab === 'active' && (
-            <button
-              onClick={() => navigate('/inicio')}
-              style={{ padding: '11px 24px', borderRadius: 'var(--radius-lg)', border: 'none', background: 'var(--b1n0-text-1)', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '13px', color: 'var(--b1n0-bg)' }}
-            >
-              Explorar eventos →
-            </button>
-          )}
-        </div>
+        tab === 'active' ? (
+          <EmptyState
+            title="Sin posiciones activas"
+            subtitle="Hacé tu primer llamado y mirá cómo se mueve el precio en tiempo real."
+            action={{ label: 'Ver eventos', onClick: () => navigate('/inicio') }}
+          />
+        ) : (
+          <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '48px 24px', textAlign: 'center' }}>
+            <p style={{ fontFamily: D, fontWeight: 700, fontSize: '17px', color: 'var(--b1n0-text-1)', marginBottom: '8px' }}>
+              Sin eventos resueltos
+            </p>
+            <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)', lineHeight: 1.5, marginBottom: '20px' }}>
+              Los eventos que se cierren y resuelvan mostrarán tus resultados.
+            </p>
+          </div>
+        )
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           {sellError && (
@@ -1384,19 +1384,11 @@ export function Portafolio() {
           )}
 
           {lpPositions.length === 0 ? (
-            lpAvailable.length === 0 ? (
-              <div style={{ padding: '64px 16px', textAlign: 'center' }}>
-                <p style={{ fontFamily: F, fontSize: '14px', color: 'var(--b1n0-muted)', lineHeight: 1.5, maxWidth: 320, margin: '0 auto' }}>
-                  Todavía no has aportado capital LP, y no hay eventos abiertos para LP en este momento.
-                </p>
-              </div>
-            ) : (
-              <div style={{ padding: '32px 16px', textAlign: 'center' }}>
-                <p style={{ fontFamily: F, fontSize: '14px', color: 'var(--b1n0-muted)', lineHeight: 1.5, maxWidth: 320, margin: '0 auto' }}>
-                  Aportá capital LP a alguno de los eventos arriba y empezá a ganar fees.
-                </p>
-              </div>
-            )
+            <EmptyState
+              title="No estás respaldando ningún evento"
+              subtitle="Como LP, ganás comisiones cada vez que alguien hace un llamado. Aprendé cómo funciona."
+              action={{ label: 'Aprender sobre LP', onClick: () => navigate('/documentacion') }}
+            />
           ) : (
           <>
 
@@ -1773,6 +1765,7 @@ export function Portafolio() {
           )}
         </div>
       )}
+      <Footer />
     </div>
   )
 }

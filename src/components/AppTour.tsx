@@ -47,8 +47,16 @@ export function AppTour() {
   const step = TUTORIAL_STEPS[stepIndex]
   const isLast = stepIndex === TUTORIAL_STEPS.length - 1
 
+  // Both "finish" and "skip" mark the tour as seen so it doesn't
+  // auto-re-open. Manually clicking the ? icon later still works
+  // because that path bypasses the flag check entirely.
+  function markSeen() {
+    try { localStorage.setItem('b1n0-has-seen-tour-v1', '1') } catch { /* noop */ }
+  }
+
   function next() {
     if (isLast) {
+      markSeen()
       stopTour()
       return
     }
@@ -56,6 +64,7 @@ export function AppTour() {
   }
 
   function close() {
+    markSeen()
     stopTour()
   }
 

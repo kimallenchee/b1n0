@@ -21,6 +21,7 @@ import type { Icon } from '@phosphor-icons/react'
 import { useNotifications } from '../../context/NotificationContext'
 import type { Notification } from '../../context/NotificationContext'
 import { useEffect, useState } from 'react'
+import { EmptyState } from '../EmptyState'
 
 const F = 'var(--font-body)'
 
@@ -284,15 +285,10 @@ export function NotificationDrawer({ onClose }: { onClose: () => void }) {
         {/* List */}
         <div style={{ flex: 1, padding: '8px 0' }}>
           {notifications.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '60px 24px' }}>
-              <div style={{ fontSize: '40px', marginBottom: '12px', opacity: 0.4 }}>🔔</div>
-              <p style={{ fontFamily: F, fontSize: '15px', fontWeight: 600, color: 'var(--b1n0-text-2)', marginBottom: '6px' }}>
-                Todo al día
-              </p>
-              <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)', lineHeight: 1.5 }}>
-                No tenés notificaciones nuevas. Cuando alguien interactúe con tus posiciones o eventos, aparecerán acá.
-              </p>
-            </div>
+            <EmptyState
+              title="Bandeja vacía"
+              subtitle="Las notificaciones de tus llamados, amigos y cobros aparecen acá."
+            />
           ) : (
             notifications.map(n => (
               <NotifRow key={n.id} n={n} onTap={() => handleTap(n)} onDismiss={() => dismissOne(n.id)} />

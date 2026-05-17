@@ -24,6 +24,7 @@ import { ThemeProvider } from './context/ThemeContext'
 import { InstallPrompt } from './components/InstallPrompt'
 import { TourProvider } from './context/TourContext'
 import { AppTour } from './components/AppTour'
+import { FirstTimeTourTrigger } from './components/FirstTimeTourTrigger'
 
 // ── Lazy-loaded routes (code splitting) ──────────────────────
 // These are heavy pages that most users don't visit on every session.
@@ -289,6 +290,7 @@ export default function App() {
                               <AuthModal />
                               <InstallPrompt />
                               <AppTour />
+                              <FirstTimeTourTrigger />
                             </TourProvider>
                           </AuthModalProvider>
                         </NotificationProvider>

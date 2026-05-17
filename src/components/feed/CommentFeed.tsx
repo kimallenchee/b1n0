@@ -4,6 +4,7 @@ import type { Comment } from '../../types'
 import { useComments } from '../../hooks/useComments'
 import { useAuth } from '../../context/AuthContext'
 import { SkeletonBlock } from '../Skeleton'
+import { EmptyState } from '../EmptyState'
 
 interface CommentFeedProps {
   comments: Comment[]
@@ -367,9 +368,10 @@ export function CommentFeed({ comments: initialComments, eventId }: CommentFeedP
         </div>
       )}
       {!loading && list.length === 0 && (
-        <p style={{ fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)', textAlign: 'center', padding: '20px 0' }}>
-          Sé el primero en comentar.
-        </p>
+        <EmptyState
+          title="Sé el primero en opinar"
+          subtitle="Comentá lo que pensás. La gente que más sabe es la que más opina."
+        />
       )}
 
       {/* Comment list */}

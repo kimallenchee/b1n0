@@ -1,6 +1,9 @@
+import { useNavigate } from 'react-router-dom'
 import type { UserPrediction } from '../types'
 import { useVotes } from '../context/VoteContext'
 import { usePageMeta } from '../hooks/usePageMeta'
+import { Footer } from '../components/layout/Footer'
+import { EmptyState } from '../components/EmptyState'
 
 const F = 'var(--font-body)'
 const D = 'var(--font-display)'
@@ -65,6 +68,7 @@ export function MisVotos() {
     title: 'Mis llamados · b1n0',
     description: 'Tus participaciones activas en b1n0 — todo lo que estás siguiendo en un solo lugar.',
   })
+  const navigate = useNavigate()
   const { predictions } = useVotes()
   // Debug log removed
   const allPredictions = predictions
@@ -92,12 +96,13 @@ export function MisVotos() {
       )}
 
       {allPredictions.length === 0 && (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '60%', textAlign: 'center' }}>
-          <p style={{ fontFamily: D, fontSize: '15px', color: 'var(--b1n0-muted)', fontStyle: 'italic' }}>
-            Todavía no hiciste ningún voto. ¡Empezá ya!
-          </p>
-        </div>
+        <EmptyState
+          title="Aún no hiciste tu primer llamado"
+          subtitle="Tu primer llamado te lleva a Nivel 2 (hasta $250 por evento) cuando termines la verificación."
+          action={{ label: 'Ver eventos', onClick: () => navigate('/inicio') }}
+        />
       )}
+      <Footer />
     </div>
   )
 }
