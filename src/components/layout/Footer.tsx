@@ -1,25 +1,21 @@
 /**
- * Footer — shared brand footer mounted at the bottom of the user-
- * facing pages (Inicio, Portafolio, Historial, Documentación,
- * Perfil, Mis Llamados). NOT mounted on admin, auth, or event-detail
- * (those are content-dense / focused funnels).
+ * Footer — minimal centered footer mounted at the bottom of the
+ * user-facing pages (Inicio, Portafolio, Historial, Documentación,
+ * Perfil, Mis Llamados). NOT mounted on admin, auth, or event-detail.
  *
- * Visual philosophy: complement the header, not compete with it.
+ * Visual philosophy: complement the header, don't compete with it.
+ *   - Centered layout — single column, no empty-column problem
+ *   - Inline link row (· separated) — fits the 5-link footprint better
+ *     than a 3-column treatment with one orphan column
  *   - Transparent background — inherits page bg, no contrast plate
- *   - Hairline border-top only — same weight as the rest of the chrome
- *   - Vertical breathing room — readers should reach this naturally
- *     after the page content, not bump into it
- *
- * Layout:
- *   - Mobile: stacked single column
- *   - Desktop (≥640px): 3 columns (Producto / Empresa / Legal),
- *     auto-fit so it collapses gracefully on tablets
+ *   - Hairline border-top + a single inner divider — quiet chrome
+ *   - Tight vertical spacing — the user is here to leave the page, not
+ *     read a 300px tall plate
  *
  * Why inside each page (not mounted at App level):
  *   The app shell uses `overflow: hidden` on <main> with per-page
- *   scroll containers. A global footer would either be position:fixed
- *   (bad UX) or never visible. Mounting at the end of each page's
- *   scroll content means the footer scrolls with the content.
+ *   scroll containers. Mounting at the end of each page's scroll
+ *   content means the footer scrolls with the content.
  */
 
 import { Link, useNavigate, useLocation } from 'react-router-dom'
@@ -28,9 +24,8 @@ import { useTheme } from '../../context/ThemeContext'
 
 const F_BODY = 'var(--font-body)'
 
-// Logo variant per theme — same source-of-truth as TopBar. White
-// wordmark on dark surfaces, full-color on light, so the footer
-// matches the chrome users already see at the top of the app.
+// Theme-aware logo — same source as TopBar, so chrome matches
+// top-to-bottom (white wordmark on dark, fullcolor on light).
 function logoSrcFor(theme: 'dark' | 'light'): string {
   return theme === 'light' ? '/brand/b1n0-logo-fullcolor.svg' : '/brand/b1n0-logo-white.svg'
 }
@@ -49,28 +44,27 @@ export function Footer() {
   return (
     <footer
       style={{
-        marginTop: 'var(--space-9)',
-        paddingTop: 'var(--space-8)',
-        paddingBottom: 'var(--space-7)',
+        marginTop: 'var(--space-8)',
+        paddingTop: 'var(--space-7)',
+        paddingBottom: 'var(--space-6)',
         paddingLeft: 'var(--space-6)',
         paddingRight: 'var(--space-6)',
         borderTop: '1px solid var(--b1n0-border)',
-        // Transparent — inherits page bg so the footer reads as a
-        // natural extension of the content rather than a heavy plate.
         background: 'transparent',
         fontFamily: F_BODY,
+        textAlign: 'center',
       }}
     >
-      {/* ── Brand row: real wordmark asset + descriptor ───────── */}
-      <div style={{ maxWidth: 960, margin: '0 auto', marginBottom: 'var(--space-7)' }}>
+      <div style={{ maxWidth: 640, margin: '0 auto' }}>
+        {/* ── Brand row ─────────────────────────────────────────── */}
         <img
           src={logoSrcFor(resolved)}
           alt="b1n0"
           style={{
-            height: 26,
+            height: 22,
             width: 'auto',
             display: 'block',
-            marginBottom: 8,
+            margin: '0 auto 8px',
           }}
         />
         <p
@@ -78,75 +72,97 @@ export function Footer() {
             fontSize: 12,
             color: 'var(--b1n0-muted)',
             margin: 0,
+            marginBottom: 'var(--space-6)',
             lineHeight: 1.5,
           }}
         >
           Mercado de opciones sobre eventos.
         </p>
-      </div>
 
-      {/* ── Link columns ───────────────────────────────────────── */}
-      <div
-        style={{
-          maxWidth: 960,
-          margin: '0 auto',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
-          gap: 'var(--space-6)',
-          marginBottom: 'var(--space-7)',
-        }}
-      >
-        <FooterColumn title="Producto">
+        {/* ── Inline link row — flat, no columns ───────────────── */}
+        <nav
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            gap: '14px',
+            rowGap: '8px',
+            marginBottom: 'var(--space-6)',
+          }}
+        >
           <FooterLinkButton onClick={openTour}>Cómo jugar</FooterLinkButton>
+          <Dot />
           <FooterLink to="/inicio">Eventos</FooterLink>
+          <Dot />
           <FooterLink to="/documentacion">Documentación</FooterLink>
-        </FooterColumn>
-
-        <FooterColumn title="Empresa">
+          <Dot />
           <FooterAnchor href="mailto:soporte@b1n0.com">Soporte</FooterAnchor>
-        </FooterColumn>
-
-        <FooterColumn title="Legal">
+          <Dot />
           <FooterLink to="/terminos">Términos</FooterLink>
+          <Dot />
           <FooterLink to="/privacidad">Privacidad</FooterLink>
-        </FooterColumn>
-      </div>
+        </nav>
 
-      {/* ── Disclaimer ─────────────────────────────────────────── */}
-      <div
-        style={{
-          maxWidth: 960,
-          margin: '0 auto',
-          marginBottom: 'var(--space-5)',
-          fontSize: 11,
-          color: 'var(--b1n0-muted)',
-          lineHeight: 1.6,
-        }}
-      >
-        Los llamados implican riesgo de pérdida del capital. Solo para mayores
-        de 18 años. Los participantes son responsables de cumplir las leyes
-        aplicables en su jurisdicción.
-      </div>
-
-      {/* ── Corporate + regulatory ─────────────────────────────── */}
-      <div
-        style={{
-          maxWidth: 960,
-          margin: '0 auto',
-          paddingTop: 'var(--space-5)',
-          borderTop: '1px solid var(--b1n0-border)',
-          fontSize: 11,
-          color: 'var(--b1n0-muted)',
-          lineHeight: 1.7,
-        }}
-      >
-        <p style={{ margin: 0 }}>
-          Operado por <strong style={{ color: 'var(--b1n0-text-1)', fontWeight: 600 }}>Tres33 SAS de CV</strong> · Registrado en El Salvador
+        {/* ── Disclaimer ───────────────────────────────────────── */}
+        <p
+          style={{
+            fontSize: 11,
+            color: 'var(--b1n0-muted)',
+            margin: 0,
+            marginBottom: 'var(--space-5)',
+            lineHeight: 1.6,
+            maxWidth: 560,
+            marginLeft: 'auto',
+            marginRight: 'auto',
+          }}
+        >
+          Los llamados implican riesgo de pérdida del capital. Solo para mayores
+          de 18 años. Los participantes son responsables de cumplir las leyes
+          aplicables en su jurisdicción.
         </p>
-        <p style={{ margin: 0, marginTop: 2, opacity: 0.85 }}>
+
+        {/* ── Hairline divider before corporate block ──────────── */}
+        <div
+          style={{
+            height: 1,
+            background: 'var(--b1n0-border)',
+            margin: '0 auto var(--space-5)',
+            maxWidth: 200,
+            opacity: 0.7,
+          }}
+        />
+
+        {/* ── Corporate + regulatory + copyright ───────────────── */}
+        <p
+          style={{
+            fontSize: 11,
+            color: 'var(--b1n0-text-1)',
+            margin: 0,
+            marginBottom: 4,
+            fontWeight: 500,
+          }}
+        >
+          Tres33 SAS de CV · Registrado en El Salvador
+        </p>
+        <p
+          style={{
+            fontSize: 11,
+            color: 'var(--b1n0-muted)',
+            margin: 0,
+            marginBottom: 'var(--space-4)',
+            opacity: 0.85,
+          }}
+        >
           Tokenización de contratos y activos digitales bajo el marco regulatorio CNAD de El Salvador
         </p>
-        <p style={{ margin: 0, marginTop: 'var(--space-3)' }}>
+        <p
+          style={{
+            fontSize: 11,
+            color: 'var(--b1n0-muted)',
+            margin: 0,
+            opacity: 0.7,
+          }}
+        >
           © {new Date().getFullYear()} b1n0 · una marca de Tres33 SAS de CV · Todos los derechos reservados
         </p>
       </div>
@@ -154,31 +170,24 @@ export function Footer() {
   )
 }
 
-// ── Column header + children stack ─────────────────────────────
-function FooterColumn({ title, children }: { title: string; children: React.ReactNode }) {
+// ── Inline dot separator between links ────────────────────────
+function Dot() {
   return (
-    <div>
-      <p
-        style={{
-          fontSize: 10,
-          fontWeight: 700,
-          letterSpacing: '1px',
-          textTransform: 'uppercase',
-          color: 'var(--b1n0-muted)',
-          margin: 0,
-          marginBottom: 'var(--space-3)',
-        }}
-      >
-        {title}
-      </p>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
-        {children}
-      </div>
-    </div>
+    <span
+      aria-hidden
+      style={{
+        color: 'var(--b1n0-muted)',
+        fontSize: 13,
+        opacity: 0.4,
+        userSelect: 'none',
+      }}
+    >
+      ·
+    </span>
   )
 }
 
-// ── Internal route link (react-router) ────────────────────────
+// ── Internal route link ──────────────────────────────────────
 function FooterLink({ to, children }: { to: string; children: React.ReactNode }) {
   return (
     <Link
@@ -187,6 +196,7 @@ function FooterLink({ to, children }: { to: string; children: React.ReactNode })
         fontSize: 13,
         color: 'var(--b1n0-text-1)',
         textDecoration: 'none',
+        whiteSpace: 'nowrap',
       }}
       onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--b1n0-si)' }}
       onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--b1n0-text-1)' }}
@@ -196,7 +206,7 @@ function FooterLink({ to, children }: { to: string; children: React.ReactNode })
   )
 }
 
-// ── External anchor (mailto, http) ────────────────────────────
+// ── External anchor (mailto, http) ───────────────────────────
 function FooterAnchor({ href, children }: { href: string; children: React.ReactNode }) {
   return (
     <a
@@ -205,6 +215,7 @@ function FooterAnchor({ href, children }: { href: string; children: React.ReactN
         fontSize: 13,
         color: 'var(--b1n0-text-1)',
         textDecoration: 'none',
+        whiteSpace: 'nowrap',
       }}
       onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--b1n0-si)' }}
       onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--b1n0-text-1)' }}
@@ -214,7 +225,7 @@ function FooterAnchor({ href, children }: { href: string; children: React.ReactN
   )
 }
 
-// ── Inline action button styled like a link (for "Cómo jugar"). ─
+// ── Action button styled as a link (for Cómo jugar) ──────────
 function FooterLinkButton({
   onClick,
   children,
@@ -229,11 +240,11 @@ function FooterLinkButton({
         background: 'transparent',
         border: 'none',
         padding: 0,
-        textAlign: 'left',
         fontFamily: F_BODY,
         fontSize: 13,
         color: 'var(--b1n0-text-1)',
         cursor: 'pointer',
+        whiteSpace: 'nowrap',
       }}
       onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--b1n0-si)' }}
       onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--b1n0-text-1)' }}
