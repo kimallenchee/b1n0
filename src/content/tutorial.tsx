@@ -22,6 +22,7 @@
 // not by import, so they need to live together.
 
 import type { ReactNode } from 'react'
+import { useTheme } from '../context/ThemeContext'
 
 export interface TutorialStep {
   id: string
@@ -129,21 +130,93 @@ function Step3Salida() {
   )
 }
 
-// ── Step 4 illustration: final screen — brand mark + tagline.
+// ── Step 4 illustration: final screen — real b1n0 wordmark.
 // ────────────────────────────────────────────────────────────────────
-// Centered wordmark-ish glyph + the platform's voice in one line.
-// No CTA-shaped element in the illustration; the Listo button below
-// is the action.
+// Uses the actual brand asset (/brand/b1n0-logo-*.svg) instead of a
+// drawn glyph. The wordmark sits inside concentric rings that subtly
+// pulse outward — echoes the live-dot animation on EventCards so the
+// motion vocabulary stays consistent. Theme-aware: white wordmark on
+// dark mode, fullcolor on light.
 function Step4Listo() {
+  const { resolved } = useTheme()
+  const logoSrc =
+    resolved === 'light' ? '/brand/b1n0-logo-fullcolor.svg' : '/brand/b1n0-logo-white.svg'
+
   return (
-    <svg viewBox="0 0 320 200" width="320" height="200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Listo para hacer tu primer llamado">
-      {/* Big circular brand mark */}
-      <circle cx="160" cy="100" r="56" fill="var(--b1n0-si)" />
-      <text x="160" y="116" textAnchor="middle" fontFamily="var(--font-display)" fontSize="38" fontWeight="800" fill="var(--b1n0-on-accent)" letterSpacing="-1">b1n0</text>
-      {/* Subtle ring */}
-      <circle cx="160" cy="100" r="72" fill="none" stroke="var(--b1n0-si)" strokeWidth="1.5" opacity="0.3" />
-      <circle cx="160" cy="100" r="86" fill="none" stroke="var(--b1n0-si)" strokeWidth="1" opacity="0.15" />
-    </svg>
+    <div
+      style={{
+        position: 'relative',
+        width: 200,
+        height: 200,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+      aria-label="Listo para hacer tu primer llamado"
+      role="img"
+    >
+      {/* Concentric pulse rings — three sizes, staggered animation.
+          Same easing/timing pattern as the LiveDot on event cards
+          so the motion language stays consistent across the product. */}
+      <style>{`
+        @keyframes b1n0LogoPulse {
+          0%, 100% { transform: scale(1);    opacity: 0.25; }
+          50%      { transform: scale(1.08); opacity: 0.45; }
+        }
+      `}</style>
+
+      <span
+        style={{
+          position: 'absolute',
+          width: 200,
+          height: 200,
+          borderRadius: '50%',
+          border: '1px solid var(--b1n0-si)',
+          opacity: 0.12,
+          animation: 'b1n0LogoPulse 3.2s ease-in-out infinite',
+          animationDelay: '0.8s',
+        }}
+      />
+      <span
+        style={{
+          position: 'absolute',
+          width: 160,
+          height: 160,
+          borderRadius: '50%',
+          border: '1.5px solid var(--b1n0-si)',
+          opacity: 0.22,
+          animation: 'b1n0LogoPulse 3.2s ease-in-out infinite',
+          animationDelay: '0.4s',
+        }}
+      />
+      <span
+        style={{
+          position: 'absolute',
+          width: 124,
+          height: 124,
+          borderRadius: '50%',
+          background: 'var(--b1n0-si)',
+          opacity: 0.18,
+          filter: 'blur(8px)',
+        }}
+      />
+
+      {/* The actual brand asset, sized so the wordmark feels weighty
+          but doesn't fill the rings — leaves breathing room. */}
+      <img
+        src={logoSrc}
+        alt="b1n0"
+        style={{
+          height: 56,
+          width: 'auto',
+          position: 'relative',
+          zIndex: 1,
+          // Subtle drop shadow tied to brand-green for a glow effect
+          // that reads in both themes.
+          filter: 'drop-shadow(0 0 24px rgba(20, 184, 166, 0.35))',
+        }}
+      />
+    </div>
   )
 }
 
