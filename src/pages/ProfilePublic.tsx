@@ -93,12 +93,16 @@ export function ProfilePublic() {
     setLoading(true)
     setProfile(null)
     ;(async () => {
-      // 1. Fetch the profile row (basic identity + privacy)
-      const { data: row } = await supabase
-        .from('profiles')
-        .select('id, name, username, tier, avatar_url, created_at, privacy_prefs')
-        .ilike('username', username)
-        .maybeSingle()
+      // 1. Fetch the profile row via SECURITY DEFINER RPC.
+      //    Direct SELECT on profiles is RLS-blocked for anon users,
+      //    which used to break /u/:username for logged-out viewers
+      //    (the worst possible discovery experience — shared links
+      //    showed "Usuario no encontrado"). The RPC exposes ONLY
+      //    public-safe columns and is granted to anon + authenticated.
+      const { data: rpcData } = await supabase.rpc('get_public_profile', {
+        p_username: username,
+      })
+      const row = Array.isArray(rpcData) ? rpcData[0] : rpcData
 
       if (cancelled) return
       if (!row) { setProfile(null); setLoading(false); return }
