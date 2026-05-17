@@ -56,17 +56,33 @@ export function Footer() {
       }}
     >
       <div style={{ maxWidth: 640, margin: '0 auto' }}>
-        {/* ── Brand row ─────────────────────────────────────────── */}
-        <img
-          src={logoSrcFor(resolved)}
-          alt="b1n0"
+        {/* ── Brand row — logo is clickable, returns to /inicio ─ */}
+        <Link
+          to="/inicio"
+          aria-label="b1n0 · Volver a inicio"
           style={{
-            height: 22,
-            width: 'auto',
-            display: 'block',
-            margin: '0 auto 8px',
+            display: 'inline-block',
+            marginBottom: 8,
+            // Inherit color for any current/foreground bits inside the
+            // logo asset; transition tied to text-1 ↔ si on hover.
+            color: 'inherit',
+            textDecoration: 'none',
           }}
-        />
+        >
+          <img
+            src={logoSrcFor(resolved)}
+            alt="b1n0"
+            style={{
+              height: 22,
+              width: 'auto',
+              display: 'block',
+              margin: '0 auto',
+              transition: 'opacity var(--duration-fast) var(--ease-out)',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.75' }}
+            onMouseLeave={(e) => { e.currentTarget.style.opacity = '1' }}
+          />
+        </Link>
         <p
           style={{
             fontSize: 12,
@@ -103,25 +119,33 @@ export function Footer() {
           <FooterLink to="/privacidad">Privacidad</FooterLink>
         </nav>
 
-        {/* ── Disclaimer ───────────────────────────────────────── */}
+        {/* ── Combined disclaimer + corporate paragraph ─────────
+            Kim's call: collapse risk warning + Tres33 registration +
+            CNAD framework into a single paragraph so it reads as one
+            unified legal block, not three stacked plates. */}
         <p
           style={{
             fontSize: 11,
             color: 'var(--b1n0-muted)',
             margin: 0,
             marginBottom: 'var(--space-5)',
-            lineHeight: 1.6,
-            maxWidth: 560,
+            lineHeight: 1.65,
+            maxWidth: 580,
             marginLeft: 'auto',
             marginRight: 'auto',
           }}
         >
           Los llamados implican riesgo de pérdida del capital. Solo para mayores
           de 18 años. Los participantes son responsables de cumplir las leyes
-          aplicables en su jurisdicción.
+          aplicables en su jurisdicción.{' '}
+          <span style={{ color: 'var(--b1n0-text-1)', fontWeight: 500 }}>
+            Tres33 SAS de CV
+          </span>{' '}
+          está registrado en El Salvador. Tokenización de contratos y activos
+          digitales bajo el marco regulatorio CNAD de El Salvador.
         </p>
 
-        {/* ── Hairline divider before corporate block ──────────── */}
+        {/* ── Hairline divider before copyright ────────────────── */}
         <div
           style={{
             height: 1,
@@ -132,29 +156,7 @@ export function Footer() {
           }}
         />
 
-        {/* ── Corporate + regulatory + copyright ───────────────── */}
-        <p
-          style={{
-            fontSize: 11,
-            color: 'var(--b1n0-text-1)',
-            margin: 0,
-            marginBottom: 4,
-            fontWeight: 500,
-          }}
-        >
-          Tres33 SAS de CV · Registrado en El Salvador
-        </p>
-        <p
-          style={{
-            fontSize: 11,
-            color: 'var(--b1n0-muted)',
-            margin: 0,
-            marginBottom: 'var(--space-4)',
-            opacity: 0.85,
-          }}
-        >
-          Tokenización de contratos y activos digitales bajo el marco regulatorio CNAD de El Salvador
-        </p>
+        {/* ── Copyright row — standalone close ────────────────── */}
         <p
           style={{
             fontSize: 11,
