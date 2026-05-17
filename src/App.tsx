@@ -25,6 +25,7 @@ import { InstallPrompt } from './components/InstallPrompt'
 import { TourProvider } from './context/TourContext'
 import { AppTour } from './components/AppTour'
 import { FirstTimeTourTrigger } from './components/FirstTimeTourTrigger'
+import { ConfirmModalRoot } from './components/ConfirmModal'
 
 // ── Lazy-loaded routes (code splitting) ──────────────────────
 // These are heavy pages that most users don't visit on every session.
@@ -36,6 +37,7 @@ const EventDetailPage = lazy(() => import('./pages/EventDetailPage').then(m => (
 const TermsPage = lazy(() => import('./pages/Legal').then(m => ({ default: m.TermsPage })))
 const PrivacyPage = lazy(() => import('./pages/Legal').then(m => ({ default: m.PrivacyPage })))
 const Documentacion = lazy(() => import('./pages/Documentacion').then(m => ({ default: m.Documentacion })))
+const ProfilePublic = lazy(() => import('./pages/ProfilePublic').then(m => ({ default: m.ProfilePublic })))
 
 function LazyFallback() {
   return (
@@ -60,6 +62,7 @@ const routes = (
     <Route path="/terminos" element={<Suspense fallback={<LazyFallback />}><TermsPage /></Suspense>} />
     <Route path="/privacidad" element={<Suspense fallback={<LazyFallback />}><PrivacyPage /></Suspense>} />
     <Route path="/documentacion" element={<Suspense fallback={<LazyFallback />}><Documentacion /></Suspense>} />
+    <Route path="/u/:username" element={<Suspense fallback={<LazyFallback />}><ProfilePublic /></Suspense>} />
   </Routes>
 )
 
@@ -291,6 +294,7 @@ export default function App() {
                               <InstallPrompt />
                               <AppTour />
                               <FirstTimeTourTrigger />
+                              <ConfirmModalRoot />
                             </TourProvider>
                           </AuthModalProvider>
                         </NotificationProvider>

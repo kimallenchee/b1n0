@@ -27,6 +27,14 @@ export interface Profile {
   mustChangePassword: boolean
   avatarUrl: string | null
   /**
+   * Per-user privacy toggles for the public profile page. Missing
+   * keys default to `true` (public). Lives in profiles.privacy_prefs
+   * as JSONB so adding a new toggle doesn't require a migration.
+   * See ProfilePublic.tsx for the consumer + the Privacidad section
+   * in Perfil.tsx for the editor.
+   */
+  privacyPrefs: Record<string, boolean>
+  /**
    * True when the user was auto-promoted to Tier 3 by hitting the
    * cumulative deposit threshold but hasn't yet completed the Didit
    * T3 verification (which runs AML/PEP screening). Cleared by the
@@ -95,6 +103,7 @@ function rowToProfile(row: Record<string, unknown>): Profile {
     isAdmin: (row.is_admin as boolean) ?? false,
     mustChangePassword: (row.must_change_password as boolean) ?? false,
     avatarUrl: (row.avatar_url as string) ?? null,
+    privacyPrefs: (row.privacy_prefs as Record<string, boolean>) ?? {},
     needsAmlReview: (row.needs_aml_review as boolean) ?? false,
   }
 }

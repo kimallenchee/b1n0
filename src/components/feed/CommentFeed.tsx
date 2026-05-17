@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { ThumbsUp, ThumbsDown } from '@phosphor-icons/react'
 import type { Comment } from '../../types'
 import { useComments } from '../../hooks/useComments'
@@ -203,9 +204,20 @@ export function CommentFeed({ comments: initialComments, eventId }: CommentFeedP
       <div style={{ position: 'relative', display: 'inline-block', maxWidth: '100%' }}>
         <div style={{ background: 'var(--b1n0-surface)', borderRadius: '0 12px 12px 12px', padding: small ? '8px 12px' : '10px 14px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '3px', flexWrap: 'wrap' }}>
-            <span style={{ fontFamily: F, fontWeight: 700, fontSize: small ? '11px' : '12px', color: 'var(--b1n0-text-1)' }}>
-              {c.username === 'Tú' ? 'Tú' : `@${c.username}`}
-            </span>
+            {c.username === 'Tú' ? (
+              <span style={{ fontFamily: F, fontWeight: 700, fontSize: small ? '11px' : '12px', color: 'var(--b1n0-text-1)' }}>
+                Tú
+              </span>
+            ) : (
+              <Link
+                to={`/u/${c.username}`}
+                style={{ fontFamily: F, fontWeight: 700, fontSize: small ? '11px' : '12px', color: 'var(--b1n0-text-1)', textDecoration: 'none', transition: 'color var(--duration-fast) var(--ease-out)' }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--b1n0-si)')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--b1n0-text-1)')}
+              >
+                @{c.username}
+              </Link>
+            )}
             <span style={{ width: 4, height: 4, borderRadius: '50%', background: tierColors[c.tier], display: 'inline-block', flexShrink: 0 }} />
             {c.side && (
               <span style={{ padding: '1px 6px', borderRadius: 'var(--radius-lg)', fontFamily: F, fontWeight: 700, fontSize: '10px', background: c.side === 'yes' ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-border)', color: c.side === 'yes' ? 'var(--b1n0-surface)' : 'var(--b1n0-muted)' }}>

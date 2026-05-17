@@ -10,10 +10,13 @@ import {
   Target as TargetIcon,
   ArrowRight,
   ShieldCheck,
+  Eye,
   Users as UsersIcon,
   ShareNetwork,
   TrendUp,           // alt name for ChartLineUp
 } from '@phosphor-icons/react'
+import { Link } from 'react-router-dom'
+import { useConfirm } from '../components/ConfirmModal'
 import { useNavigate } from 'react-router-dom'
 import { AnimatedNumber } from '../components/AnimatedNumber'
 import { mockUser } from '../data/mockEvents'
@@ -114,7 +117,18 @@ export function Perfil() {
 
   const [cuentaOpen, setCuentaOpen] = useState(false)
   const [aparienciaOpen, setAparienciaOpen] = useState(false)
+  const [privacidadOpen, setPrivacidadOpen] = useState(false)
   const [soporteOpen, setSoporteOpen] = useState(false)
+  const [privacyPrefs, setPrivacyPrefs] = useState<Record<string, boolean>>({
+    show_tier: true,
+    show_total_cobrado: true,
+    show_accuracy_rate: true,
+    show_total_predictions: true,
+    show_full_name: true,
+    show_join_date: true,
+    show_avatar: true,
+  })
+  const confirm = useConfirm()
   const { mode: themeMode, setMode: setThemeMode } = useTheme()
   const [notifPrefs, setNotifPrefs] = useState<Record<string, boolean>>({
     evento_resuelto: true,
@@ -144,6 +158,20 @@ export function Perfil() {
     const updated = { ...notifPrefs, [key]: !notifPrefs[key] }
     setNotifPrefs(updated)
     if (userId) supabase.from('profiles').update({ notification_prefs: updated }).eq('id', userId)
+  }
+
+  // Load privacy prefs from DB
+  useEffect(() => {
+    if (!userId) return
+    supabase.from('profiles').select('privacy_prefs').eq('id', userId).single().then(({ data }) => {
+      if (data?.privacy_prefs) setPrivacyPrefs(prev => ({ ...prev, ...(data.privacy_prefs as Record<string, boolean>) }))
+    })
+  }, [userId])
+
+  const togglePrivacy = (key: string) => {
+    const updated = { ...privacyPrefs, [key]: !privacyPrefs[key] }
+    setPrivacyPrefs(updated)
+    if (userId) supabase.from('profiles').update({ privacy_prefs: updated }).eq('id', userId)
   }
 
   const [avatarUploading, setAvatarUploading] = useState(false)
@@ -269,9 +297,37 @@ export function Perfil() {
     setFriendActionLoading(null)
   }
 
-  const rejectOrRemove = async (friendshipId: string) => {
-    setFriendActionLoading(friendshipId)
-    await supabase.from('friendships').delete().eq('id', friendshipId)
+  const rejectOrRemove = async (f: FriendRow) => {
+    // Decide messaging from row state. Accepted = remove a friend; pending
+    // received = reject incoming request; pending sent = cancel an outgoing
+    // request that hasn't been answered yet.
+    let opts: { title: string; body: string; confirmLabel?: string; danger?: boolean }
+    if (f.status === 'accepted') {
+      opts = {
+        title: 'Remover amigo',
+        body: '¿Estás seguro? Vas a tener que enviar una nueva solicitud para volver a conectarte.',
+        confirmLabel: 'Remover',
+        danger: true,
+      }
+    } else if (!f.isSender) {
+      opts = {
+        title: 'Rechazar solicitud',
+        body: '¿Rechazar esta solicitud de amistad?',
+        confirmLabel: 'Rechazar',
+        danger: true,
+      }
+    } else {
+      opts = {
+        title: 'Cancelar solicitud',
+        body: '¿Cancelar tu solicitud pendiente?',
+        confirmLabel: 'Cancelar solicitud',
+        danger: false,
+      }
+    }
+    const ok = await confirm(opts)
+    if (!ok) return
+    setFriendActionLoading(f.id)
+    await supabase.from('friendships').delete().eq('id', f.id)
     await loadFriendships()
     setFriendActionLoading(null)
   }
@@ -555,13 +611,18 @@ export function Perfil() {
                   const existing = getFriendshipFor(r.id)
                   return (
                     <div key={r.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 14px', borderBottom: '1px solid var(--b1n0-border)' }}>
-                      <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--b1n0-surface)', border: '1px solid var(--b1n0-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F, fontWeight: 600, fontSize: '11px', color: 'var(--b1n0-muted)', flexShrink: 0 }}>
-                        {r.name.charAt(0)}
-                      </div>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <p style={{ fontFamily: F, fontWeight: 500, fontSize: '13px', color: 'var(--b1n0-text-1)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.name}</p>
-                        <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>@{r.username}</p>
-                      </div>
+                      <Link
+                        to={`/u/${r.username}`}
+                        style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: 0, textDecoration: 'none', color: 'inherit' }}
+                      >
+                        <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--b1n0-surface)', border: '1px solid var(--b1n0-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F, fontWeight: 600, fontSize: '11px', color: 'var(--b1n0-muted)', flexShrink: 0 }}>
+                          {r.name.charAt(0)}
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <p style={{ fontFamily: F, fontWeight: 500, fontSize: '13px', color: 'var(--b1n0-text-1)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.name}</p>
+                          <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>@{r.username}</p>
+                        </div>
+                      </Link>
                       {existing ? (
                         <span style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', flexShrink: 0 }}>
                           {existing.status === 'accepted' ? 'Amigo' : 'Pendiente'}
@@ -660,15 +721,20 @@ export function Perfil() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
               {acceptedFriends.map((f) => (
                 <div key={f.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 0', borderBottom: '1px solid var(--b1n0-border)' }}>
-                  <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'var(--b1n0-surface)', border: '1px solid var(--b1n0-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-muted)', flexShrink: 0 }}>
-                    {f.name.charAt(0)}
-                  </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <span style={{ fontFamily: F, fontWeight: 500, fontSize: '14px', color: 'var(--b1n0-text-1)' }}>{f.name}</span>
-                    {f.username && <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>@{f.username}</p>}
-                  </div>
+                  <Link
+                    to={`/u/${f.username}`}
+                    style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: 0, textDecoration: 'none', color: 'inherit' }}
+                  >
+                    <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'var(--b1n0-surface)', border: '1px solid var(--b1n0-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-muted)', flexShrink: 0 }}>
+                      {f.name.charAt(0)}
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <span style={{ fontFamily: F, fontWeight: 500, fontSize: '14px', color: 'var(--b1n0-text-1)' }}>{f.name}</span>
+                      {f.username && <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>@{f.username}</p>}
+                    </div>
+                  </Link>
                   <button
-                    onClick={() => rejectOrRemove(f.id)}
+                    onClick={() => rejectOrRemove(f)}
                     disabled={friendActionLoading === f.id}
                     style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', color: 'var(--b1n0-muted)', padding: '4px 6px', opacity: friendActionLoading === f.id ? 0.5 : 1 }}
                   >
@@ -687,13 +753,18 @@ export function Perfil() {
                 <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>Recibidas</p>
                 {pendingReceived.map((f) => (
                   <div key={f.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 0', borderBottom: '1px solid var(--b1n0-border)' }}>
-                    <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'var(--b1n0-surface)', border: '1px solid var(--b1n0-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-muted)', flexShrink: 0 }}>
-                      {f.name.charAt(0)}
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <span style={{ fontFamily: F, fontWeight: 500, fontSize: '13px', color: 'var(--b1n0-text-1)' }}>{f.name}</span>
-                      {f.username && <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>@{f.username}</p>}
-                    </div>
+                    <Link
+                      to={`/u/${f.username}`}
+                      style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: 0, textDecoration: 'none', color: 'inherit' }}
+                    >
+                      <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'var(--b1n0-surface)', border: '1px solid var(--b1n0-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-muted)', flexShrink: 0 }}>
+                        {f.name.charAt(0)}
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <span style={{ fontFamily: F, fontWeight: 500, fontSize: '13px', color: 'var(--b1n0-text-1)' }}>{f.name}</span>
+                        {f.username && <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>@{f.username}</p>}
+                      </div>
+                    </Link>
                     <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
                       <button
                         onClick={() => acceptRequest(f.id)}
@@ -703,7 +774,7 @@ export function Perfil() {
                         Aceptar
                       </button>
                       <button
-                        onClick={() => rejectOrRemove(f.id)}
+                        onClick={() => rejectOrRemove(f)}
                         disabled={friendActionLoading === f.id}
                         style={{ padding: '6px 12px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--b1n0-border)', background: 'transparent', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-muted)', opacity: friendActionLoading === f.id ? 0.5 : 1 }}
                       >
@@ -721,15 +792,20 @@ export function Perfil() {
                 <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>Enviadas</p>
                 {pendingSent.map((f) => (
                   <div key={f.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 0', borderBottom: '1px solid var(--b1n0-border)' }}>
-                    <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'var(--b1n0-surface)', border: '1px solid var(--b1n0-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-muted)', flexShrink: 0 }}>
-                      {f.name.charAt(0)}
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <span style={{ fontFamily: F, fontWeight: 500, fontSize: '13px', color: 'var(--b1n0-text-1)' }}>{f.name}</span>
-                      {f.username && <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>@{f.username}</p>}
-                    </div>
+                    <Link
+                      to={`/u/${f.username}`}
+                      style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: 0, textDecoration: 'none', color: 'inherit' }}
+                    >
+                      <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'var(--b1n0-surface)', border: '1px solid var(--b1n0-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-muted)', flexShrink: 0 }}>
+                        {f.name.charAt(0)}
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <span style={{ fontFamily: F, fontWeight: 500, fontSize: '13px', color: 'var(--b1n0-text-1)' }}>{f.name}</span>
+                        {f.username && <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>@{f.username}</p>}
+                      </div>
+                    </Link>
                     <button
-                      onClick={() => rejectOrRemove(f.id)}
+                      onClick={() => rejectOrRemove(f)}
                       disabled={friendActionLoading === f.id}
                       style={{ padding: '6px 12px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--b1n0-border)', background: 'transparent', cursor: 'pointer', fontFamily: F, fontWeight: 600, fontSize: '12px', color: 'var(--b1n0-muted)', opacity: friendActionLoading === f.id ? 0.5 : 1 }}
                     >
@@ -856,6 +932,30 @@ export function Perfil() {
                   )
                 })}
               </div>
+            </div>
+          )}
+
+          {/* Privacidad — collapsible */}
+          <SettingsRow
+            icon={<Eye size={16} weight="regular" />}
+            label="Privacidad"
+            iconBg="rgba(99, 102, 241, 0.14)"
+            iconColor="#6366f1"
+            open={privacidadOpen}
+            onToggle={() => setPrivacidadOpen((o) => !o)}
+          />
+          {privacidadOpen && (
+            <div style={{ padding: '12px 0 4px' }}>
+              <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)', marginBottom: '10px', lineHeight: 1.4 }}>
+                Elegí qué información se muestra en tu perfil público.
+              </p>
+              <ToggleRow label="Mostrar nivel" description="Tu nivel KYC (N1/N2/N3)" value={privacyPrefs.show_tier} onChange={() => togglePrivacy('show_tier')} />
+              <ToggleRow label="Mostrar total de llamados" description="Cuántos llamados has hecho" value={privacyPrefs.show_total_predictions} onChange={() => togglePrivacy('show_total_predictions')} />
+              <ToggleRow label="Mostrar acierto" description="Porcentaje de llamados correctos" value={privacyPrefs.show_accuracy_rate} onChange={() => togglePrivacy('show_accuracy_rate')} />
+              <ToggleRow label="Mostrar total cobrado" description="Cuánto has cobrado en total" value={privacyPrefs.show_total_cobrado} onChange={() => togglePrivacy('show_total_cobrado')} />
+              <ToggleRow label="Mostrar nombre real" description="Si lo apagás, solo se ve tu @username" value={privacyPrefs.show_full_name} onChange={() => togglePrivacy('show_full_name')} />
+              <ToggleRow label="Mostrar foto de perfil" description="Si lo apagás, se muestra una inicial" value={privacyPrefs.show_avatar} onChange={() => togglePrivacy('show_avatar')} />
+              <ToggleRow label="Mostrar fecha de unión" description="Cuándo te uniste a b1n0" value={privacyPrefs.show_join_date} onChange={() => togglePrivacy('show_join_date')} />
             </div>
           )}
 

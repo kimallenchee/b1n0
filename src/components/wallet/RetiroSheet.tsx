@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { CreditCard, CurrencyDollar, Money } from '@phosphor-icons/react'
+import { CurrencyDollar, Money } from '@phosphor-icons/react'
 import { BottomSheet } from '../BottomSheet'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
+import { useConfirm } from '../ConfirmModal'
 
 const F = 'var(--font-body)'
 const D = 'var(--font-display)'
@@ -38,6 +39,7 @@ const quickAmounts = [50, 100, 250, 500]
 
 export function RetiroSheet({ open, onClose }: RetiroSheetProps) {
   const { refreshProfile } = useAuth()
+  const confirm = useConfirm()
   const [step, setStep] = useState<Step>('method')
   const [method, setMethod] = useState<Method>('transferencia')
   const [amount, setAmount] = useState('')
@@ -77,6 +79,17 @@ export function RetiroSheet({ open, onClose }: RetiroSheetProps) {
   const bankValid = bankName.trim().length > 1 && bankAccount.trim().length > 3 && bankHolder.trim().length > 1
 
   const handleWithdraw = async () => {
+    // Confirm-and-proceed gate — withdrawals are irreversible once the
+    // RPC fires, so we always prompt the user with the final amount
+    // before submitting. The confirm modal is centralized so the same
+    // visual treatment is used app-wide.
+    const ok = await confirm({
+      title: 'Confirmar retiro',
+      body: `Vas a retirar $${amountNum.toLocaleString(undefined, { minimumFractionDigits: 2 })}. Esta acción es irreversible.`,
+      confirmLabel: 'Retirar',
+      danger: false,
+    })
+    if (!ok) return
     setLoading(true)
     setError(null)
 
