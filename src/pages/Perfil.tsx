@@ -483,35 +483,27 @@ export function Perfil() {
           </div>
         </button>
 
-        {/* Tier progress CTA — only when not at max */}
-        {(user.tier ?? 1) < 3 && (
+        {/* Tier progress CTA — only N1 users get the manual Didit
+            verification path. N2 → N3 is automatic on cumulative
+            deposits hitting auto_tier3_deposit_threshold (config'd
+            in platform_config, default $1000). */}
+        {(user.tier ?? 1) === 1 && (
           <TierProgressCard
             currentTier={user.tier ?? 1}
             onUpgrade={() => setKycOpen(true)}
           />
         )}
-
-        {/* AML-review banner — shown only to users who were
-            auto-promoted to Tier 3 via deposit threshold and
-            still need to complete the Didit T3 verification.
-            Non-blocking (they can keep using the platform) but
-            visible so they know it's coming. */}
-        {profile?.needsAmlReview && (
-          <AmlReviewBanner onVerify={() => setKycOpen(true)} />
-        )}
       </div>
 
       <WalletSheet open={walletOpen} onClose={() => setWalletOpen(false)} />
       {/*
-        targetTier logic:
-          - AML-review banner users are already Tier 3 but need
-            to complete the Didit T3 flow → force targetTier=3
-          - Otherwise: next tier up (capped at 3)
+        targetTier is always 2 — only N1 users can open this sheet
+        (N2 → N3 is automatic on deposit volume, no manual flow).
       */}
       <KYCSheet
         open={kycOpen}
         onClose={() => setKycOpen(false)}
-        targetTier={profile?.needsAmlReview ? 3 : (Math.min(3, (user.tier ?? 1) + 1) as 2 | 3)}
+        targetTier={2}
       />
 
       {/* Portfolio CTA — now with content preview: active position count
@@ -1243,80 +1235,6 @@ function TierProgressCard({
   )
 }
 
-/**
- * AmlReviewBanner — passive callout for users who were auto-promoted
- * to Tier 3 by hitting the cumulative deposit threshold but still
- * need to complete the Didit T3 verification (which runs AML/PEP
- * screening). Non-blocking: the user can keep buying at the Tier 3
- * cap, but we surface this so they know a verification step is owed.
- * Tone is friendly, not legal — this is a heads-up, not a warning.
- */
-function AmlReviewBanner({ onVerify }: { onVerify: () => void }) {
-  return (
-    <div
-      style={{
-        marginTop: 'var(--space-3)',
-        background: 'var(--b1n0-card)',
-        border: '1px solid rgba(99, 102, 241, 0.3)',
-        borderLeft: '3px solid var(--b1n0-indigo)',
-        borderRadius: 'var(--radius-lg)',
-        padding: 'var(--space-5) var(--space-6)',
-      }}
-    >
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'flex-start',
-          justifyContent: 'space-between',
-          gap: 'var(--space-3)',
-        }}
-      >
-        <div style={{ flex: 1 }}>
-          <p
-            style={{
-              fontFamily: 'var(--font-display)',
-              fontWeight: 700,
-              fontSize: 'var(--text-base)',
-              color: 'var(--b1n0-text-1)',
-              letterSpacing: 'var(--tracking-tight)',
-            }}
-          >
-            Verificación pendiente
-          </p>
-          <p
-            style={{
-              fontFamily: 'var(--font-body)',
-              fontSize: 'var(--text-xs)',
-              color: 'var(--b1n0-muted)',
-              marginTop: '4px',
-              lineHeight: 1.5,
-            }}
-          >
-            Llegaste a Nivel 3 por tus depósitos. Falta una verificación
-            rápida de seguridad — toma 2 minutos.
-          </p>
-        </div>
-        <button
-          onClick={onVerify}
-          style={{
-            padding: 'var(--space-2) var(--space-4)',
-            background: 'var(--b1n0-indigo)',
-            color: '#fff',
-            border: 'none',
-            borderRadius: 'var(--radius-pill)',
-            fontFamily: 'var(--font-body)',
-            fontWeight: 600,
-            fontSize: 'var(--text-xs)',
-            cursor: 'pointer',
-            flexShrink: 0,
-          }}
-        >
-          Verificar
-        </button>
-      </div>
-    </div>
-  )
-}
 
 /**
  * SettingsRow — collapsible header for the Configuración card. Each
