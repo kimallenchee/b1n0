@@ -22,6 +22,8 @@ import { ProtectedRoute } from './components/ProtectedRoute'
 import { ToastProvider, useToast } from './components/Toast'
 import { ThemeProvider } from './context/ThemeContext'
 import { InstallPrompt } from './components/InstallPrompt'
+import { TourProvider } from './context/TourContext'
+import { AppTour } from './components/AppTour'
 
 // ── Lazy-loaded routes (code splitting) ──────────────────────
 // These are heavy pages that most users don't visit on every session.
@@ -282,9 +284,12 @@ export default function App() {
                       <VoteProvider>
                         <NotificationProvider>
                           <AuthModalProvider>
-                            <AppContent />
-                            <AuthModal />
-                            <InstallPrompt />
+                            <TourProvider>
+                              <AppContent />
+                              <AuthModal />
+                              <InstallPrompt />
+                              <AppTour />
+                            </TourProvider>
                           </AuthModalProvider>
                         </NotificationProvider>
                       </VoteProvider>

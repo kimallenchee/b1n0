@@ -1,10 +1,10 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Lightbulb } from '@phosphor-icons/react'
 import type { User } from '../../types'
-import { useToast } from '../Toast'
 import { useAuth } from '../../context/AuthContext'
 import { useAuthModal } from '../../context/AuthModalContext'
 import { useTheme } from '../../context/ThemeContext'
+import { useTour } from '../../context/TourContext'
 
 interface TopBarProps {
   user: User
@@ -22,10 +22,10 @@ function logoSrcFor(theme: 'dark' | 'light'): string {
 export function TopBar({ user }: TopBarProps) {
   const navigate = useNavigate()
   const location = useLocation()
-  const toast = useToast()
   const { session } = useAuth()
   const { openAuth } = useAuthModal()
   const { resolved } = useTheme()
+  const { startTour } = useTour()
   const isLoggedIn = !!session
 
   return (
@@ -81,7 +81,18 @@ export function TopBar({ user }: TopBarProps) {
                 read as the right side of the chrome: "tip + identity".
               */}
               <button
-                onClick={() => toast.showInfo('Pronto: tutorial interactivo. Te vamos a guiar paso a paso.')}
+                onClick={() => {
+                  // Cómo Jugar — fires the interactive tour. The tour
+                  // walks the user through the key UI elements on the
+                  // current page; it targets things via data-tour="..."
+                  // selectors that live on EventCard, SplitBar, etc.
+                  // If the user is not on /inicio, navigate there first
+                  // so the targeted elements are mounted.
+                  if (location.pathname !== '/inicio') navigate('/inicio')
+                  // Small delay lets the route render before the tour
+                  // tries to find its targets.
+                  setTimeout(() => startTour(), 300)
+                }}
                 aria-label="Cómo jugar"
                 title="Cómo jugar"
                 style={{

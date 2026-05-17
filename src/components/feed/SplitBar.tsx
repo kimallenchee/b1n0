@@ -47,6 +47,7 @@ export function SplitBar({
 
   return (
     <div
+      data-tour="split-bar"
       className={`tow-container${compact ? ' tow-compact' : ''}`}
       style={{ margin: compact ? '6px 0 2px' : '10px 0 4px' }}
     >
