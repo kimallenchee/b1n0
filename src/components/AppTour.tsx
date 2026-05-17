@@ -25,7 +25,15 @@ import { TUTORIAL_STEPS, TUTORIAL_LOCALE } from '../content/tutorial'
 
 // Lazy-load Joyride — it's ~30KB and only needed when the user
 // actually opens the tour. Keeps the initial bundle slim.
-const Joyride = lazy(() => import('react-joyride'))
+//
+// IMPORTANT: react-joyride v2 has NO default export — it exports
+// `Joyride` as a named export only. React.lazy requires a default
+// export, so we adapt with `.then(m => ({ default: m.Joyride }))`.
+// Without this shim, lazy() resolves to `undefined` and React
+// crashes trying to render it (silent: just shows ErrorBoundary).
+const Joyride = lazy(() =>
+  import('react-joyride').then((m) => ({ default: m.Joyride }))
+)
 
 export function AppTour() {
   const { running, stopTour } = useTour()
