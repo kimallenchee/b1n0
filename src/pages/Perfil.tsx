@@ -878,14 +878,9 @@ export function Perfil() {
 
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginTop: '24px' }}>
-          <a href="/terminos" style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', textDecoration: 'underline' }}>Términos</a>
-          <a href="/documentacion" style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', textDecoration: 'underline' }}>Documentación</a>
-          <a href="/privacidad" style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', textDecoration: 'underline' }}>Privacidad</a>
-        </div>
-        <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', textAlign: 'center', marginTop: '8px', marginBottom: '16px' }}>
-          b1n0 v0.1.0 · Hecho en Centroamérica
-        </p>
+        {/* Inline mini-footer removed — the shared <Footer/> below
+            handles legal links + branding consistently across all
+            pages. Keeping two footers caused double-stacking. */}
       </div>
       <Footer />
     </div>
