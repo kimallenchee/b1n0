@@ -127,6 +127,11 @@ export function Perfil() {
     show_full_name: true,
     show_join_date: true,
     show_avatar: true,
+    // Activity feed toggles. Both streams default ON; "amount on
+    // llamado" defaults OFF — users opt in to "show off" their stake.
+    show_activity_llamados: true,
+    show_activity_comments: true,
+    show_activity_llamado_amount: false,
   })
   const confirm = useConfirm()
   const { mode: themeMode, setMode: setThemeMode } = useTheme()
@@ -956,6 +961,11 @@ export function Perfil() {
               <ToggleRow label="Mostrar nombre real" description="Si lo apagás, solo se ve tu @username" value={privacyPrefs.show_full_name} onChange={() => togglePrivacy('show_full_name')} />
               <ToggleRow label="Mostrar foto de perfil" description="Si lo apagás, se muestra una inicial" value={privacyPrefs.show_avatar} onChange={() => togglePrivacy('show_avatar')} />
               <ToggleRow label="Mostrar fecha de unión" description="Cuándo te uniste a b1n0" value={privacyPrefs.show_join_date} onChange={() => togglePrivacy('show_join_date')} />
+
+              <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--b1n0-muted)', letterSpacing: '0.5px', textTransform: 'uppercase', marginTop: '14px', marginBottom: '4px' }}>Actividad</p>
+              <ToggleRow label="Mostrar mis llamados" description="Tus llamados recientes en tu perfil público" value={privacyPrefs.show_activity_llamados} onChange={() => togglePrivacy('show_activity_llamados')} />
+              <ToggleRow label="Mostrar mis comentarios" description="Tus comentarios recientes en tu perfil público" value={privacyPrefs.show_activity_comments} onChange={() => togglePrivacy('show_activity_comments')} />
+              <ToggleRow label="Mostrar monto en mis llamados" description="Si lo prendés, otros pueden ver cuánto entraste en cada llamado" value={privacyPrefs.show_activity_llamado_amount} onChange={() => togglePrivacy('show_activity_llamado_amount')} />
             </div>
           )}
 

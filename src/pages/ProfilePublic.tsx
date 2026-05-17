@@ -31,6 +31,7 @@ import { useAuth } from '../context/AuthContext'
 import { usePageMeta } from '../hooks/usePageMeta'
 import { Footer } from '../components/layout/Footer'
 import { EmptyState } from '../components/EmptyState'
+import { ActivityFeed } from '../components/ActivityFeed'
 
 const F = 'var(--font-body)'
 const D = 'var(--font-display)'
@@ -223,6 +224,11 @@ export function ProfilePublic() {
   const showFullName = isOwner || (pp.show_full_name ?? true)
   const showJoinDate = isOwner || (pp.show_join_date ?? true)
   const showAvatar = isOwner || (pp.show_avatar ?? true)
+  // Activity-feed gates. Both default to ON; the "show amount on llamado"
+  // toggle defaults to OFF — users opt in to flex their stake size.
+  const showActivityLlamados = isOwner || (pp.show_activity_llamados ?? true)
+  const showActivityComments = isOwner || (pp.show_activity_comments ?? true)
+  const showActivityLlamadoAmount = isOwner || (pp.show_activity_llamado_amount ?? false)
 
   const accuracy =
     profile.totalPredictions > 0
@@ -377,6 +383,18 @@ export function ProfilePublic() {
             year: 'numeric',
           })}
         </p>
+      )}
+
+      {/* Activity feed — only render if at least one stream is visible.
+          Inside the component, each item links back to its event so
+          profile views convert into event traffic. */}
+      {(showActivityLlamados || showActivityComments) && (
+        <ActivityFeed
+          userId={profile.id}
+          showLlamados={showActivityLlamados}
+          showComments={showActivityComments}
+          showLlamadoAmount={showActivityLlamadoAmount}
+        />
       )}
 
       <Footer />
