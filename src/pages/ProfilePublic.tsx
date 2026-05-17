@@ -41,11 +41,15 @@ interface PublicProfile {
   username: string
   tier: 1 | 2 | 3
   avatar_url: string | null
-  total_predictions: number
-  correct_predictions: number
-  total_cobrado: number
   created_at: string
   privacy_prefs: Record<string, boolean>
+  // Stats are computed LIVE from the positions table on mount, not
+  // read from profiles.total_predictions / correct_predictions —
+  // those counter columns aren't kept in sync by any trigger, so
+  // they're stale. positions is the source of truth.
+  totalPredictions: number
+  correctPredictions: number
+  totalCobrado: number
 }
 
 type Relationship =
@@ -78,7 +82,7 @@ export function ProfilePublic() {
   usePageMeta({
     title: profile ? `@${profile.username} · b1n0` : 'Perfil · b1n0',
     description: profile
-      ? `Perfil público de @${profile.username} en b1n0. ${profile.total_predictions} llamados.`
+      ? `Perfil público de @${profile.username} en b1n0. ${profile.totalPredictions} llamados.`
       : 'Perfil de usuario en b1n0.',
   })
 
@@ -88,16 +92,43 @@ export function ProfilePublic() {
     setLoading(true)
     setProfile(null)
     ;(async () => {
-      const { data } = await supabase
+      // 1. Fetch the profile row (basic identity + privacy)
+      const { data: row } = await supabase
         .from('profiles')
-        .select(
-          'id, name, username, tier, avatar_url, total_predictions, correct_predictions, total_cobrado, created_at, privacy_prefs'
-        )
+        .select('id, name, username, tier, avatar_url, created_at, privacy_prefs')
         .ilike('username', username)
         .maybeSingle()
 
       if (cancelled) return
-      setProfile(data as PublicProfile | null)
+      if (!row) { setProfile(null); setLoading(false); return }
+
+      // 2. Compute live stats from positions. Counters on profiles
+      //    aren't trigger-maintained, so reading them here would show
+      //    stale zeros.
+      const { data: posRows } = await supabase
+        .from('positions')
+        .select('status, payout_if_win')
+        .eq('user_id', row.id)
+
+      const positions = (posRows ?? []) as Array<{ status: string; payout_if_win: number | null }>
+      // Resolution-skim factor lives in pricing config; for the public
+      // profile we use the same approximation as Perfil (gross of skim
+      // is fine for headline stats — the skim shows up in Historial /
+      // Mi Portafolio with full fidelity).
+      const totalPredictions = positions.length
+      const won = positions.filter((p) => p.status === 'won')
+      const correctPredictions = won.length
+      const totalCobrado = won.reduce(
+        (sum, p) => sum + (Number(p.payout_if_win) || 0),
+        0,
+      )
+
+      setProfile({
+        ...(row as Omit<PublicProfile, 'totalPredictions' | 'correctPredictions' | 'totalCobrado'>),
+        totalPredictions,
+        correctPredictions,
+        totalCobrado,
+      })
       setLoading(false)
     })()
     return () => { cancelled = true }
@@ -194,8 +225,8 @@ export function ProfilePublic() {
   const showAvatar = isOwner || (pp.show_avatar ?? true)
 
   const accuracy =
-    profile.total_predictions > 0
-      ? Math.round((profile.correct_predictions / profile.total_predictions) * 100)
+    profile.totalPredictions > 0
+      ? Math.round((profile.correctPredictions / profile.totalPredictions) * 100)
       : 0
 
   return (
@@ -316,15 +347,15 @@ export function ProfilePublic() {
         }}
       >
         {showTotalPredictions && (
-          <StatCard label="Llamados" value={profile.total_predictions.toString()} />
+          <StatCard label="Llamados" value={profile.totalPredictions.toString()} />
         )}
         {showAccuracy && (
-          <StatCard label="Acierto" value={profile.total_predictions > 0 ? `${accuracy}%` : '—'} />
+          <StatCard label="Acierto" value={profile.totalPredictions > 0 ? `${accuracy}%` : '—'} />
         )}
         {showTotalCobrado && (
           <StatCard
             label="Total cobrado"
-            value={`$${profile.total_cobrado.toFixed(0)}`}
+            value={`$${profile.totalCobrado.toFixed(0)}`}
             accent
           />
         )}
