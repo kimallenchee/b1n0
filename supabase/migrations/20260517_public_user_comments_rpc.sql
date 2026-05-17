@@ -60,10 +60,16 @@ BEGIN
   END IF;
 
   -- Anyone else: respect the privacy toggle.
-  SELECT COALESCE((privacy_prefs ->> 'show_activity_comments')::boolean, true)
+  -- NOTE: alias the table and fully qualify the column.
+  -- The RETURNS TABLE clause declares an OUT parameter named `id`, which
+  -- shadows unqualified `id` references inside the function body. Hitting
+  -- this on the anon path threw 42702 ("column reference 'id' is ambiguous")
+  -- — the owner branch returned before this query ran, so the issue only
+  -- surfaced for logged-out viewers.
+  SELECT COALESCE((p.privacy_prefs ->> 'show_activity_comments')::boolean, true)
   INTO v_show
-  FROM public.profiles
-  WHERE id = p_user_id;
+  FROM public.profiles p
+  WHERE p.id = p_user_id;
 
   IF v_show IS NOT TRUE THEN
     RETURN;
