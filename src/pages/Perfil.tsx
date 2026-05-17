@@ -183,18 +183,28 @@ export function Perfil() {
     const updated = { ...privacyPrefs, [key]: !privacyPrefs[key] }
     setPrivacyPrefs(updated)
 
-    const { error } = await supabase
+    // Use .select() to force the update to return the affected rows.
+    // Without this, RLS-filtered updates return `error: null` AND
+    // `data: null` (the update succeeded from the API's POV but
+    // zero rows were actually changed). With .select() we can
+    // detect zero affected rows and surface as a failure.
+    const { data: updateRows, error } = await supabase
       .from('profiles')
       .update({ privacy_prefs: updated })
       .eq('id', userId)
+      .select('id, privacy_prefs')
 
-    if (error) {
-      // Revert the optimistic flip and surface the failure. Without
-      // this, a silent RLS denial or network drop would leave the
-      // UI showing the new value while the DB still had the old —
-      // which was the 'toggles off by themselves' bug Kim hit.
+    if (error || !updateRows || updateRows.length === 0) {
+      // Revert the optimistic flip and surface the failure. Catches:
+      //   - Network errors (error truthy)
+      //   - RLS silent denials (data empty, no error)
+      //   - Row missing (shouldn't happen but defensive)
       setPrivacyPrefs(previous)
-      toast.showError('No se pudo guardar el cambio. Probá de nuevo.')
+      toast.showError(
+        error
+          ? `No se pudo guardar el cambio: ${error.message}`
+          : 'No se pudo guardar el cambio. Probá refrescar la página.',
+      )
       return
     }
 
