@@ -1,3 +1,4 @@
+// build: 2026-05-20T01:50 — risk-ack flow + investor PDF trust pack
 import { useState, useEffect, lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { TopBar } from './components/layout/TopBar'
