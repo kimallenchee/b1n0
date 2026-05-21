@@ -148,7 +148,16 @@ export function DocPageShell({ pageEyebrow, pageTitle, intro, lastUpdated, secti
   }, [location.hash])
 
   return (
-    <div style={{ minHeight: '100dvh', background: 'var(--b1n0-bg)', color: 'var(--b1n0-text-1)', padding: isDesktop ? '32px 24px 64px' : '20px 16px 64px' }}>
+    <div
+      // Internal scroll container. The app shell's <main> sets
+      // `overflow: hidden`, so doc pages must scroll inside their own
+      // root. Use `height: 100%` to fill the slot exactly, then
+      // overflow-y: auto so long content stays scrollable on mobile
+      // (where minHeight: 100dvh alone got clipped) and on desktop
+      // (where the TOC sticky positioning needs a real scroll context).
+      className="feed-scroll"
+      style={{ height: '100%', overflowY: 'auto', WebkitOverflowScrolling: 'touch', background: 'var(--b1n0-bg)', color: 'var(--b1n0-text-1)', padding: isDesktop ? '32px 24px 64px' : '20px 16px 64px' }}
+    >
       <div style={{ maxWidth: '1140px', margin: '0 auto' }}>
         <button
           onClick={() => navigate(-1)}

@@ -245,7 +245,13 @@ export function Documentacion() {
   }, [location.hash])
 
   return (
-    <div style={{ minHeight: '100dvh', background: 'var(--b1n0-bg)', color: 'var(--b1n0-text-1)', padding: isDesktop ? '32px 24px 64px' : '20px 16px 64px' }}>
+    <div
+      // Internal scroll container — same pattern as DocPageShell.
+      // App's <main> is overflow:hidden, so doc pages need their own
+      // scrollable root, otherwise long content gets clipped.
+      className="feed-scroll"
+      style={{ height: '100%', overflowY: 'auto', WebkitOverflowScrolling: 'touch', background: 'var(--b1n0-bg)', color: 'var(--b1n0-text-1)', padding: isDesktop ? '32px 24px 64px' : '20px 16px 64px' }}
+    >
       <div style={{ maxWidth: '1140px', margin: '0 auto' }}>
         {/* Back link */}
         <button
