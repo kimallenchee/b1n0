@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { CreditCard, CurrencyDollar, Money } from '@phosphor-icons/react'
 import { BottomSheet } from '../BottomSheet'
+import { RiskModal } from '../RiskModal'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
 
@@ -45,9 +46,26 @@ const methods: { id: Method; label: string; sub: string; icon: React.ReactNode }
 const quickAmounts = [25, 50, 100, 250]
 
 export function DepositSheet({ open, onClose }: DepositSheetProps) {
-  const { refreshProfile } = useAuth()
+  const { profile, refreshProfile } = useAuth()
   const [step, setStep] = useState<Step>('method')
   const [method, setMethod] = useState<Method>('tarjeta')
+  // Risk gate: if the user has never acknowledged the risk warning,
+  // we intercept the deposit sheet with RiskModal first. The
+  // acknowledgement is captured server-side via the acknowledge_risk
+  // RPC so we have an immutable audit trail of when each user first
+  // accepted the disclosures. Once profile.riskAcknowledgedAt is set,
+  // this modal never appears again for that user.
+  const needsRiskAck = open && profile != null && profile.riskAcknowledgedAt == null
+  const [ackLoading, setAckLoading] = useState(false)
+  async function handleAcceptRisk() {
+    setAckLoading(true)
+    try {
+      await supabase.rpc('acknowledge_risk')
+      await refreshProfile()
+    } finally {
+      setAckLoading(false)
+    }
+  }
   const [amount, setAmount] = useState('')
   const [cardNumber, setCardNumber] = useState('')
   const [cardExpiry, setCardExpiry] = useState('')
@@ -126,6 +144,21 @@ export function DepositSheet({ open, onClose }: DepositSheetProps) {
   }
 
   const title = step === 'method' ? 'Depositar' : step === 'card' ? 'Datos de tarjeta' : step === 'done' ? 'Depositar' : 'Depositar'
+
+  // While the risk modal is up, we don't render the deposit sheet —
+  // the user must accept (or cancel) the disclosures first. On accept,
+  // refreshProfile() flips riskAcknowledgedAt and the sheet renders
+  // on the next pass.
+  if (needsRiskAck) {
+    return (
+      <RiskModal
+        open={true}
+        loading={ackLoading}
+        onAccept={handleAcceptRisk}
+        onCancel={handleClose}
+      />
+    )
+  }
 
   return (
     <BottomSheet open={open} onClose={handleClose} title={title}>

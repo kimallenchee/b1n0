@@ -90,6 +90,33 @@ export function Confianza() {
           cómo se mueve el dinero, qué medidas de seguridad operan y
           cómo reportar un problema.
         </p>
+
+        {/* PDF version of this page for offline / email distribution.
+            Generated from scripts/build_confianza_pdf.py. The link
+            uses `download` so the browser saves with a clean filename
+            instead of opening inline. Kept brand-side (teal pill)
+            because partners hand it around in emails. */}
+        <a
+          href="/docs/b1n0-confianza.pdf"
+          download="b1n0-confianza.pdf"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 8,
+            marginTop: 18,
+            padding: '10px 18px',
+            background: 'var(--b1n0-si)',
+            color: 'var(--b1n0-on-accent)',
+            borderRadius: 'var(--radius-pill)',
+            fontFamily: F_BODY,
+            fontSize: 13,
+            fontWeight: 700,
+            textDecoration: 'none',
+            letterSpacing: '0.3px',
+          }}
+        >
+          Descargar PDF · 8 páginas
+        </a>
       </header>
 
       {/* ── Entidad ────────────────────────────────────────────── */}

@@ -57,7 +57,15 @@ const F = 'var(--font-body)'
 const D = 'var(--font-display)'
 
 export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = false }: EntryFlowProps) {
-  const { session } = useAuth()
+  const { session, profile, refreshProfile } = useAuth()
+  // First-llamado risk gate: if the user has never acknowledged the
+  // risk disclosure (i.e. they didn't first hit the deposit flow), we
+  // require an explicit checkbox on step 3 before allowing confirm.
+  // The acknowledgement is captured server-side via acknowledge_risk
+  // RPC so regulators get an immutable audit timestamp. Local checkbox
+  // state is just a UI gate — the server is the source of truth.
+  const needsRiskAck = profile != null && profile.riskAcknowledgedAt == null
+  const [riskChecked, setRiskChecked] = useState(false)
   const toast = useToast()
   const isOpen = event.eventType === 'open'
 
@@ -201,6 +209,13 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
    */
   const handleConfirm = async () => {
     if (!side) return
+    // Risk gate: if the user hasn't acknowledged risk yet, require
+    // the checkbox to be checked. This is a no-op for users who already
+    // accepted it during a prior deposit flow.
+    if (needsRiskAck && !riskChecked) {
+      setConfirmError('Tenés que aceptar el aviso de riesgo para continuar.')
+      return
+    }
 
     const sideAtClick = side
     const amountAtClick = amountNum
@@ -215,6 +230,15 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
     // Auth flow: optimistic close + celebration, RPC in background.
     setConfirming(true)
     setConfirmError(null)
+
+    // Fire-and-forget the risk acknowledgment if needed. Idempotent
+    // RPC — does nothing if already acknowledged. Don't block on it;
+    // the user already checked the box, the server record is just
+    // the audit artifact.
+    if (needsRiskAck) {
+      supabase.rpc('acknowledge_risk').then(() => refreshProfile())
+    }
+
     onConfirm(sideAtClick, amountAtClick, true, cobroAtClick)
 
     // Background RPC. We don't await before closing — but we still
@@ -590,6 +614,59 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
             </div>
           </div>
 
+          {/* ── First-llamado risk acknowledgment ────────────────
+              Only rendered when the user has never acknowledged the
+              risk warning. Checking the box doesn't call the RPC
+              yet — that happens on confirm — but it must be checked
+              before the Confirmar button is enabled. Once set, the
+              server-side timestamp persists across sessions and this
+              block disappears forever for this user. */}
+          {needsRiskAck && (
+            <label
+              htmlFor="risk-ack-checkbox"
+              style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: 10,
+                padding: '12px 14px',
+                marginBottom: 12,
+                background: 'var(--b1n0-card)',
+                border: `1px solid ${riskChecked ? 'var(--b1n0-si)' : 'var(--b1n0-border)'}`,
+                borderRadius: 'var(--radius-lg)',
+                cursor: 'pointer',
+                transition: 'border-color var(--duration-fast) var(--ease-out)',
+              }}
+            >
+              <input
+                id="risk-ack-checkbox"
+                type="checkbox"
+                checked={riskChecked}
+                onChange={(e) => setRiskChecked(e.target.checked)}
+                style={{
+                  marginTop: 3,
+                  accentColor: 'var(--b1n0-si)',
+                  cursor: 'pointer',
+                  flexShrink: 0,
+                }}
+              />
+              <span style={{ fontFamily: F, fontSize: 12.5, color: 'var(--b1n0-text-1)', lineHeight: 1.5 }}>
+                Entiendo que los llamados implican riesgo de pérdida del
+                capital, que b1n0 no es una inversión y que soy mayor de
+                18 años. Acepto los{' '}
+                <a
+                  href="/terminos"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: 'var(--b1n0-si)', textDecoration: 'underline' }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  términos
+                </a>
+                .
+              </span>
+            </label>
+          )}
+
           {confirmError && (
             <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-error)', marginBottom: '12px', padding: '8px 10px', background: 'var(--b1n0-error-bg)', borderRadius: 'var(--radius-lg)' }}>
               {confirmError}
@@ -598,8 +675,8 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
 
           <button
             onClick={handleConfirm}
-            disabled={confirming}
-            style={{ width: '100%', padding: '16px', borderRadius: 'var(--radius-lg)', border: 'none', background: confirming ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-surface)', cursor: confirming ? 'default' : 'pointer', fontFamily: F, fontWeight: 600, fontSize: '14px', color: 'var(--b1n0-text-1)', letterSpacing: '0.8px', marginBottom: '8px' }}
+            disabled={confirming || (needsRiskAck && !riskChecked)}
+            style={{ width: '100%', padding: '16px', borderRadius: 'var(--radius-lg)', border: 'none', background: confirming || (needsRiskAck && !riskChecked) ? 'var(--b1n0-disabled-bg)' : 'var(--b1n0-surface)', cursor: confirming || (needsRiskAck && !riskChecked) ? 'default' : 'pointer', fontFamily: F, fontWeight: 600, fontSize: '14px', color: 'var(--b1n0-text-1)', letterSpacing: '0.8px', marginBottom: '8px', opacity: needsRiskAck && !riskChecked ? 0.6 : 1 }}
           >
             {confirming ? 'Registrando...' : 'CONFIRMAR VOTO'}
           </button>

@@ -41,6 +41,15 @@ export interface Profile {
    * kyc_session_promote_tier trigger on Didit T3 approval.
    */
   needsAmlReview: boolean
+  /**
+   * ISO timestamp of the user's first risk acknowledgment. `null`
+   * means the user has not yet acknowledged the risk warning. Once
+   * set (via supabase.rpc('acknowledge_risk')) it is immutable — the
+   * RPC will not overwrite an existing value. Used to gate the
+   * first-deposit modal and the first-llamado checkbox so each user
+   * sees them exactly once.
+   */
+  riskAcknowledgedAt: string | null
 }
 
 export interface SignupMeta {
@@ -105,6 +114,7 @@ function rowToProfile(row: Record<string, unknown>): Profile {
     avatarUrl: (row.avatar_url as string) ?? null,
     privacyPrefs: (row.privacy_prefs as Record<string, boolean>) ?? {},
     needsAmlReview: (row.needs_aml_review as boolean) ?? false,
+    riskAcknowledgedAt: (row.risk_acknowledged_at as string) ?? null,
   }
 }
 
