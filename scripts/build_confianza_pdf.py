@@ -293,12 +293,15 @@ def page_entidad_modelo(c):
     y -= 8
     y = body_paragraph(
         c, y,
-        "b1n0 opera un mercado de cobro fijo respaldado por LPs: capital de "
-        "proveedores de liquidez respalda los pagos prometidos a los ganadores, "
-        "y a cambio captura un porcentaje de las comisiones del mercado. Cada "
-        "usuario ve su cobro al entrar — queda bloqueado en ese instante, no "
-        "flota como en un parimutuel. b1n0 no es una casa de apuestas, no es "
-        "un casino y no ofrece servicios de inversión.",
+        "b1n0 opera un mercado de cobro fijo respaldado por LPs: tu cobro "
+        "por contrato queda bloqueado al confirmar tu posición — $1 por "
+        "contrato si tu lado gana. A diferencia de un parimutuel, los "
+        "recién llegados no diluyen tu participación; el pool de LPs absorbe "
+        "cualquier diferencia entre el pool y los pagos prometidos. La "
+        "ventaja de entrar temprano viene del precio: cuanto antes leés "
+        "bien el mercado, más contratos comprás con el mismo dólar. b1n0 "
+        "no es una casa de apuestas, no es un casino y no ofrece servicios "
+        "de inversión.",
     )
     y -= 16
     callout_box(

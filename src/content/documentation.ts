@@ -72,10 +72,14 @@ export const DOC_SECTIONS: DocSection[] = [
         text: 'El precio de cada contrato refleja lo que el mercado cree en ese momento. Si SÍ está a 62%, un contrato SÍ cuesta aproximadamente $0.62. Si NO está a 38%, un contrato NO cuesta $0.38. Cuanto más impopular tu lado, más barato el contrato — y más cobrás si tenés razón.',
       },
       {
+        kind: 'paragraph',
+        text: 'Importante: tu cobro queda bloqueado en el momento que confirmás. A diferencia de un parimutuel, donde la gente que entra después diluye tu participación, en b1n0 tus contratos son tuyos — cada uno paga $1 si tu lado gana, sin importar cuánta gente más entre. El pool de LPs (Liquidity Providers) absorbe cualquier diferencia entre el pool y los pagos prometidos. Por eso lo llamamos un mercado de cobro fijo respaldado por LPs.',
+      },
+      {
         kind: 'callout',
         tone: 'info',
-        title: 'Ejemplo concreto',
-        body: 'María pone $50 en NO al precio $0.38. Su entrada compra ~131 contratos. Si NO gana, cobra $131 — 2.6× su entrada (+162% retorno). Si NO pierde, cobra $0. Esa es la trampa, esa es la oportunidad.',
+        title: 'Ejemplo concreto — el premio por entrar temprano',
+        body: 'María entra temprano: pone $50 en NO al precio $0.38. Su entrada compra ~131 contratos, que pagarán ~$125 si NO gana (131 × $1, menos 5% de skim de resolución) — 2.5× su entrada. Carlos entra tarde, al precio $0.65 cuando el consenso ya cambió: su $50 solo compra 77 contratos, que pagarán ~$73 si NO gana — 1.5× su entrada. Misma apuesta, distinto momento, distinto cobro. La ventaja viene del precio en el que entrás, no del pool creciendo después — tu cobro queda bloqueado al confirmar.',
       },
       {
         kind: 'paragraph',

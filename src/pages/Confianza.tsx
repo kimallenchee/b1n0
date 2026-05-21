@@ -90,7 +90,7 @@ const CONFIANZA_SECTIONS: DocPageSection[] = [
           b1n0 es un mercado de opciones sobre eventos. Los usuarios toman posiciones (SÍ o NO) sobre preguntas binarias con fecha de resolución conocida. El precio de entrada refleja el consenso del mercado y se mueve en función de la oferta y la demanda.
         </DocParagraph>
         <DocParagraph>
-          b1n0 opera un <em>mercado de cobro fijo respaldado por LPs</em>: capital de proveedores de liquidez (LPs) respalda los pagos prometidos a los ganadores, y a cambio captura un porcentaje de las comisiones del mercado. Cada usuario ve su cobro al entrar — queda bloqueado en ese instante, no flota como en un parimutuel. b1n0 no es una casa de apuestas, no es un casino y no ofrece servicios de inversión.
+          b1n0 opera un <em>mercado de cobro fijo respaldado por LPs</em>: tu cobro por contrato queda bloqueado al confirmar tu posición — $1 por contrato si tu lado gana. A diferencia de un parimutuel, los recién llegados no diluyen tu participación; el pool de LPs absorbe cualquier diferencia entre el pool y los pagos prometidos. La ventaja de entrar temprano viene del <strong>precio</strong>: cuanto antes leés bien el mercado, más contratos comprás con el mismo dólar. b1n0 no es una casa de apuestas, no es un casino y no ofrece servicios de inversión.
         </DocParagraph>
         <DocParagraph>
           La estructura de comisiones, los límites por nivel de KYC y las reglas de resolución están documentadas en{' '}
