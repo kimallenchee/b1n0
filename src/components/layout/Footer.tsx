@@ -118,7 +118,14 @@ export function Footer() {
           <FooterAnchor href="mailto:soporte@b1n0.com">Soporte</FooterAnchor>
           <FooterLink to="/terminos">Términos</FooterLink>
           <FooterLink to="/privacidad">Privacidad</FooterLink>
-          <FooterLink to="/confianza">Confianza</FooterLink>
+          {/* Confianza is the 7th link — on mobile's 3-col grid it lands
+              alone in row 3. Forcing it into column 2 centers it for
+              symmetry. The grid-column property is ignored when the
+              parent flips to flex on ≥560px (desktop inline row),
+              so this is a mobile-only nudge. */}
+          <div style={{ gridColumn: '2', display: 'flex', justifyContent: 'center' }} className="footer-confianza">
+            <FooterLink to="/confianza">Confianza</FooterLink>
+          </div>
         </nav>
 
         {/* Inline media query so the grid flips to a single inline
