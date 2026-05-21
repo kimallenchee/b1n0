@@ -1,7 +1,7 @@
 /**
  * AppTour — illustrated modal carousel for "Cómo Jugar".
  *
- * Replaces the earlier react-joyride implementation. Polymarket-style
+ * Replaces the earlier react-joyride implementation. A carousel-style
  * sequence of full-screen modal slides; each step is a brand-aligned
  * illustration + title + body + single CTA. Last step closes back to
  * Inicio (no signup redirect).

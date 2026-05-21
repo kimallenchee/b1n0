@@ -5,7 +5,7 @@
  * un ctaLabel opcional (default: "Siguiente", "Listo" en el último).
  *
  * Las ilustraciones son SVG inline diseñados para verse como b1n0,
- * no como Polymarket. Usan los tokens de marca (--b1n0-si verde,
+ * no como otras plataformas internacionales. Usan los tokens de marca (--b1n0-si verde,
  * --b1n0-no ámbar, --b1n0-card, etc.) y el split bar característico
  * de la plataforma. NO son screenshots de la app real — son mockups
  * estilizados que no se rompen cuando el UI cambia.
@@ -68,8 +68,8 @@ function Step1Card() {
 // ── Step 2 illustration: the cobro celebration (won position).
 // ────────────────────────────────────────────────────────────────────
 // Big +$ number, "Cobro" label, confetti-ish flecks in brand colors
-// (verde/ámbar/cream). Doesn't literally use confetti like Polymarket;
-// uses subtle radiating dashes for an editorial feel.
+// (verde/ámbar/cream). Doesn't literally use confetti; uses subtle
+// radiating dashes for an editorial feel.
 function Step2Cobro() {
   return (
     <svg viewBox="0 0 320 200" width="320" height="200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cobro de un voto ganado">

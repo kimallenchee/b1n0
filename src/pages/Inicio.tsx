@@ -127,7 +127,7 @@ function StatsRow({ stats, size = 'sm' }: { stats: EventStats | undefined; size?
   )
 }
 
-/* ── Compact event card (Polymarket-style) ── */
+/* ── Compact event card ── */
 function MiniCard({ event, now, stats, liveOptPcts, liveBinary }: { event: Event; now: number; stats?: EventStats; liveOptPcts?: Record<string, number>; liveBinary?: { yes: number; no: number } }) {
   const navigate = useNavigate()
   const color = categoryColors[event.category] || 'var(--b1n0-muted)'

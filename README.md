@@ -15,7 +15,7 @@ It is **not** a casino, sportsbook, or financial instrument. It's a social opini
 
 ## Highlights
 
-- **LP-backstopped Kalshi-style AMM.** Pools are funded by liquidity providers; pricing follows a parimutuel-tinted automated market maker (`src/lib/pricing.ts`, `supabase/migrations/*_fee_settlement.sql`). Blended take is ~8% across compra fee (1–5%), AMM spread (1–2%), salida fee (2%), and resolution skim (5%).
+- **LP-backed fixed-payout market.** Pools are funded by liquidity providers; pricing follows an automated market-maker curve (`src/lib/pricing.ts`, `supabase/migrations/*_fee_settlement.sql`). Users see and lock their cobro at entry — no moving claim. Blended take is ~8% across compra fee (1–5%), AMM spread (1–2%), salida fee (2%), and resolution skim (5%).
 - **3-tier KYC via [Didit](https://business.didit.me)** — N1 phone, N2 DPI, N3 full identity + AML/PEP. Auto-promote to N3 at $1k cumulative deposits. Edge functions in `supabase/functions/kyc-*/`.
 - **Server-side risk acknowledgment** captured before first deposit via the idempotent `acknowledge_risk()` RPC. Regulator-facing audit trail in `profiles.risk_acknowledged_at`.
 - **Hard-isolated RLS + `SECURITY DEFINER` RPCs.** Public-readable surfaces (profiles, comments) go through dedicated RPCs that filter to safe columns only; admin claim lives in `auth.users.app_metadata`, not in user-mutable columns.

@@ -293,10 +293,12 @@ def page_entidad_modelo(c):
     y -= 8
     y = body_paragraph(
         c, y,
-        "El modelo de liquidez es LP-backstopped: capital de proveedores de "
-        "liquidez respalda los pagos prometidos a los ganadores, y a cambio "
-        "captura un porcentaje de las comisiones del mercado. b1n0 no es una "
-        "casa de apuestas, no es un casino y no ofrece servicios de inversión.",
+        "b1n0 opera un mercado de cobro fijo respaldado por LPs: capital de "
+        "proveedores de liquidez respalda los pagos prometidos a los ganadores, "
+        "y a cambio captura un porcentaje de las comisiones del mercado. Cada "
+        "usuario ve su cobro al entrar — queda bloqueado en ese instante, no "
+        "flota como en un parimutuel. b1n0 no es una casa de apuestas, no es "
+        "un casino y no ofrece servicios de inversión.",
     )
     y -= 16
     callout_box(

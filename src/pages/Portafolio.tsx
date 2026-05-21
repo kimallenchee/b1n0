@@ -115,7 +115,7 @@ function PositionCard({
   // Per-position contracts (keyed by position id, not event::side).
   // Using the event-level total here would make every card on the same
   // event+side display identical P&L — which was the bug shipped in
-  // the earlier Kalshi-revert pass.
+  // the earlier revert-to-fixed-payout pass.
   const contracts = positionContractsMap[pred.id] ?? pred.potentialCobro
 
   // Mark-to-market value: contracts × current mid price.
@@ -689,8 +689,10 @@ export function Portafolio() {
   const [contractsMap, setContractsMap] = useState<Record<string, number>>({})
   // Per-position contracts: positionId → contracts (for accurate sell preview)
   const [positionContractsMap, setPositionContractsMap] = useState<Record<string, number>>({})
-  // (Kalshi model — payouts come from pred.potentialCobro stored at purchase
-  // time, with a 5% resolution skim. No need to query other-user side totals.)
+  // (Fixed-payout model — payouts come from pred.potentialCobro stored at
+  // purchase time, with a 5% resolution skim. No need to query other-user
+  // side totals. The LP pool absorbs any mismatch between locked-in cobros
+  // and actual pool size.)
   // Entry prices from positions table
   const [entryPrices, setEntryPrices] = useState<Record<string, number>>({})
   // Sale proceeds: position_id → net_to_pool (what user received)
@@ -857,7 +859,7 @@ export function Portafolio() {
       }
       let gross = round2(myContracts * currentBid)
 
-      // Cap: in the LP-backstopped Kalshi model, the most you can ever
+      // Cap: in the LP-backed fixed-payout model, the most you can ever
       // collect on a position is contracts × $1 minus the resolution
       // skim. Selling early should never project more than that. The
       // cap rarely fires (bid is always less than $1) but it's a safety
@@ -874,10 +876,12 @@ export function Portafolio() {
     return { entryAsk, currentAsk, currentBid, currentMid, sell }
   }
 
-  // ── LP-backstopped Kalshi model ──────────────────────────────────
+  // ── LP-backed fixed-payout model ─────────────────────────────────
   // 1 contract = $1 if the position's side wins, else $0. The platform
-  // skims 5% off winning payouts at settlement. Sponsor/LP capital
-  // backstops shortfalls when bet_pool < total winning liability.
+  // skims 5% off winning payouts at settlement. LP capital backstops
+  // shortfalls when bet_pool < total winning liability — that's the
+  // "fixed-payout" guarantee: cobro is locked at entry, the LP pool
+  // absorbs any pool-vs-liability mismatch.
   //
   // getPositionPayout: per-position payout if THIS side wins =
   // potentialCobro (contracts × $1) minus 5% resolution skim. Matches
@@ -889,8 +893,8 @@ export function Portafolio() {
   }
 
   // Mark-to-market unrealized P&L: contracts × current_mid − invested.
-  // Kalshi-style — what the position is worth right now if we marked
-  // to the AMM mid price, not what it pays at settlement.
+  // What the position is worth right now if we marked to the AMM mid
+  // price — distinct from what it pays at settlement (fixed cobro).
   function getUnrealizedPnl(pred: UserPrediction, lp: LivePrice | null): number {
     if (pred.status === 'won') {
       // Realized: stored payout less skim
@@ -909,7 +913,7 @@ export function Portafolio() {
 
   const totalInvested = active.reduce((s, p) => s + p.amount, 0)
 
-  // ── Kalshi aggregation: per event, the better of "if YES wins" vs "if NO wins" ──
+  // ── Per-event best-case aggregation ──────────────────────────────
   // For each event, sum the user's payouts by side using stored
   // payout_if_win × (1 − skim). The "best case" picks whichever side
   // pays more; you can't win both. Current value is mark-to-market

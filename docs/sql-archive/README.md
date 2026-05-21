@@ -12,7 +12,7 @@ These files are preserved here for historical reference only:
 | `fix-balance-ledger.sql` | One-off hotfix that was folded into the migration that created the canonical `balance_ledger` table |
 | `fix-execute-purchase.sql` | Patch to `execute_purchase` RPC, superseded by the unified fee/settlement migration (task #45) |
 | `fix-spread-at-deposit.sql` | Spread accrual fix, now part of the spread tracking migration |
-| `parimutuel-model.sql` | Experimental parimutuel model — replaced by LP-backstopped Kalshi-style AMM (task #42) |
+| `parimutuel-model.sql` | Experimental parimutuel model — replaced by the LP-backed fixed-payout market (task #42) |
 | `private-allocation.sql` | Early sponsor-allocation scaffolding, now obsolete (task #59 removed the sponsor concept) |
 | `treasury-auto-credit.sql` | Treasury credit logic, folded into the unified settlement migration |
 
