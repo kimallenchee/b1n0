@@ -21,15 +21,13 @@ import { ImageResponse } from '@vercel/og'
  * response). The Node runtime works too but is slower.
  */
 
-// Pin to Node 20 explicitly. `@vercel/og` 0.6.4 predates the
-// `nodejs24.x` runtime that Vercel now defaults to when the config
-// says just `'nodejs'`, and we saw `FUNCTION_INVOCATION_FAILED` at
-// cold-start under Node 24 (likely an ESM resolver or fetch-polyfill
-// incompat). Node 20 is the most recent LTS that @vercel/og has been
-// tested against. When @vercel/og publishes a Node 24-compatible
-// release, this can be relaxed.
+// In-file `runtime` only accepts 'edge' | 'experimental-edge' | 'nodejs'.
+// To pin Node 20 (because @vercel/og 0.6.4 crashes under the new Node 24
+// default with FUNCTION_INVOCATION_FAILED), the version pin lives in
+// package.json under `engines.node`. Vercel reads engines.node and
+// provisions the matching runtime for the whole project.
 export const config = {
-  runtime: 'nodejs20.x',
+  runtime: 'nodejs',
 }
 
 interface EventRow {
