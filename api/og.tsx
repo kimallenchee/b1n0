@@ -21,11 +21,15 @@ import { ImageResponse } from '@vercel/og'
  * response). The Node runtime works too but is slower.
  */
 
-// Note: defaulting to Node.js runtime — @vercel/og works there without
-// the Edge-runtime restrictions on bundled modules. Cold start is slightly
-// slower but the function still completes well under 1s for an OG image.
+// Pin to Node 20 explicitly. `@vercel/og` 0.6.4 predates the
+// `nodejs24.x` runtime that Vercel now defaults to when the config
+// says just `'nodejs'`, and we saw `FUNCTION_INVOCATION_FAILED` at
+// cold-start under Node 24 (likely an ESM resolver or fetch-polyfill
+// incompat). Node 20 is the most recent LTS that @vercel/og has been
+// tested against. When @vercel/og publishes a Node 24-compatible
+// release, this can be relaxed.
 export const config = {
-  runtime: 'nodejs',
+  runtime: 'nodejs20.x',
 }
 
 interface EventRow {
