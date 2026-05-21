@@ -6,8 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "prebuild": "npm run clean && npm run check:truncation && npm run check:types",
-    "clean": "node -e \"const{rmSync}=require('node:fs');['dist','node_modules/.vite'].forEach(p=>rmSync(p,{recursive:true,force:true}))\"",
+    "prebuild": "npm run check:truncation && npm run check:types",
     "build": "vite build",
     "check:truncation": "node scripts/check-truncation.mjs",
     "check:types": "tsc --noEmit",

@@ -132,8 +132,8 @@ export function AuthPage() {
     title: tab === 'signup' ? 'Crear cuenta · b1n0' : 'Ingresar · b1n0',
     description:
       tab === 'signup'
-        ? 'Sumate gratis. Hacé tu primer llamado en menos de un minuto — fútbol, política, economía de Centroamérica.'
-        : 'Iniciá sesión para seguir tus llamados en b1n0.',
+        ? 'Sumate gratis. Hacé tu primer voto en menos de un minuto — fútbol, política, economía de Centroamérica.'
+        : 'Iniciá sesión para seguir tus votos en b1n0.',
   })
 
   // Detect email confirmation redirect
@@ -398,7 +398,7 @@ export function AuthPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
             {[
               { step: '1', title: 'Elegí un evento', desc: 'Política, deportes, economía, cultura — eventos reales que te importan.', color: 'var(--b1n0-gold)' },
-              { step: '2', title: 'Hacé tu llamado', desc: 'Todo es binario: sí o no, pasa o no pasa. Simple.', color: 'var(--b1n0-si)' },
+              { step: '2', title: 'Hacé tu voto', desc: 'Todo es binario: sí o no, pasa o no pasa. Simple.', color: 'var(--b1n0-si)' },
               { step: '3', title: 'Cobrá si acertás', desc: 'Los precios se calculan en tiempo real según las posiciones.', color: 'var(--b1n0-gold)' },
             ].map(s => (
               <div key={s.step} style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '28px 24px', textAlign: 'left', position: 'relative' }}>

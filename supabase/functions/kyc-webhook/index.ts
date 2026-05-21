@@ -52,18 +52,42 @@ Deno.serve(async (req) => {
     return json({ error: 'stale_timestamp', sent: ts, server: now }, 401)
   }
 
-  // Try both signature formats. Didit sends multiple sigs:
-  //   x-signature-simple  = HMAC(secret, body)
-  //   x-signature-v2      = HMAC(secret, `${timestamp}.${body}`) (Stripe-style)
-  // We accept either. If the algorithm changes again in the future,
-  // failed attempts log enough context to diagnose without redeploying.
-  const expectSimple = await hmacSha256Hex(secret, rawBody)
-  const expectV2     = await hmacSha256Hex(secret, `${timestamp}.${rawBody}`)
+  // Parse body once, used by both Simple and V2 verifiers.
+  let parsed: Record<string, unknown>
+  try {
+    parsed = JSON.parse(rawBody)
+  } catch {
+    return json({ error: 'invalid_json' }, 400)
+  }
+
+  // Per Didit docs (docs.didit.me/integration/webhooks):
+  //   X-Signature-Simple = HMAC(secret, "${timestamp}:${session_id}:${status}:${webhook_type}")
+  //   X-Signature-V2     = HMAC(secret, canonical_json) where canonical_json is
+  //                        JSON.stringify(body, sort_keys=true, separators=(',',':'), ensure_ascii=false)
+  //                        with floats-that-are-integers normalized to int.
+  // We try both — Simple is dead reliable and middleware-safe; V2 is the
+  // "recommended" one per Didit but requires careful canonicalization.
+  const simpleCanonical = [
+    String(parsed.timestamp ?? ''),
+    String(parsed.session_id ?? ''),
+    String(parsed.status ?? ''),
+    String(parsed.webhook_type ?? ''),
+  ].join(':')
+  const v2Canonical = canonicalJsonForV2(parsed)
+
+  const expectSimple = await hmacSha256Hex(secret, simpleCanonical)
+  const expectV2     = await hmacSha256Hex(secret, v2Canonical)
 
   const okSimple = sigSimple && timingSafeEqual(expectSimple, sigSimple)
   const okV2     = sigV2     && timingSafeEqual(expectV2,     sigV2)
 
   if (!okSimple && !okV2) {
+    // Temporary: return full diagnostic in response body. This is
+    // visible in Didit's delivery log UI so we can debug signature
+    // mismatches without needing Supabase function logs. REMOVE THIS
+    // before any sensitive launch — leaking what we computed could
+    // help an attacker reverse-engineer the secret if they can
+    // observe our responses.
     console.error('invalid_signature', {
       sigV2_in:     sigV2.slice(0, 12),
       sigSimple_in: sigSimple.slice(0, 12),
@@ -71,17 +95,26 @@ Deno.serve(async (req) => {
       expectSimple: expectSimple.slice(0, 12),
       ts,
     })
-    return json({ error: 'invalid_signature' }, 401)
+    return json({
+      error:         'invalid_signature',
+      _debug_diditv2:  sigV2.slice(0, 12),
+      _debug_diditsimple: sigSimple.slice(0, 12),
+      _debug_we_expect_v2:     expectV2.slice(0, 12),
+      _debug_we_expect_simple: expectSimple.slice(0, 12),
+      _debug_secret_len:       secret.length,
+      _debug_body_len:         rawBody.length,
+      _debug_ts:               ts,
+    }, 401)
   }
 
-  let payload: {
-    session_id: string
-    status: string
+  // Re-cast parsed body for downstream use (already JSON-validated above)
+  const payload = parsed as {
+    session_id?: string
+    status?: string
     webhook_type?: string
     vendor_data?: string
     decision?: unknown
   }
-  try { payload = JSON.parse(rawBody) } catch { return json({ error: 'invalid_json' }, 400) }
 
   if (!payload.session_id || !payload.status) {
     return json({ error: 'missing_fields' }, 400)
@@ -109,6 +142,33 @@ Deno.serve(async (req) => {
 
   return json({ received: true }, 200)
 })
+
+// Canonical JSON serialization that matches Didit's X-Signature-V2 algorithm.
+// Mirrors their Python reference: json.dumps(data, sort_keys=True,
+// separators=(",", ":"), ensure_ascii=False) with shorten_floats applied
+// first (any float that is an integer becomes int — e.g. 1.0 → 1).
+//
+// JavaScript JSON.stringify already uses ascii-as-is (ensure_ascii=False)
+// and no whitespace when you don't pass an indent arg. The trick parts:
+//   - Keys must be sorted at every nesting level (we walk the object)
+//   - Floats that are integers must be emitted without decimal (.0)
+//     — JavaScript's JSON.stringify already does this (1.0 serializes as "1")
+//     so we get this for free.
+function canonicalJsonForV2(value: unknown): string {
+  return JSON.stringify(sortKeysDeep(value))
+}
+
+function sortKeysDeep(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(sortKeysDeep)
+  if (value && typeof value === 'object') {
+    const sorted: Record<string, unknown> = {}
+    for (const k of Object.keys(value as object).sort()) {
+      sorted[k] = sortKeysDeep((value as Record<string, unknown>)[k])
+    }
+    return sorted
+  }
+  return value
+}
 
 async function hmacSha256Hex(secret: string, message: string): Promise<string> {
   const enc = new TextEncoder()

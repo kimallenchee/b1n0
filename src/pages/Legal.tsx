@@ -75,7 +75,7 @@ const TERMS_SECTIONS: DocPageSection[] = [
     title: '6. Cómo funciona la plataforma',
     children: (
       <DocParagraph>
-        (a) Depositás fondos a tu saldo mediante los métodos de pago habilitados. (b) Elegís un evento y un lado (SÍ/NO o una opción específica) y el monto que querés poner. La plataforma muestra antes de confirmar: la comisión que cobramos, el precio del contrato (basado en un mercado automatizado, AMM), los contratos que recibís, y el cobro estimado si tu llamado resulta correcto. (c) Cuando el evento se resuelve, si tu llamado fue correcto, recibís el pago automáticamente menos un porcentaje de resolución (skim) que va a la tesorería de la plataforma. Si fue incorrecto, perdés tu entrada que queda en el pool para los ganadores. (d) También podés vender tu posición antes de la resolución a precio del mercado actual menos comisión de venta y spread.
+        (a) Depositás fondos a tu saldo mediante los métodos de pago habilitados. (b) Elegís un evento y un lado (SÍ/NO o una opción específica) y el monto que querés poner. La plataforma muestra antes de confirmar: la comisión que cobramos, el precio del contrato (basado en un mercado automatizado, AMM), los contratos que recibís, y el cobro estimado si tu voto resulta correcto. (c) Cuando el evento se resuelve, si tu voto fue correcto, recibís el pago automáticamente menos un porcentaje de resolución (skim) que va a la tesorería de la plataforma. Si fue incorrecto, perdés tu entrada que queda en el pool para los ganadores. (d) También podés vender tu posición antes de la resolución a precio del mercado actual menos comisión de venta y spread.
       </DocParagraph>
     ),
   },

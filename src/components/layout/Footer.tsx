@@ -112,7 +112,7 @@ export function Footer() {
           }}
           className="footer-links"
         >
-          <FooterLinkButton onClick={openTour}>Cómo jugar</FooterLinkButton>
+          <FooterLinkButton onClick={openTour}>Cómo participar</FooterLinkButton>
           <FooterLink to="/inicio">Eventos</FooterLink>
           <FooterLink to="/documentacion">Documentación</FooterLink>
           <FooterAnchor href="mailto:soporte@b1n0.com">Soporte</FooterAnchor>
@@ -151,7 +151,7 @@ export function Footer() {
             marginRight: 'auto',
           }}
         >
-          Los llamados implican riesgo de pérdida del capital. Solo para mayores
+          Los votos implican riesgo de pérdida del capital. Solo para mayores
           de 18 años. Los participantes son responsables de cumplir las leyes
           aplicables en su jurisdicción. Tres33 SAS de CV está registrado en El
           Salvador. Tokenización de contratos y activos digitales operada por

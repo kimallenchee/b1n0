@@ -98,7 +98,7 @@ function DiditFlow({ targetTier, onClose }: { targetTier: 2 | 3; onClose: () => 
     return (
       <SuccessPanel
         title="¡Verificado!"
-        body={`Tu cuenta es Nivel ${targetTier}. Ya podés hacer llamados hasta el nuevo límite.`}
+        body={`Tu cuenta es Nivel ${targetTier}. Ya podés hacer votos hasta el nuevo límite.`}
         onClose={onClose}
       />
     )

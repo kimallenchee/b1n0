@@ -1016,17 +1016,17 @@ export function Perfil() {
                 Elegí qué información se muestra en tu perfil público.
               </p>
               <ToggleRow label="Mostrar nivel" description="Tu nivel KYC (N1/N2/N3)" value={privacyPrefs.show_tier} onChange={() => togglePrivacy('show_tier')} />
-              <ToggleRow label="Mostrar total de llamados" description="Cuántos llamados has hecho" value={privacyPrefs.show_total_predictions} onChange={() => togglePrivacy('show_total_predictions')} />
-              <ToggleRow label="Mostrar acierto" description="Porcentaje de llamados correctos" value={privacyPrefs.show_accuracy_rate} onChange={() => togglePrivacy('show_accuracy_rate')} />
+              <ToggleRow label="Mostrar total de votos" description="Cuántos votos has hecho" value={privacyPrefs.show_total_predictions} onChange={() => togglePrivacy('show_total_predictions')} />
+              <ToggleRow label="Mostrar acierto" description="Porcentaje de votos correctos" value={privacyPrefs.show_accuracy_rate} onChange={() => togglePrivacy('show_accuracy_rate')} />
               <ToggleRow label="Mostrar total cobrado" description="Cuánto has cobrado en total" value={privacyPrefs.show_total_cobrado} onChange={() => togglePrivacy('show_total_cobrado')} />
               <ToggleRow label="Mostrar nombre real" description="Si lo apagás, solo se ve tu @username" value={privacyPrefs.show_full_name} onChange={() => togglePrivacy('show_full_name')} />
               <ToggleRow label="Mostrar foto de perfil" description="Si lo apagás, se muestra una inicial" value={privacyPrefs.show_avatar} onChange={() => togglePrivacy('show_avatar')} />
               <ToggleRow label="Mostrar fecha de unión" description="Cuándo te uniste a b1n0" value={privacyPrefs.show_join_date} onChange={() => togglePrivacy('show_join_date')} />
 
               <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--b1n0-muted)', letterSpacing: '0.5px', textTransform: 'uppercase', marginTop: '14px', marginBottom: '4px' }}>Actividad</p>
-              <ToggleRow label="Mostrar mis llamados" description="Tus llamados recientes en tu perfil público" value={privacyPrefs.show_activity_llamados} onChange={() => togglePrivacy('show_activity_llamados')} />
+              <ToggleRow label="Mostrar mis votos" description="Tus votos recientes en tu perfil público" value={privacyPrefs.show_activity_llamados} onChange={() => togglePrivacy('show_activity_llamados')} />
               <ToggleRow label="Mostrar mis comentarios" description="Tus comentarios recientes en tu perfil público" value={privacyPrefs.show_activity_comments} onChange={() => togglePrivacy('show_activity_comments')} />
-              <ToggleRow label="Mostrar monto en mis llamados" description="Si lo prendés, otros pueden ver cuánto entraste en cada llamado" value={privacyPrefs.show_activity_llamado_amount} onChange={() => togglePrivacy('show_activity_llamado_amount')} />
+              <ToggleRow label="Mostrar monto en mis votos" description="Si lo prendés, otros pueden ver cuánto entraste en cada voto" value={privacyPrefs.show_activity_llamado_amount} onChange={() => togglePrivacy('show_activity_llamado_amount')} />
             </div>
           )}
 
@@ -1074,7 +1074,7 @@ export function Perfil() {
               <LinkRow
                 label="Eliminar mi cuenta"
                 onPress={() => {
-                  if (!window.confirm('Eliminar tu cuenta es permanente — perdés saldo, llamados activos e historial. Te vamos a conectar con soporte para procesarlo manualmente. ¿Continuamos?')) return
+                  if (!window.confirm('Eliminar tu cuenta es permanente — perdés saldo, votos activos e historial. Te vamos a conectar con soporte para procesarlo manualmente. ¿Continuamos?')) return
                   const subject = encodeURIComponent('Solicitud: eliminar mi cuenta')
                   const body = encodeURIComponent(
                     `Hola,\n\nQuiero solicitar la eliminación permanente de mi cuenta en b1n0.\n\nUsuario: ${profile?.username ?? userId ?? 'desconocido'}\n\nEntiendo que esta acción es irreversible.\n`

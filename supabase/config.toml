@@ -1,0 +1,35 @@
+# Supabase project configuration.
+# Tracked in git so future `supabase functions deploy` calls get the
+# right settings without each contributor remembering CLI flags.
+
+# ── Edge Function settings ──────────────────────────────────────
+#
+# kyc-webhook: called by Didit (an external service), not by the
+# user's browser. Didit sends X-Signature / X-Timestamp headers,
+# NOT a Supabase JWT, so the gateway must skip JWT verification.
+# Our function does its own HMAC-SHA256 signature check against
+# DIDIT_WEBHOOK_SECRET — that's the security boundary.
+#
+# Without verify_jwt = false here, the Supabase gateway rejects
+# every Didit webhook with UNAUTHORIZED_NO_AUTH_HEADER and our
+# function never runs.
+[functions.kyc-webhook]
+verify_jwt = false
+
+# kyc-create-session: called by the user's browser via
+# supabase.functions.invoke(), which passes the session JWT.
+# verify_jwt defaults to true — explicit here for clarity.
+[functions.kyc-create-session]
+verify_jwt = true
+
+# send-resolution-email: called from Postgres via pg_net with a
+# Bearer service_role JWT in the Authorization header. JWT
+# verification stays on — protects against external callers.
+[functions.send-resolution-email]
+verify_jwt = true
+
+# reconciliation-alert: called from a Postgres trigger via pg_net
+# with the X-Alert-Secret header. The function does its own secret
+# check; JWT not required from pg_net side either way.
+[functions.reconciliation-alert]
+verify_jwt = false

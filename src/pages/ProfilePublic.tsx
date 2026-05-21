@@ -90,7 +90,7 @@ export function ProfilePublic() {
   usePageMeta({
     title: profile ? `@${profile.username} · b1n0` : 'Perfil · b1n0',
     description: profile
-      ? `Perfil público de @${profile.username} en b1n0. ${profile.totalPredictions} llamados.`
+      ? `Perfil público de @${profile.username} en b1n0. ${profile.totalPredictions} votos.`
       : 'Perfil de usuario en b1n0.',
   })
 
@@ -426,7 +426,7 @@ export function ProfilePublic() {
         }}
       >
         {showTotalPredictions && (
-          <StatCard label="Llamados" value={profile.totalPredictions.toString()} />
+          <StatCard label="Votos" value={profile.totalPredictions.toString()} />
         )}
         {showAccuracy && (
           <StatCard label="Acierto" value={profile.resolvedPredictions > 0 ? `${accuracy}%` : '—'} />

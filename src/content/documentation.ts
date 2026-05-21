@@ -40,7 +40,7 @@ export const DOC_SECTIONS: DocSection[] = [
     blocks: [
       {
         kind: 'paragraph',
-        text: 'b1n0 es una plataforma de opinión social donde demostrás que sabés más que todos. Hacés tu llamado sobre eventos reales — fútbol, política, economía, cultura — y cobrás si tenés razón.',
+        text: 'b1n0 es una plataforma de opinión social donde demostrás que sabés más que todos. Hacés tu voto sobre eventos reales — fútbol, política, economía, cultura — y cobrás si tenés razón.',
       },
       {
         kind: 'paragraph',
@@ -61,11 +61,11 @@ export const DOC_SECTIONS: DocSection[] = [
   {
     id: 'como-funcionan',
     eyebrow: '02',
-    title: 'Cómo funcionan los llamados',
+    title: 'Cómo funcionan los votos',
     blocks: [
       {
         kind: 'paragraph',
-        text: 'Cada evento en b1n0 tiene dos lados: SÍ y NO. Cuando hacés tu llamado, comprás "contratos" en uno de los lados. Cada contrato vale exactamente $1 si tu lado gana — y $0 si no.',
+        text: 'Cada evento en b1n0 tiene dos lados: SÍ y NO. Cuando hacés tu voto, comprás "contratos" en uno de los lados. Cada contrato vale exactamente $1 si tu lado gana — y $0 si no.',
       },
       {
         kind: 'paragraph',
@@ -85,7 +85,7 @@ export const DOC_SECTIONS: DocSection[] = [
         kind: 'paragraph',
         text: 'Cuando el evento se resuelve, los ganadores cobran $1 × contratos automáticamente en su saldo. Los perdedores no pagan nada extra — perdieron lo que pusieron, no más.',
       },
-      { kind: 'deepLink', label: 'Ver llamados activos', href: '/inicio' },
+      { kind: 'deepLink', label: 'Ver votos activos', href: '/inicio' },
     ],
   },
 
@@ -134,7 +134,7 @@ export const DOC_SECTIONS: DocSection[] = [
         kind: 'table',
         headers: ['Comisión', 'Tasa', 'Cuándo se cobra'],
         rows: [
-          ['Comisión de compra', '1–5%', 'Cada vez que hacés un llamado.'],
+          ['Comisión de compra', '1–5%', 'Cada vez que hacés un voto.'],
           ['Comisión de salida', '2%', 'Si vendés tu posición antes de la resolución.'],
           ['Spread (margen)', '1–2%', 'Capturado en el precio que pagás al comprar.'],
           ['Skim de resolución', '5%', 'Sobre lo que cobrás cuando ganás.'],
@@ -145,7 +145,7 @@ export const DOC_SECTIONS: DocSection[] = [
         kind: 'callout',
         tone: 'positive',
         title: 'Las primeras 10 entradas en cada evento nuevo son sin comisión',
-        body: 'Llamado "maker rebate". Premia a quien se anima primero a opinar cuando un evento recién aparece. Esto baja el costo de entrada y mejora la liquidez para todos.',
+        body: 'Voto "maker rebate". Premia a quien se anima primero a opinar cuando un evento recién aparece. Esto baja el costo de entrada y mejora la liquidez para todos.',
       },
       {
         kind: 'paragraph',
@@ -168,13 +168,13 @@ export const DOC_SECTIONS: DocSection[] = [
       },
       {
         kind: 'paragraph',
-        text: 'Cuando los usuarios hacen sus llamados, el dinero que entra y el capital LP se combinan para formar el pool. Cuando el evento se resuelve, los ganadores cobran de ese pool. El LP recupera su capital original más una participación de las comisiones generadas durante el evento y un margen por variancia.',
+        text: 'Cuando los usuarios hacen sus votos, el dinero que entra y el capital LP se combinan para formar el pool. Cuando el evento se resuelve, los ganadores cobran de ese pool. El LP recupera su capital original más una participación de las comisiones generadas durante el evento y un margen por variancia.',
       },
       {
         kind: 'callout',
         tone: 'info',
         title: '¿Por qué necesitamos LPs?',
-        body: 'Sin LPs, un evento tendría que esperar a que entren suficientes usuarios antes de poder pagar al lado ganador. Con LPs, los pagos están garantizados desde el primer minuto. Hacés tu llamado con la tranquilidad de que vas a cobrar si tenés razón.',
+        body: 'Sin LPs, un evento tendría que esperar a que entren suficientes usuarios antes de poder pagar al lado ganador. Con LPs, los pagos están garantizados desde el primer minuto. Hacés tu voto con la tranquilidad de que vas a cobrar si tenés razón.',
       },
       {
         kind: 'paragraph',
@@ -260,9 +260,9 @@ export const DOC_SECTIONS: DocSection[] = [
       {
         kind: 'glossary',
         items: [
-          { term: 'Llamado', def: 'La posición que hacés cuando comprás contratos en un evento. "Hice mi llamado por SÍ en el clásico."' },
-          { term: 'Convicción', def: 'La intuición o conocimiento que respalda tu llamado. Lo que querés demostrar al hacerlo.' },
-          { term: 'Contrato', def: 'Cada unidad que comprás dentro de un llamado. Vale $1 si tu lado gana, $0 si no.' },
+          { term: 'Voto', def: 'La posición que hacés cuando comprás contratos en un evento. "Hice mi voto por SÍ en el clásico."' },
+          { term: 'Convicción', def: 'La intuición o conocimiento que respalda tu voto. Lo que querés demostrar al hacerlo.' },
+          { term: 'Contrato', def: 'Cada unidad que comprás dentro de un voto. Vale $1 si tu lado gana, $0 si no.' },
           { term: 'Cobro', def: 'Lo que recibís cuando tu lado gana. Equivale a contratos × $1, menos el skim de resolución.' },
           { term: 'Pool', def: 'El dinero total disponible para pagar al lado ganador. Suma de aportes de usuarios y de LPs.' },
           { term: 'LP (Liquidity Provider)', def: 'Persona o empresa que respalda el pool de un evento. Gana comisiones a cambio del riesgo que asume.' },
@@ -297,7 +297,7 @@ export const DOC_SECTIONS: DocSection[] = [
           'NO es bolsa de valores. No operamos con acciones, bonos, ni derivados financieros.',
           'NO es asesoría financiera. Nada en b1n0 es una recomendación de inversión.',
           'NO es una red de intermediación bursátil. No somos casa de bolsa ni operamos como tal.',
-          'NO es garantía de retorno. Tus llamados pueden ganar o perder — esa es la naturaleza del producto.',
+          'NO es garantía de retorno. Tus votos pueden ganar o perder — esa es la naturaleza del producto.',
         ],
       },
       {

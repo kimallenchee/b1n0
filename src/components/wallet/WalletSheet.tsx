@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { CreditCard, CurrencyDollar, Money } from '@phosphor-icons/react'
+import { CreditCard, CurrencyDollar, Money, Warning } from '@phosphor-icons/react'
 import { BottomSheet } from '../BottomSheet'
 import { AnimatedNumber } from '../AnimatedNumber'
 import { supabase } from '../../lib/supabase'
@@ -72,8 +72,37 @@ const depositQuick = [25, 50, 100, 250]
 const retiroQuick = [50, 100, 250, 500]
 
 export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletSheetProps) {
-  const { refreshProfile } = useAuth()
+  const { refreshProfile, profile } = useAuth()
   const { balance } = useVotes()
+  // Risk acknowledgment gate. Renders an inline disclosure overlay
+  // when the user clicks a deposit method for the first time AND
+  // has never acknowledged. acknowledge_risk RPC writes a server-side
+  // timestamp the first time it's called and returns the existing
+  // timestamp on subsequent calls — idempotent audit primitive for
+  // regulator inquiries.
+  const needsRiskAck = profile != null && profile.riskAcknowledgedAt == null
+  const [showRiskModal, setShowRiskModal] = useState(false)
+  const [pendingMethod, setPendingMethod] = useState<DepositMethod | null>(null)
+  const [ackLoading, setAckLoading] = useState(false)
+  async function handleAcceptRisk() {
+    setAckLoading(true)
+    try {
+      await supabase.rpc('acknowledge_risk')
+      await refreshProfile()
+      if (pendingMethod) {
+        setDepositMethod(pendingMethod)
+        setStep('deposit-amount')
+        setPendingMethod(null)
+      }
+      setShowRiskModal(false)
+    } finally {
+      setAckLoading(false)
+    }
+  }
+  function handleCancelRisk() {
+    setShowRiskModal(false)
+    setPendingMethod(null)
+  }
   const [tab, setTab] = useState<'depositar' | 'retirar'>(initialTab)
   const [step, setStep] = useState<Step>('home')
   const [depositMethod, setDepositMethod] = useState<DepositMethod>('tarjeta')
@@ -125,6 +154,13 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
 
   // ── Deposit flow ──
   const handleDepositMethodSelect = (m: DepositMethod) => {
+    // First-deposit risk gate: if the user has never acknowledged,
+    // intercept here. The modal will set step + method on accept.
+    if (needsRiskAck) {
+      setPendingMethod(m)
+      setShowRiskModal(true)
+      return
+    }
     setDepositMethod(m)
     setStep('deposit-amount')
   }
@@ -169,7 +205,113 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
 
   const isDeposit = tab === 'depositar'
 
+  // Inline risk-acknowledgment overlay. Rendered as a sibling to
+  // BottomSheet so it stacks above with its own z-index. We keep the
+  // JSX inline (no extracted component) to avoid Vite tree-shaking
+  // issues we saw with a standalone RiskModal file — this guarantees
+  // the disclosure code lives in the same module that the app already
+  // resolves and bundles.
+  const riskOverlay = showRiskModal ? (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="risk-modal-title"
+      style={{
+        position: 'fixed', inset: 0, zIndex: 1100,
+        background: 'rgba(0, 0, 0, 0.65)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: 16,
+      }}
+      onClick={handleCancelRisk}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          maxWidth: 460, width: '100%',
+          background: 'var(--b1n0-card)',
+          border: '1px solid var(--b1n0-border)',
+          borderRadius: 'var(--radius-xl)',
+          padding: 'var(--space-6)',
+          fontFamily: F,
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 'var(--space-4)' }}>
+          <div style={{
+            width: 40, height: 40, borderRadius: '50%',
+            background: 'var(--b1n0-no-bg, rgba(245,158,11,0.15))',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+          }}>
+            <Warning size={22} weight="bold" color="var(--b1n0-no)" />
+          </div>
+          <h2 id="risk-modal-title" style={{
+            fontFamily: D, fontSize: 20, fontWeight: 800,
+            color: 'var(--b1n0-text-1)', margin: 0, letterSpacing: '-0.5px',
+          }}>
+            Antes de continuar
+          </h2>
+        </div>
+        <p style={{ fontSize: 14, color: 'var(--b1n0-text-1)', margin: 0, marginBottom: 'var(--space-4)', lineHeight: 1.6 }}>
+          Antes de hacer tu primer depósito, queremos que tengas claro qué es y qué no es b1n0:
+        </p>
+        <ul style={{
+          margin: 0, marginBottom: 'var(--space-5)',
+          paddingLeft: 0, listStyle: 'none',
+          display: 'flex', flexDirection: 'column', gap: 'var(--space-3)',
+        }}>
+          <li style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 13.5, color: 'var(--b1n0-text-1)', lineHeight: 1.55 }}>
+            <span style={{ flexShrink: 0, width: 6, height: 6, borderRadius: '50%', background: 'var(--b1n0-no)', marginTop: 7 }} />
+            <span>Los votos implican <strong>riesgo de pérdida del capital</strong>. No hay retornos garantizados.</span>
+          </li>
+          <li style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 13.5, color: 'var(--b1n0-text-1)', lineHeight: 1.55 }}>
+            <span style={{ flexShrink: 0, width: 6, height: 6, borderRadius: '50%', background: 'var(--b1n0-no)', marginTop: 7 }} />
+            <span>b1n0 <strong>no es una inversión</strong>, no es un instrumento financiero, no es una casa de apuestas y no es un casino.</span>
+          </li>
+          <li style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 13.5, color: 'var(--b1n0-text-1)', lineHeight: 1.55 }}>
+            <span style={{ flexShrink: 0, width: 6, height: 6, borderRadius: '50%', background: 'var(--b1n0-no)', marginTop: 7 }} />
+            <span>El acceso es para <strong>mayores de 18 años</strong>.</span>
+          </li>
+          <li style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 13.5, color: 'var(--b1n0-text-1)', lineHeight: 1.55 }}>
+            <span style={{ flexShrink: 0, width: 6, height: 6, borderRadius: '50%', background: 'var(--b1n0-no)', marginTop: 7 }} />
+            <span>Sos responsable de cumplir las leyes y obligaciones fiscales aplicables en tu jurisdicción.</span>
+          </li>
+        </ul>
+        <p style={{ fontSize: 12, color: 'var(--b1n0-muted)', margin: 0, marginBottom: 'var(--space-5)', lineHeight: 1.55 }}>
+          Tu aceptación queda registrada con fecha y hora. Términos completos en{' '}
+          <a href="/terminos" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--b1n0-si)', textDecoration: 'underline' }}>/terminos</a>.
+        </p>
+        <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
+          <button
+            onClick={handleCancelRisk}
+            disabled={ackLoading}
+            style={{
+              flex: 1, padding: '12px 16px', borderRadius: 'var(--radius-pill)',
+              background: 'transparent', border: '1px solid var(--b1n0-border)',
+              color: 'var(--b1n0-muted)', fontFamily: F, fontSize: 14, fontWeight: 600,
+              cursor: ackLoading ? 'default' : 'pointer', opacity: ackLoading ? 0.5 : 1,
+            }}
+          >
+            Cancelar
+          </button>
+          <button
+            onClick={handleAcceptRisk}
+            disabled={ackLoading}
+            style={{
+              flex: 2, padding: '12px 16px', borderRadius: 'var(--radius-pill)',
+              background: 'var(--b1n0-si)', border: 'none',
+              color: 'var(--b1n0-on-accent)', fontFamily: F, fontSize: 14, fontWeight: 700,
+              cursor: ackLoading ? 'default' : 'pointer', opacity: ackLoading ? 0.7 : 1,
+            }}
+          >
+            {ackLoading ? 'Registrando…' : 'Entiendo y acepto'}
+          </button>
+        </div>
+      </div>
+    </div>
+  ) : null
+
   return (
+    <>
+    {riskOverlay}
     <BottomSheet open={open} onClose={handleClose} title="Billetera">
       <div style={{ padding: '0 20px 40px' }}>
 
@@ -556,5 +698,6 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
         )}
       </div>
     </BottomSheet>
+    </>
   )
 }

@@ -33,7 +33,7 @@ npm run preview    # Preview production build
 src/
 ├── pages/                      # Route-level pages
 │   ├── Inicio.tsx              # Main feed (events + news)
-│   ├── MisLlamados.tsx         # User's active predictions (Mis Votos)
+│   ├── MisLlamados.tsx         # User's active predictions (Mis Votos) — filename retained for stability
 │   ├── Perfil.tsx              # Account, wallet, KYC, friends
 │   ├── Portafolio.tsx          # Active positions with live P/L
 │   ├── Historial.tsx           # Transaction history + vote history
@@ -140,7 +140,7 @@ Supports dark, light, and system modes via `ThemeContext`. Uses `[data-theme="li
 
 | Never say | Use instead |
 |-----------|-------------|
-| Apostar / Bet | Hacer tu llamado / Call it |
+| Apostar / Bet | Hacer tu voto / Call it |
 | Ganar / Win | Tener razón / Cobrar |
 | Perder / Lose | Esta vez no / No fue |
 | Cuotas / Odds | Distribución / Split |
@@ -174,7 +174,7 @@ Currency is **USD** platform-wide. Sponsor model removed — pools are funded ex
 
 ## Microcopy Examples
 
-- Empty feed: *"No hay llamados activos. Volvé más tarde — esto se pone bueno."*
+- Empty feed: *"No hay votos activos. Volvé más tarde — esto se pone bueno."*
 - Win: *"¡Lo sabías! Colectás $82.35"*
 - Loss: *"Esta vez no. Seguí participando."*
 - KYC upsell: *"Subí a Nivel 2 para participar hasta $250. Solo tarda 2 minutos."*
@@ -232,4 +232,5 @@ The Didit API key never touches the browser — all Didit calls go through the e
 ```
 VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-key-here
-VITE_SENTRY_DSN=              # Optional: leave empty to skip S
+VITE_SENTRY_DSN=              # Optional: leave empty to skip Sentry
+```

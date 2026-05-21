@@ -265,7 +265,7 @@ export function Documentacion() {
             Cómo funciona b1n0.
           </h1>
           <p style={{ fontFamily: F, fontSize: isDesktop ? '16px' : '14px', color: 'var(--b1n0-text-2)', lineHeight: 1.6, margin: 0 }}>
-            Todo lo que necesitás saber sobre llamados, contratos, comisiones, LPs, custodia, resolución y verificación. Sin letra chica.
+            Todo lo que necesitás saber sobre votos, contratos, comisiones, LPs, custodia, resolución y verificación. Sin letra chica.
           </p>
           <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', marginTop: '12px' }}>
             Última actualización: {DOC_LAST_UPDATED}

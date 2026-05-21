@@ -182,7 +182,7 @@ function VoteCard({ p }: { p: UserPrediction }) {
         </span>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
           <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 600, color: 'var(--b1n0-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-            Tu llamado
+            Tu voto
           </span>
           <span
             style={{
@@ -448,7 +448,7 @@ type VoteFilter = 'todos' | 'active' | 'won' | 'lost' | 'sold'
 export function Historial() {
   usePageMeta({
     title: 'Historial · b1n0',
-    description: 'Todos tus llamados resueltos en b1n0. Mirá tu trayectoria completa.',
+    description: 'Todos tus votos resueltos en b1n0. Mirá tu trayectoria completa.',
   })
   const { session } = useAuth()
   const { predictions, refreshPredictions } = useVotes()
@@ -648,7 +648,7 @@ export function Historial() {
           {active.length === 0 && prior.length === 0 && (
             <EmptyState
               title="Sin movimientos todavía"
-              subtitle="Tus depósitos, retiros, llamados y cobros van a aparecer acá."
+              subtitle="Tus depósitos, retiros, votos y cobros van a aparecer acá."
             />
           )}
         </>
@@ -680,7 +680,7 @@ export function Historial() {
           {allTx.length === 0 && (
             <EmptyState
               title="Sin movimientos todavía"
-              subtitle="Tus depósitos, retiros, llamados y cobros van a aparecer acá."
+              subtitle="Tus depósitos, retiros, votos y cobros van a aparecer acá."
             />
           )}
         </div>

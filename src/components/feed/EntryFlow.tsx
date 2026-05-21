@@ -266,7 +266,7 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
         }
       })
       .catch((err) => {
-        toast.showError(err instanceof Error ? err.message : 'Error inesperado al procesar el llamado.')
+        toast.showError(err instanceof Error ? err.message : 'Error inesperado al procesar el voto.')
       })
       .finally(() => {
         setConfirming(false)
@@ -650,7 +650,7 @@ export function EntryFlow({ event, onClose, onConfirm, initialSide, compact = fa
                 }}
               />
               <span style={{ fontFamily: F, fontSize: 12.5, color: 'var(--b1n0-text-1)', lineHeight: 1.5 }}>
-                Entiendo que los llamados implican riesgo de pérdida del
+                Entiendo que los votos implican riesgo de pérdida del
                 capital, que b1n0 no es una inversión y que soy mayor de
                 18 años. Acepto los{' '}
                 <a

@@ -93,8 +93,8 @@ export function TopBar({ user }: TopBarProps) {
                   // tries to find its targets.
                   setTimeout(() => startTour(), 300)
                 }}
-                aria-label="Cómo jugar"
-                title="Cómo jugar"
+                aria-label="Cómo participar"
+                title="Cómo participar"
                 style={{
                   display: 'flex',
                   alignItems: 'center',

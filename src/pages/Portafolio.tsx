@@ -414,7 +414,7 @@ function PositionCard({
 export function Portafolio() {
   usePageMeta({
     title: 'Portafolio · b1n0',
-    description: 'Posiciones activas, P/L en tiempo real. Seguí tus llamados en b1n0.',
+    description: 'Posiciones activas, P/L en tiempo real. Seguí tus votos en b1n0.',
   })
   const navigate = useNavigate()
   const { predictions, refreshPredictions } = useVotes()
@@ -1012,7 +1012,7 @@ export function Portafolio() {
         {(['predictions', 'lp'] as const).map((t) => {
           const isOn = topTab === t
           const labelText = t === 'predictions'
-            ? `Mis Llamados (${predictions.length})`
+            ? `Mis Votos (${predictions.length})`
             : `Capital LP (${lpPositions.length})`
           return (
             <button
@@ -1232,7 +1232,7 @@ export function Portafolio() {
         tab === 'active' ? (
           <EmptyState
             title="Sin posiciones activas"
-            subtitle="Hacé tu primer llamado y mirá cómo se mueve el precio en tiempo real."
+            subtitle="Hacé tu primer voto y mirá cómo se mueve el precio en tiempo real."
             action={{ label: 'Ver eventos', onClick: () => navigate('/inicio') }}
           />
         ) : (
@@ -1397,7 +1397,7 @@ export function Portafolio() {
           {lpPositions.length === 0 ? (
             <EmptyState
               title="No estás respaldando ningún evento"
-              subtitle="Como LP, ganás comisiones cada vez que alguien hace un llamado. Aprendé cómo funciona."
+              subtitle="Como LP, ganás comisiones cada vez que alguien hace un voto. Aprendé cómo funciona."
               action={{ label: 'Aprender sobre LP', onClick: () => navigate('/documentacion') }}
             />
           ) : (

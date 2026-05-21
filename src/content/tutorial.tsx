@@ -40,7 +40,7 @@ export interface TutorialStep {
 // feel like the real product without literally copying any one event.
 function Step1Card() {
   return (
-    <svg viewBox="0 0 320 200" width="320" height="200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Tarjeta de un llamado">
+    <svg viewBox="0 0 320 200" width="320" height="200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Tarjeta de un voto">
       {/* Card surface */}
       <rect x="20" y="14" width="280" height="172" rx="16" fill="var(--b1n0-surface)" stroke="var(--b1n0-border)" />
       {/* Side accent (categoría) */}
@@ -72,7 +72,7 @@ function Step1Card() {
 // uses subtle radiating dashes for an editorial feel.
 function Step2Cobro() {
   return (
-    <svg viewBox="0 0 320 200" width="320" height="200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cobro de un llamado ganado">
+    <svg viewBox="0 0 320 200" width="320" height="200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cobro de un voto ganado">
       {/* Radiating flecks (decorative) */}
       <g stroke="var(--b1n0-si)" strokeWidth="2" strokeLinecap="round" opacity="0.5">
         <line x1="40" y1="40" x2="50" y2="32" />
@@ -152,7 +152,7 @@ function Step4Listo() {
         alignItems: 'center',
         justifyContent: 'center',
       }}
-      aria-label="Listo para hacer tu primer llamado"
+      aria-label="Listo para hacer tu primer voto"
       role="img"
     >
       {/* Concentric pulse rings — three sizes, staggered animation.
@@ -223,9 +223,9 @@ function Step4Listo() {
 export const TUTORIAL_STEPS: TutorialStep[] = [
   {
     id: 'llamado',
-    title: 'Hacé tu llamado',
+    title: 'Hacé tu voto',
     body:
-      'Cada tarjeta es un evento real del mundo. Tocá el lado SÍ o NO según lo que creas — el precio te dice cuánto vale ese llamado ahora mismo.',
+      'Cada tarjeta es un evento real del mundo. Tocá el lado SÍ o NO según lo que creas — el precio te dice cuánto vale ese voto ahora mismo.',
     illustration: <Step1Card />,
   },
   {
@@ -246,7 +246,7 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
     id: 'listo',
     title: 'Demostrá que sabés.',
     body:
-      'Ya sabés lo esencial. Hacé tu primer llamado y mostrá que entendés tu mundo mejor que todos.',
+      'Ya sabés lo esencial. Hacé tu primer voto y mostrá que entendés tu mundo mejor que todos.',
     illustration: <Step4Listo />,
     ctaLabel: 'Empezar',
   },

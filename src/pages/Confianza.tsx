@@ -209,7 +209,7 @@ const CONFIANZA_SECTIONS: DocPageSection[] = [
     title: 'Privacidad',
     children: (
       <DocParagraph>
-        Cada usuario controla la visibilidad de su perfil público desde <code style={codeStyle}>/perfil</code> → Privacidad: nivel KYC, total cobrado, tasa de acierto, total de llamados, nombre real, fecha de ingreso, avatar y actividad reciente (llamados y comentarios) se pueden ocultar individualmente. La aplicación respeta estas preferencias en el servidor — no solo en el cliente — mediante funciones <code style={codeStyle}>SECURITY DEFINER</code> que filtran los campos antes de salir de la base. Política completa en{' '}
+        Cada usuario controla la visibilidad de su perfil público desde <code style={codeStyle}>/perfil</code> → Privacidad: nivel KYC, total cobrado, tasa de acierto, total de votos, nombre real, fecha de ingreso, avatar y actividad reciente (votos y comentarios) se pueden ocultar individualmente. La aplicación respeta estas preferencias en el servidor — no solo en el cliente — mediante funciones <code style={codeStyle}>SECURITY DEFINER</code> que filtran los campos antes de salir de la base. Política completa en{' '}
         <a href="/privacidad" style={inlineLink}>/privacidad</a>.
       </DocParagraph>
     ),
@@ -220,7 +220,7 @@ const CONFIANZA_SECTIONS: DocPageSection[] = [
     title: 'Riesgo y responsabilidad del usuario',
     children: (
       <DocCallout title="Advertencia obligatoria" tone="warn">
-        Los llamados implican riesgo de pérdida del capital. No hay retornos garantizados, no es una inversión, no es un instrumento financiero, no es una casa de apuestas. b1n0 es un juego de opinión social con dinero real. Cada participante es responsable de cumplir las leyes y obligaciones fiscales de su jurisdicción. El acceso es para mayores de 18 años.
+        Los votos implican riesgo de pérdida del capital. No hay retornos garantizados, no es una inversión, no es un instrumento financiero, no es una casa de apuestas. b1n0 es un juego de opinión social con dinero real. Cada participante es responsable de cumplir las leyes y obligaciones fiscales de su jurisdicción. El acceso es para mayores de 18 años.
       </DocCallout>
     ),
   },

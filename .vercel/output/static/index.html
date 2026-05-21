@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon-brand.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#0D0D0D" />
+
+    <!-- PWA — Android/Chrome -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+
+    <!-- PWA — iOS Safari fallback (Apple ignores manifest.webmanifest) -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="b1n0" />
+    <link rel="apple-touch-icon" href="/brand/icon-1.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/brand/icon-1.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/brand/icon-1.png" />
+    <link rel="apple-touch-icon" sizes="167x167" href="/brand/icon-1.png" />
+    <meta name="description" content="b1n0 — La plataforma de opinión donde demostrás que sabés más que todos. Hacé tu llamado en fútbol, economía y cultura de Centroamérica." />
+    <meta name="keywords" content="predicciones, opinión, fútbol, Guatemala, El Salvador, Honduras, Centroamérica" />
+    <meta name="author" content="b1n0" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="b1n0" />
+    <meta property="og:description" content="La plataforma de opinión donde demostrás que sabés más que todos. Centroamérica." />
+    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:url" content="https://www.b1n0.com" />
+    <meta property="og:locale" content="es_GT" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="b1n0" />
+    <meta name="twitter:description" content="Hacé tu llamado. Demostrá que sabés más que todos." />
+    <meta name="twitter:image" content="/og-image.png" />
+
+    <title>b1n0</title>
+
+    <!-- Structured data — helps Google understand b1n0 as a brand
+         and decide on sitelinks. Two schemas:
+           Organization — identity, logo
+           WebSite — search action so a Google sitelink may render -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://www.b1n0.com/#org",
+          "name": "b1n0",
+          "url": "https://www.b1n0.com",
+          "logo": "https://www.b1n0.com/brand/b1n0-logo-white.png",
+          "description": "La plataforma de opinión de Centroamérica donde demostrás que sabés más que todos.",
+          "areaServed": ["GT", "SV", "HN", "NI", "CR"]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://www.b1n0.com/#website",
+          "name": "b1n0",
+          "url": "https://www.b1n0.com",
+          "inLanguage": "es",
+          "publisher": { "@id": "https://www.b1n0.com/#org" },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://www.b1n0.com/inicio?q={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }
+        }
+      ]
+    }
+    </script>
+
+    <!-- Type system: Inter + InterDisplay (self-hosted via /public/fonts/). See src/index.css @font-face. -->
+    <script type="module" crossorigin src="/assets/index-ClU2u6af.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-D6K3B4gb.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

@@ -409,7 +409,7 @@ export function EventCard({ event }: EventCardProps) {
                     gap: 'var(--space-2)',
                   }}
                 >
-                  {voted ? 'Agregar posición' : 'Hacer mi llamado'}
+                  {voted ? 'Agregar posición' : 'Hacer mi voto'}
                   <ArrowRight size={14} weight="bold" />
                 </button>
               </>
@@ -508,7 +508,7 @@ export function EventCard({ event }: EventCardProps) {
                     gap: 'var(--space-2)',
                   }}
                 >
-                  {voted ? 'Agregar posición' : 'Hacer mi llamado'}
+                  {voted ? 'Agregar posición' : 'Hacer mi voto'}
                   <ArrowRight size={14} weight="bold" />
                 </button>
               </>

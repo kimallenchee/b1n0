@@ -12,7 +12,7 @@ interface HowItWorksProps {
 const steps = [
   {
     number: 1,
-    title: 'Elegí tu llamado',
+    title: 'Elegí tu voto',
     description: 'Explorá las preguntas del momento — deportes, política, economía. Elegí un lado: SÍ o NO. Tu opinión es tu posición.',
     accent: 'var(--b1n0-si)',
     accentBg: 'var(--b1n0-si-bg)',
@@ -59,7 +59,7 @@ const steps = [
           <span style={{ fontFamily: D, fontWeight: 700, fontSize: '18px', color: 'var(--b1n0-si)' , fontVariantNumeric: 'tabular-nums'}}>$15.62</span>
         </div>
         <div style={{ padding: '10px', borderRadius: 'var(--radius-lg)', background: 'var(--b1n0-si)', textAlign: 'center', cursor: 'default' }}>
-          <span style={{ fontFamily: F, fontWeight: 700, fontSize: '13px', color: 'var(--b1n0-bg)' }}>Confirmar llamado →</span>
+          <span style={{ fontFamily: F, fontWeight: 700, fontSize: '13px', color: 'var(--b1n0-bg)' }}>Confirmar voto →</span>
         </div>
       </div>
     ),
@@ -67,7 +67,7 @@ const steps = [
   {
     number: 3,
     title: 'Cobrá',
-    description: 'Cuando se resuelve el evento, si acertaste colectás automáticamente. Si no fue, seguís participando — siempre hay otro llamado.',
+    description: 'Cuando se resuelve el evento, si acertaste colectás automáticamente. Si no fue, seguís participando — siempre hay otro voto.',
     accent: 'var(--b1n0-si)',
     accentBg: 'var(--b1n0-si-bg)',
     illustration: (
@@ -78,7 +78,7 @@ const steps = [
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0' }}>
           <div>
-            <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-text-2)', marginBottom: '2px' }}>Tu llamado: SÍ</p>
+            <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-text-2)', marginBottom: '2px' }}>Tu voto: SÍ</p>
             <p style={{ fontFamily: F, fontSize: '10px', color: 'var(--b1n0-text-2)' }}>Entrada: $5</p>
           </div>
           <div style={{ textAlign: 'right' }}>

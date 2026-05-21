@@ -65,7 +65,7 @@ function PredictionCard({ prediction }: { prediction: UserPrediction }) {
 
 export function MisVotos() {
   usePageMeta({
-    title: 'Mis llamados · b1n0',
+    title: 'Mis votos · b1n0',
     description: 'Tus participaciones activas en b1n0 — todo lo que estás siguiendo en un solo lugar.',
   })
   const navigate = useNavigate()
@@ -97,8 +97,8 @@ export function MisVotos() {
 
       {allPredictions.length === 0 && (
         <EmptyState
-          title="Aún no hiciste tu primer llamado"
-          subtitle="Tu primer llamado te lleva a Nivel 2 (hasta $250 por evento) cuando termines la verificación."
+          title="Aún no hiciste tu primer voto"
+          subtitle="Tu primer voto te lleva a Nivel 2 (hasta $250 por evento) cuando termines la verificación."
           action={{ label: 'Ver eventos', onClick: () => navigate('/inicio') }}
         />
       )}

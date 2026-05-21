@@ -72,7 +72,7 @@ export function AppTour() {
     <div
       role="dialog"
       aria-modal="true"
-      aria-label="Cómo jugar"
+      aria-label="Cómo participar"
       onClick={(e) => { if (e.target === e.currentTarget) close() }}
       style={{
         position: 'fixed',

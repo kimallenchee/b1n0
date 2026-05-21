@@ -276,7 +276,7 @@ export function EventDetailPage() {
   // the live state of the question rather than a generic logo.
   usePageMeta({
     title: event ? `${event.question} · b1n0` : 'Evento · b1n0',
-    description: event?.considerations ?? `Hacé tu llamado en este evento de b1n0.`,
+    description: event?.considerations ?? `Hacé tu voto en este evento de b1n0.`,
     ogImage: id ? `/api/og?event=${encodeURIComponent(id)}` : undefined,
   })
 
@@ -808,7 +808,7 @@ function EventDetailInner({ event }: { event: AppEvent }) {
               {/* ── Mobile CTA ── */}
               {!isResolved && !isDesktop && (
                 <button onClick={() => openVoteSheet()} className="btn-primary" style={{ width: '100%', padding: '15px', fontSize: '14px', letterSpacing: '0.5px', marginBottom: '20px' }}>
-                  {voted ? 'AGREGAR POSICIÓN →' : 'HACER MI LLAMADO →'}
+                  {voted ? 'AGREGAR POSICIÓN →' : 'HACER MI VOTO →'}
                 </button>
               )}
 

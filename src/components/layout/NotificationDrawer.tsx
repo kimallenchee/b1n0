@@ -287,7 +287,7 @@ export function NotificationDrawer({ onClose }: { onClose: () => void }) {
           {notifications.length === 0 ? (
             <EmptyState
               title="Bandeja vacía"
-              subtitle="Las notificaciones de tus llamados, amigos y cobros aparecen acá."
+              subtitle="Las notificaciones de tus votos, amigos y cobros aparecen acá."
             />
           ) : (
             notifications.map(n => (

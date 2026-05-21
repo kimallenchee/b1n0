@@ -235,4 +235,16 @@ function shell({ title, accent, body }: { title: string; accent: string; body: s
 }
 
 function cta(label: string, href: string): string {
-  return `<a href="${href}" style="display:inline-block;padding:13px 22px;background:#06D47F;color:#FFFFFF;text-decoration:n
+  return `<a href="${href}" style="display:inline-block;padding:13px 22px;background:#06D47F;color:#FFFFFF;text-decoration:none;border-radius:8px;font-weight:700;font-size:14px;">${label}</a>`
+}
+
+function escapeHtml(s: string): string {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+}
+
+function json(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
+  })
+}

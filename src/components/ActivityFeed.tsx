@@ -252,7 +252,7 @@ function LlamadoCard({
             letterSpacing: '0.6px',
           }}
         >
-          Llamado · {formatRelative(item.timestamp)}
+          Voto · {formatRelative(item.timestamp)}
         </span>
       </div>
       <p
