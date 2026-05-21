@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { Envelope, X, Lock, Eye, EyeSlash, GoogleLogo, AppleLogo } from '@phosphor-icons/react'
+import { Envelope, X, Lock, Eye, EyeSlash, GoogleLogo, FacebookLogo } from '@phosphor-icons/react'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
 import { useAuthModal } from '../context/AuthModalContext'
@@ -131,7 +131,7 @@ function IconInput({
 
 /**
  * OAuthButton — full-width button used for the "Continuar con Google /
- * Apple" rows. Rendered as a quiet outline button so the primary
+ * Facebook" rows. Rendered as a quiet outline button so the primary
  * action (email submit) stays the loudest element on the form.
  */
 function OAuthButton({
@@ -324,33 +324,11 @@ export function AuthModal() {
               display: 'block',
             }}
           />
-          {/* Country pills — geographic specificity is a trust signal in CA */}
-          <div
-            style={{
-              display: 'flex',
-              gap: 'var(--space-1)',
-              justifyContent: 'center',
-              flexWrap: 'wrap',
-            }}
-          >
-            {['GT', 'SV', 'HN', 'NI', 'CR'].map((c) => (
-              <span
-                key={c}
-                style={{
-                  fontFamily: 'var(--font-num)',
-                  fontSize: '9px',
-                  fontWeight: 700,
-                  color: 'var(--b1n0-muted)',
-                  background: 'var(--b1n0-surface)',
-                  padding: '3px 7px',
-                  borderRadius: 'var(--radius-pill)',
-                  letterSpacing: 'var(--tracking-caps)',
-                }}
-              >
-                {c}
-              </span>
-            ))}
-          </div>
+          {/* Country pills were here (GT/SV/HN/NI/CR). Removed when the
+              platform's served-jurisdiction list expanded beyond Central
+              America — the chips became inaccurate and the geographic
+              specificity is no longer a useful trust signal at this point
+              in the funnel. */}
         </div>
 
         {/* OAuth providers — placeholders until Supabase OAuth is wired.
@@ -363,9 +341,9 @@ export function AuthModal() {
             onClick={() => setError('Pronto: inicio de sesión con Google.')}
           />
           <OAuthButton
-            label="Continuar con Apple"
-            icon={<AppleLogo size={18} weight="fill" />}
-            onClick={() => setError('Pronto: inicio de sesión con Apple.')}
+            label="Continuar con Facebook"
+            icon={<FacebookLogo size={18} weight="fill" />}
+            onClick={() => setError('Pronto: inicio de sesión con Facebook.')}
           />
         </div>
 
