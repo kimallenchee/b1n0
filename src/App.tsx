@@ -38,6 +38,7 @@ const TermsPage = lazy(() => import('./pages/Legal').then(m => ({ default: m.Ter
 const PrivacyPage = lazy(() => import('./pages/Legal').then(m => ({ default: m.PrivacyPage })))
 const Documentacion = lazy(() => import('./pages/Documentacion').then(m => ({ default: m.Documentacion })))
 const ProfilePublic = lazy(() => import('./pages/ProfilePublic').then(m => ({ default: m.ProfilePublic })))
+const Confianza = lazy(() => import('./pages/Confianza').then(m => ({ default: m.Confianza })))
 
 function LazyFallback() {
   return (
@@ -63,6 +64,7 @@ const routes = (
     <Route path="/privacidad" element={<Suspense fallback={<LazyFallback />}><PrivacyPage /></Suspense>} />
     <Route path="/documentacion" element={<Suspense fallback={<LazyFallback />}><Documentacion /></Suspense>} />
     <Route path="/u/:username" element={<Suspense fallback={<LazyFallback />}><ProfilePublic /></Suspense>} />
+    <Route path="/confianza" element={<Suspense fallback={<LazyFallback />}><Confianza /></Suspense>} />
   </Routes>
 )
 

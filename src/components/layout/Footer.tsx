@@ -118,6 +118,7 @@ export function Footer() {
           <FooterAnchor href="mailto:soporte@b1n0.com">Soporte</FooterAnchor>
           <FooterLink to="/terminos">Términos</FooterLink>
           <FooterLink to="/privacidad">Privacidad</FooterLink>
+          <FooterLink to="/confianza">Confianza</FooterLink>
         </nav>
 
         {/* Inline media query so the grid flips to a single inline
@@ -153,8 +154,8 @@ export function Footer() {
           Los llamados implican riesgo de pérdida del capital. Solo para mayores
           de 18 años. Los participantes son responsables de cumplir las leyes
           aplicables en su jurisdicción. Tres33 SAS de CV está registrado en El
-          Salvador. Tokenización de contratos y activos digitales bajo el marco
-          regulatorio CNAD de El Salvador.
+          Salvador. Tokenización de contratos y activos digitales operada por
+          proveedor licenciado bajo el marco regulatorio CNAD de El Salvador.
         </p>
 
         {/* ── Hairline divider before copyright ────────────────── */}
