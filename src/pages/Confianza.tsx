@@ -1,250 +1,159 @@
 /**
- * Confianza ("Trust") — public-facing page at /confianza.
+ * /confianza — public trust page.
  *
- * The page anyone (investor, sponsor brand, regulator, journalist,
- * curious user) can read to understand:
- *   - Who runs b1n0
- *   - How money flows
- *   - What security posture is in place
- *   - Which partners we depend on
- *   - How to report a vulnerability or get help
+ * Mirrors the canonical /documentacion layout via DocPageShell so all
+ * footer-linked informational pages share the same visual chrome:
+ * back link → header (eyebrow + H1 + intro + last updated) → body
+ * (sticky TOC on desktop / accordion on mobile) → Footer.
  *
- * Anchors map 1:1 with sections so we can deep-link from email
- * ("read https://www.b1n0.com/confianza#seguridad"). Each section
- * intentionally short — this page exists to make the answer
- * pointable, not to replace /documentacion (the full mechanics) or
- * /legal (terms + privacy).
+ * Content covers: entity, model, money flow, security posture, public
+ * scan grades, partners, privacy, risk, contact. Plus a download
+ * button for the offline PDF version (scripts/build_confianza_pdf.py).
  *
- * Public scan grades link out to third-party scanners that re-run
- * live on every click — so anyone reading this can verify the claim
- * themselves rather than trust a screenshot we'd have to keep fresh.
- *
- * NOT routed inside the auth shell — /confianza is a marketing-grade
- * page reachable without login.
+ * Anchors are deep-linkable: /confianza#seguridad etc.
  */
 
-import { Footer } from '../components/layout/Footer'
 import { usePageMeta } from '../hooks/usePageMeta'
+import { DocPageShell, DocParagraph, DocBullets, DocCallout, type DocPageSection } from '../components/DocPageShell'
 
-const F_BODY = 'var(--font-body)'
-const F_DISPLAY = 'var(--font-display)'
+const F = 'var(--font-body)'
+const D = 'var(--font-display)'
 
-export function Confianza() {
-  usePageMeta({
-    title: 'Confianza · b1n0',
-    description:
-      'Cómo funciona b1n0: entidad, modelo, seguridad, socios y cómo reportar una vulnerabilidad.',
-  })
+const inlineLink: React.CSSProperties = {
+  color: 'var(--b1n0-si)',
+  textDecoration: 'underline',
+  textUnderlineOffset: 2,
+}
 
+const codeStyle: React.CSSProperties = {
+  fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+  fontSize: '0.88em',
+  background: 'var(--b1n0-surface)',
+  padding: '1px 6px',
+  borderRadius: 4,
+  border: '1px solid var(--b1n0-border)',
+}
+
+// ── Public-scan link card (renders inside the verificación section) ──
+function ScanCard({ label, provider, href }: { label: string; provider: string; href: string }) {
   return (
-    <div
-      className="feed-scroll"
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
       style={{
-        padding: '24px 16px',
-        maxWidth: 760,
-        margin: '0 auto',
-        fontFamily: F_BODY,
+        display: 'block',
+        background: 'var(--b1n0-card)',
+        border: '1px solid var(--b1n0-border)',
+        borderRadius: 'var(--radius-lg)',
+        padding: '12px 14px',
+        textDecoration: 'none',
+        color: 'inherit',
+        transition: 'border-color var(--duration-fast) var(--ease-out)',
       }}
+      onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--b1n0-si)' }}
+      onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--b1n0-border)' }}
     >
-      {/* ── Hero ───────────────────────────────────────────────── */}
-      <header style={{ marginBottom: 'var(--space-7)' }}>
-        <p
-          style={{
-            fontSize: 11,
-            fontWeight: 700,
-            letterSpacing: '1.5px',
-            textTransform: 'uppercase',
-            color: 'var(--b1n0-si)',
-            margin: 0,
-            marginBottom: 8,
-          }}
-        >
-          Confianza · Trust
-        </p>
-        <h1
-          style={{
-            fontFamily: F_DISPLAY,
-            fontSize: 36,
-            fontWeight: 800,
-            letterSpacing: '-1px',
-            color: 'var(--b1n0-text-1)',
-            margin: 0,
-            lineHeight: 1.1,
-            marginBottom: 14,
-          }}
-        >
-          Cómo opera b1n0.
-        </h1>
-        <p
-          style={{
-            fontSize: 16,
-            color: 'var(--b1n0-muted)',
-            margin: 0,
-            lineHeight: 1.6,
-            maxWidth: 640,
-          }}
-        >
-          Esta página existe para que cualquier persona —usuario,
-          inversionista, marca patrocinadora, regulador o investigador—
-          pueda entender en cinco minutos quién está detrás de b1n0,
-          cómo se mueve el dinero, qué medidas de seguridad operan y
-          cómo reportar un problema.
-        </p>
+      <p style={{ fontFamily: F, fontSize: 10, fontWeight: 700, letterSpacing: '0.8px', textTransform: 'uppercase', color: 'var(--b1n0-muted)', margin: 0, marginBottom: 4 }}>
+        {provider}
+      </p>
+      <p style={{ fontFamily: D, fontSize: 15, fontWeight: 700, color: 'var(--b1n0-text-1)', margin: 0 }}>
+        {label} ↗
+      </p>
+    </a>
+  )
+}
 
-        {/* PDF version of this page for offline / email distribution.
-            Generated from scripts/build_confianza_pdf.py. The link
-            uses `download` so the browser saves with a clean filename
-            instead of opening inline. Kept brand-side (teal pill)
-            because partners hand it around in emails. */}
-        <a
-          href="/docs/b1n0-confianza.pdf"
-          download="b1n0-confianza.pdf"
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 8,
-            marginTop: 18,
-            padding: '10px 18px',
-            background: 'var(--b1n0-si)',
-            color: 'var(--b1n0-on-accent)',
-            borderRadius: 'var(--radius-pill)',
-            fontFamily: F_BODY,
-            fontSize: 13,
-            fontWeight: 700,
-            textDecoration: 'none',
-            letterSpacing: '0.3px',
-          }}
-        >
-          Descargar PDF · 8 páginas
-        </a>
-      </header>
-
-      {/* ── Entidad ────────────────────────────────────────────── */}
-      <Section id="entidad" title="Entidad">
-        <p>
-          b1n0 es una marca operada por <strong>Tres33 SAS de CV</strong>,
-          una sociedad anónima de capital variable registrada en la
-          República de El Salvador. Toda la propiedad intelectual del
-          software, los activos de marca y los acuerdos comerciales son
-          propiedad de Tres33.
-        </p>
-        <p>
-          La tokenización de contratos y activos digitales es operada por
-          un proveedor licenciado bajo el marco regulatorio CNAD
-          (Comisión Nacional de Activos Digitales) de El Salvador. Tres33
-          se apoya en este proveedor para la capa de cumplimiento de
-          activos digitales.
-        </p>
-      </Section>
-
-      {/* ── Modelo ─────────────────────────────────────────────── */}
-      <Section id="modelo" title="Modelo">
-        <p>
-          b1n0 es un mercado de opciones sobre eventos. Los usuarios
-          toman posiciones (SÍ o NO) sobre preguntas binarias con fecha
-          de resolución conocida. El precio de entrada refleja el
-          consenso del mercado y se mueve en función de la oferta y la
-          demanda.
-        </p>
-        <p>
-          El modelo de liquidez es <em>LP-backstopped</em>: capital de
-          proveedores de liquidez (LPs) respalda los pagos prometidos
-          a los ganadores, y a cambio captura un porcentaje de las
-          comisiones del mercado. b1n0 no es una casa de apuestas, no
-          es un casino y no ofrece servicios de inversión.
-        </p>
-        <p>
-          La estructura de comisiones, los límites por nivel de KYC y
-          las reglas de resolución están documentadas en{' '}
-          <ExternalLink to="/documentacion">/documentacion</ExternalLink>.
-          Los términos legales completos viven en{' '}
-          <ExternalLink to="/terminos">/terminos</ExternalLink>.
-        </p>
-      </Section>
-
-      {/* ── Flujo de fondos ────────────────────────────────────── */}
-      <Section id="fondos" title="Flujo de fondos">
-        <p>
-          Cada movimiento de dinero queda registrado en un libro mayor
-          (<em>balance_ledger</em>) que sirve como fuente de verdad para
-          saldos, comisiones, pagos a ganadores, retornos de LP y
-          comisión de plataforma. Los saldos visibles al usuario son
-          una caché derivada del ledger, no una variable manipulable
-          aparte.
-        </p>
-        <p>
-          Las reglas contables están documentadas en{' '}
-          <code style={codeStyle}>LEDGER_INVARIANTS.md</code> del
-          repositorio: cada crédito tiene su débito correspondiente,
-          la suma de los saldos cuadra con el total de fondos
-          gestionados, y ningún pago se ejecuta sin la verificación
-          previa de fondos disponibles.
-        </p>
-      </Section>
-
-      {/* ── Seguridad ──────────────────────────────────────────── */}
-      <Section id="seguridad" title="Seguridad">
-        <p>
-          La arquitectura aplica defensa en profundidad a nivel de base
-          de datos, no solo en la capa de aplicación:
-        </p>
-        <ul style={ulStyle}>
-          <li>
-            <strong>Row-Level Security (RLS)</strong> en las tablas
-            sensibles (perfiles, posiciones, comentarios, ledger). Los
-            permisos de lectura/escritura los enforza Postgres, no el
-            cliente.
-          </li>
-          <li>
-            <strong>Funciones <code style={codeStyle}>SECURITY DEFINER</code></strong>{' '}
-            para operaciones privilegiadas (resolución de eventos,
-            ajustes de saldo, configuración de plataforma). Cada una
-            verifica explícitamente el rol del invocador mediante el
-            helper <code style={codeStyle}>is_admin(auth.uid())</code>.
-          </li>
-          <li>
-            <strong>Claim de admin</strong> almacenado en{' '}
-            <code style={codeStyle}>auth.users.app_metadata</code>, no
-            en columnas que el cliente pueda manipular.
-          </li>
-          <li>
-            <strong>KYC delegado</strong> a Didit (proveedor europeo
-            especializado). Los documentos de identidad nunca tocan la
-            infraestructura de b1n0; se transmiten directo del usuario
-            a Didit.
-          </li>
-          <li>
-            <strong>Webhooks firmados</strong> con HMAC-SHA256 y
-            verificación de frescura (ventana de 5 minutos), aceptando
-            ambos formatos de firma publicados por Didit.
-          </li>
-          <li>
-            <strong>HTTPS forzado</strong> en toda la superficie con
-            HSTS, CSP estricta, X-Frame-Options DENY y{' '}
-            <code style={codeStyle}>Permissions-Policy</code> que
-            deshabilita cámara, micrófono, geolocalización y pagos del
-            navegador.
-          </li>
-          <li>
-            <strong>Sin contraseñas</strong> almacenadas por b1n0; la
-            autenticación corre sobre Supabase Auth con hashing
-            bcrypt manejado por la plataforma.
-          </li>
-        </ul>
-      </Section>
-
-      {/* ── Verificá vos mismo ─────────────────────────────────── */}
-      <Section id="verificacion" title="Verificá vos mismo">
-        <p style={{ marginBottom: 14 }}>
-          No te pedimos que nos creas. Estos escáneres públicos
-          re-evalúan b1n0.com en vivo cada vez que hacés clic:
-        </p>
+const CONFIANZA_SECTIONS: DocPageSection[] = [
+  {
+    id: 'entidad',
+    eyebrow: 'SECCIÓN 01',
+    title: 'Entidad',
+    children: (
+      <>
+        <DocParagraph>
+          b1n0 es una marca operada por <strong>Tres33 SAS de CV</strong>, una sociedad anónima de capital variable registrada en la República de El Salvador. Toda la propiedad intelectual del software, los activos de marca y los acuerdos comerciales son propiedad de Tres33.
+        </DocParagraph>
+        <DocParagraph>
+          La tokenización de contratos y activos digitales es operada por un proveedor licenciado bajo el marco regulatorio CNAD (Comisión Nacional de Activos Digitales) de El Salvador. Tres33 se apoya en este proveedor para la capa de cumplimiento de activos digitales.
+        </DocParagraph>
+      </>
+    ),
+  },
+  {
+    id: 'modelo',
+    eyebrow: 'SECCIÓN 02',
+    title: 'Modelo',
+    children: (
+      <>
+        <DocParagraph>
+          b1n0 es un mercado de opciones sobre eventos. Los usuarios toman posiciones (SÍ o NO) sobre preguntas binarias con fecha de resolución conocida. El precio de entrada refleja el consenso del mercado y se mueve en función de la oferta y la demanda.
+        </DocParagraph>
+        <DocParagraph>
+          El modelo de liquidez es <em>LP-backstopped</em>: capital de proveedores de liquidez (LPs) respalda los pagos prometidos a los ganadores, y a cambio captura un porcentaje de las comisiones del mercado. b1n0 no es una casa de apuestas, no es un casino y no ofrece servicios de inversión.
+        </DocParagraph>
+        <DocParagraph>
+          La estructura de comisiones, los límites por nivel de KYC y las reglas de resolución están documentadas en{' '}
+          <a href="/documentacion" style={inlineLink}>/documentacion</a>. Los términos legales completos viven en{' '}
+          <a href="/terminos" style={inlineLink}>/terminos</a>.
+        </DocParagraph>
+      </>
+    ),
+  },
+  {
+    id: 'fondos',
+    eyebrow: 'SECCIÓN 03',
+    title: 'Flujo de fondos',
+    children: (
+      <>
+        <DocParagraph>
+          Cada movimiento de dinero queda registrado en un libro mayor (<em>balance_ledger</em>) que sirve como fuente de verdad para saldos, comisiones, pagos a ganadores, retornos de LP y comisión de plataforma. Los saldos visibles al usuario son una caché derivada del ledger, no una variable manipulable aparte.
+        </DocParagraph>
+        <DocParagraph>
+          Las reglas contables están documentadas en <code style={codeStyle}>LEDGER_INVARIANTS.md</code> del repositorio: cada crédito tiene su débito correspondiente, la suma de los saldos cuadra con el total de fondos gestionados, y ningún pago se ejecuta sin la verificación previa de fondos disponibles.
+        </DocParagraph>
+      </>
+    ),
+  },
+  {
+    id: 'seguridad',
+    eyebrow: 'SECCIÓN 04',
+    title: 'Seguridad',
+    children: (
+      <>
+        <DocParagraph>
+          La arquitectura aplica defensa en profundidad a nivel de base de datos, no solo en la capa de aplicación:
+        </DocParagraph>
+        <DocBullets
+          items={[
+            <><strong>Row-Level Security (RLS)</strong> en las tablas sensibles (perfiles, posiciones, comentarios, ledger). Los permisos de lectura y escritura los enforza Postgres, no el cliente.</>,
+            <><strong>Funciones <code style={codeStyle}>SECURITY DEFINER</code></strong> para operaciones privilegiadas (resolución de eventos, ajustes de saldo, configuración de plataforma). Cada una verifica explícitamente el rol del invocador mediante <code style={codeStyle}>is_admin(auth.uid())</code>.</>,
+            <><strong>Claim de admin</strong> almacenado en <code style={codeStyle}>auth.users.app_metadata</code>, no en columnas que el cliente pueda manipular.</>,
+            <><strong>KYC delegado</strong> a Didit (proveedor europeo especializado). Los documentos de identidad nunca tocan la infraestructura de b1n0; se transmiten directo del usuario a Didit.</>,
+            <><strong>Webhooks firmados</strong> con HMAC-SHA256 y verificación de frescura (ventana de 5 minutos), aceptando ambos formatos de firma publicados por Didit.</>,
+            <><strong>HTTPS forzado</strong> en toda la superficie con HSTS, CSP estricta, X-Frame-Options DENY y <code style={codeStyle}>Permissions-Policy</code> que deshabilita cámara, micrófono, geolocalización y pagos del navegador.</>,
+            <><strong>Sin contraseñas</strong> almacenadas por b1n0; la autenticación corre sobre Supabase Auth con hashing bcrypt manejado por la plataforma.</>,
+            <><strong>Reconocimiento de riesgo</strong> capturado server-side con timestamp inmutable antes del primer depósito — audit trail para inquérito regulatorio.</>,
+          ]}
+        />
+      </>
+    ),
+  },
+  {
+    id: 'verificacion',
+    eyebrow: 'SECCIÓN 05',
+    title: 'Verificá vos mismo',
+    children: (
+      <>
+        <DocParagraph>
+          No te pedimos que nos creas. Estos escáneres públicos re-evalúan b1n0.com en vivo cada vez que hacés clic:
+        </DocParagraph>
         <div
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
             gap: 12,
-            marginBottom: 12,
+            margin: '8px 0 18px',
           }}
         >
           <ScanCard
@@ -263,256 +172,117 @@ export function Confianza() {
             href="https://observatory.mozilla.org/analyze/www.b1n0.com"
           />
         </div>
-        <p style={{ fontSize: 13, color: 'var(--b1n0-muted)', margin: 0 }}>
-          Si encontrás algo que no cuadra, mandá un correo a{' '}
-          <a href="mailto:security@b1n0.com" style={inlineLink}>
-            security@b1n0.com
-          </a>{' '}
-          o consultá nuestra política completa en{' '}
-          <a
-            href="/.well-known/security.txt"
-            style={inlineLink}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+        <DocCallout title="Reportar una vulnerabilidad" tone="info">
+          Mandá un correo a <a href="mailto:security@b1n0.com" style={inlineLink}>security@b1n0.com</a>{' '}
+          o consultá la política completa en{' '}
+          <a href="/.well-known/security.txt" target="_blank" rel="noopener noreferrer" style={inlineLink}>
             /.well-known/security.txt
-          </a>
-          .
-        </p>
-      </Section>
+          </a>. Tiempo de respuesta máximo: 5 días hábiles.
+        </DocCallout>
+      </>
+    ),
+  },
+  {
+    id: 'socios',
+    eyebrow: 'SECCIÓN 06',
+    title: 'Socios técnicos',
+    children: (
+      <>
+        <DocParagraph>
+          Apoyarse en proveedores que ya pasaron auditorías es parte de la estrategia de seguridad. Los nombres importan:
+        </DocParagraph>
+        <DocBullets
+          items={[
+            <><strong>Supabase</strong> — base de datos Postgres gestionada, autenticación, Storage y Edge Functions. SOC 2 Type II reportado por el proveedor.</>,
+            <><strong>Vercel</strong> — hosting del frontend, CDN global y TLS automático con renovación gestionada.</>,
+            <><strong>Didit</strong> — verificación de identidad (KYC), captura de documentos, prueba de vida y screening AML/PEP para el Nivel 3.</>,
+            <><strong>Resend</strong> — envío de correos transaccionales (resolución de eventos, recuperación de cuenta).</>,
+            <><strong>Sentry</strong> — monitoreo de errores en producción con sampling, sin captura de PII en payloads.</>,
+          ]}
+        />
+      </>
+    ),
+  },
+  {
+    id: 'privacidad',
+    eyebrow: 'SECCIÓN 07',
+    title: 'Privacidad',
+    children: (
+      <DocParagraph>
+        Cada usuario controla la visibilidad de su perfil público desde <code style={codeStyle}>/perfil</code> → Privacidad: nivel KYC, total cobrado, tasa de acierto, total de llamados, nombre real, fecha de ingreso, avatar y actividad reciente (llamados y comentarios) se pueden ocultar individualmente. La aplicación respeta estas preferencias en el servidor — no solo en el cliente — mediante funciones <code style={codeStyle}>SECURITY DEFINER</code> que filtran los campos antes de salir de la base. Política completa en{' '}
+        <a href="/privacidad" style={inlineLink}>/privacidad</a>.
+      </DocParagraph>
+    ),
+  },
+  {
+    id: 'riesgo',
+    eyebrow: 'SECCIÓN 08',
+    title: 'Riesgo y responsabilidad del usuario',
+    children: (
+      <DocCallout title="Advertencia obligatoria" tone="warn">
+        Los llamados implican riesgo de pérdida del capital. No hay retornos garantizados, no es una inversión, no es un instrumento financiero, no es una casa de apuestas. b1n0 es un juego de opinión social con dinero real. Cada participante es responsable de cumplir las leyes y obligaciones fiscales de su jurisdicción. El acceso es para mayores de 18 años.
+      </DocCallout>
+    ),
+  },
+  {
+    id: 'contacto',
+    eyebrow: 'SECCIÓN 09',
+    title: 'Contacto',
+    children: (
+      <DocBullets
+        items={[
+          <><strong>Soporte general:</strong> <a href="mailto:soporte@b1n0.com" style={inlineLink}>soporte@b1n0.com</a></>,
+          <><strong>Seguridad / vulnerabilidades:</strong> <a href="mailto:security@b1n0.com" style={inlineLink}>security@b1n0.com</a></>,
+          <><strong>Asuntos legales / licencias:</strong> <a href="mailto:legal@b1n0.com" style={inlineLink}>legal@b1n0.com</a></>,
+          <><strong>Prensa / inversionistas:</strong> <a href="mailto:hola@b1n0.com" style={inlineLink}>hola@b1n0.com</a></>,
+        ]}
+      />
+    ),
+  },
+]
 
-      {/* ── Socios técnicos ────────────────────────────────────── */}
-      <Section id="socios" title="Socios técnicos">
-        <p>
-          Apoyarse en proveedores que ya pasaron auditorías es parte de
-          la estrategia de seguridad. Los nombres importan:
-        </p>
-        <ul style={ulStyle}>
-          <li>
-            <strong>Supabase</strong> — base de datos Postgres
-            gestionada, autenticación, Storage y Edge Functions. SOC 2
-            Type II reportado por el proveedor.
-          </li>
-          <li>
-            <strong>Vercel</strong> — hosting del frontend, CDN global y
-            TLS automático con renovación gestionada.
-          </li>
-          <li>
-            <strong>Didit</strong> — verificación de identidad (KYC),
-            captura de documentos, prueba de vida y screening AML/PEP
-            para el Nivel 3.
-          </li>
-          <li>
-            <strong>Resend</strong> — envío de correos transaccionales
-            (resolución de eventos, recuperación de cuenta).
-          </li>
-          <li>
-            <strong>Sentry</strong> — monitoreo de errores en producción
-            con sampling, sin captura de PII en payloads.
-          </li>
-        </ul>
-      </Section>
+export function Confianza() {
+  usePageMeta({
+    title: 'Confianza · b1n0',
+    description: 'Cómo funciona b1n0: entidad, modelo, seguridad, socios y cómo reportar una vulnerabilidad.',
+  })
 
-      {/* ── Privacidad ─────────────────────────────────────────── */}
-      <Section id="privacidad" title="Privacidad">
-        <p>
-          Cada usuario controla la visibilidad de su perfil público
-          desde <code style={codeStyle}>/perfil</code> → Privacidad:
-          nivel KYC, total cobrado, tasa de acierto, total de llamados,
-          nombre real, fecha de ingreso, avatar y actividad reciente
-          (llamados y comentarios) se pueden ocultar individualmente.
-          La aplicación respeta estas preferencias en el servidor —no
-          solo en el cliente—, mediante funciones{' '}
-          <code style={codeStyle}>SECURITY DEFINER</code> que filtran
-          los campos antes de salir de la base.
-        </p>
-        <p>
-          Política completa de privacidad en{' '}
-          <ExternalLink to="/privacidad">/privacidad</ExternalLink>.
-        </p>
-      </Section>
-
-      {/* ── Riesgo ─────────────────────────────────────────────── */}
-      <Section id="riesgo" title="Riesgo y responsabilidad del usuario">
-        <p>
-          Los llamados implican riesgo de pérdida del capital. No hay
-          retornos garantizados, no es una inversión, no es un
-          instrumento financiero, no es una casa de apuestas. b1n0 es un
-          juego de opinión social con dinero real. Cada participante es
-          responsable de cumplir las leyes y obligaciones fiscales de
-          su jurisdicción. El acceso es para mayores de 18 años.
-        </p>
-      </Section>
-
-      {/* ── Contacto ───────────────────────────────────────────── */}
-      <Section id="contacto" title="Contacto">
-        <ul style={ulStyle}>
-          <li>
-            <strong>Soporte general:</strong>{' '}
-            <a href="mailto:soporte@b1n0.com" style={inlineLink}>
-              soporte@b1n0.com
-            </a>
-          </li>
-          <li>
-            <strong>Seguridad / vulnerabilidades:</strong>{' '}
-            <a href="mailto:security@b1n0.com" style={inlineLink}>
-              security@b1n0.com
-            </a>
-          </li>
-          <li>
-            <strong>Asuntos legales / licencias:</strong>{' '}
-            <a href="mailto:legal@b1n0.com" style={inlineLink}>
-              legal@b1n0.com
-            </a>
-          </li>
-          <li>
-            <strong>Prensa / inversionistas:</strong>{' '}
-            <a href="mailto:hola@b1n0.com" style={inlineLink}>
-              hola@b1n0.com
-            </a>
-          </li>
-        </ul>
-      </Section>
-
-      <Footer />
-    </div>
-  )
-}
-
-// ── Section wrapper ──────────────────────────────────────────
-function Section({
-  id,
-  title,
-  children,
-}: {
-  id: string
-  title: string
-  children: React.ReactNode
-}) {
   return (
-    <section
-      id={id}
-      style={{
-        marginBottom: 'var(--space-8)',
-        scrollMarginTop: 80, // accounts for fixed TopBar on anchor jumps
-      }}
-    >
-      <h2
+    <>
+      <DocPageShell
+        pageEyebrow="CONFIANZA · TRUST"
+        pageTitle="Cómo opera b1n0."
+        intro="Esta página existe para que cualquier persona — usuario, inversionista, marca patrocinadora, regulador o investigador — pueda entender en cinco minutos quién está detrás de b1n0, cómo se mueve el dinero, qué medidas de seguridad operan y cómo reportar un problema."
+        lastUpdated="20 de mayo de 2026"
+        sections={CONFIANZA_SECTIONS}
+      />
+      {/* PDF download — rendered as a floating action button so it
+          doesn't disturb the doc shell layout. Visible on all pages
+          but contextual to /confianza only via this component. */}
+      <a
+        href="/docs/b1n0-confianza.pdf"
+        download="b1n0-confianza.pdf"
         style={{
-          fontFamily: F_DISPLAY,
-          fontSize: 22,
-          fontWeight: 800,
-          letterSpacing: '-0.5px',
-          color: 'var(--b1n0-text-1)',
-          margin: 0,
-          marginBottom: 12,
-        }}
-      >
-        {title}
-      </h2>
-      <div
-        style={{
-          fontSize: 15,
-          color: 'var(--b1n0-text-1)',
-          lineHeight: 1.7,
-        }}
-      >
-        {children}
-      </div>
-    </section>
-  )
-}
-
-// ── Public-scan link card ─────────────────────────────────────
-function ScanCard({
-  label,
-  provider,
-  href,
-}: {
-  label: string
-  provider: string
-  href: string
-}) {
-  return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      style={{
-        display: 'block',
-        background: 'var(--b1n0-card)',
-        border: '1px solid var(--b1n0-border)',
-        borderRadius: 'var(--radius-lg)',
-        padding: '12px 14px',
-        textDecoration: 'none',
-        color: 'inherit',
-        transition: 'border-color var(--duration-fast) var(--ease-out)',
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.borderColor = 'var(--b1n0-si)'
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.borderColor = 'var(--b1n0-border)'
-      }}
-    >
-      <p
-        style={{
-          fontSize: 10,
+          position: 'fixed',
+          bottom: 'calc(24px + env(safe-area-inset-bottom, 0px))',
+          right: 24,
+          padding: '10px 18px',
+          background: 'var(--b1n0-si)',
+          color: 'var(--b1n0-on-accent)',
+          borderRadius: 'var(--radius-pill)',
+          fontFamily: F,
+          fontSize: 13,
           fontWeight: 700,
-          letterSpacing: '0.8px',
-          textTransform: 'uppercase',
-          color: 'var(--b1n0-muted)',
-          margin: 0,
-          marginBottom: 4,
+          textDecoration: 'none',
+          boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+          zIndex: 50,
+          letterSpacing: '0.3px',
         }}
       >
-        {provider}
-      </p>
-      <p
-        style={{
-          fontFamily: F_DISPLAY,
-          fontSize: 15,
-          fontWeight: 700,
-          color: 'var(--b1n0-text-1)',
-          margin: 0,
-        }}
-      >
-        {label} ↗
-      </p>
-    </a>
+        ↓ Descargar PDF · 9 páginas
+      </a>
+    </>
   )
 }
 
-// Internal route link rendered as a plain anchor so the Trust page
-// remains marketing-grade and copy-pasteable without needing to
-// pull in react-router primitives for inline references.
-function ExternalLink({ to, children }: { to: string; children: React.ReactNode }) {
-  return (
-    <a href={to} style={inlineLink}>
-      {children}
-    </a>
-  )
-}
-
-const inlineLink: React.CSSProperties = {
-  color: 'var(--b1n0-si)',
-  textDecoration: 'underline',
-  textUnderlineOffset: 2,
-}
-
-const ulStyle: React.CSSProperties = {
-  paddingLeft: 18,
-  margin: '0 0 14px 0',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 8,
-}
-
-const codeStyle: React.CSSProperties = {
-  fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-  fontSize: '0.88em',
-  background: 'var(--b1n0-surface)',
-  padding: '1px 6px',
-  borderRadius: 4,
-  border: '1px solid var(--b1n0-border)',
-}
+export default Confianza
