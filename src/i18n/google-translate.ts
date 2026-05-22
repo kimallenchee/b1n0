@@ -130,8 +130,27 @@ function loadWidget(): Promise<void> {
           },
           'google_translate_element',
         )
-        // Give Google a tick to inject the <select> into the DOM.
-        setTimeout(resolve, 60)
+        // Google populates the language <select> asynchronously after
+        // construction. Poll for the select to have at least one option
+        // before resolving so flipSelect() doesn't run against an empty
+        // dropdown. ~5s ceiling — Google is typically ready in <300 ms;
+        // beyond that we resolve anyway and let the flip attempt fail
+        // silently (the override scrubber can still run on whatever
+        // Google does inject).
+        const deadline = Date.now() + 5000
+        const poll = () => {
+          const sel = document.querySelector<HTMLSelectElement>('select.goog-te-combo')
+          if (sel && sel.options.length > 0) {
+            resolve()
+            return
+          }
+          if (Date.now() > deadline) {
+            resolve()
+            return
+          }
+          setTimeout(poll, 80)
+        }
+        poll()
       } catch (e) {
         reject(e instanceof Error ? e : new Error(String(e)))
       }
