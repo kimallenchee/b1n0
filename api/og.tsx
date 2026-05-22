@@ -16,18 +16,18 @@ import { ImageResponse } from '@vercel/og'
  *   - Hand-renders the card with JSX → ImageResponse
  *   - Caches at the CDN edge for 5 minutes (s-maxage=300)
  *
- * Why edge runtime: ImageResponse uses Satori under the hood and
- * works best on Vercel's edge runtime (lower cold-start, faster
- * response). The Node runtime works too but is slower.
+ * Why edge runtime: ImageResponse uses Satori + Yoga (WASM) under the
+ * hood and is tuned for Vercel's edge / V8-isolate sandbox. Empirically
+ * the Node runtime threw FUNCTION_INVOCATION_FAILED on us — see config
+ * comment below.
  */
 
-// In-file `runtime` only accepts 'edge' | 'experimental-edge' | 'nodejs'.
-// To pin Node 20 (because @vercel/og 0.6.4 crashes under the new Node 24
-// default with FUNCTION_INVOCATION_FAILED), the version pin lives in
-// package.json under `engines.node`. Vercel reads engines.node and
-// provisions the matching runtime for the whole project.
+// @vercel/og is designed for Vercel's edge runtime — Satori + Yoga ship as
+// WASM and the V8-isolate edge sandbox is what they're tuned against. Running
+// on the Node runtime produced FUNCTION_INVOCATION_FAILED even pinned to
+// Node 20, so we route this function to the edge runtime explicitly.
 export const config = {
-  runtime: 'nodejs',
+  runtime: 'edge',
 }
 
 interface EventRow {
