@@ -58,12 +58,17 @@ export default i18n
 
 /**
  * Set language and persist. Footer/toggle should call this — direct
- * use of i18n.changeLanguage() works too but won't update the document
- * `lang` attribute for screen readers + SEO.
+ * use of i18n.changeLanguage() works too but is missing the persistence.
+ *
+ * NOTE: we deliberately do NOT update document.documentElement.lang.
+ * The DOM's source language is Spanish (index.html ships `lang="es"`),
+ * and Google Translate Element uses that attribute to detect the source.
+ * If we flipped it to "en" Google would conclude "already English" and
+ * refuse to translate the page body. So `<html lang>` stays "es"
+ * permanently; user preference lives only in localStorage.
  */
 export function setLanguage(lang: 'es' | 'en') {
   i18n.changeLanguage(lang)
-  document.documentElement.setAttribute('lang', lang)
   try {
     localStorage.setItem(STORAGE_KEY, lang)
   } catch {
