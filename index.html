@@ -80,12 +80,28 @@
 
     <!-- Google Translate Element — used by the ES/EN footer toggle to
          live-translate page content that's not covered by our own i18n
-         JSON. The mount div below is moved off-screen rather than set
-         to display:none — Google's widget only populates the language
-         <select> with options when its host is rendered/visible. With
-         display:none the select stays empty and translation never
-         triggers. Off-screen positioning gives Google a real layout
-         box while keeping the widget invisible to the user. -->
+         JSON. Loaded eagerly here in <head> (not lazily from JS) because
+         the widget's auto-translate-from-cookie behavior fires during
+         init and only works when init runs early in the page lifecycle.
+         Loading lazily from a React effect was too late — by the time
+         the script ran, the body was already rendered and Google never
+         translated it. The cost of the eager load is ~80 KB which we
+         accept; this is what every working Google Translate site does.
+
+         The script gates itself on a `googtrans` cookie. With no
+         cookie set, the widget renders its (off-screen) UI but does
+         not modify page content. When the user toggles EN in the
+         footer, we set the cookie and reload — on the next paint the
+         widget reads the cookie and translates the body in place. -->
+    <script>
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement(
+          { pageLanguage: 'es', includedLanguages: 'en', autoDisplay: false },
+          'google_translate_element'
+        )
+      }
+    </script>
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async></script>
     <style>
       /* Hide Google's branded top bar, in-page tooltip, and hover glow.
          The widget itself still runs — we just keep the page chrome
