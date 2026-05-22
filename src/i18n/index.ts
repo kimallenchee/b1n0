@@ -31,6 +31,15 @@ import en from './locales/en.json'
 
 const STORAGE_KEY = 'b1n0-lang'
 
+// IMPORTANT: detection order is localStorage-only. We deliberately do
+// NOT fall through to `navigator` because b1n0 is Spanish-first by
+// product decision (CLAUDE.md). A user on an English-locale browser
+// (common with iPhones bought in the US, Chrome installed in EN, etc.)
+// should still see Spanish on first visit. They opt into English via
+// the footer toggle, which persists to localStorage. Without this
+// override, the EN toggle button reads aria-pressed=true on first
+// paint and clicking it early-returns from pickLang() because the
+// "current" lang is already 'en' — translation never fires.
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
@@ -45,7 +54,10 @@ i18n
       escapeValue: false, // React already escapes
     },
     detection: {
-      order: ['localStorage', 'navigator'],
+      // Only read user's explicit choice from localStorage. If none,
+      // fall through to fallbackLng ('es'). Navigator language is
+      // intentionally NOT consulted.
+      order: ['localStorage'],
       lookupLocalStorage: STORAGE_KEY,
       caches: ['localStorage'],
     },
