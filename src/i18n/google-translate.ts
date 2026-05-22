@@ -77,37 +77,98 @@ const VOCAB_OVERRIDES: Array<[RegExp, string]> = [
 ]
 
 /**
- * Set the user-facing translation language. First call to 'en' boots
- * the widget; subsequent calls just flip the underlying <select>.
+ * Set the user-facing translation language.
  *
- * Going back to 'es' clears the translation (we set the widget select
- * to its restore value — Google interprets the empty value as "show
- * original").
+ * Implementation note: programmatically driving Google's TranslateElement
+ * <select> works only when the widget renders with a dropdown layout
+ * (HORIZONTAL/VERTICAL). With layout=SIMPLE the <select> stays empty
+ * and select-value manipulation is a no-op. The reliable cross-layout
+ * pattern that every working Google-Translate-on-React site uses is:
+ *
+ *   1. Write the `googtrans` cookie with the desired source/target pair
+ *      (e.g. `/es/en`).
+ *   2. Reload the page.
+ *   3. On the next page load, Google's widget reads the cookie and
+ *      auto-translates the DOM before user interaction.
+ *
+ * That's what we do here. The cost is a single reload on language flip
+ * — acceptable for a setting the user changes maybe once. ES restore
+ * also reloads to wipe Google's translated DOM back to the source.
  */
 export function setTranslation(lang: Lang): Promise<void> {
-  // ES = original page language → either no-op or restore.
-  if (lang === 'es') {
-    restoreOriginal()
+  // Avoid an infinite reload loop: only act if the cookie's current
+  // value differs from what the user just picked.
+  const desired = lang === 'en' ? '/es/en' : null
+  const current = readGoogtransCookie()
+  if (desired === current) {
+    // Already in the right state — make sure observer is running for
+    // overrides on dynamically loaded content.
+    if (lang === 'en') installOverrideObserver()
     return Promise.resolve()
   }
 
+  if (lang === 'en') {
+    writeGoogtransCookie('/es/en')
+  } else {
+    clearGoogtransCookie()
+  }
+  // Slight delay so the cookie write hits the document.cookie store
+  // before the reload reads it back on the next request.
+  return new Promise<void>((resolve) => {
+    setTimeout(() => {
+      // Use replace to keep the back button sane — the previous
+      // history entry shouldn't bounce the user between languages.
+      window.location.replace(window.location.pathname + window.location.search)
+      resolve()
+    }, 80)
+  })
+}
+
+/**
+ * Boot the widget on page load when a googtrans cookie is already set.
+ * Called from Footer's mount effect so we don't pay the script-load
+ * cost on pages without a footer (auth, admin).
+ *
+ * The widget reads the cookie itself and translates synchronously
+ * during init — we just need to make sure the script is on the page.
+ */
+export function bootIfTranslatedSession(): Promise<void> {
+  const cookie = readGoogtransCookie()
+  if (!cookie || cookie === '/es/es') return Promise.resolve()
   if (widgetLoaded) {
-    flipSelect('en')
+    installOverrideObserver()
     return Promise.resolve()
   }
-
   return loadWidget()
     .then(() => {
       widgetLoaded = true
-      flipSelect('en')
       installOverrideObserver()
     })
     .catch((err) => {
-      // Network blocked or widget deprecated server-side. Fail soft:
-      // the i18n JSON-translated chrome still works, the body just
-      // stays in Spanish. Logged so we notice if Google kills it.
       console.warn('[google-translate] widget failed to load', err)
     })
+}
+
+function readGoogtransCookie(): string | null {
+  const m = document.cookie.match(/(?:^|;\s*)googtrans=([^;]*)/)
+  return m ? decodeURIComponent(m[1]) : null
+}
+
+function writeGoogtransCookie(value: string) {
+  const expires = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toUTCString()
+  document.cookie = `googtrans=${value}; expires=${expires}; path=/`
+  // Domain-wide variant so subdomains share the choice if we ever add any.
+  if (typeof window !== 'undefined' && window.location.hostname.includes('b1n0.com')) {
+    document.cookie = `googtrans=${value}; expires=${expires}; path=/; domain=.b1n0.com`
+  }
+}
+
+function clearGoogtransCookie() {
+  const past = 'Thu, 01 Jan 1970 00:00:00 GMT'
+  document.cookie = `googtrans=; expires=${past}; path=/`
+  if (typeof window !== 'undefined' && window.location.hostname.includes('b1n0.com')) {
+    document.cookie = `googtrans=; expires=${past}; path=/; domain=.b1n0.com`
+  }
 }
 
 function loadWidget(): Promise<void> {
@@ -162,32 +223,6 @@ function loadWidget(): Promise<void> {
     script.onerror = () => reject(new Error('script load error'))
     document.head.appendChild(script)
   })
-}
-
-function flipSelect(value: string) {
-  // The injected select carries class `goog-te-combo`. Setting its value
-  // and dispatching a change event triggers Google's translation pass.
-  const select = document.querySelector<HTMLSelectElement>('select.goog-te-combo')
-  if (!select) return
-  select.value = value
-  select.dispatchEvent(new Event('change'))
-}
-
-function restoreOriginal() {
-  // Google stores the user's last translation choice in a cookie. If we
-  // want the page to stay in ES across reloads, we explicitly clear
-  // both the cookie and the in-DOM translation.
-  flipSelect('')
-  // Clear cookie at apex + subdomain for safety.
-  const past = 'Thu, 01 Jan 1970 00:00:00 GMT'
-  document.cookie = `googtrans=; expires=${past}; path=/`
-  if (typeof window !== 'undefined' && window.location.hostname.includes('b1n0.com')) {
-    document.cookie = `googtrans=; expires=${past}; path=/; domain=.b1n0.com`
-  }
-  if (overrideObserver) {
-    overrideObserver.disconnect()
-    overrideObserver = null
-  }
 }
 
 /**

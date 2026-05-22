@@ -29,7 +29,7 @@ import { useTour } from '../../context/TourContext'
 import { useTheme } from '../../context/ThemeContext'
 import { useTranslation } from 'react-i18next'
 import { setLanguage, getLanguage } from '../../i18n'
-import { setTranslation } from '../../i18n/google-translate'
+import { setTranslation, bootIfTranslatedSession } from '../../i18n/google-translate'
 import {
   XLogo,
   InstagramLogo,
@@ -64,14 +64,16 @@ export function Footer() {
   const { t, i18n } = useTranslation()
   const currentLang = getLanguage()
 
-  // Boot the Google Translate widget on mount if a returning visitor
-  // has 'en' saved. We do this from Footer rather than main.tsx so the
-  // widget module is only ever fetched on user-facing pages (admin /
-  // auth pages don't mount the Footer and won't pay the cost).
+  // Boot the Google Translate widget on mount when the user has the
+  // googtrans cookie set (i.e., they previously toggled to EN). The
+  // widget reads the cookie on init and translates the DOM in place,
+  // so this is purely "make sure the script is loaded" rather than
+  // "trigger a translation". We do this from Footer rather than
+  // main.tsx so the widget module is only fetched on user-facing
+  // pages (admin/auth pages don't mount the Footer and won't pay
+  // the cost).
   useEffect(() => {
-    if (currentLang === 'en') {
-      setTranslation('en')
-    }
+    bootIfTranslatedSession()
     // Only on mount — the toggle handler covers subsequent changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
