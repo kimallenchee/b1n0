@@ -7,6 +7,7 @@ import { usePageMeta } from '../hooks/usePageMeta'
 import { SplitBar } from '../components/feed/SplitBar'
 import { EntryFlow } from '../components/feed/EntryFlow'
 import { PurchaseCelebration } from '../components/feed/PurchaseCelebration'
+import { ShareButton } from '../components/ShareButton'
 import { CommentFeed } from '../components/feed/CommentFeed'
 import { BottomSheet } from '../components/BottomSheet'
 import { LiveDot } from '../components/feed/LiveDot'
@@ -658,6 +659,27 @@ function EventDetailInner({ event }: { event: AppEvent }) {
               <img src={photo} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center', display: 'block' }} />
               <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(135deg, ${catFlat[event.category] || '#3D3D3A'}22 0%, ${catFlat[event.category] || '#3D3D3A'}11 50%, transparent 100%)`, mixBlendMode: 'multiply' }} />
               <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent 30%, rgba(0,0,0,0.8) 100%)' }} />
+              {/* Share — top-right pill over the hero. White text + glass
+                  background so it reads against any photo. */}
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 12,
+                  right: 12,
+                  background: 'rgba(0,0,0,0.35)',
+                  backdropFilter: 'blur(8px)',
+                  WebkitBackdropFilter: 'blur(8px)',
+                  borderRadius: 999,
+                }}
+              >
+                <ShareButton
+                  url={`${typeof window !== 'undefined' ? window.location.origin : ''}/eventos/${event.id}`}
+                  title={event.question}
+                  text={`¿Qué decís? ${event.question}`}
+                  variant="icon"
+                  size={18}
+                />
+              </div>
               <div style={{ position: 'absolute', bottom: '14px', left: '16px', right: '16px' }}>
                 <h1 style={{ fontFamily: F, fontWeight: 800, fontSize: isDesktop ? '22px' : '20px', color: '#fff', lineHeight: 1.25, letterSpacing: '-0.3px' }}>
                   {event.question}
@@ -1301,6 +1323,8 @@ function EventDetailInner({ event }: { event: AppEvent }) {
           cobro={celeb.cobro}
           currency={event.currency}
           onDone={() => setCeleb(null)}
+          eventId={event.id}
+          eventQuestion={event.question}
         />
       )}
     </div>

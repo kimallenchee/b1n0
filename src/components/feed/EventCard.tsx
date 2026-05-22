@@ -522,8 +522,10 @@ export function EventCard({ event }: EventCardProps) {
           </p>
         )}
 
-        {/* Comment toggle + preview */}
-        <div style={{ marginTop: '10px', borderTop: '1px solid var(--b1n0-border)', paddingTop: '10px' }}>
+        {/* Comment toggle + preview. Share button sits on the right of
+            the same row so quick-share is one tap from the feed card
+            without entering the event detail page. */}
+        <div style={{ marginTop: '10px', borderTop: '1px solid var(--b1n0-border)', paddingTop: '10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 'var(--space-3)' }}>
           <button
             onClick={() => setSheet('comments')}
             style={{
@@ -546,6 +548,17 @@ export function EventCard({ event }: EventCardProps) {
             <ChatCircle size={16} weight="regular" />
             {commentCount > 0 ? `${commentCount} comentarios` : 'Comentar'}
           </button>
+          <ShareButton
+            url={`${typeof window !== 'undefined' ? window.location.origin : ''}/eventos/${event.id}`}
+            title={event.question}
+            text={`¿Qué decís? ${event.question}`}
+            variant="compact"
+            size={16}
+          />
+        </div>
+        {/* Top comments preview — separated from the action row so the
+            flex layout above only governs the two buttons. */}
+        <div>
           {topComments.length > 0 && (
             <div
               onClick={() => setSheet('comments')}
@@ -620,6 +633,8 @@ export function EventCard({ event }: EventCardProps) {
           cobro={celeb.cobro}
           currency={event.currency}
           onDone={() => setCeleb(null)}
+          eventId={event.id}
+          eventQuestion={event.question}
         />
       )}
     </>

@@ -32,6 +32,7 @@ import { usePageMeta } from '../hooks/usePageMeta'
 import { Footer } from '../components/layout/Footer'
 import { EmptyState } from '../components/EmptyState'
 import { ActivityFeed } from '../components/ActivityFeed'
+import { ShareButton } from '../components/ShareButton'
 
 const F = 'var(--font-body)'
 const D = 'var(--font-display)'
@@ -400,20 +401,32 @@ export function ProfilePublic() {
           )}
         </div>
 
-        {/* Relationship CTA.
-            In preview-as-guest, we pass relationship=guest so the owner
-            sees the same CTA a logged-out viewer would. The banner up
-            top owns the "exit preview" affordance. */}
-        <RelationshipCta
-          relationship={previewAsGuest ? 'guest' : relationship}
-          actionLoading={actionLoading}
-          onSendRequest={sendRequest}
-          onAcceptRequest={acceptRequest}
-          onRejectRequest={rejectRequest}
-          onGoToOwnProfile={() => navigate('/perfil')}
-          onGoToLogin={() => navigate('/auth')}
-          onPreviewAsGuest={() => setPreviewAsGuest(true)}
-        />
+        {/* Right-side actions column: share above relationship CTA so
+            both visitors and the profile owner have one-tap access to
+            the OG share link without crowding the CTA itself. */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8 }}>
+          <ShareButton
+            url={`${typeof window !== 'undefined' ? window.location.origin : ''}/u/${profile.username}`}
+            title={`@${profile.username} · b1n0`}
+            text={`Mirá el track record de @${profile.username} en b1n0`}
+            variant="icon"
+            size={18}
+          />
+          {/* Relationship CTA.
+              In preview-as-guest, we pass relationship=guest so the owner
+              sees the same CTA a logged-out viewer would. The banner up
+              top owns the "exit preview" affordance. */}
+          <RelationshipCta
+            relationship={previewAsGuest ? 'guest' : relationship}
+            actionLoading={actionLoading}
+            onSendRequest={sendRequest}
+            onAcceptRequest={acceptRequest}
+            onRejectRequest={rejectRequest}
+            onGoToOwnProfile={() => navigate('/perfil')}
+            onGoToLogin={() => navigate('/auth')}
+            onPreviewAsGuest={() => setPreviewAsGuest(true)}
+          />
+        </div>
       </div>
 
       {/* ── Stats row ─────────────────────────────────────── */}

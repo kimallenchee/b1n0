@@ -1,12 +1,16 @@
 import { useLocation, useNavigate } from 'react-router-dom'
 import { House, Clock, User } from '@phosphor-icons/react'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '../../context/AuthContext'
 import { useAuthModal } from '../../context/AuthModalContext'
 
+// Tabs are defined as i18n keys, resolved inside the component. Keeping
+// `path` and `Icon` static avoids needless reconfiguration on language
+// flip; only the visible label re-renders.
 const tabs = [
-  { path: '/inicio',    Icon: House, label: 'Inicio' },
-  { path: '/historial', Icon: Clock, label: 'Historial' },
-  { path: '/perfil',    Icon: User,  label: 'Perfil' },
+  { path: '/inicio',    Icon: House, labelKey: 'nav.home' },
+  { path: '/historial', Icon: Clock, labelKey: 'nav.history' },
+  { path: '/perfil',    Icon: User,  labelKey: 'nav.profile' },
 ]
 
 export function BottomNav() {
@@ -14,10 +18,11 @@ export function BottomNav() {
   const navigate = useNavigate()
   const { session } = useAuth()
   const { openAuth } = useAuthModal()
+  const { t } = useTranslation()
 
   return (
     <nav
-      aria-label="Navegación principal"
+      aria-label={t('nav.home')}
       role="navigation"
       style={{
         display: 'flex',
@@ -29,10 +34,11 @@ export function BottomNav() {
       {tabs.map((tab) => {
         const active = location.pathname === tab.path
         const requiresAuth = tab.path !== '/inicio'
+        const label = t(tab.labelKey)
         return (
           <button
             key={tab.path}
-            aria-label={tab.label}
+            aria-label={label}
             aria-current={active ? 'page' : undefined}
             onClick={() => {
               if (requiresAuth && !session) { openAuth(); return }
@@ -84,7 +90,7 @@ export function BottomNav() {
                 lineHeight: 1,
               }}
             >
-              {tab.label}
+              {label}
             </span>
           </button>
         )

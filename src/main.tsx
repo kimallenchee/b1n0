@@ -1,11 +1,20 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
+import './i18n'
 import App from './App.tsx'
 import { initMonitoring } from './lib/logger'
 
 // Initialize error monitoring (no-op if VITE_SENTRY_DSN is not set)
 initMonitoring(import.meta.env.VITE_SENTRY_DSN)
+
+// Apply saved language to <html lang="…"> before render — helps screen
+// readers + SEO crawlers see the right language on first paint.
+;(function initLang() {
+  const saved = localStorage.getItem('b1n0-lang')
+  const lang = saved === 'en' || saved === 'es' ? saved : 'es'
+  document.documentElement.setAttribute('lang', lang)
+})()
 
 // Apply saved theme before render to prevent flash
 ;(function initTheme() {

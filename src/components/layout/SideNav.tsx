@@ -7,14 +7,17 @@ import { useAuthModal } from '../../context/AuthModalContext'
 import { NotificationDrawer } from './NotificationDrawer'
 import { HowItWorks } from '../HowItWorks'
 import { useTheme } from '../../context/ThemeContext'
+import { useTranslation } from 'react-i18next'
 
 const F = 'var(--font-body)'
 const NUM_FONT = 'var(--font-num)'
 
+// Nav items defined by i18n key so the label re-renders on lang flip
+// without needing to mutate the array.
 const navItems = [
-  { path: '/inicio',    label: 'Inicio',    Icon: House },
-  { path: '/perfil',    label: 'Perfil',    Icon: UserIcon },
-  { path: '/historial', label: 'Historial', Icon: Clock },
+  { path: '/inicio',    labelKey: 'nav.home',    Icon: House },
+  { path: '/perfil',    labelKey: 'nav.profile', Icon: UserIcon },
+  { path: '/historial', labelKey: 'nav.history', Icon: Clock },
 ]
 
 export function SideNav() {
@@ -23,6 +26,8 @@ export function SideNav() {
   const { profile, signOut, session } = useAuth()
   const { unreadCount } = useNotifications()
   const { openAuth } = useAuthModal()
+  const { resolved } = useTheme()
+  const { t } = useTranslation()
   const [notifOpen, setNotifOpen] = useState(false)
   const [howOpen, setHowOpen] = useState(false)
   const user = profile ?? { name: 'Tu', tier: 1 }
@@ -55,17 +60,18 @@ export function SideNav() {
           cursor: 'pointer',
         }}
       >
-        <img src={resolved === 'light' ? '/brand/b1n0-logo-fullcolor.svg' : '/brand/b1n0-logo-white.svg'} alt="b1n0 — Ir al inicio" style={{ height: '22px', objectFit: 'contain' }} />
+        <img src={resolved === 'light' ? '/brand/b1n0-logo-fullcolor.svg' : '/brand/b1n0-logo-white.svg'} alt="b1n0" style={{ height: '22px', objectFit: 'contain' }} />
       </button>
 
       {/* Nav */}
       <nav
-        aria-label="Navegación principal"
+        aria-label={t('nav.home')}
         style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-1)', flex: 1, width: '100%', alignItems: 'center' }}
       >
-        {navItems.map(({ path, label, Icon }) => {
+        {navItems.map(({ path, labelKey, Icon }) => {
           const active = location.pathname === path
           const requiresAuth = path !== '/inicio'
+          const label = t(labelKey)
           return (
             <NavButton
               key={path}
@@ -84,7 +90,7 @@ export function SideNav() {
 
         {/* Notifications */}
         <NavButton
-          ariaLabel={`Notificaciones${unreadCount > 0 ? ` (${unreadCount} sin leer)` : ''}`}
+          ariaLabel={t('topbar.notifications')}
           active={false}
           onClick={() => { if (!isLoggedIn) { openAuth(); return } setNotifOpen(true) }}
           style={{ position: 'relative' }}
@@ -118,13 +124,13 @@ export function SideNav() {
         </NavButton>
 
         {/* How it works */}
-        <NavButton ariaLabel="¿Cómo funciona?" active={false} onClick={() => setHowOpen(true)}>
+        <NavButton ariaLabel={t('footer.howToPlay')} active={false} onClick={() => setHowOpen(true)}>
           <Question size={20} weight="regular" />
         </NavButton>
 
         {profile?.isAdmin && (
           <NavButton
-            ariaLabel="Admin"
+            ariaLabel={t('nav.admin')}
             active={location.pathname === '/admin'}
             onClick={() => navigate('/admin')}
             style={{ marginTop: 'var(--space-3)' }}
@@ -150,7 +156,7 @@ export function SideNav() {
             <button
               onClick={() => navigate('/perfil')}
               title={profile?.username ? `@${profile.username}` : user.name}
-              aria-label="Mi perfil"
+              aria-label={t('perfil.title')}
               style={{
                 width: 36,
                 height: 36,
@@ -175,7 +181,7 @@ export function SideNav() {
               )}
             </button>
             <NavButton
-              ariaLabel="Cerrar sesión"
+              ariaLabel={t('auth.logOut')}
               active={false}
               onClick={signOut}
               size={36}
@@ -185,7 +191,7 @@ export function SideNav() {
           </>
         ) : (
           <NavButton
-            ariaLabel="Iniciar sesión"
+            ariaLabel={t('auth.logIn')}
             active={false}
             onClick={() => openAuth('login')}
             style={{ border: '1px solid var(--b1n0-border)' }}

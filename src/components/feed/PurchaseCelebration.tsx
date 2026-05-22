@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Check } from '@phosphor-icons/react'
+import { useTranslation } from 'react-i18next'
+import { ShareButton } from '../ShareButton'
 
 const F = 'var(--font-body)'
 const D = 'var(--font-display)'
@@ -11,6 +13,11 @@ interface PurchaseCelebrationProps {
   cobro: number
   currency: string
   onDone: () => void
+  // Optional share metadata. When provided, the card shows a "Decile a
+  // tus amigos" share button below the entry summary and pauses
+  // auto-dismiss while the share UI is open.
+  eventId?: string
+  eventQuestion?: string
 }
 
 function displaySide(s: string): string {
@@ -93,15 +100,29 @@ function Particles() {
   )
 }
 
-export function PurchaseCelebration({ side, amount, cobro, currency, onDone }: PurchaseCelebrationProps) {
+export function PurchaseCelebration({ side, amount, cobro, currency, onDone, eventId, eventQuestion }: PurchaseCelebrationProps) {
+  const { t } = useTranslation()
   const [phase, setPhase] = useState<'enter' | 'visible' | 'exit'>('enter')
+  // When the user reaches for the share affordance we want the card to
+  // stop auto-dismissing — otherwise it can vanish underneath them
+  // mid-tap on slower devices.
+  const [shareTouched, setShareTouched] = useState(false)
 
   useEffect(() => {
     const t1 = setTimeout(() => setPhase('visible'), 50)
+    if (shareTouched) return () => { clearTimeout(t1) }
     const t2 = setTimeout(() => setPhase('exit'), 2800)
     const t3 = setTimeout(onDone, 3200)
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
-  }, [onDone])
+  }, [onDone, shareTouched])
+
+  const shareUrl =
+    eventId && typeof window !== 'undefined'
+      ? `${window.location.origin}/eventos/${eventId}`
+      : null
+  const shareText = eventQuestion
+    ? t('share.entryPrefill', { question: eventQuestion })
+    : t('share.title')
 
   const multiplier = amount > 0 ? (cobro / amount) : 0
 
@@ -165,7 +186,7 @@ export function PurchaseCelebration({ side, amount, cobro, currency, onDone }: P
           marginBottom: '4px', letterSpacing: '-0.5px',
           animation: 'celebFadeIn 0.4s 0.2s ease-out forwards',
           opacity: 0, fontVariantNumeric: 'tabular-nums'}}>
-          Posición confirmada
+          {t('entry.successTitle')}
         </p>
 
         {/* Side badge */}
@@ -187,7 +208,7 @@ export function PurchaseCelebration({ side, amount, cobro, currency, onDone }: P
           opacity: 0,
         }}>
           <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-            Si tenés razón cobrás
+            {t('entry.potentialCollectIf')}
           </p>
           <p style={{
             fontFamily: D, fontWeight: 800, fontSize: '38px', color: 'var(--b1n0-text-1)',
@@ -197,7 +218,7 @@ export function PurchaseCelebration({ side, amount, cobro, currency, onDone }: P
           </p>
           {multiplier > 1 && (
             <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 600, color: 'var(--b1n0-si)' }}>
-              {multiplier.toFixed(1)}x tu entrada
+              {t('entry.multiplier', { defaultValue: '{{multi}}x your entry', multi: multiplier.toFixed(1) })}
             </p>
           )}
         </div>
@@ -210,10 +231,34 @@ export function PurchaseCelebration({ side, amount, cobro, currency, onDone }: P
           opacity: 0,
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)' }}>Entrada</span>
+            <span style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)' }}>{t('entry.yourEntry')}</span>
             <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 600, color: 'var(--b1n0-text-1)' }}>{currency}{amount.toFixed(2)}</span>
           </div>
         </div>
+
+        {/* Share row — visible only when we have an event id + question.
+            Tapping share pauses the auto-dismiss so the share sheet has
+            time to come up before the celebration vanishes. */}
+        {shareUrl && eventQuestion && (
+          <div
+            onClick={(e) => { e.stopPropagation(); setShareTouched(true) }}
+            style={{
+              marginTop: 16,
+              display: 'flex',
+              justifyContent: 'center',
+              animation: 'celebFadeIn 0.4s 0.6s ease-out forwards',
+              opacity: 0,
+            }}
+          >
+            <ShareButton
+              url={shareUrl}
+              title={eventQuestion}
+              text={shareText}
+              variant="pill"
+              label={t('celebration.shareEntry')}
+            />
+          </div>
+        )}
 
         {/* Tap to dismiss hint */}
         <p style={{
@@ -221,7 +266,7 @@ export function PurchaseCelebration({ side, amount, cobro, currency, onDone }: P
           animation: 'celebFadeIn 0.3s 0.8s ease-out forwards',
           opacity: 0,
         }}>
-          Toca para cerrar
+          {t('common.close')}
         </p>
       </div>
     </div>,
