@@ -77,6 +77,28 @@
     </script>
 
     <!-- Type system: Inter + InterDisplay (self-hosted via /public/fonts/). See src/index.css @font-face. -->
+
+    <!-- Google Translate Element — used by the ES/EN footer toggle to
+         live-translate page content that's not covered by our own i18n
+         JSON. The hidden #google_translate_element below is where the
+         widget renders its (suppressed) UI. The script is loaded lazily
+         from src/i18n/google-translate.ts only when the user actually
+         flips to a non-default language, so we don't pay the script
+         cost for the 99 % of visitors who stay in Spanish. -->
+    <style>
+      /* Hide Google's branded top bar and goofy injected highlight.
+         The widget still runs — we just keep the chrome clean. */
+      .skiptranslate, .goog-te-banner-frame, #goog-gt-tt, .goog-tooltip {
+        display: none !important;
+      }
+      body { top: 0 !important; }
+      /* Suppress the hover-highlight glow Google adds to translated text. */
+      .goog-text-highlighted {
+        background-color: transparent !important;
+        box-shadow: none !important;
+      }
+    </style>
+    <div id="google_translate_element" style="display: none"></div>
   </head>
   <body>
     <div id="root"></div>
