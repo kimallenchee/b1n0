@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { mockUser } from '../../data/mockEvents'
 import { WalletSheet } from '../wallet/WalletSheet'
-import { RetiroSheet } from '../wallet/RetiroSheet'
 import { useVotes } from '../../context/VoteContext'
 import { useAuth } from '../../context/AuthContext'
 
@@ -149,7 +148,7 @@ export function AccountDrawer({ onClose }: AccountDrawerProps) {
       </div>
 
       <WalletSheet open={depositOpen} onClose={() => setDepositOpen(false)} initialTab="depositar" />
-      <RetiroSheet open={retiroOpen} onClose={() => setRetiroOpen(false)} />
+      <WalletSheet open={retiroOpen} onClose={() => setRetiroOpen(false)} initialTab="retirar" />
     </>
   )
 }

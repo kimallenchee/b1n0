@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { mockUser } from '../../data/mockEvents'
 import { WalletSheet } from '../wallet/WalletSheet'
-import { RetiroSheet } from '../wallet/RetiroSheet'
 import { KYCSheet } from '../wallet/KYCSheet'
 import { useVotes } from '../../context/VoteContext'
 import { useNow } from '../../context/NowContext'
@@ -129,7 +128,7 @@ export function RightPanel() {
       )}
 
       <WalletSheet open={depositOpen} onClose={() => setDepositOpen(false)} initialTab="depositar" />
-      <RetiroSheet open={retiroOpen} onClose={() => setRetiroOpen(false)} />
+      <WalletSheet open={retiroOpen} onClose={() => setRetiroOpen(false)} initialTab="retirar" />
       <KYCSheet open={kycOpen} onClose={() => setKycOpen(false)} targetTier={(user.tier + 1) as 2 | 3} />
     </div>
   )

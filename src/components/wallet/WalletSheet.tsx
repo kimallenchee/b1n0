@@ -45,7 +45,7 @@ const depositMethods: MethodDef<DepositMethod>[] = [
   },
   {
     id: 'transferencia',
-    label: 'Transferencia bancaria',
+    label: 'Cuenta bancaria',
     sub: '1–2 días hábiles',
     icon: <CurrencyDollar size={20} weight="regular" color="var(--b1n0-text-1)" />,
     flag: 'bankDeposits',
@@ -508,7 +508,7 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
 
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', borderRadius: 'var(--radius-lg)', background: 'var(--b1n0-surface)', marginBottom: '14px' }}>
               <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 500, color: 'var(--b1n0-text-1)' }}>
-                Método: {depositMethod === 'tarjeta' ? 'Tarjeta' : 'Transferencia bancaria'}
+                Método: {depositMethod === 'tarjeta' ? 'Tarjeta' : 'Cuenta bancaria'}
               </span>
               <button onClick={() => setStep('home')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-muted)' }}>Cambiar</button>
             </div>
