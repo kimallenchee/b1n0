@@ -134,8 +134,9 @@ CREATE POLICY payment_tx_owner_select ON public.payment_transactions
 -- One row per event that has been tokenized. The 'unminted' state is
 -- where every existing event starts; new events post-tokenization launch
 -- get their token contracts deployed on event creation.
+-- NB: events.id is TEXT (slug-style), not UUID. The FK type must match.
 CREATE TABLE IF NOT EXISTS public.event_tokens (
-  event_id            UUID PRIMARY KEY REFERENCES public.events(id) ON DELETE CASCADE,
+  event_id            TEXT PRIMARY KEY REFERENCES public.events(id) ON DELETE CASCADE,
   -- Token model: 'ctf' (Conditional Token Framework, Polymarket-style),
   -- 'erc1155_pair' (custom multi-token contract), 'unminted' (placeholder
   -- so we can pre-create rows before deploying)

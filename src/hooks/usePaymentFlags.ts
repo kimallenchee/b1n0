@@ -54,16 +54,19 @@ export function usePaymentFlags(): PaymentFlags {
   useEffect(() => {
     let cancelled = false
     async function load() {
+      // Feature flags live in `value_text` (boolean-as-string) rather
+      // than the numeric `value` column. See platform_config schema
+      // comment in 20260427_harden_admin_authorization.sql.
       const { data, error } = await supabase
         .from('platform_config')
-        .select('key, value')
+        .select('key, value_text')
         .in('key', [...FLAG_KEYS])
       if (cancelled) return
       if (error || !data) {
         setFlags({ ...DEFAULTS, loading: false })
         return
       }
-      const map = new Map(data.map((r) => [r.key, r.value === 'true']))
+      const map = new Map(data.map((r) => [r.key, r.value_text === 'true']))
       setFlags({
         cardDeposits:       map.get('card_deposits_enabled')       ?? false,
         cardWithdrawals:    map.get('card_withdrawals_enabled')    ?? false,

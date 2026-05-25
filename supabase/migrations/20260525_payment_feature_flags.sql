@@ -5,28 +5,33 @@
 -- defaults to 'false' so the UI shows "Próximamente" until Kim signs
 -- the vendor and flips the flag.
 --
--- Reading: SELECT value FROM platform_config WHERE key IN (...)
--- Toggling: UPDATE platform_config SET value='true' WHERE key='...';
+-- platform_config has two value columns:
+--   value      NUMERIC   — for fee rates / percentages
+--   value_text TEXT      — for UUIDs, URLs, feature flags
 --
--- The WalletSheet UI reads these on mount (no realtime — flags change
--- rarely and a page refresh is acceptable).
+-- We use value_text for these (they're 'true' / 'false' strings).
+--
+-- Reading: SELECT value_text FROM platform_config WHERE key = '...'
+-- Toggling: UPDATE platform_config SET value_text='true' WHERE key='...';
+--
+-- The WalletSheet UI reads these on mount via usePaymentFlags hook.
 -- ============================================================================
 
-INSERT INTO public.platform_config (key, value, label)
+INSERT INTO public.platform_config (key, value, value_text, label)
 VALUES
   -- Card rail (Pagadito via Redbajas). Flip on once b1n0 has its OWN
   -- Pagadito contract + production credentials live in Supabase secrets.
-  ('card_deposits_enabled',  'false', 'Show "Tarjeta" as a deposit option. False = "Próximamente" badge.'),
-  ('card_withdrawals_enabled','false', 'Show "Tarjeta" as a withdrawal option.'),
+  ('card_deposits_enabled',    NULL, 'false', 'Show "Tarjeta" as a deposit option. False = "Próximamente" badge.'),
+  ('card_withdrawals_enabled', NULL, 'false', 'Show "Tarjeta" as a withdrawal option.'),
 
   -- Bank rail (SPEI / wire / ACH — manual admin processing today, vendor
   -- integration later). Decoupled from cards because the contracting +
   -- compliance path is different (bank account onboarding vs card processor).
-  ('bank_deposits_enabled',   'false', 'Show "Cuenta bancaria" as a deposit option.'),
-  ('bank_withdrawals_enabled','false', 'Show "Cuenta bancaria" as a withdrawal option.'),
+  ('bank_deposits_enabled',    NULL, 'false', 'Show "Cuenta bancaria" as a deposit option.'),
+  ('bank_withdrawals_enabled', NULL, 'false', 'Show "Cuenta bancaria" as a withdrawal option.'),
 
   -- Crypto rail (Vudy). Flip on once Vudy contract + custody arrangement
   -- (Monetae or Fireblocks-direct) are in place.
-  ('crypto_deposits_enabled',  'false', 'Show "Stablecoin" as a deposit option.'),
-  ('crypto_withdrawals_enabled','false', 'Show "Stablecoin" as a withdrawal option.')
+  ('crypto_deposits_enabled',   NULL, 'false', 'Show "Stablecoin" as a deposit option.'),
+  ('crypto_withdrawals_enabled',NULL, 'false', 'Show "Stablecoin" as a withdrawal option.')
 ON CONFLICT (key) DO NOTHING;

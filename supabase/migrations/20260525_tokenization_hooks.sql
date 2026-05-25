@@ -19,6 +19,9 @@
 -- All lifecycle hooks check this before queueing on-chain work. Toggled
 -- via platform_config so admin can flip tokenization on/off without a
 -- deploy.
+-- platform_config has two value columns: NUMERIC `value` for fee rates
+-- and TEXT `value_text` for UUIDs / URLs / feature flags. These three
+-- config rows are all text-typed, so they use value_text.
 CREATE OR REPLACE FUNCTION public.tokenization_enabled()
 RETURNS BOOLEAN
 LANGUAGE plpgsql
@@ -29,33 +32,36 @@ AS $$
 DECLARE
   v_value TEXT;
 BEGIN
-  SELECT value INTO v_value FROM public.platform_config WHERE key = 'tokenization_enabled';
+  SELECT value_text INTO v_value FROM public.platform_config WHERE key = 'tokenization_enabled';
   RETURN COALESCE(v_value, 'false') = 'true';
 END;
 $$;
 
 GRANT EXECUTE ON FUNCTION public.tokenization_enabled TO authenticated, anon, service_role;
 
--- Seed the config row in 'off' state. Admin flips this when ready.
-INSERT INTO public.platform_config (key, value, label)
+-- Seed the config rows in 'off' state. Admin flips them when ready.
+INSERT INTO public.platform_config (key, value, value_text, label)
 VALUES (
   'tokenization_enabled',
+  NULL,
   'false',
-  'Master switch for the on-chain tokenization layer. When true, new events spawn token contracts and positions get minted on-chain. See docs/payments-architecture.md §6.'
+  'Master switch for the on-chain tokenization layer. When true, new events spawn token contracts and positions get minted on-chain.'
 )
 ON CONFLICT (key) DO NOTHING;
 
-INSERT INTO public.platform_config (key, value, label)
+INSERT INTO public.platform_config (key, value, value_text, label)
 VALUES (
   'tokenization_provider',
+  NULL,
   'monetae',
   'Which TokenizationProvider implementation is active. Possible: monetae, tohkn, tokeny.'
 )
 ON CONFLICT (key) DO NOTHING;
 
-INSERT INTO public.platform_config (key, value, label)
+INSERT INTO public.platform_config (key, value, value_text, label)
 VALUES (
   'tokenization_chain',
+  NULL,
   'polygon',
   'Default chain for tokenized events. polygon, base, tron.'
 )
@@ -73,7 +79,7 @@ ON CONFLICT (key) DO NOTHING;
 -- Safe to call on every event creation — when tokenization is off,
 -- the row sits unprocessed and is ignored.
 CREATE OR REPLACE FUNCTION public.queue_event_tokenization(
-  p_event_id UUID
+  p_event_id TEXT
 )
 RETURNS VOID
 LANGUAGE plpgsql
@@ -87,8 +93,8 @@ BEGIN
   -- Always insert the placeholder row, even when tokenization is off.
   -- This way when we flip the switch later, every event has a row to
   -- update rather than needing a back-fill migration.
-  SELECT value INTO v_provider FROM public.platform_config WHERE key = 'tokenization_provider';
-  SELECT value INTO v_chain    FROM public.platform_config WHERE key = 'tokenization_chain';
+  SELECT value_text INTO v_provider FROM public.platform_config WHERE key = 'tokenization_provider';
+  SELECT value_text INTO v_chain    FROM public.platform_config WHERE key = 'tokenization_chain';
 
   INSERT INTO public.event_tokens (
     event_id, token_model, provider, chain, collateral_token
@@ -145,7 +151,7 @@ SET search_path = public
 AS $$
 DECLARE
   v_user_wallet TEXT;
-  v_event_id    UUID;
+  v_event_id    TEXT;   -- positions.event_id is TEXT (matches events.id)
   v_status      TEXT;
 BEGIN
   IF NOT public.tokenization_enabled() THEN
@@ -184,7 +190,7 @@ GRANT EXECUTE ON FUNCTION public.queue_position_mint TO service_role, authentica
 -- calls TokenizationProvider.resolveEvent() — winning side becomes
 -- redeemable.
 CREATE OR REPLACE FUNCTION public.queue_event_resolution(
-  p_event_id      UUID,
+  p_event_id      TEXT,   -- events.id is TEXT (slug-style), not UUID
   p_winning_side  TEXT
 )
 RETURNS VOID
