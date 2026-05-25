@@ -16,15 +16,17 @@ import { ImageResponse } from '@vercel/og';
  *   - Hand-renders the card with JSX → ImageResponse
  *   - Caches at the CDN edge for 5 minutes (s-maxage=300)
  *
- * Why edge runtime: ImageResponse uses Satori under the hood and
- * works best on Vercel's edge runtime (lower cold-start, faster
- * response). The Node runtime works too but is slower.
+ * Why edge runtime: ImageResponse uses Satori + Yoga (WASM) under the
+ * hood and is tuned for Vercel's edge / V8-isolate sandbox. Empirically
+ * the Node runtime threw FUNCTION_INVOCATION_FAILED on us — see config
+ * comment below.
  */
-// Note: defaulting to Node.js runtime — @vercel/og works there without
-// the Edge-runtime restrictions on bundled modules. Cold start is slightly
-// slower but the function still completes well under 1s for an OG image.
+// @vercel/og is designed for Vercel's edge runtime — Satori + Yoga ship as
+// WASM and the V8-isolate edge sandbox is what they're tuned against. Running
+// on the Node runtime produced FUNCTION_INVOCATION_FAILED even pinned to
+// Node 20, so we route this function to the edge runtime explicitly.
 export const config = {
-    runtime: 'nodejs',
+    runtime: 'edge',
 };
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || '';
 const SUPABASE_KEY = process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || '';

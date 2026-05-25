@@ -5,6 +5,7 @@ import { AnimatedNumber } from '../AnimatedNumber'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
 import { useVotes } from '../../context/VoteContext'
+import { PagaditoIframeSheet } from './PagaditoIframeSheet'
 
 const F = 'var(--font-body)'
 const D = 'var(--font-display)'
@@ -118,6 +119,10 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [doneType, setDoneType] = useState<'deposit' | 'retiro'>('deposit')
+  // Pagadito iframe overlay state — when true, the full-screen
+  // PagaditoIframeSheet sits on top of this BottomSheet and the user
+  // completes the card flow inside Pagadito's hosted UI.
+  const [pagaditoOpen, setPagaditoOpen] = useState(false)
 
   const amountNum = parseFloat(amount) || 0
   const validDepositAmount = amountNum >= 25
@@ -507,7 +512,11 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
           </>
         )}
 
-        {/* ── Deposit: Card ── */}
+        {/* ── Deposit: Card ──
+            The actual card capture happens in Pagadito's hosted iframe
+            (PagaditoIframeSheet). This step is just the launch screen
+            confirming what the user is about to pay. The iframe sheet
+            covers the whole viewport once opened. */}
         {step === 'deposit-card' && (
           <>
             <button onClick={() => setStep('deposit-amount')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 600, color: 'var(--b1n0-muted)', padding: '4px 0 12px', display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -520,31 +529,55 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
               <p style={{ fontFamily: D, fontWeight: 800, fontSize: '28px', color: 'var(--b1n0-text-1)' , fontVariantNumeric: 'tabular-nums'}}>${amountNum.toLocaleString()}</p>
               <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)', marginTop: '4px' }}>Depósito vía tarjeta</p>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '18px' }}>
-              <input type="text" value={cardNumber} onChange={(e) => setCardNumber(formatCardNumber(e.target.value))} placeholder="Número de tarjeta" maxLength={19} style={inputStyle} />
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <input type="text" value={cardExpiry} onChange={(e) => setCardExpiry(formatExpiry(e.target.value))} placeholder="MM/AA" maxLength={5} style={{ ...inputStyle, width: '50%' }} />
-                <input type="text" value={cardCvc} onChange={(e) => setCardCvc(e.target.value.replace(/\D/g, '').slice(0, 4))} placeholder="CVC" maxLength={4} style={{ ...inputStyle, width: '50%' }} />
-              </div>
-              <input type="text" value={cardName} onChange={(e) => setCardName(e.target.value)} placeholder="Nombre en la tarjeta" style={inputStyle} />
+            <div
+              style={{
+                background: 'var(--b1n0-card)',
+                border: '1px solid var(--b1n0-border)',
+                borderRadius: 'var(--radius-lg)',
+                padding: '14px',
+                marginBottom: '14px',
+              }}
+            >
+              <p style={{ fontFamily: F, fontSize: 12, color: 'var(--b1n0-muted)', margin: 0, lineHeight: 1.55 }}>
+                Vas a completar el pago en una ventana segura de <strong style={{ color: 'var(--b1n0-text-1)' }}>Pagadito</strong>.
+                Tus datos de tarjeta nunca pasan por b1n0.
+              </p>
             </div>
             {error && <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-error)', marginBottom: '10px', textAlign: 'center' }}>{error}</p>}
             <button
-              onClick={handleDeposit}
-              disabled={!cardValid || loading}
+              onClick={() => setPagaditoOpen(true)}
+              disabled={loading}
               style={{
                 width: '100%', padding: '14px', borderRadius: 'var(--radius-lg)', border: 'none',
-                background: cardValid && !loading ? 'var(--b1n0-si)' : 'var(--b1n0-disabled-bg)',
-                cursor: cardValid && !loading ? 'pointer' : 'default',
-                fontFamily: F, fontWeight: 700, fontSize: '14px', color: cardValid && !loading ? 'var(--b1n0-on-accent)' : 'var(--b1n0-muted)',
+                background: !loading ? 'var(--b1n0-si)' : 'var(--b1n0-disabled-bg)',
+                cursor: !loading ? 'pointer' : 'default',
+                fontFamily: F, fontWeight: 700, fontSize: '14px', color: !loading ? 'var(--b1n0-on-accent)' : 'var(--b1n0-muted)',
               }}
             >
-              {loading ? 'Procesando...' : `Depositar Q${amountNum.toLocaleString()} →`}
+              Continuar a Pagadito →
             </button>
             <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)', textAlign: 'center', marginTop: '12px', lineHeight: 1.5 }}>
-              Al confirmar, autorizás el cargo a tu tarjeta.
+              Procesamiento seguro · PCI DSS · El cargo aparece como "B1N0".
             </p>
           </>
+        )}
+
+        {/* Pagadito iframe — full-screen overlay, mounted only when needed.
+            Sits above the WalletSheet via z-index 1500. */}
+        {pagaditoOpen && (
+          <PagaditoIframeSheet
+            amount={amountNum}
+            currency="USD"
+            description={`Saldo b1n0 ${amountNum.toFixed(2)} USD`}
+            onClose={() => setPagaditoOpen(false)}
+            onSuccess={async (settledAmount) => {
+              setPagaditoOpen(false)
+              setAmount(String(settledAmount))
+              setDoneType('deposit')
+              setStep('done')
+              await refreshProfile()
+            }}
+          />
         )}
 
         {/* ── Retiro: Amount ── */}

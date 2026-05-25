@@ -77,8 +77,67 @@
     </script>
 
     <!-- Type system: Inter + InterDisplay (self-hosted via /public/fonts/). See src/index.css @font-face. -->
-    <script type="module" crossorigin src="/assets/index-DJecRu2-.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-_G5Zzd0T.css">
+
+    <!-- Google Translate Element — used by the ES/EN footer toggle to
+         live-translate page content that's not covered by our own i18n
+         JSON. Loaded eagerly here in <head> (not lazily from JS) because
+         the widget's auto-translate-from-cookie behavior fires during
+         init and only works when init runs early in the page lifecycle.
+         Loading lazily from a React effect was too late — by the time
+         the script ran, the body was already rendered and Google never
+         translated it. The cost of the eager load is ~80 KB which we
+         accept; this is what every working Google Translate site does.
+
+         The script gates itself on a `googtrans` cookie. With no
+         cookie set, the widget renders its (off-screen) UI but does
+         not modify page content. When the user toggles EN in the
+         footer, we set the cookie and reload — on the next paint the
+         widget reads the cookie and translates the body in place. -->
+    <script>
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement(
+          { pageLanguage: 'es', includedLanguages: 'en', autoDisplay: false },
+          'google_translate_element'
+        )
+      }
+    </script>
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async></script>
+    <style>
+      /* Hide Google's branded top bar, in-page tooltip, and hover glow.
+         The widget itself still runs — we just keep the page chrome
+         clean. .skiptranslate is intentionally NOT hidden here because
+         it's a marker class Google applies to elements that should not
+         be translated (e.g. our wallet numbers); hiding it would hide
+         legitimate content. We target only Google's *injected* chrome. */
+      .goog-te-banner-frame.skiptranslate,
+      .goog-te-banner-frame,
+      #goog-gt-tt,
+      .goog-tooltip,
+      .goog-tooltip:hover {
+        display: none !important;
+      }
+      body { top: 0 !important; position: static !important; }
+      /* Suppress the hover-highlight glow Google adds to translated text. */
+      .goog-text-highlighted {
+        background-color: transparent !important;
+        box-shadow: none !important;
+      }
+      /* The mount itself — visible to Google's layout calc but
+         positioned far off-screen so it never reaches the viewport. */
+      #google_translate_element {
+        position: absolute;
+        left: -10000px;
+        top: -10000px;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        opacity: 0;
+        pointer-events: none;
+      }
+    </style>
+    <div id="google_translate_element"></div>
+    <script type="module" crossorigin src="/assets/index-DgP-fut4.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-C8fLOUDZ.css">
   </head>
   <body>
     <div id="root"></div>
