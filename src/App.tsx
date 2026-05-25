@@ -14,6 +14,7 @@ import { EventsProvider } from './context/EventsContext'
 import { VoteProvider } from './context/VoteContext'
 import { NotificationProvider } from './context/NotificationContext'
 import { AuthPage } from './pages/AuthPage'
+import { BetaGate, hasBetaAccess } from './pages/BetaGate'
 import { AuthModalProvider } from './context/AuthModalContext'
 import { AuthModal } from './components/AuthModal'
 import { setPricingRates } from './lib/pricing'
@@ -49,9 +50,35 @@ function LazyFallback() {
   )
 }
 
+/**
+ * RootGate — decides whether the visitor sees the pre-launch BetaGate
+ * or gets redirected straight to /inicio.
+ *
+ * Bypass conditions:
+ *   - User is authenticated (existing account → never sees the gate)
+ *   - hasBetaAccess() === true (localStorage flag set by a prior signup)
+ *
+ * AuthContext is still loading on first paint, so we render nothing
+ * briefly (avoids flash-of-gate for signed-in returning users). The
+ * loading window is typically < 100 ms.
+ */
+function RootGate() {
+  const { session, loading: authLoading } = useAuth()
+  if (authLoading) return null
+  if (session || hasBetaAccess()) {
+    return <Navigate to="/inicio" replace />
+  }
+  return <BetaGate />
+}
+
 const routes = (
   <Routes>
-    <Route path="/" element={<Navigate to="/inicio" replace />} />
+    {/* Root = pre-launch beta gate. Returning visitors (those who already
+        entered an email OR are authenticated existing users) bypass it
+        and go straight to /inicio. The gate writes a localStorage flag
+        on successful signup; we also consider signed-in users as
+        already-past-gate so existing accounts never see it. */}
+    <Route path="/" element={<RootGate />} />
     <Route path="/inicio" element={<Inicio />} />
     <Route path="/en-vivo" element={<Navigate to="/inicio" replace />} />
     <Route path="/mis-votos" element={<MisVotos />} />
