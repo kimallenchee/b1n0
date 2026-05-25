@@ -78,67 +78,58 @@
 
     <!-- Type system: Inter + InterDisplay (self-hosted via /public/fonts/). See src/index.css @font-face. -->
 
-    <!-- Google Translate Element — used by the ES/EN footer toggle to
-         live-translate page content that's not covered by our own i18n
-         JSON. Loaded eagerly here in <head> (not lazily from JS) because
-         the widget's auto-translate-from-cookie behavior fires during
-         init and only works when init runs early in the page lifecycle.
-         Loading lazily from a React effect was too late — by the time
-         the script ran, the body was already rendered and Google never
-         translated it. The cost of the eager load is ~80 KB which we
-         accept; this is what every working Google Translate site does.
-
-         The script gates itself on a `googtrans` cookie. With no
-         cookie set, the widget renders its (off-screen) UI but does
-         not modify page content. When the user toggles EN in the
-         footer, we set the cookie and reload — on the next paint the
-         widget reads the cookie and translates the body in place. -->
-    <script>
-      function googleTranslateElementInit() {
-        new google.translate.TranslateElement(
-          { pageLanguage: 'es', includedLanguages: 'en', autoDisplay: false },
-          'google_translate_element'
-        )
-      }
-    </script>
-    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async></script>
+    <!-- Google Translate Element — minimal CSS only. The init callback
+         and mount div live in <body> (where Google expects them) and
+         get triggered AFTER React renders. See bottom of <body>. -->
     <style>
-      /* Hide Google's branded top bar, in-page tooltip, and hover glow.
-         The widget itself still runs — we just keep the page chrome
-         clean. .skiptranslate is intentionally NOT hidden here because
-         it's a marker class Google applies to elements that should not
-         be translated (e.g. our wallet numbers); hiding it would hide
-         legitimate content. We target only Google's *injected* chrome. */
-      .goog-te-banner-frame.skiptranslate,
+      /* Hide Google's injected chrome (banner + tooltip + highlight). */
       .goog-te-banner-frame,
+      .goog-te-banner-frame.skiptranslate,
       #goog-gt-tt,
       .goog-tooltip,
       .goog-tooltip:hover {
         display: none !important;
       }
-      body { top: 0 !important; position: static !important; }
-      /* Suppress the hover-highlight glow Google adds to translated text. */
       .goog-text-highlighted {
         background-color: transparent !important;
         box-shadow: none !important;
       }
-      /* The mount itself — visible to Google's layout calc but
-         positioned far off-screen so it never reaches the viewport. */
+      /* Off-screen mount — visible to Google's layout calc, invisible to user. */
       #google_translate_element {
-        position: absolute;
-        left: -10000px;
-        top: -10000px;
-        width: 1px;
-        height: 1px;
-        overflow: hidden;
-        opacity: 0;
-        pointer-events: none;
+        position: absolute !important;
+        left: -10000px !important;
+        top: 0 !important;
+        width: 1px !important;
+        height: 1px !important;
+        overflow: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
       }
     </style>
-    <div id="google_translate_element"></div>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+
+    <!-- Google Translate Element. Mount div + init script live in <body>
+         so the widget initializes AFTER the body is parsed. The widget
+         then watches for DOM changes via its internal MutationObserver,
+         so it picks up React's renders into #root and translates them
+         whenever the `googtrans` cookie is set. -->
+    <div id="google_translate_element"></div>
+    <script>
+      function googleTranslateElementInit() {
+        // Bare-minimum config. `includedLanguages` is intentionally
+        // omitted — restricting to a single target was preventing the
+        // widget from entering auto-translate mode. Without it the
+        // widget exposes all languages and reads the `googtrans` cookie
+        // to decide which one to apply.
+        new google.translate.TranslateElement(
+          { pageLanguage: 'es' },
+          'google_translate_element'
+        )
+      }
+    </script>
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   </body>
 </html>
