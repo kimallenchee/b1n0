@@ -6,6 +6,7 @@ import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
 import { useVotes } from '../../context/VoteContext'
 import { PagaditoIframeSheet } from './PagaditoIframeSheet'
+import { usePaymentFlags } from '../../hooks/usePaymentFlags'
 
 const F = 'var(--font-body)'
 const D = 'var(--font-display)'
@@ -16,56 +17,55 @@ interface WalletSheetProps {
   initialTab?: 'depositar' | 'retirar'
 }
 
-type DepositMethod = 'tarjeta' | 'transferencia' | 'efectivo'
-type RetiroMethod = 'transferencia' | 'efectivo'
+type DepositMethod = 'tarjeta' | 'transferencia'
+type RetiroMethod = 'tarjeta' | 'transferencia'
 
 type Step = 'home' | 'deposit-method' | 'deposit-amount' | 'deposit-card' | 'retiro-method' | 'retiro-amount' | 'retiro-bank' | 'done'
 
-const depositMethods: { id: DepositMethod; label: string; sub: string; icon: React.ReactNode }[] = [
+// Method definitions are static. The "Próximamente" badge is layered
+// on at render time based on the corresponding feature flag — keeps
+// the method list as a single source of truth and lets each flag
+// flip independently when its vendor signs.
+interface MethodDef<T extends string> {
+  id: T
+  label: string
+  sub: string
+  icon: React.ReactNode
+  /** Which feature flag gates this method ('cardDeposits' | 'bankDeposits' | etc). */
+  flag: 'cardDeposits' | 'cardWithdrawals' | 'bankDeposits' | 'bankWithdrawals'
+}
+
+const depositMethods: MethodDef<DepositMethod>[] = [
   {
     id: 'tarjeta',
     label: 'Tarjeta de débito / crédito',
     sub: 'Acreditación inmediata',
-    icon: (
-      <CreditCard size={20} weight="regular" color="var(--b1n0-text-1)" />
-    ),
+    icon: <CreditCard size={20} weight="regular" color="var(--b1n0-text-1)" />,
+    flag: 'cardDeposits',
   },
   {
     id: 'transferencia',
     label: 'Transferencia bancaria',
     sub: '1–2 días hábiles',
-    icon: (
-      <CurrencyDollar size={20} weight="regular" color="var(--b1n0-text-1)" />
-    ),
-  },
-  {
-    id: 'efectivo',
-    label: 'Depósito en efectivo',
-    sub: 'Puntos autorizados · 24h',
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--b1n0-text-1)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/>
-      </svg>
-    ),
+    icon: <CurrencyDollar size={20} weight="regular" color="var(--b1n0-text-1)" />,
+    flag: 'bankDeposits',
   },
 ]
 
-const retiroMethods: { id: RetiroMethod; label: string; sub: string; icon: React.ReactNode }[] = [
+const retiroMethods: MethodDef<RetiroMethod>[] = [
   {
-    id: 'transferencia',
-    label: 'Transferencia bancaria',
-    sub: '1–2 días hábiles',
-    icon: (
-      <CurrencyDollar size={20} weight="regular" color="var(--b1n0-text-1)" />
-    ),
+    id: 'tarjeta',
+    label: 'Tarjeta de débito / crédito',
+    sub: 'Devolución a la tarjeta original',
+    icon: <CreditCard size={20} weight="regular" color="var(--b1n0-text-1)" />,
+    flag: 'cardWithdrawals',
   },
   {
-    id: 'efectivo',
-    label: 'Retiro en efectivo',
-    sub: 'Puntos autorizados · 24h',
-    icon: (
-      <Money size={20} weight="regular" color="var(--b1n0-text-1)" />
-    ),
+    id: 'transferencia',
+    label: 'Cuenta bancaria',
+    sub: '1–2 días hábiles',
+    icon: <Money size={20} weight="regular" color="var(--b1n0-text-1)" />,
+    flag: 'bankWithdrawals',
   },
 ]
 
@@ -123,6 +123,12 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
   // PagaditoIframeSheet sits on top of this BottomSheet and the user
   // completes the card flow inside Pagadito's hosted UI.
   const [pagaditoOpen, setPagaditoOpen] = useState(false)
+
+  // Feature flags — each (rail, direction) pair flips on independently
+  // when the relevant vendor contract goes live. While false, the UI
+  // shows the method but with a "Próximamente" badge and the click is
+  // a no-op (no broken server roundtrip).
+  const flags = usePaymentFlags()
 
   const amountNum = parseFloat(amount) || 0
   const validDepositAmount = amountNum >= 25
@@ -384,32 +390,69 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
               />
             </div>
 
-            {/* Method list */}
+            {/* Method list.
+                Each method's `flag` decides whether the tile is live or
+                "Próximamente". A disabled tile is dimmed, shows the badge,
+                and click is a no-op (no broken server roundtrip until
+                Kim signs the vendor and flips the flag in platform_config). */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {(isDeposit ? depositMethods : retiroMethods).map((m) => (
-                <button
-                  key={m.id}
-                  onClick={() => isDeposit ? handleDepositMethodSelect(m.id as DepositMethod) : handleRetiroMethodSelect(m.id as RetiroMethod)}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: '12px',
-                    padding: '14px 16px', borderRadius: 'var(--radius-lg)',
-                    border: '1px solid var(--b1n0-border)', background: 'var(--b1n0-card)',
-                    cursor: 'pointer', textAlign: 'left', width: '100%',
-                    transition: 'border-color 0.15s',
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--b1n0-card-hover-border)')}
-                  onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--b1n0-border)')}
-                >
-                  <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-lg)', background: isDeposit ? 'var(--b1n0-si-bg)' : 'var(--status-enjuego-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    {m.icon}
-                  </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontFamily: F, fontWeight: 600, fontSize: '13px', color: 'var(--b1n0-text-1)', marginBottom: '1px' }}>{m.label}</p>
-                    <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>{m.sub}</p>
-                  </div>
-                  <span style={{ fontFamily: F, fontSize: '16px', color: 'var(--b1n0-muted)', flexShrink: 0 }}>›</span>
-                </button>
-              ))}
+              {(isDeposit ? depositMethods : retiroMethods).map((m) => {
+                const enabled = flags[m.flag]
+                return (
+                  <button
+                    key={m.id}
+                    disabled={!enabled}
+                    onClick={() => {
+                      if (!enabled) return
+                      if (isDeposit) handleDepositMethodSelect(m.id as DepositMethod)
+                      else handleRetiroMethodSelect(m.id as RetiroMethod)
+                    }}
+                    aria-disabled={!enabled}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '12px',
+                      padding: '14px 16px', borderRadius: 'var(--radius-lg)',
+                      border: '1px solid var(--b1n0-border)', background: 'var(--b1n0-card)',
+                      cursor: enabled ? 'pointer' : 'default',
+                      textAlign: 'left', width: '100%',
+                      transition: 'border-color 0.15s, opacity 0.15s',
+                      opacity: enabled ? 1 : 0.55,
+                    }}
+                    onMouseEnter={(e) => { if (enabled) e.currentTarget.style.borderColor = 'var(--b1n0-card-hover-border)' }}
+                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--b1n0-border)' }}
+                  >
+                    <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-lg)', background: isDeposit ? 'var(--b1n0-si-bg)' : 'var(--status-enjuego-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      {m.icon}
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 1 }}>
+                        <p style={{ fontFamily: F, fontWeight: 600, fontSize: '13px', color: 'var(--b1n0-text-1)', margin: 0 }}>{m.label}</p>
+                        {!enabled && !flags.loading && (
+                          <span
+                            style={{
+                              fontFamily: F,
+                              fontSize: '9px',
+                              fontWeight: 700,
+                              letterSpacing: '0.5px',
+                              textTransform: 'uppercase',
+                              color: 'var(--b1n0-muted)',
+                              background: 'var(--b1n0-surface)',
+                              border: '1px solid var(--b1n0-border)',
+                              borderRadius: 999,
+                              padding: '2px 7px',
+                            }}
+                          >
+                            Próximamente
+                          </span>
+                        )}
+                      </div>
+                      <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-muted)' }}>{m.sub}</p>
+                    </div>
+                    {enabled && (
+                      <span style={{ fontFamily: F, fontSize: '16px', color: 'var(--b1n0-muted)', flexShrink: 0 }}>›</span>
+                    )}
+                  </button>
+                )
+              })}
             </div>
           </>
         )}
@@ -465,7 +508,7 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
 
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', borderRadius: 'var(--radius-lg)', background: 'var(--b1n0-surface)', marginBottom: '14px' }}>
               <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 500, color: 'var(--b1n0-text-1)' }}>
-                Método: {depositMethod === 'tarjeta' ? 'Tarjeta' : depositMethod === 'transferencia' ? 'Transferencia' : 'Efectivo'}
+                Método: {depositMethod === 'tarjeta' ? 'Tarjeta' : 'Transferencia bancaria'}
               </span>
               <button onClick={() => setStep('home')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-muted)' }}>Cambiar</button>
             </div>
@@ -503,11 +546,6 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
                   </div>
                 ))}
               </div>
-            )}
-            {depositMethod === 'efectivo' && validDepositAmount && (
-              <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)', marginTop: '12px', textAlign: 'center', lineHeight: 1.5 }}>
-                Presentá el código que recibirás en cualquier punto autorizado b1n0.
-              </p>
             )}
           </>
         )}
@@ -635,7 +673,7 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
 
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', borderRadius: 'var(--radius-lg)', background: 'var(--b1n0-surface)', marginBottom: '14px' }}>
               <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 500, color: 'var(--b1n0-text-1)' }}>
-                Método: {retiroMethod === 'transferencia' ? 'Transferencia' : 'Efectivo'}
+                Método: {retiroMethod === 'transferencia' ? 'Cuenta bancaria' : 'Tarjeta'}
               </span>
               <button onClick={() => setStep('home')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '11px', fontWeight: 600, color: 'var(--b1n0-muted)' }}>Cambiar</button>
             </div>
@@ -658,9 +696,9 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
               {loading ? 'Procesando...' : retiroMethod === 'transferencia' ? 'Continuar →' : 'Confirmar retiro →'}
             </button>
 
-            {retiroMethod === 'efectivo' && validRetiroAmount && (
+            {retiroMethod === 'tarjeta' && validRetiroAmount && (
               <p style={{ fontFamily: F, fontSize: '12px', color: 'var(--b1n0-muted)', marginTop: '12px', textAlign: 'center', lineHeight: 1.5 }}>
-                Recibirás un código para presentar en cualquier punto autorizado b1n0.
+                El monto será devuelto a la tarjeta original utilizada para depositar.
               </p>
             )}
           </>
@@ -718,7 +756,7 @@ export function WalletSheet({ open, onClose, initialTab = 'depositar' }: WalletS
             <p style={{ fontFamily: F, fontSize: '14px', color: 'var(--b1n0-muted)', marginBottom: '28px' }}>
               {doneType === 'deposit'
                 ? `Q${amountNum.toLocaleString()} acreditados a tu saldo.`
-                : `Q${amountNum.toLocaleString()} vía ${retiroMethod === 'transferencia' ? 'transferencia bancaria' : 'efectivo'}.`
+                : `Q${amountNum.toLocaleString()} vía ${retiroMethod === 'transferencia' ? 'cuenta bancaria' : 'tarjeta'}.`
               }
             </p>
             <button

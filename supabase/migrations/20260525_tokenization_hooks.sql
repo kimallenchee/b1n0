@@ -37,7 +37,7 @@ $$;
 GRANT EXECUTE ON FUNCTION public.tokenization_enabled TO authenticated, anon, service_role;
 
 -- Seed the config row in 'off' state. Admin flips this when ready.
-INSERT INTO public.platform_config (key, value, description)
+INSERT INTO public.platform_config (key, value, label)
 VALUES (
   'tokenization_enabled',
   'false',
@@ -45,7 +45,7 @@ VALUES (
 )
 ON CONFLICT (key) DO NOTHING;
 
-INSERT INTO public.platform_config (key, value, description)
+INSERT INTO public.platform_config (key, value, label)
 VALUES (
   'tokenization_provider',
   'monetae',
@@ -53,7 +53,7 @@ VALUES (
 )
 ON CONFLICT (key) DO NOTHING;
 
-INSERT INTO public.platform_config (key, value, description)
+INSERT INTO public.platform_config (key, value, label)
 VALUES (
   'tokenization_chain',
   'polygon',
