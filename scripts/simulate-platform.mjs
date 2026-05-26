@@ -188,6 +188,7 @@ async function main() {
         p_amount:   amount,
       })
       if (error) { logErr('purchase', error, { event: event.id, user: user.id, side, amount }); continue }
+      if (data?.error) { logErr('purchase-soft', new Error(data.error), { event: event.id, user: user.id }); continue }
       stats.purchases_succeeded++
       stats.per_event[event.id].purchases++
       user.balance -= amount
