@@ -103,6 +103,11 @@ This is the single largest blocker. Until both accounts are open, neither cards 
 
 ---
 
+
+### Security posture (context, not your scope)
+
+Before you dive in: the public security posture is already in place. Three-channel responsible disclosure (security@b1n0.com + GitHub PVR + OpenBugBounty), RFC 9116 security.txt, disclose.io standard adopted, Dependabot + Semgrep workflows running on every PR, GitHub Secret Scanning enabled. Public verification surfaces are listed in `docs/SECURITY_AUDIT.md` "Security Posture v2." This is mostly orthogonal to your payments work, but if you find anything in the vendor integrations that warrants a CVE, route it through the existing disclosure flow.
+
 ## 6. Files worth reading on day 1
 
 In rough priority order:

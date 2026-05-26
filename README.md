@@ -22,6 +22,8 @@ It is **not** a casino, sportsbook, or financial instrument, and **not** a brand
 - **Public profile pages at `/u/:username`** with per-user privacy controls (10 toggles in `profiles.privacy_prefs` JSONB), preview-as-guest mode, and a mixed activity stream (votos + comentarios).
 - **Live event resolution emails** via [Resend](https://resend.com) with brand-styled HTML templates fired by a Postgres trigger + `pg_net` edge call.
 - **Strict CSP, HSTS preload, security.txt, and public scan grades** linked from [`/confianza`](https://www.b1n0.com/confianza). PDF version of the trust pack ships at `/docs/b1n0-confianza.pdf`.
+- **Three-channel responsible disclosure** under the [disclose.io](https://disclose.io) open standard: direct email to `security@b1n0.com`, [GitHub Private Vulnerability Reporting](https://github.com/kimallenchee/b1n0/security/advisories/new), and a public [OpenBugBounty program](https://openbugbounty.org/bugbounty/b1n0/). RFC 9116 `security.txt` with explicit safe-harbor language. 5-business-day acknowledgment + 10-day triage SLA.
+- **Automated supply-chain + code scanning** via GitHub Dependabot (grouped weekly npm + monthly GHA bumps) and a free [Semgrep](https://semgrep.dev) workflow running the `security-audit`, `owasp-top-ten`, `typescript`, `react`, and `secrets` rulesets on every PR. SARIF results upload to the repo Security tab.
 
 ---
 

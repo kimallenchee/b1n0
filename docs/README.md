@@ -88,6 +88,25 @@ The /documentacion page has so much content that it's easier to maintain as stru
 
 ---
 
+## Recently shipped (2026-05-26)
+
+The current production deploy includes:
+
+- **Canonical positioning lock-in.** CLAUDE.md, README, /confianza, /documentacion, index.html meta + OG + Twitter + JSON-LD all on the "LP-backed fixed-payout event-options market" framing.
+- **News feed dead code ripped out** (NewsCard, NewsArticle, fetch-news + rewrite-news edge functions, locale strings).
+- **Brand-green sweep** — every reference to teal `#14b8a6` is now the actual `#06D47F`.
+- **Security stack v2 (free, $0/yr)**:
+  - `.github/dependabot.yml` — weekly grouped npm + monthly GHA updates.
+  - `.github/workflows/semgrep.yml` — free OSS static analysis on every PR + weekly cron.
+  - Beefed-up RFC 9116 `security.txt` with three Contact channels.
+  - `/confianza` Sección 06–07 — Divulgación responsable + Agradecimientos (hall of fame).
+  - **OpenBugBounty program live** at `openbugbounty.org/bugbounty/b1n0/`, domain verification in progress.
+  - **disclose.io** standard adopted by reference.
+- **`docs/handoff-payments-expert.md`** — day-1 onboarding for the incoming payments/crypto expert.
+- **Critical Vercel deploy fix** — `.vercel/output/` was accidentally tracked and got Vercel to treat the repo as prebuilt; untracking it restored normal `npm run build` deploys.
+
+---
+
 # Open to-dos — what's still left
 
 Numbered roughly by priority. Items 1–4 unblock the beta launch. Items 5+ are post-launch.
@@ -163,6 +182,30 @@ Currently the notification preferences UI in Perfil doesn't persist — values g
 
 ---
 
+
+
+### 12. Flip GitHub Advanced Security toggles in repo settings
+
+The Dependabot config + Semgrep workflow are committed, but the matching dashboard toggles haven't been clicked. At `https://github.com/kimallenchee/b1n0/settings/security_analysis`:
+
+- **Private vulnerability reporting** → Enable
+- **Dependency graph** → Enable
+- **Dependabot alerts** → Enable
+- **Dependabot security updates** → Enable
+- **Grouped security updates** → Enable
+- **Secret scanning** → Enable (scroll down)
+- **Push protection** → Enable (prevents accidentally committing API keys)
+
+~1 minute total. After this, the security posture v2 is fully live.
+
+### 13. Wait for OpenBugBounty verification + wire badge
+
+Domain `*.b1n0.com` is registered with OpenBugBounty (canonical URL: `https://openbugbounty.org/bugbounty/b1n0/`). The verification line `OpenBugBounty: https://openbugbounty.org/bugbounty/b1n0/` is live in `security.txt`. Their scanner usually confirms within minutes; FAQ says up to 24h.
+
+Once verified, OpenBugBounty offers a badge SVG. Drop me the badge URL/code and I'll wire it into `/confianza` alongside the existing scan-card grid.
+
+---
+
 ## How to track new to-dos going forward
 
 I (Claude) track tasks per-session in a built-in task list, but **you can't see that list directly** between sessions. So I'll start dropping new open items here at the bottom of this file when we surface them mid-conversation. Look at `docs/README.md` (this file) any time you feel lost.
@@ -171,4 +214,4 @@ If you want a single command to print remaining work later, ask me: *"what's sti
 
 ---
 
-**Last updated:** 2026-05-26 — after the news rip-out + CLAUDE.md canonical positioning rewrite + drift sweep + handoff doc.
+**Last updated:** 2026-05-26 (evening) — after the post-ship pass: canonical positioning live on www.b1n0.com, security stack v2 deployed, OpenBugBounty program registered, Bugcrowd scrapped after pricing reveal.

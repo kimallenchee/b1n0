@@ -127,6 +127,23 @@ See `docs/payments-architecture.md` for the full diagram and `docs/handoff-payme
 - Teal `#14b8a6` — brand green `#06D47F` is the truth
 - "Social opinion game" / "ESPN + Instagram + group chat" framing — this was an earlier draft positioning
 
+## Recently Shipped (2026-05-26)
+
+The current production deploy contains the following batch landed on 2026-05-26:
+
+- **Canonical positioning rewrite.** This file, `README.md`, `/confianza`, `/documentacion`, `index.html` `<meta>` tags, OG cards, Twitter cards and JSON-LD structured data are all on the "LP-backed fixed-payout event-options market" framing. The earlier "social opinion game / brands fund prize pools / ESPN+Instagram+group chat" framing has been swept everywhere.
+- **News feed dead code ripped.** `NewsCard.tsx`, `NewsArticle` type, the `news` table, `EventFeed` news interleave, `fetch-news` + `rewrite-news` edge functions, and locale strings are gone. Events-only feed.
+- **Drift sweep.** "Pool parimutuel" admin label → "Pool del mercado"; stale parimutuel comments → LP-backed fixed-payout; documentation.ts tone rules + section comments llamado → votos; teal `#14b8a6` → brand green `#06D47F` everywhere (emails, PDF, comments).
+- **Payments expert handoff doc.** `docs/handoff-payments-expert.md` is the day-1 onboarding for the incoming payments/crypto-native expert.
+- **Security posture v2 — free 3-channel disclosure stack.**
+  - `.github/dependabot.yml` — weekly npm + monthly GHA updates, grouped to avoid PR storm.
+  - `.github/workflows/semgrep.yml` — free OSS static analysis (security-audit + OWASP top-ten + TypeScript + React + secrets rulesets) on every PR + weekly cron. Replaces paid GitHub Advanced Security CodeQL.
+  - `public/.well-known/security.txt` — RFC 9116 compliant, three Contact channels, disclose.io standard reference, full safe-harbor language.
+  - `/confianza` Sección 06 (Divulgación responsable) + Sección 07 (Agradecimientos) — three verifiable channels: direct email to security@b1n0.com, GitHub Private Vulnerability Reporting, OpenBugBounty.
+  - **OpenBugBounty program**: `openbugbounty.org/bugbounty/b1n0/` — domain `*.b1n0.com` verification in progress (security.txt `OpenBugBounty:` line is now live; their scanner will flip status to verified within minutes-to-24h).
+  - **disclose.io** open standard adopted by reference (no signup, no fees — the standard itself is the badge).
+  - **GitHub Private Vulnerability Reporting** enabled on the repo.
+
 ## Known Gaps (as of 2026-05-26)
 
 - **No signed payment vendor for b1n0 yet** — Redbajas/Vudy/Monetae are all scaffolded but uncontracted.
@@ -134,6 +151,7 @@ See `docs/payments-architecture.md` for the full diagram and `docs/handoff-payme
 - **Supabase auth email templates not pasted into dashboard** — HTML is ready in `docs/supabase-auth-email-templates.md`. Kim pastes manually.
 - **i18n is single-language right now** — `lng: 'es'` hardcoded; EN locale file maintained for the future re-enable when crypto rails open the audience.
 - **Recurring file-corruption bug** — Cowork's Edit/Write tools occasionally silently truncate files or pad them with NULL bytes. The truncation guard (`scripts/check-truncation.mjs`) catches it at prebuild. If you see "Invalid character" or "} expected" on a file you didn't break, restore from HEAD and re-apply via `python3` find/replace in bash.
+- **GitHub Advanced Security toggles still in dashboard** — Dependabot config + Semgrep workflow are committed and active, but the matching repo-settings toggles (Private vulnerability reporting, Dependabot alerts, Dependabot security updates, Grouped security updates, Secret scanning + Push protection) need to be flipped manually at `github.com/kimallenchee/b1n0/settings/security_analysis`.
 
 ## Documentation System
 

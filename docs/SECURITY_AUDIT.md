@@ -1,5 +1,57 @@
 # SECURITY_AUDIT.md
 
+## Security Posture v2 — shipped 2026-05-26
+
+This section summarizes the broader public-facing security posture that landed after the original authorization-hardening audit below. It is the single artifact to point investors / IT skeptics / auditors at when they ask "show me your security."
+
+### Disclosure stack (three free verifiable channels)
+
+| Channel | URL | Purpose |
+|---|---|---|
+| Direct email | `security@b1n0.com` | Primary inbound, PGP available on request |
+| GitHub Private Vulnerability Reporting | https://github.com/kimallenchee/b1n0/security/advisories/new | Coordinated private advisory, CVE assignment available |
+| OpenBugBounty program | https://www.openbugbounty.org/bugbounty/b1n0/ | Public-verifiable third-party listing, neutral triage |
+
+All three are referenced as `Contact:` channels in `public/.well-known/security.txt` and linked from `/confianza` Sección 06 (Divulgación responsable). The program follows the [disclose.io](https://disclose.io) open standard with an explicit safe-harbor clause.
+
+**Response SLAs:**
+- Acknowledgment within 5 business days
+- Preliminary severity within 10 business days
+- Default coordinated-disclosure window: 90 days post-fix, flexible
+
+### Automated scanning
+
+| Tool | Coverage | Runs on |
+|---|---|---|
+| GitHub Dependabot | npm + GitHub Actions dependency CVEs, version updates | Configured in `.github/dependabot.yml` — weekly grouped npm, monthly GHA |
+| Semgrep (free OSS) | Static analysis with `p/security-audit` + `p/owasp-top-ten` + `p/typescript` + `p/react` + `p/secrets` rulesets | `.github/workflows/semgrep.yml` — every PR + weekly cron + manual dispatch |
+| GitHub Secret Scanning | Detects committed API keys/tokens at push time | Enabled in repo settings (Push protection) |
+| Truncation guard | Validates every `src/**/*.{ts,tsx}` parses cleanly before any build | `scripts/check-truncation.mjs`, runs as `prebuild` |
+
+Semgrep results upload to the GitHub Security tab as SARIF. Dependabot opens grouped PRs (react-stack / supabase-stack / build-tooling) to avoid PR storm.
+
+### Public verification surfaces
+
+A skeptical reader can independently verify all of the above from outside the org:
+
+| Verifier | URL |
+|---|---|
+| `security.txt` (RFC 9116) | https://www.b1n0.com/.well-known/security.txt |
+| Trust page | https://www.b1n0.com/confianza |
+| Mozilla Observatory | https://observatory.mozilla.org/analyze/www.b1n0.com |
+| SecurityHeaders.com | https://securityheaders.com/?q=https%3A%2F%2Fwww.b1n0.com |
+| SSL Labs | https://www.ssllabs.com/ssltest/analyze.html?d=www.b1n0.com |
+| GitHub Security tab | https://github.com/kimallenchee/b1n0/security |
+| OpenBugBounty program | https://www.openbugbounty.org/bugbounty/b1n0/ |
+
+### Investor-facing one-paragraph summary
+
+> Security reports reach us through three verifiable channels — GitHub's Private Vulnerability Reporting, OpenBugBounty, and direct PGP-encrypted email — under a disclose.io-aligned safe-harbor policy with 5-day acknowledgment and 10-day triage SLAs. Every PR runs Semgrep static analysis (OWASP top-ten + secrets) and Dependabot watches all dependencies for CVEs. Public scan grades (Mozilla Observatory, SecurityHeaders, SSL Labs) are linked from `/confianza` for independent verification. Full policy at `b1n0.com/.well-known/security.txt`.
+
+---
+
+## Authorization audit (Production Hardening Pass — Pre-PSP, April 2026)
+
 Authorization audit for the b1n0 backend, completed as part of the
 **Production Hardening Pass — Pre-PSP** (April 2026).
 
