@@ -14,14 +14,13 @@
 -- Or paste into the Supabase SQL editor and execute.
 -- ============================================================
 
-\echo ''
-\echo '════════════════════════════════════════════════════════════'
-\echo 'b1n0 invariants — math validation suite'
-\echo '════════════════════════════════════════════════════════════'
+SELECT '── ════════════════════════════════════════════════════════════' AS section;
+SELECT '── b1n0 invariants — math validation suite' AS section;
+SELECT '── ════════════════════════════════════════════════════════════' AS section;
 
 -- ── 1. profiles.balance >= 0 ───────────────────────────────
-\echo ''
-\echo '[1] No negative balances'
+
+SELECT '── [1] No negative balances' AS section;
 SELECT id, name, balance
   FROM public.profiles
  WHERE balance < 0
@@ -32,8 +31,8 @@ SELECT id, name, balance
 -- ── 2. balance_ledger matches profiles.balance ─────────────
 -- For every user, SUM(balance_ledger.amount) should equal
 -- profiles.balance. profiles.balance is the denormalized cache.
-\echo ''
-\echo '[2] balance_ledger sum matches profiles.balance for every user'
+
+SELECT '── [2] balance_ledger sum matches profiles.balance for every user' AS section;
 WITH ledger_sum AS (
   SELECT user_id, SUM(amount) AS ledger_total
     FROM public.balance_ledger
@@ -50,8 +49,8 @@ SELECT p.id, p.name, p.balance AS profile_balance,
 -- Empty result = PASS.
 
 -- ── 3. positions.price_at_purchase in [0, 1] ───────────────
-\echo ''
-\echo '[3] All position prices are in [0, 1]'
+
+SELECT '── [3] All position prices are in [0, 1]' AS section;
 SELECT id, event_id, side, price_at_purchase, contracts
   FROM public.positions
  WHERE price_at_purchase < 0 OR price_at_purchase > 1
@@ -59,8 +58,8 @@ SELECT id, event_id, side, price_at_purchase, contracts
 -- Empty = PASS.
 
 -- ── 4. positions.contracts > 0 ─────────────────────────────
-\echo ''
-\echo '[4] All positions have positive contract counts'
+
+SELECT '── [4] All positions have positive contract counts' AS section;
 SELECT id, event_id, side, contracts
   FROM public.positions
  WHERE contracts <= 0
@@ -70,8 +69,8 @@ SELECT id, event_id, side, contracts
 -- ── 5. settled positions have correct status ───────────────
 -- For every settled event: positions on the winning side should
 -- be status='won', positions on the losing side should be 'lost'.
-\echo ''
-\echo '[5] Settled positions match event result'
+
+SELECT '── [5] Settled positions match event result' AS section;
 SELECT p.id, p.event_id, p.side, p.status, em.result, em.status AS event_status
   FROM public.positions p
   JOIN public.event_markets em ON em.event_id = p.event_id
@@ -87,8 +86,8 @@ SELECT p.id, p.event_id, p.side, p.status, em.result, em.status AS event_status
 -- This is the headline guarantee of the LP-backed fixed-payout
 -- model: every winning contract is worth exactly $1, less the
 -- resolution skim percentage.
-\echo ''
-\echo '[6] Winning positions paid out as contracts × payout_if_win'
+
+SELECT '── [6] Winning positions paid out as contracts × payout_if_win' AS section;
 WITH winners AS (
   SELECT p.id, p.user_id, p.contracts, p.payout_if_win,
          COALESCE(bl.amount, 0) AS cobro_credited
@@ -105,8 +104,8 @@ SELECT id, contracts, payout_if_win, cobro_credited,
 -- Empty = PASS (drift > 5¢ on any winning payout is suspicious).
 
 -- ── 7. event_markets pool_total >= 0 ───────────────────────
-\echo ''
-\echo '[7] No negative pool totals'
+
+SELECT '── [7] No negative pool totals' AS section;
 SELECT event_id, pool_total, pool_committed, yes_shares, no_shares
   FROM public.event_markets
  WHERE pool_total < 0 OR pool_committed < 0 OR yes_shares < 0 OR no_shares < 0
@@ -116,8 +115,8 @@ SELECT event_id, pool_total, pool_committed, yes_shares, no_shares
 -- ── 8. platform_ledger entries reconcile with event count ──
 -- Every settled event should have at least one platform_ledger
 -- row recording the platform's margin take.
-\echo ''
-\echo '[8] Every settled event has a platform_ledger entry'
+
+SELECT '── [8] Every settled event has a platform_ledger entry' AS section;
 SELECT em.event_id, em.status, em.result,
        (SELECT COUNT(*) FROM public.platform_ledger pl WHERE pl.event_id = em.event_id) AS pl_rows
   FROM public.event_markets em
@@ -127,10 +126,10 @@ SELECT em.event_id, em.status, em.result,
 -- Empty = PASS.
 
 -- ── 9. summary by simulated activity ───────────────────────
-\echo ''
-\echo '────────────────────────────────────────────────────────────'
-\echo 'Simulation activity summary'
-\echo '────────────────────────────────────────────────────────────'
+
+SELECT '── ────────────────────────────────────────────────────────────' AS section;
+SELECT '── Simulation activity summary' AS section;
+SELECT '── ────────────────────────────────────────────────────────────' AS section;
 
 SELECT
   (SELECT COUNT(*) FROM public.profiles WHERE is_simulated)              AS simulated_users,
@@ -149,8 +148,8 @@ SELECT
                    WHERE p.event_id = em.event_id AND pr.is_simulated))   AS settled_simulated_events;
 
 -- ── 10. per-event LP P&L roll-up ───────────────────────────
-\echo ''
-\echo 'Per-event LP P&L (simulated events only)'
+
+SELECT '── Per-event LP P&L (simulated events only)' AS section;
 SELECT em.event_id,
        em.status,
        em.result,
@@ -171,7 +170,6 @@ SELECT em.event_id,
                WHERE p.event_id = em.event_id AND pr.is_simulated)
  ORDER BY em.event_id;
 
-\echo ''
-\echo '════════════════════════════════════════════════════════════'
-\echo 'Done. Empty result sets in checks [1]–[8] = math is clean.'
-\echo '════════════════════════════════════════════════════════════'
+SELECT '── ════════════════════════════════════════════════════════════' AS section;
+SELECT '── Done. Empty result sets in checks [1]–[8] = math is clean.' AS section;
+SELECT '── ════════════════════════════════════════════════════════════' AS section;
