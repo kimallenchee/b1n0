@@ -100,6 +100,26 @@ async function main() {
   console.log(`  resolve at end: ${RESOLVE}`)
   console.log(`──────────────────────────────────────────────\n`)
 
+  // 0. Sanity-check the connection before doing anything ────
+  const { count: probeCount, error: probeErr } = await sb
+    .from('events').select('id', { count: 'exact', head: true })
+  if (probeErr) {
+    console.error('\n❌ Supabase connection failed:')
+    console.error('   ', probeErr.message || probeErr)
+    console.error('   ', probeErr.hint || probeErr.details || '')
+    console.error('\n   Common causes:')
+    console.error('   • SUPABASE_SERVICE_ROLE_KEY is not set or is a placeholder')
+    console.error('     (in PowerShell, # starts a comment — anything after is dropped)')
+    console.error('   • SUPABASE_URL is wrong')
+    console.error('   • RLS on events is blocking the service role (shouldn\'t happen)')
+    console.error('\n   Verify with:')
+    console.error('     echo $env:SUPABASE_SERVICE_ROLE_KEY    # PowerShell')
+    console.error('     echo $SUPABASE_SERVICE_ROLE_KEY        # bash')
+    console.error('   The key should be a long eyJ... JWT, ~200 chars.')
+    process.exit(2)
+  }
+  console.log(`Connected. Total events in DB: ${probeCount}`)
+
   // 1. Pick events to use ─────────────────────────────────
   const { data: events, error: eErr } = await sb
     .from('events')
@@ -107,9 +127,15 @@ async function main() {
     .eq('status', 'open')
     .order('created_at', { ascending: false })
     .limit(N_EVENTS)
-  if (eErr || !events?.length) {
-    console.error('No open events found. Create some via /admin first.')
+  if (eErr) {
+    console.error('Events query failed:', eErr.message || eErr)
     process.exit(2)
+  }
+  if (!events?.length) {
+    console.error(`No events with status='open' found (DB has ${probeCount} total events).`)
+    console.error(`Either create events via /admin, or run the SQL seed snippet from docs/simulation-runbook.md.`)
+    console.error(`Also check that your seeded events have status='open' (not 'draft' or anything else).`)
+    process.exit(3)
   }
   console.log(`Using ${events.length} open events:`)
   for (const e of events) {
