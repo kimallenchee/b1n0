@@ -31,7 +31,4 @@ VALUES
   ('bank_withdrawals_enabled', NULL, 'false', 'Show "Cuenta bancaria" as a withdrawal option.'),
 
   -- Crypto rail (Vudy). Flip on once Vudy contract + custody arrangement
-  -- (Monetae or Fireblocks-direct) are in place.
-  ('crypto_deposits_enabled',   NULL, 'false', 'Show "Stablecoin" as a deposit option.'),
-  ('crypto_withdrawals_enabled',NULL, 'false', 'Show "Stablecoin" as a withdrawal option.')
-ON CONFLICT (key) DO NOTHING;
+  -- (Monetae or Fir

@@ -708,14 +708,6 @@ input[type="number"] {
   .card-grid { grid-template-columns: repeat(3, 1fr) !important; }
 }
 
-.news-card {
-  background: var(--b1n0-card);
-  border: 1px solid var(--b1n0-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-6);
-  margin-bottom: var(--space-3);
-}
-
 /* Category badge */
 .cat-badge {
   display: inline-flex; align-items: center; gap: 4px;

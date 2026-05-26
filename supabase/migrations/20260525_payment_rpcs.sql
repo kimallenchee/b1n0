@@ -402,4 +402,4 @@ GRANT EXECUTE ON FUNCTION public.cancel_payment_transaction TO service_role;
 -- ============================================================================
 -- End of payment RPCs. Tokenization lifecycle hooks live in a separate
 -- migration (20260525_tokenization_hooks.sql).
--- ============================================================================
+-- =============================================================

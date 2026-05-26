@@ -2,11 +2,19 @@
 
 ## What This Project Is
 
-b1n0 is a **sponsored prediction platform** for Central America (Guatemala, El Salvador, Honduras, Nicaragua, Costa Rica, Panama, Belize). It is a social opinion game — not a gambling app, not a finance app. Brands fund prize pools and users prove they know their world better than everyone else. The product lives between ESPN, Instagram, and a group chat where someone always has a hot take.
+b1n0 is an **LP-backed fixed-payout event-options market** for Central America. Users buy SÍ/NO (or multi-option) positions on real-world events at a market price; payouts are funded by liquidity-provider capital — *not* by a brand sponsor, *not* parimutuel, *not* a peer-to-peer order book. The LP is the counterparty.
 
-**Spanish-first. Mobile-first. 18–35 age target.**
+- **Operating entity:** Tres33 SAS de CV — Salvadoran company under the CNAD framework.
+- **Geography:** Central America today. Spanish-first interface. EN + additional languages will come back as crypto rails open the audience beyond CA.
+- **Audience:** 18–35, mobile-first. Beta-gated at the root for expectation management — the gate is soft, not a regulatory wall.
+- **LP model:** Hybrid. Some events are funded entirely by institutional LPs (Tres33 + investors); some open the LP pool to public capital ("Abierto para LP público" toggle on event creation).
+- **Live at:** https://www.b1n0.com (Vercel, DNS via GoDaddy)
 
-**Live at:** https://www.b1n0.com (Vercel, DNS via GoDaddy)
+This is *not* a gambling app. It is *not* a generic social opinion game. It is *not* a Polymarket clone or a Kalshi clone — those comparisons exist only as "the closest US analogue" when explaining to investors, and never as product framing inside the codebase.
+
+## Content Model
+
+**Every event is admin-created manually.** The admin (Kim today; eventually a small ops team) writes the question, picks category + country, sets initial SÍ %, funds LP capital, sets min/max entry, and writes the **Contexto** field — which becomes the event's descriptor on the event page. There is no scraping, no AI generation, no syndication. News-feed integration was scoped in an earlier draft and ripped out entirely on 2026-05-26.
 
 ## Tech Stack
 
@@ -14,101 +22,20 @@ b1n0 is a **sponsored prediction platform** for Central America (Guatemala, El S
 - **UI:** Custom CSS (inline styles + index.css) — no shadcn/ui, no component library
 - **Styling:** Tailwind CSS v4 (via `@tailwindcss/vite` plugin)
 - **Routing:** React Router DOM v7
-- **Backend:** Supabase (PostgreSQL + Auth + Realtime + Storage)
+- **i18n:** react-i18next (currently hardcoded to `lng: 'es'`; EN locale file exists for future re-enable)
+- **Backend:** Supabase (PostgreSQL + Auth + Realtime + Storage + Edge Functions)
 - **Monitoring:** Sentry (lazy-loaded, optional via `VITE_SENTRY_DSN`)
-- **Deployment:** Vercel (auto-deploy from GitHub)
+- **Deployment:** Vercel (auto-deploy from GitHub `main`)
+- **Project ref:** `bebdvsdiqlruqzmkvmgy`
 
 ## Commands
 
 ```bash
 npm run dev        # Start dev server (localhost:5173)
-npm run build      # Production build
+npm run build      # Production build (also runs tsc + truncation guard)
 npm run lint       # ESLint
 npm run preview    # Preview production build
 ```
-
-## Project Structure
-
-```
-src/
-├── pages/                      # Route-level pages
-│   ├── Inicio.tsx              # Main feed (events + news)
-│   ├── MisLlamados.tsx         # User's active predictions (Mis Votos) — filename retained for stability
-│   ├── Perfil.tsx              # Account, wallet, KYC, friends
-│   ├── Portafolio.tsx          # Active positions with live P/L
-│   ├── Historial.tsx           # Transaction history + vote history
-│   ├── EventDetailPage.tsx     # Full event view with comments + purchase
-│   ├── AdminPage.tsx           # 5-panel admin suite
-│   ├── AuthPage.tsx            # Login / signup standalone page
-│   ├── Legal.tsx               # Terms + privacy
-│   └── Documentacion.tsx       # User-facing docs page
-├── components/
-│   ├── layout/
-│   │   ├── TopBar.tsx          # Fixed top: balance + avatar + tier badge
-│   │   ├── BottomNav.tsx       # Fixed bottom: 5 tabs (mobile)
-│   │   ├── SideNav.tsx         # Side navigation (desktop)
-│   │   ├── RightPanel.tsx      # Desktop right sidebar
-│   │   ├── NotificationDrawer.tsx
-│   │   └── AccountDrawer.tsx
-│   ├── feed/
-│   │   ├── EventCard.tsx       # Signature UI — the entire product
-│   │   ├── EventFeed.tsx       # Feed wrapper
-│   │   ├── SplitBar.tsx        # Animated SÍ/NO split bar
-│   │   ├── LiveDot.tsx         # Pulsing teal live indicator
-│   │   ├── EntryFlow.tsx       # 3-step entry: pick side → amount → confirm
-│   │   ├── CommentFeed.tsx     # Threaded comments on events
-│   │   ├── PurchaseCelebration.tsx
-│   │   └── NewsCard.tsx
-│   ├── admin/
-│   │   ├── EventManager.tsx    # Create/edit/resolve events (bulk import via xlsx)
-│   │   ├── RevenuePanel.tsx    # Revenue tracking, LP commissions
-│   │   ├── RatesPanel.tsx      # Fee rate configuration
-│   │   ├── UsersPanel.tsx      # User management, balance adjustments
-│   │   └── TreasuryPanel.tsx   # Platform treasury + sweeps
-│   ├── wallet/
-│   │   ├── WalletSheet.tsx     # Main wallet bottom sheet
-│   │   ├── DepositSheet.tsx    # Deposit flow (TODO: payment processor)
-│   │   ├── RetiroSheet.tsx     # Withdrawal flow (TODO: payment processor)
-│   │   └── KYCSheet.tsx        # Tier upgrade flow
-│   ├── AuthModal.tsx           # Login/signup modal overlay
-│   ├── ErrorBoundary.tsx       # App-wide error catching + Sentry
-│   ├── HowItWorks.tsx          # Onboarding modal
-│   └── ProtectedRoute.tsx      # Admin route guard
-├── context/
-│   ├── AuthContext.tsx          # Supabase auth + profile sync + realtime
-│   ├── EventsContext.tsx        # Event fetching + caching
-│   ├── VoteContext.tsx          # Purchase/vote execution + optimistic updates
-│   ├── NotificationContext.tsx  # Realtime notifications
-│   ├── ThemeContext.tsx         # Dark/light/system theme
-│   ├── NowContext.tsx           # Shared clock for countdown timers
-│   └── AuthModalContext.tsx     # Modal state management
-├── hooks/
-│   ├── usePricingEngine.ts      # AMM pricing calculations
-│   ├── useComments.ts           # Comment CRUD + realtime
-│   └── useIsDesktop.ts          # Responsive breakpoint
-├── lib/
-│   ├── supabase.ts              # Supabase client init
-│   ├── pricing.ts               # Parimutuel AMM math
-│   ├── logger.ts                # Structured logging + Sentry
-│   ├── retry.ts                 # Fetch retry with backoff
-│   ├── rateLimit.ts             # Client-side rate limiting
-│   ├── validate.ts              # Input validation helpers
-│   └── theme.ts                 # Theme utilities
-├── types/
-│   └── index.ts                 # TypeScript interfaces
-└── data/
-    └── mockEvents.ts            # Mock data for offline dev
-```
-
-## Supabase Schema (19 migrations)
-
-**Core tables:** profiles, events, predictions, positions, event_markets, option_markets, market_transactions, comments, balance_ledger, friendships, notifications, platform_config, platform_ledger, rate_limits
-
-**Key RPCs:** execute_purchase, preview_purchase, execute_sell, settle_event, settle_predictions, cast_vote, deposit_balance, withdraw_balance, initialize_market, initialize_option_markets, execute_option_purchase, preview_option_purchase, update_platform_config, admin_adjust_balance
-
-**Event types:** binary (SÍ/NO) and open (multi-option with per-option markets)
-
-**Pricing:** Parimutuel AMM — users stake, pool reprices on every entry, winners split pro-rata. ~8% blended take across transaction fees (1-5%), spread capture (1-2%), and 5% resolution skim.
 
 ## Theme System
 
@@ -116,121 +43,114 @@ Supports dark, light, and system modes via `ThemeContext`. Uses `[data-theme="li
 
 **Critical CSS note:** Tailwind v4's `@theme { }` block resolves `var()` at COMPILE time. All runtime-reactive color aliases must be defined in a `:root { }` block AFTER `@theme` in `index.css`. This is why `--color-*` aliases exist in both places.
 
-**Selected-state pattern:** For tabs/pills that invert across themes, always use `bg: var(--b1n0-text-1)` + `color: var(--b1n0-bg)`. Container uses `--b1n0-card` for contrast. Never hardcode `#fff` on dynamic backgrounds.
-
-### Colors (dark mode defaults)
+### Colors (dark mode defaults — canonical source is `src/index.css`)
 ```css
---b1n0-bg: #090b10
---b1n0-surface: #111318
---b1n0-card: #161920
---b1n0-border: rgba(255,255,255,0.06)
---b1n0-text-1: #e2e4ed
---b1n0-muted: #8b8fa3
---b1n0-si: #14b8a6        /* Primary accent — CTA, live, wins */
---b1n0-no: #f59e0b        /* NO side — amber, NOT red */
---b1n0-indigo: #6366f1    /* Tertiary — KYC, badges */
+--b1n0-bg:       #090b10
+--b1n0-surface:  #111318
+--b1n0-card:     #161920
+--b1n0-border:   rgba(255,255,255,0.06)
+--b1n0-text-1:   #e2e4ed
+--b1n0-muted:    #8b8fa3
+--b1n0-si:       #06D47F   /* Brand green — CTA, live, wins, primary accent */
+--b1n0-si-bg:    rgba(6,212,127,0.12)
+--b1n0-si-hover: #04B86C
+--b1n0-no:       #f59e0b   /* NO side — amber, NEVER red */
+--b1n0-gold:     warm gold for tier 3 / premium accents
 ```
 
+**The primary accent is `#06D47F` (vibrant brand green). Not teal.** Older code/docs may still reference `#14b8a6` — that is wrong and should be swept on sight. The canonical source is `src/index.css`.
+
 ### Typography
-- **Display / Questions:** Syne 800 — ESPN headline energy
-- **Body / UI labels:** DM Sans 400/500 — clean at small sizes
-- **Numbers:** Syne 700, letter-spacing: -1px, tabular-nums
+- **All text:** Inter (variable weights 400/500/600/700)
+- **Numbers:** Inter with `font-variant-numeric: tabular-nums`, tight letter-spacing
+- (Syne and Geist were removed during Phase 3b — do not re-introduce.)
 
 ## Language Rules (CRITICAL)
 
 | Never say | Use instead |
 |-----------|-------------|
-| Apostar / Bet | Hacer tu voto / Call it |
+| Apostar / Bet | Hacer tu voto / Participar |
 | Ganar / Win | Tener razón / Cobrar |
 | Perder / Lose | Esta vez no / No fue |
 | Cuotas / Odds | Distribución / Split |
 | Stake / Riesgo | Entrada / Tu participación |
 | Payout / Premio | Cobro / Lo que colectás |
 | Trade / Invertir | Participar / Tomar posición |
+| Jugar / Juego | Participar / Voto |
 | Probabilidad | ¿Qué dice la gente? |
 | House edge | (never mention) |
-| KYC | Verificá tu cuenta |
+| KYC (UI-facing) | Verificá tu cuenta |
+| Sponsored / Brand-funded | (model removed — LP capital only) |
+| Parimutuel / Kalshi clone / Polymarket clone | LP-backed fixed-payout (only in dev/investor framing) |
+
+The route `/mis-votos` and component name `MisLlamados.tsx` exist in tension — the filename was kept after the `llamado → voto` rebrand (task #108) to avoid breaking imports. Use "voto" everywhere user-facing; "llamado" only survives in the filename.
 
 ## KYC Tiers
 
 | Tier | Badge | Max per event | Requirement |
 |------|-------|---------------|-------------|
 | Nivel 1 | N1 gray | $50 | Phone number |
-| Nivel 2 | N2 teal | $250 | Phone + DPI |
-| Nivel 3 | N3 gold | $1,000 | Full KYC |
+| Nivel 2 | N2 brand-green | $250 | Phone + DPI (Didit) |
+| Nivel 3 | N3 gold | $1,000 | Full KYC (Didit + AML/PEP screening) — also auto-promotes on $1k cumulative deposits |
 
-Currency is **USD** platform-wide. Sponsor model removed — pools are funded exclusively by LP capital flowing through `balance_ledger`. See `LEDGER_INVARIANTS.md` for accounting invariants.
+Currency is **USD** platform-wide.
 
-## What NOT to Build
+## Payments & Tokenization (vendor-agnostic scaffold)
+
+Three vendors are scaffolded but **none are contracted for b1n0 yet**:
+
+| Vendor | Role | Status |
+|---|---|---|
+| **Redbajas / Pagadito** | Cards (deposit + withdrawal) | Sandbox code path complete. Existing Pagadito credentials in env belong to Kim's *other* lottery operation (escoge2/lotescdos) — they must NOT be used to drive real test transactions for b1n0. b1n0 needs its own contract before any live test. |
+| **Vudy** | Crypto rails (USDC/USDT in + out) | Stubbed via `usePaymentFlags`. Vendor unsigned. |
+| **Monetae (or alternate — tohkn, etc.)** | Tokenization + custody (CTF-style conditional tokens) | Stubbed. Vendor selection still open; deal currently being negotiated. Monetae is the most important regulatory shelter under CNAD. |
+
+All deposit/withdrawal happens through `WalletSheet.tsx`. Feature flags live in `platform_config.value_text` (boolean as string) and are read via `usePaymentFlags`. The Pagadito flow lives in `PagaditoIframeSheet.tsx` to keep card data out of b1n0's PCI scope.
+
+Tres33 needs to open **two Salvadoran bank accounts** before anything live: an operating account, and an FBO (for-benefit-of) custody account for user funds. This is the longest-lead-time pre-launch item.
+
+See `docs/payments-architecture.md` for the full diagram and `docs/handoff-payments-expert.md` for the onboarding doc for the incoming payments expert.
+
+## What NOT to Build / Re-introduce
 
 - Decimal odds (1.43x, 2.8x) — finance/gambling signal
-- Red for NO side — casino signal
+- Red for NO side — casino signal (use amber `#f59e0b`)
 - Casino iconography (chips, dice, cards)
 - Countdown timers with alarm urgency
 - "Hot streaks" / "lucky" copy
 - Order books or depth charts
 - Auto-deposit prompts
-- ROI/return language
+- ROI / return language
+- Brand-sponsored prize pool framing — LP capital is the only model
+- News feed integration in `/inicio` — scoped and ripped on 2026-05-26
+- Syne / Geist / DM Sans typography — Inter only
+- Teal `#14b8a6` — brand green `#06D47F` is the truth
+- "Social opinion game" / "ESPN + Instagram + group chat" framing — this was an earlier draft positioning
 
-## Microcopy Examples
+## Known Gaps (as of 2026-05-26)
 
-- Empty feed: *"No hay votos activos. Volvé más tarde — esto se pone bueno."*
-- Win: *"¡Lo sabías! Colectás $82.35"*
-- Loss: *"Esta vez no. Seguí participando."*
-- KYC upsell: *"Subí a Nivel 2 para participar hasta $250. Solo tarda 2 minutos."*
-- Leaderboard: *"Los que más saben este mes"*
+- **No signed payment vendor for b1n0 yet** — Redbajas/Vudy/Monetae are all scaffolded but uncontracted.
+- **Two Salvadoran bank accounts not opened** — operating + FBO. Blocks any real money movement.
+- **Supabase auth email templates not pasted into dashboard** — HTML is ready in `docs/supabase-auth-email-templates.md`. Kim pastes manually.
+- **i18n is single-language right now** — `lng: 'es'` hardcoded; EN locale file maintained for the future re-enable when crypto rails open the audience.
+- **Recurring file-corruption bug** — Cowork's Edit/Write tools occasionally silently truncate files or pad them with NULL bytes. The truncation guard (`scripts/check-truncation.mjs`) catches it at prebuild. If you see "Invalid character" or "} expected" on a file you didn't break, restore from HEAD and re-apply via `python3` find/replace in bash.
 
-## KYC — Didit Integration
+## Documentation System
 
-KYC verification is provider-pluggable. Set `VITE_KYC_PROVIDER=didit` to use Didit; leave unset / `manual` for the legacy flow.
+Four layers — see `docs/README.md` for the full map.
 
-**Setup steps:**
-
-1. Create a Didit account at https://business.didit.me
-2. In the Didit Console, create two **Workflows**:
-   - **Tier 2** — KYC base template, document + liveness + face match
-   - **Tier 3** — KYC base template + AML/PEP screening + database validation
-3. Copy your API Key, Webhook Secret, and both Workflow IDs
-4. Set them as Supabase Edge Function secrets:
-   ```bash
-   supabase secrets set DIDIT_API_KEY=...
-   supabase secrets set DIDIT_WEBHOOK_SECRET=...
-   supabase secrets set DIDIT_WORKFLOW_ID_T2=...
-   supabase secrets set DIDIT_WORKFLOW_ID_T3=...
-   supabase secrets set APP_URL=https://www.b1n0.com
-   ```
-5. Deploy the two edge functions:
-   ```bash
-   supabase functions deploy kyc-create-session
-   supabase functions deploy kyc-webhook
-   ```
-6. In the Didit Console → Webhooks, configure the webhook URL:
-   `https://YOUR_PROJECT.supabase.co/functions/v1/kyc-webhook`
-7. Run the migration `20260516_kyc_sessions.sql`
-8. Flip the client flag: `VITE_KYC_PROVIDER=didit` in production env
-9. Test end-to-end with a test user
-
-**Architecture:**
-
-- Client (`src/lib/didit.ts`) → edge function (`kyc-create-session`) → Didit API
-- Didit webhook → edge function (`kyc-webhook`) → updates `kyc_sessions`
-- DB trigger (`kyc_session_promote_tier`) auto-promotes `profiles.tier` on Approved
-- Realtime subscription in `KYCSheet` fires the success state when status flips
-
-The Didit API key never touches the browser — all Didit calls go through the edge function.
-
-## Known Gaps (as of April 2026)
-
-- **Payment processor not integrated** — DepositSheet and RetiroSheet are stubs (TODO comments). Balances adjust via RPC but no real money moves.
-- **Admin auth is client-side** — `isAdmin` flag on profile row. RPCs check `auth.uid()` server-side, but no dedicated admin role in Supabase.
-- **Treasury ID hardcoded** — UUID `00000000-0000-0000-0000-000000000001` in RevenuePanel/TreasuryPanel. Should move to platform_config.
-- **TypeScript `any` casts** — Several admin panels cast Supabase responses as `any[]` instead of typed interfaces.
-- **No PWA manifest** — App works on mobile browser but can't be added to home screen as an app yet.
+1. **Repo root** (this file, `README.md`, `LICENSE`, `LEDGER_INVARIANTS.md`)
+2. **`docs/*.md`** — engineering + business reference
+3. **`src/content/*.ts`** — Spanish user-facing copy for `/documentacion` and the in-app tour
+4. **`src/pages/{Legal,Confianza,Documentacion}.tsx`** — the actual user-facing legal/trust/docs pages
 
 ## Environment Variables
 
 ```
 VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-key-here
-VITE_SENTRY_DSN=              # Optional: leave empty to skip Sentry
+VITE_SENTRY_DSN=                # Optional
+VITE_KYC_PROVIDER=didit         # or unset / 'manual' for legacy
 ```
+
+Plus Supabase Edge Function secrets for Didit + (future) Redbajas/Vudy/Monetae. See `docs/env-variables.md`.

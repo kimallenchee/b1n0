@@ -1052,7 +1052,7 @@ export function EventManager({ platformRates }: EventManagerProps) {
 
             <div style={{ flex: '1 1 240px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <div>
-                <label style={labelStyle}>Pool parimutuel</label>
+                <label style={labelStyle}>Pool del mercado</label>
                 <div style={{ padding: '10px 12px', background: 'var(--b1n0-surface)', borderRadius: 'var(--radius-lg)', border: '1px solid rgba(0,0,0,0.07)' }}>
                   {hasActivePositions && (
                     <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-gold)', marginBottom: '8px', fontWeight: 600 }}>

@@ -40,18 +40,7 @@ TRUNCATE TABLE public.event_tokens RESTART IDENTITY CASCADE;
 -- ─── 8. Events themselves ────────────────────────────────────────────
 TRUNCATE TABLE public.events RESTART IDENTITY CASCADE;
 
--- ─── 9. News content ────────────────────────────────────────────────
--- Wrap in a check — the table is conditional on a feature flag and may
--- not exist in all environments. Use a DO block so missing-table errors
--- don't abort the transaction.
-DO $$
-BEGIN
-  EXECUTE 'TRUNCATE TABLE public.news RESTART IDENTITY CASCADE';
-EXCEPTION WHEN undefined_table THEN
-  RAISE NOTICE 'news table not present, skipping';
-END $$;
-
--- ─── 10. Balance ledger — wipe + reset profile balance + counters ──
+-- ─── 9. Balance ledger — wipe + reset profile balance + counters ──
 -- balance_ledger is the source of truth (sum of rows = real balance);
 -- profiles.balance is a denormalized cache. Truncating + zeroing the
 -- cache keeps them consistent. Also reset stats counters so leaderboards

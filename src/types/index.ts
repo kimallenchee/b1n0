@@ -50,20 +50,6 @@ export interface Event {
   country?: string
 }
 
-export interface NewsArticle {
-  id: string
-  headline: string
-  summary: string
-  category: string
-  source: string
-  timeAgo: string
-  relatedEventId?: string
-  country?: string
-  url?: string
-  imageUrl?: string
-  publishedAt?: string
-}
-
 export interface UserPrediction {
   id: string
   eventId: string

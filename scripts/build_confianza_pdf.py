@@ -20,8 +20,8 @@ Design choices:
     brand identity for portability; the cover does the brand work.
   - 8.5" x 11" US Letter (standard for investor decks; EU recipients
     have no issue printing).
-  - Two-tone palette: white background, b1n0-teal #14b8a6 for accents,
-    near-black #111827 for body. High contrast, low ink usage.
+  - Dark palette matching the live site: deep bg #090b10, brand
+    green #06D47F for accents, light text #e2e4ed for body.
   - Anchor-friendly: each section starts on its own page so links
     from elsewhere can deep-link by page number.
 """

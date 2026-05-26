@@ -683,7 +683,7 @@ export function Portafolio() {
   // Live prices: eventId → { yesMidPct, noMidPct } for binary, or eventId → { optLabel → midPct } for open
   const [liveBinaryMap, setLiveBinaryMap] = useState<Record<string, { yes: number; no: number }>>({})
   const [liveOptMap, setLiveOptMap] = useState<Record<string, Record<string, number>>>({})
-  // Parimutuel pool data: eventId → { poolTotal, yesShares, noShares }
+  // Pool data (LP-backed fixed-payout market): eventId → { poolTotal, yesShares, noShares }
   const [poolDataMap, setPoolDataMap] = useState<Record<string, { poolTotal: number; yesShares: number; noShares: number; lpCapital: number; betPool: number }>>({})
   // Actual contracts held per event+side (from positions table)
   const [contractsMap, setContractsMap] = useState<Record<string, number>>({})
@@ -721,7 +721,7 @@ export function Portafolio() {
       supabase.from('market_transactions').select('position_id, net_to_pool').eq('user_id', uid).eq('tx_type', 'sale'),
     ])
 
-    // Binary prices + parimutuel pool data
+    // Binary prices + LP-backed pool data
     const binMap: Record<string, { yes: number; no: number }> = {}
     const poolMap: Record<string, { poolTotal: number; yesShares: number; noShares: number; lpCapital: number; betPool: number }> = {}
     if (emRes.data) {
@@ -840,7 +840,7 @@ export function Portafolio() {
 
     // Sell preview: what THIS POSITION would get (not total side)
     // Uses actual position contracts for accuracy (not ratio estimate)
-    // Capped: sell value can never exceed parimutuel win value
+    // Capped: sell value can never exceed fixed-payout win value ($1/contract)
     let sell: SellPreview | undefined
     if (hasLiveData && currentBid > 0) {
       // Use actual position contracts if available, fall back to ratio estimate

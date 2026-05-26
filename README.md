@@ -3,9 +3,9 @@
 > **Mercado de opciones sobre eventos** for Central America.
 > Live at [**www.b1n0.com**](https://www.b1n0.com).
 
-b1n0 is a Spanish-first, mobile-first event-prediction market for Guatemala, El Salvador, Honduras, Nicaragua, Costa Rica, Panamá, and Belize. Users take **SÍ** or **NO** positions on real-world questions — sports, politics, economy, culture — and the side that calls it right collects from the pool. Built between ESPN, Instagram, and a group chat where someone always has a hot take.
+b1n0 is a Spanish-first, mobile-first **LP-backed fixed-payout event-options market** for Central America (Guatemala, El Salvador, Honduras, Nicaragua, Costa Rica, Panamá, Belize). Users take **SÍ** or **NO** positions on real-world questions — sports, politics, economy, culture — at a market price; the side that calls it right collects $1 per contract from the LP-backed pool.
 
-It is **not** a casino, sportsbook, or financial instrument. It's a social opinion game where brands back the prize pools and users prove they read the room better than everyone else.
+It is **not** a casino, sportsbook, or financial instrument, and **not** a brand-sponsored prize pool. Liquidity providers — institutional and (per-event opt-in) public — fund the payouts. The platform takes a blended fee across compra, spread, salida, and resolution skim. EN + additional languages are on the roadmap once crypto rails open the audience beyond CA.
 
 **Operator:** [Tres33 SAS de CV](https://www.b1n0.com/confianza), registered in El Salvador.
 **Tokenization:** operated by a CNAD-licensed third-party provider.

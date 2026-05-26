@@ -5,7 +5,7 @@
  * El componente lee este árbol y renderiza cada bloque según su tipo.
  *
  * Reglas de tono:
- *   - Voseo centroamericano (hacés, sabés, llamado, cobrás).
+ *   - Voseo centroamericano (hacés, sabés, votás, cobrás).
  *   - Sin lenguaje de casino o apuestas (ver brandbook + CLAUDE.md).
  *   - Honesto sobre comisiones y riesgos. Esa es la diferencia.
  */
@@ -27,7 +27,7 @@ export interface DocSection {
   blocks: DocBlock[]
 }
 
-export const DOC_LAST_UPDATED = '15 de mayo de 2026'
+export const DOC_LAST_UPDATED = '26 de mayo de 2026'
 
 export const DOC_SECTIONS: DocSection[] = [
   // ────────────────────────────────────────────────────────────────
@@ -56,7 +56,7 @@ export const DOC_SECTIONS: DocSection[] = [
   },
 
   // ────────────────────────────────────────────────────────────────
-  // 2. Cómo funcionan los llamados
+  // 2. Cómo funcionan los votos
   // ────────────────────────────────────────────────────────────────
   {
     id: 'como-funcionan',

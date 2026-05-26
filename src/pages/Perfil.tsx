@@ -1216,7 +1216,7 @@ function StatCard({
  * PortfolioCard — Mi Portafolio CTA with content preview. Shows the
  * count of active positions, total positions, and a tiny SplitBar
  * representing the user's overall won/lost ratio. If the user has no
- * predictions yet, shows a friendly "haz tu primer llamado" prompt
+ * predictions yet, shows a friendly "hacé tu primer voto" prompt
  * instead of empty stats.
  */
 function PortfolioCard({
