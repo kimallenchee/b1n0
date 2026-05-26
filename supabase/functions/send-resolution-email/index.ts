@@ -118,36 +118,68 @@ Deno.serve(async (req) => {
 })
 
 // ── Email templates ──────────────────────────────────────────
+// Palette mirrors the b1n0 dark-mode UI so emails feel like an
+// extension of the product, not a generic transactional message.
+//
+//   Background    #090b10  (= --b1n0-bg)
+//   Card          #161920  (= --b1n0-card)
+//   Surface       #111318  (= --b1n0-surface) — used inside cards for sub-panels
+//   Border        rgba(255,255,255,0.08)
+//   Text primary  #e2e4ed  (= --b1n0-text-1)
+//   Text muted    #8b8fa3  (= --b1n0-muted)
+//   Accent (SÍ)   #14b8a6  (= --b1n0-si)
+//   Accent bg     rgba(20,184,166,0.14)
+//   Loss/neutral  #f59e0b  (= --b1n0-no, amber — never red)
+//
+// Note: many email clients (Outlook desktop in particular) strip CSS
+// variables. We inline literal hex values instead of var() refs.
+
+const COLORS = {
+  bg:        '#090b10',
+  card:      '#161920',
+  surface:   '#111318',
+  border:    'rgba(255,255,255,0.08)',
+  text1:     '#e2e4ed',
+  muted:     '#8b8fa3',
+  si:        '#14b8a6',
+  siBg:      'rgba(20,184,166,0.14)',
+  no:        '#f59e0b',
+  noBg:      'rgba(245,158,11,0.12)',
+}
+
 function renderEmail(b: ResolveEmailBody, appUrl: string, firstName: string) {
   const amount = (b.amount ?? 0).toFixed(2)
   const entry = (b.entry ?? 0).toFixed(2)
   const portafolioUrl = `${appUrl}/portafolio`
-  const eventUrl = b.event_id ? `${appUrl}/eventos/${b.event_id}` : portafolioUrl
+  // Reserved for future use — keep computed in case we wire deep links
+  // back into individual emails. (Currently we always send users to
+  // their portafolio.)
+  void (b.event_id ? `${appUrl}/eventos/${b.event_id}` : portafolioUrl)
 
   if (b.type === 'win') {
     return {
       subject: `¡Lo sabías! Cobraste $${amount}`,
       html: shell({
         title: '¡Lo sabías!',
-        accent: '#06D47F',
+        accent: COLORS.si,
         body: `
-          <p style="font-size:16px;line-height:1.6;color:#143338;margin:0 0 18px;">
-            ${firstName}, tu llamado salió.
+          <p style="font-size:16px;line-height:1.6;color:${COLORS.text1};margin:0 0 18px;">
+            ${firstName}, tu voto salió.
           </p>
-          <p style="font-size:14px;line-height:1.55;color:#5C6573;margin:0 0 18px;">
+          <p style="font-size:14px;line-height:1.55;color:${COLORS.muted};margin:0 0 20px;">
             ${escapeHtml(b.event_question)}
           </p>
-          <div style="background:#F0FFF6;border-left:3px solid #06D47F;padding:18px 20px;border-radius:6px;margin:0 0 24px;">
-            <p style="font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:#058753;margin:0 0 6px;">Cobro</p>
-            <p style="font-size:32px;font-weight:800;color:#06D47F;margin:0;letter-spacing:-0.5px;">+$${amount}</p>
+          <div style="background:${COLORS.siBg};border-left:3px solid ${COLORS.si};padding:18px 20px;border-radius:8px;margin:0 0 24px;">
+            <p style="font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:${COLORS.si};margin:0 0 6px;">Cobro</p>
+            <p style="font-size:32px;font-weight:800;color:${COLORS.si};margin:0;letter-spacing:-0.5px;font-variant-numeric:tabular-nums;">+$${amount}</p>
           </div>
-          <p style="font-size:14px;line-height:1.55;color:#5C6573;margin:0 0 24px;">
-            Ya está en tu saldo. Podés hacer otro llamado o retirar cuando quieras.
+          <p style="font-size:14px;line-height:1.55;color:${COLORS.muted};margin:0 0 26px;">
+            Ya está en tu saldo. Podés hacer otro voto o retirar cuando quieras.
           </p>
           ${cta('Ver en tu portafolio', portafolioUrl)}
         `,
       }),
-      text: `${firstName}, tu llamado salió.\n\n${b.event_question}\n\nCobro: +$${amount}\n\nYa está en tu saldo. ${portafolioUrl}`,
+      text: `${firstName}, tu voto salió.\n\n${b.event_question}\n\nCobro: +$${amount}\n\nYa está en tu saldo. ${portafolioUrl}`,
     }
   }
 
@@ -156,25 +188,25 @@ function renderEmail(b: ResolveEmailBody, appUrl: string, firstName: string) {
       subject: 'Esta vez no',
       html: shell({
         title: 'Esta vez no',
-        accent: '#5C6573',
+        accent: COLORS.muted,
         body: `
-          <p style="font-size:16px;line-height:1.6;color:#143338;margin:0 0 18px;">
-            ${firstName}, tu llamado no salió esta vez.
+          <p style="font-size:16px;line-height:1.6;color:${COLORS.text1};margin:0 0 18px;">
+            ${firstName}, tu voto no salió esta vez.
           </p>
-          <p style="font-size:14px;line-height:1.55;color:#5C6573;margin:0 0 18px;">
+          <p style="font-size:14px;line-height:1.55;color:${COLORS.muted};margin:0 0 20px;">
             ${escapeHtml(b.event_question)}
           </p>
-          <div style="background:#F5F2EC;padding:16px 20px;border-radius:6px;margin:0 0 24px;">
-            <p style="font-size:11px;color:#5C6573;margin:0 0 4px;">Entrada perdida</p>
-            <p style="font-size:18px;font-weight:700;color:#143338;margin:0;">$${entry}</p>
+          <div style="background:${COLORS.surface};border:1px solid ${COLORS.border};padding:16px 20px;border-radius:8px;margin:0 0 24px;">
+            <p style="font-size:11px;color:${COLORS.muted};margin:0 0 4px;">Entrada</p>
+            <p style="font-size:18px;font-weight:700;color:${COLORS.text1};margin:0;font-variant-numeric:tabular-nums;">$${entry}</p>
           </div>
-          <p style="font-size:14px;line-height:1.55;color:#5C6573;margin:0 0 24px;">
-            Hay nuevos llamados todos los días. Seguí participando — los que más saben son los que más opinan.
+          <p style="font-size:14px;line-height:1.55;color:${COLORS.muted};margin:0 0 26px;">
+            Hay nuevos votos todos los días. Seguí participando — los que más saben son los que más opinan.
           </p>
-          ${cta('Ver llamados activos', `${appUrl}/inicio`)}
+          ${cta('Ver votos activos', `${appUrl}/inicio`)}
         `,
       }),
-      text: `${firstName}, esta vez no.\n\n${b.event_question}\n\nEntrada: $${entry}\n\nHay nuevos llamados todos los días. ${appUrl}/inicio`,
+      text: `${firstName}, esta vez no.\n\n${b.event_question}\n\nEntrada: $${entry}\n\nHay nuevos votos todos los días. ${appUrl}/inicio`,
     }
   }
 
@@ -183,20 +215,20 @@ function renderEmail(b: ResolveEmailBody, appUrl: string, firstName: string) {
     subject: `Tu capital LP volvió: $${amount}`,
     html: shell({
       title: 'Capital devuelto',
-      accent: '#06D47F',
+      accent: COLORS.si,
       body: `
-        <p style="font-size:16px;line-height:1.6;color:#143338;margin:0 0 18px;">
+        <p style="font-size:16px;line-height:1.6;color:${COLORS.text1};margin:0 0 18px;">
           ${firstName}, el evento que respaldaste se resolvió.
         </p>
-        <p style="font-size:14px;line-height:1.55;color:#5C6573;margin:0 0 18px;">
+        <p style="font-size:14px;line-height:1.55;color:${COLORS.muted};margin:0 0 20px;">
           ${escapeHtml(b.event_question)}
         </p>
-        <div style="background:#F0FFF6;border-left:3px solid #06D47F;padding:18px 20px;border-radius:6px;margin:0 0 24px;">
-          <p style="font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:#058753;margin:0 0 6px;">Capital + ganancia</p>
-          <p style="font-size:32px;font-weight:800;color:#06D47F;margin:0;letter-spacing:-0.5px;">+$${amount}</p>
+        <div style="background:${COLORS.siBg};border-left:3px solid ${COLORS.si};padding:18px 20px;border-radius:8px;margin:0 0 24px;">
+          <p style="font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:${COLORS.si};margin:0 0 6px;">Capital + ganancia</p>
+          <p style="font-size:32px;font-weight:800;color:${COLORS.si};margin:0;letter-spacing:-0.5px;font-variant-numeric:tabular-nums;">+$${amount}</p>
         </div>
-        <p style="font-size:14px;line-height:1.55;color:#5C6573;margin:0 0 24px;">
-          Ya está acreditado en tu saldo. Podés depositar en otro evento como LP o retirar tu capital cuando quieras.
+        <p style="font-size:14px;line-height:1.55;color:${COLORS.muted};margin:0 0 26px;">
+          Ya está acreditado en tu saldo. Podés respaldar otro evento como LP o retirar tu capital cuando quieras.
         </p>
         ${cta('Ver mi portafolio LP', portafolioUrl)}
       `,
@@ -208,22 +240,28 @@ function renderEmail(b: ResolveEmailBody, appUrl: string, firstName: string) {
 function shell({ title, accent, body }: { title: string; accent: string; body: string }): string {
   return `<!doctype html>
 <html lang="es">
-<body style="margin:0;padding:0;background:#F5F2EC;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Helvetica,Arial,sans-serif;">
-  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="padding:32px 16px;">
+<head>
+  <meta charset="utf-8">
+  <meta name="color-scheme" content="dark light">
+  <meta name="supported-color-schemes" content="dark light">
+  <title>${escapeHtml(title)}</title>
+</head>
+<body style="margin:0;padding:0;background:${COLORS.bg};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Helvetica,Arial,sans-serif;color:${COLORS.text1};">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="padding:32px 16px;background:${COLORS.bg};">
     <tr><td align="center">
-      <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="540" style="max-width:540px;background:#FFFFFF;border-radius:12px;overflow:hidden;border:1px solid #E5DFD2;">
+      <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="540" style="max-width:540px;background:${COLORS.card};border-radius:14px;overflow:hidden;border:1px solid ${COLORS.border};">
         <tr><td style="padding:28px 32px 8px;">
-          <p style="font-size:11px;font-weight:700;letter-spacing:1px;color:${accent};text-transform:uppercase;margin:0;">B1N0</p>
+          <p style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:${accent};text-transform:uppercase;margin:0;">b1n0</p>
         </td></tr>
         <tr><td style="padding:4px 32px 0;">
-          <h1 style="font-size:28px;font-weight:800;color:#143338;margin:0 0 8px;letter-spacing:-0.5px;">${title}</h1>
+          <h1 style="font-size:28px;font-weight:800;color:${COLORS.text1};margin:0 0 8px;letter-spacing:-0.7px;line-height:1.15;">${title}</h1>
         </td></tr>
         <tr><td style="padding:14px 32px 32px;">
           ${body}
         </td></tr>
-        <tr><td style="padding:0 32px 24px;border-top:1px solid #E5DFD2;padding-top:18px;">
-          <p style="font-size:11px;color:#8B8F9A;margin:0;line-height:1.6;">
-            Tres33 SAS de CV · Ciudad de Guatemala · soporte@b1n0.com<br>
+        <tr><td style="padding:18px 32px 24px;border-top:1px solid ${COLORS.border};">
+          <p style="font-size:11px;color:${COLORS.muted};margin:0;line-height:1.7;">
+            Tres33 SAS de CV · El Salvador · soporte@b1n0.com<br>
             Recibís este correo porque participás en b1n0. Cambiá tus preferencias en tu perfil.
           </p>
         </td></tr>
@@ -235,7 +273,9 @@ function shell({ title, accent, body }: { title: string; accent: string; body: s
 }
 
 function cta(label: string, href: string): string {
-  return `<a href="${href}" style="display:inline-block;padding:13px 22px;background:#06D47F;color:#FFFFFF;text-decoration:none;border-radius:8px;font-weight:700;font-size:14px;">${label}</a>`
+  // White text on the SÍ teal — same as the in-app CTA. Inline padding
+  // is heavy because Gmail strips outer margin-on-link styling.
+  return `<a href="${href}" style="display:inline-block;padding:13px 22px;background:${COLORS.si};color:#0a0c10;text-decoration:none;border-radius:999px;font-weight:700;font-size:14px;letter-spacing:0.2px;">${label}</a>`
 }
 
 function escapeHtml(s: string): string {

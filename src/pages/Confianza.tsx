@@ -256,9 +256,11 @@ export function Confianza() {
         lastUpdated="20 de mayo de 2026"
         sections={CONFIANZA_SECTIONS}
       />
-      {/* PDF download — rendered as a floating action button so it
-          doesn't disturb the doc shell layout. Visible on all pages
-          but contextual to /confianza only via this component. */}
+      {/* PDF download — floating action button anchored bottom-right.
+          Styled as a dark glass card (matches the b1n0 dark theme +
+          the rest of the Confianza doc shell) rather than a screaming
+          accent CTA. The teal accent appears only inside the icon, so
+          the affordance is visible without dominating the page. */}
       <a
         href="/docs/b1n0-confianza.pdf"
         download="b1n0-confianza.pdf"
@@ -266,20 +268,56 @@ export function Confianza() {
           position: 'fixed',
           bottom: 'calc(24px + env(safe-area-inset-bottom, 0px))',
           right: 24,
-          padding: '10px 18px',
-          background: 'var(--b1n0-si)',
-          color: 'var(--b1n0-on-accent)',
-          borderRadius: 'var(--radius-pill)',
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 10,
+          padding: '10px 16px 10px 12px',
+          background: 'var(--b1n0-card)',
+          color: 'var(--b1n0-text-1)',
+          border: '1px solid var(--b1n0-border)',
+          borderRadius: 999,
           fontFamily: F,
           fontSize: 13,
-          fontWeight: 700,
+          fontWeight: 600,
           textDecoration: 'none',
-          boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+          boxShadow: '0 8px 24px rgba(0,0,0,0.35), 0 0 0 0 transparent',
           zIndex: 50,
-          letterSpacing: '0.3px',
+          letterSpacing: '0.2px',
+          transition: 'border-color var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out)',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.borderColor = 'var(--b1n0-si)'
+          e.currentTarget.style.transform = 'translateY(-1px)'
+          e.currentTarget.style.boxShadow = '0 10px 28px rgba(0,0,0,0.4)'
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.borderColor = 'var(--b1n0-border)'
+          e.currentTarget.style.transform = 'translateY(0)'
+          e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.35)'
         }}
       >
-        ↓ Descargar PDF · 9 páginas
+        <span
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 24,
+            height: 24,
+            borderRadius: 999,
+            background: 'var(--b1n0-si-bg)',
+            color: 'var(--b1n0-si)',
+            fontSize: 14,
+            fontWeight: 700,
+            lineHeight: 1,
+          }}
+          aria-hidden
+        >
+          ↓
+        </span>
+        <span>Descargar PDF</span>
+        <span style={{ color: 'var(--b1n0-muted)', fontSize: 11, fontWeight: 500, marginLeft: 2 }}>
+          9 págs
+        </span>
       </a>
     </>
   )
