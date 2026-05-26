@@ -77,59 +77,9 @@
     </script>
 
     <!-- Type system: Inter + InterDisplay (self-hosted via /public/fonts/). See src/index.css @font-face. -->
-
-    <!-- Google Translate Element — minimal CSS only. The init callback
-         and mount div live in <body> (where Google expects them) and
-         get triggered AFTER React renders. See bottom of <body>. -->
-    <style>
-      /* Hide Google's injected chrome (banner + tooltip + highlight). */
-      .goog-te-banner-frame,
-      .goog-te-banner-frame.skiptranslate,
-      #goog-gt-tt,
-      .goog-tooltip,
-      .goog-tooltip:hover {
-        display: none !important;
-      }
-      .goog-text-highlighted {
-        background-color: transparent !important;
-        box-shadow: none !important;
-      }
-      /* Off-screen mount — visible to Google's layout calc, invisible to user. */
-      #google_translate_element {
-        position: absolute !important;
-        left: -10000px !important;
-        top: 0 !important;
-        width: 1px !important;
-        height: 1px !important;
-        overflow: hidden !important;
-        opacity: 0 !important;
-        pointer-events: none !important;
-      }
-    </style>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-
-    <!-- Google Translate Element. Mount div + init script live in <body>
-         so the widget initializes AFTER the body is parsed. The widget
-         then watches for DOM changes via its internal MutationObserver,
-         so it picks up React's renders into #root and translates them
-         whenever the `googtrans` cookie is set. -->
-    <div id="google_translate_element"></div>
-    <script>
-      function googleTranslateElementInit() {
-        // Bare-minimum config. `includedLanguages` is intentionally
-        // omitted — restricting to a single target was preventing the
-        // widget from entering auto-translate mode. Without it the
-        // widget exposes all languages and reads the `googtrans` cookie
-        // to decide which one to apply.
-        new google.translate.TranslateElement(
-          { pageLanguage: 'es' },
-          'google_translate_element'
-        )
-      }
-    </script>
-    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   </body>
 </html>

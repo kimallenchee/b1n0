@@ -23,13 +23,11 @@
  * it doesn't visually compete with the nav.
  */
 
-import { useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useTour } from '../../context/TourContext'
 import { useTheme } from '../../context/ThemeContext'
 import { useTranslation } from 'react-i18next'
 import { setLanguage, getLanguage } from '../../i18n'
-import { setTranslation, bootIfTranslatedSession } from '../../i18n/google-translate'
 import {
   XLogo,
   InstagramLogo,
@@ -64,41 +62,28 @@ export function Footer() {
   const { t, i18n } = useTranslation()
   const currentLang = getLanguage()
 
-  // Boot the Google Translate widget on mount when the user has the
-  // googtrans cookie set (i.e., they previously toggled to EN). The
-  // widget reads the cookie on init and translates the DOM in place,
-  // so this is purely "make sure the script is loaded" rather than
-  // "trigger a translation". We do this from Footer rather than
-  // main.tsx so the widget module is only fetched on user-facing
-  // pages (admin/auth pages don't mount the Footer and won't pay
-  // the cost).
-  useEffect(() => {
-    bootIfTranslatedSession()
-    // Only on mount — the toggle handler covers subsequent changes.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   function openTour() {
     if (location.pathname !== '/inicio') navigate('/inicio')
     setTimeout(() => startTour(), 300)
   }
 
-  // Toggle handler. Two coordinated effects:
-  //   1. Our own i18n (react-i18next) flips the chrome strings we
-  //      manually translated (footer, nav, share modal, etc).
-  //   2. The Google Translate widget translates everything else
-  //      (event questions, news, comments, deep pages) live in the DOM.
-  // The widget is lazy-loaded the first time the user picks EN; going
-  // back to ES restores the original DOM and clears the widget's cookie.
+  // Toggle handler. Flips our react-i18next chrome strings (footer, nav,
+  // share modal, vote-confirmation). Page bodies (event questions, news,
+  // comments) stay in their original Spanish — Chrome/Safari/Edge users
+  // on English-locale browsers automatically get the native "Translate
+  // this page?" prompt because <html lang="es"> is correctly set.
+  //
+  // (We previously layered Google Translate Element on top of this for
+  // automatic body translation, but Google has effectively abandoned
+  // that widget for SPAs — the cookie-driven auto-translate path no
+  // longer fires reliably. Stripped 2026-05-25 in favor of letting the
+  // browser do what it does well natively.)
   function pickLang(lang: 'es' | 'en') {
     if (lang === currentLang) return
     setLanguage(lang)
     // Touch i18n directly to be doubly sure the change propagates even if
     // some component holds a stale reference.
     i18n.changeLanguage(lang)
-    // Fire-and-forget — the widget may take a few hundred ms to load on
-    // first invocation but we don't want to block the UI on it.
-    setTranslation(lang)
   }
 
   return (
