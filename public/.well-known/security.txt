@@ -3,8 +3,11 @@
 #
 # Operator: Tres33 SAS de CV (El Salvador, CNAD framework)
 # Production: https://www.b1n0.com
+# Standard: This program follows the disclose.io open standard.
 
 Contact: mailto:security@b1n0.com
+Contact: https://github.com/kimallenchee/b1n0/security/advisories/new
+Contact: https://www.openbugbounty.org/search/?search=b1n0.com
 Expires: 2027-05-26T00:00:00.000Z
 Preferred-Languages: es, en
 Canonical: https://www.b1n0.com/.well-known/security.txt
@@ -12,24 +15,29 @@ Policy: https://www.b1n0.com/confianza#divulgacion
 Acknowledgments: https://www.b1n0.com/confianza#agradecimientos
 Hiring: https://www.b1n0.com/confianza#carreras
 
-# ─── Reporting ─────────────────────────────────────────────────
-# If you've discovered a security vulnerability in b1n0, please
-# email security@b1n0.com with:
-#   1. A short description of the issue.
-#   2. Steps to reproduce (or a minimal proof-of-concept).
-#   3. The impact you believe a malicious actor could achieve.
-#   4. Your name / handle for acknowledgment (optional — pseudonymous OK).
+# ─── How to report ─────────────────────────────────────────────
+# Choose any one of three channels — all reach our security team:
+#
+#   1. Email security@b1n0.com directly.
+#   2. Submit a private advisory via GitHub:
+#      https://github.com/kimallenchee/b1n0/security/advisories/new
+#   3. Submit a public-but-coordinated report via OpenBugBounty:
+#      https://www.openbugbounty.org/
+#
+# Include: short description, steps to reproduce (or minimal PoC),
+# the impact you believe a malicious actor could achieve, and your
+# name/handle for acknowledgment (optional — pseudonymous OK).
 #
 # We commit to:
 #   - Acknowledging your report within 5 business days.
 #   - Triaging and providing a preliminary severity within 10 business days.
 #   - Keeping you informed of remediation progress.
-#   - Crediting you (or your pseudonym) on https://www.b1n0.com/confianza#agradecimientos
+#   - Crediting you on https://www.b1n0.com/confianza#agradecimientos
 #     unless you ask to remain anonymous.
 #
 # Please do not publicly disclose the issue until we've had a
-# reasonable opportunity to remediate. Good-faith researchers acting
-# under this policy will not be subject to legal action.
+# reasonable opportunity to remediate (default coordinated-disclosure
+# window: 90 days post-fix).
 
 # ─── In scope ──────────────────────────────────────────────────
 # - https://www.b1n0.com  (production app)
@@ -45,16 +53,15 @@ Hiring: https://www.b1n0.com/confianza#carreras
 # - Denial-of-service / volumetric attacks
 # - Rate-limit bypass without a downstream impact
 # - Findings from automated scanners without demonstrable impact
-# - Vulnerabilities in third-party services themselves (report those
-#   directly to the vendor and CC us)
+# - Vulnerabilities in third-party services themselves (report to the vendor)
 # - Self-XSS or attacks requiring already-compromised client browsers
-# - Missing best-practice headers on non-auth surfaces (e.g. static
-#   marketing pages) — open a discussion instead
-# - UI/UX bugs, broken links, content errors — these belong in
-#   soporte@b1n0.com, not security@
+# - Missing best-practice headers on purely static / marketing surfaces
+# - UI/UX bugs, broken links, content typos — soporte@b1n0.com instead
+# - Email-spoofing reports against a domain with no inbound mail flow
 
 # ─── Safe-harbor commitment ────────────────────────────────────
 # Tres33 SAS de CV will not pursue legal action against researchers
 # who act in good faith, stay within the scope above, avoid privacy
 # violations and service disruption, and give us a reasonable window
-# to fix issues before public disclosure.
+# to fix issues before public disclosure. This program follows the
+# disclose.io safe-harbor framework — see https://disclose.io/legal/

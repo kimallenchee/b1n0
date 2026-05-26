@@ -193,21 +193,29 @@ const CONFIANZA_SECTIONS: DocPageSection[] = [
           <a href="/.well-known/security.txt" target="_blank" rel="noopener noreferrer" style={inlineLink}>
             /.well-known/security.txt
           </a>{' '}
-          (RFC 9116). Los compromisos clave:
+          (RFC 9116) y sigue el estándar abierto de{' '}
+          <a href="https://disclose.io" target="_blank" rel="noopener noreferrer" style={inlineLink}>disclose.io</a>. Los compromisos clave:
         </DocParagraph>
         <DocBullets
           items={[
-            <><strong>Acuso de recibo:</strong> dentro de 5 días hábiles después de tu correo a <a href="mailto:security@b1n0.com" style={inlineLink}>security@b1n0.com</a>.</>,
+            <><strong>Acuso de recibo:</strong> dentro de 5 días hábiles.</>,
             <><strong>Triaje y severidad preliminar:</strong> dentro de 10 días hábiles.</>,
             <><strong>Reconocimiento:</strong> tu nombre o seudónimo aparece en <a href="#agradecimientos" style={inlineLink}>el agradecimiento público</a> a menos que pidas anonimato.</>,
-            <><strong>Sin acciones legales</strong> contra investigadores que actúen de buena fe dentro del alcance — esa es nuestra cláusula de safe-harbor.</>,
+            <><strong>Safe-harbor:</strong> sin acciones legales contra investigadores que actúen de buena fe dentro del alcance.</>,
+          ]}
+        />
+        <DocParagraph>
+          <strong>Canales para reportar (cualquiera funciona):</strong>
+        </DocParagraph>
+        <DocBullets
+          items={[
+            <><strong>Correo directo:</strong> <a href="mailto:security@b1n0.com" style={inlineLink}>security@b1n0.com</a> — para canal cifrado pedinos primero la llave PGP.</>,
+            <><strong>GitHub Private Vulnerability Reporting:</strong> <a href="https://github.com/kimallenchee/b1n0/security/advisories/new" target="_blank" rel="noopener noreferrer" style={inlineLink}>github.com/kimallenchee/b1n0/security/advisories/new</a> — reporte privado coordinado, con asignación de CVE si aplica.</>,
+            <><strong>OpenBugBounty:</strong> <a href="https://www.openbugbounty.org/search/?search=b1n0.com" target="_blank" rel="noopener noreferrer" style={inlineLink}>openbugbounty.org/search/?search=b1n0.com</a> — plataforma pública con triaje neutral.</>,
           ]}
         />
         <DocParagraph>
           <strong>Dentro del alcance:</strong> b1n0.com, el dominio apex, el proyecto Supabase (auth, RLS, RPCs, edge functions) y la PWA. <strong>Fuera del alcance:</strong> ingeniería social, ataques físicos, DoS volumétrico, bypass de rate-limit sin impacto demostrable, hallazgos de escáneres automáticos sin prueba de concepto.
-        </DocParagraph>
-        <DocParagraph>
-          También aceptamos reportes anónimos. Si querés un canal cifrado, podemos coordinarlo por PGP — escribinos primero a <a href="mailto:security@b1n0.com" style={inlineLink}>security@b1n0.com</a> y te enviamos la llave.
         </DocParagraph>
       </>
     ),
