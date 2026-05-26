@@ -11,6 +11,7 @@ Contact: https://www.openbugbounty.org/bugbounty/b1n0/
 Expires: 2027-05-26T00:00:00.000Z
 Preferred-Languages: es, en
 Canonical: https://www.b1n0.com/.well-known/security.txt
+OpenBugBounty: https://openbugbounty.org/bugbounty/b1n0/
 Policy: https://www.b1n0.com/confianza#divulgacion
 Acknowledgments: https://www.b1n0.com/confianza#agradecimientos
 Hiring: https://www.b1n0.com/confianza#carreras
