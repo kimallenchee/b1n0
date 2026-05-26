@@ -38,7 +38,7 @@ playwright-report/
 test-results/
 
 # Vercel CLI build output (when using `vercel build --prebuilt`)
-.vercel/output/
+.vercel/
 
 # Stale editor/backup files — kept out of the repo so they don't
 # pollute diffs. Past hits included src/index.css.bak from the OneDrive
