@@ -1,65 +1,60 @@
 /**
- * i18n bootstrap.
+ * i18n bootstrap — Spanish-only beta mode.
  *
- * b1n0 is Spanish-first — the canonical UI language is `es`. We added
- * English on 2026-05-21 because users outside Central America (investors,
- * partners, English-speaking diaspora) were bouncing on the all-Spanish
- * interface. Spanish stays the default; English is opt-in via the footer
- * toggle.
+ * b1n0 is Spanish-first by product decision. The ES/EN footer toggle
+ * was removed pre-launch (2026-05-25) because there's no proof of
+ * demand from non-Spanish users yet; English-locale browser users
+ * get Chrome / Safari / Edge's native "Translate this page?" prompt
+ * automatically because `<html lang="es">` is correctly set.
  *
- * Persistence: the chosen language is saved to localStorage under
- * `b1n0-lang`. We avoid relying purely on browser language detection
- * because a Guatemalan visitor on an English-locale phone (common with
- * iPhones bought in the US) still wants Spanish by default.
+ * IMPORTANT — language is HARDCODED to 'es' here regardless of any
+ * `b1n0-lang` value left in a user's localStorage. We previously
+ * persisted the user's toggle pick to localStorage, so users who
+ * had selected EN before we removed the toggle would otherwise be
+ * permanently stuck in (a half-broken) English because no UI exists
+ * to flip them back. Forcing 'es' at init repaints them in Spanish
+ * on the very next page load and the stale localStorage value is
+ * cleared as a bonus.
  *
- * Vocabulary rules: the b1n0 anti-gambling vocab (see CLAUDE.md) MUST
- * be honored in the English translations too. Map:
- *   - apostar / bet            → "place a vote" / "cast a vote", never "bet"
- *   - ganar / win              → "be right" / "collect", never "win"
- *   - perder / lose            → "not this time", never "lose"
- *   - cuotas / odds            → "split" / "share", never "odds"
- *   - stake / risk             → "entry"
- *   - payout / prize           → "payout" is OK (Robinhood-style, not gambling)
- *   - probabilidad             → "what the crowd thinks"
+ * The full i18n infrastructure (en.json, useTranslation hooks across
+ * the codebase) is intentionally left in place. To re-enable English:
+ *   1. Restore the LanguageDetector usage below.
+ *   2. Restore the ES/EN pill in Footer.tsx (search for the "Language
+ *      toggle removed for beta" comment block).
+ *   3. The existing t('...') calls flip back on automatically.
  */
 
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
-import LanguageDetector from 'i18next-browser-languagedetector'
 import es from './locales/es.json'
 import en from './locales/en.json'
 
 const STORAGE_KEY = 'b1n0-lang'
 
-// IMPORTANT: detection order is localStorage-only. We deliberately do
-// NOT fall through to `navigator` because b1n0 is Spanish-first by
-// product decision (CLAUDE.md). A user on an English-locale browser
-// (common with iPhones bought in the US, Chrome installed in EN, etc.)
-// should still see Spanish on first visit. They opt into English via
-// the footer toggle, which persists to localStorage. Without this
-// override, the EN toggle button reads aria-pressed=true on first
-// paint and clicking it early-returns from pickLang() because the
-// "current" lang is already 'en' — translation never fires.
+// Clear any stale 'b1n0-lang=en' from previous toggle sessions so the
+// user's localStorage matches our hardcoded behaviour. Idempotent on
+// repeated loads.
+try {
+  if (typeof localStorage !== 'undefined') {
+    localStorage.removeItem(STORAGE_KEY)
+  }
+} catch {
+  // localStorage blocked (incognito + 3p cookies disabled). Doesn't
+  // matter — we're not relying on it anymore.
+}
+
 i18n
-  .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources: {
       es: { translation: es },
       en: { translation: en },
     },
+    lng: 'es',           // hardcoded — no detector
     fallbackLng: 'es',
     supportedLngs: ['es', 'en'],
     interpolation: {
       escapeValue: false, // React already escapes
-    },
-    detection: {
-      // Only read user's explicit choice from localStorage. If none,
-      // fall through to fallbackLng ('es'). Navigator language is
-      // intentionally NOT consulted.
-      order: ['localStorage'],
-      lookupLocalStorage: STORAGE_KEY,
-      caches: ['localStorage'],
     },
     react: {
       useSuspense: false, // resources are bundled — no async load
@@ -69,31 +64,18 @@ i18n
 export default i18n
 
 /**
- * Set language and persist. Footer/toggle should call this — direct
- * use of i18n.changeLanguage() works too but is missing the persistence.
- *
- * NOTE: we deliberately do NOT update document.documentElement.lang.
- * The DOM's source language is Spanish (index.html ships `lang="es"`),
- * and Google Translate Element uses that attribute to detect the source.
- * If we flipped it to "en" Google would conclude "already English" and
- * refuse to translate the page body. So `<html lang>` stays "es"
- * permanently; user preference lives only in localStorage.
+ * No-op kept for backward compat with any code that still imports it.
+ * In Spanish-only mode this can't actually change the language —
+ * the en.json bundle still ships for the eventual re-enable, but
+ * nothing exposes a way to flip into it.
  */
-export function setLanguage(lang: 'es' | 'en') {
-  i18n.changeLanguage(lang)
-  try {
-    localStorage.setItem(STORAGE_KEY, lang)
-  } catch {
-    // localStorage disabled (incognito + 3p cookies blocked) — toggle still
-    // works for the session, just won't persist.
-  }
+export function setLanguage(_lang: 'es' | 'en') {
+  // intentionally no-op
 }
 
 /**
- * Current language code, normalized to 'es' | 'en'. Useful for non-component
- * code that needs to branch on language (e.g. analytics events).
+ * Always returns 'es' in beta mode. Kept for backward compat.
  */
 export function getLanguage(): 'es' | 'en' {
-  const lng = (i18n.language || 'es').toLowerCase()
-  return lng.startsWith('en') ? 'en' : 'es'
+  return 'es'
 }
