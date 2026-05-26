@@ -7,7 +7,7 @@
 
 Contact: mailto:security@b1n0.com
 Contact: https://github.com/kimallenchee/b1n0/security/advisories/new
-Contact: https://www.openbugbounty.org/search/?search=b1n0.com
+Contact: https://www.openbugbounty.org/bugbounty/b1n0/
 Expires: 2027-05-26T00:00:00.000Z
 Preferred-Languages: es, en
 Canonical: https://www.b1n0.com/.well-known/security.txt

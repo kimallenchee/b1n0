@@ -211,7 +211,7 @@ const CONFIANZA_SECTIONS: DocPageSection[] = [
           items={[
             <><strong>Correo directo:</strong> <a href="mailto:security@b1n0.com" style={inlineLink}>security@b1n0.com</a> — para canal cifrado pedinos primero la llave PGP.</>,
             <><strong>GitHub Private Vulnerability Reporting:</strong> <a href="https://github.com/kimallenchee/b1n0/security/advisories/new" target="_blank" rel="noopener noreferrer" style={inlineLink}>github.com/kimallenchee/b1n0/security/advisories/new</a> — reporte privado coordinado, con asignación de CVE si aplica.</>,
-            <><strong>OpenBugBounty:</strong> <a href="https://www.openbugbounty.org/search/?search=b1n0.com" target="_blank" rel="noopener noreferrer" style={inlineLink}>openbugbounty.org/search/?search=b1n0.com</a> — plataforma pública con triaje neutral.</>,
+            <><strong>OpenBugBounty:</strong> <a href="https://www.openbugbounty.org/bugbounty/b1n0/" target="_blank" rel="noopener noreferrer" style={inlineLink}>openbugbounty.org/bugbounty/b1n0</a> — plataforma pública con triaje neutral.</>,
           ]}
         />
         <DocParagraph>

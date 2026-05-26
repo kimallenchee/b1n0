@@ -31,7 +31,7 @@ That's it. Researchers can now click "Report a vulnerability" on the repo's Secu
    - **Meta tag** — they give you something like `<meta name="openbugbounty.org" content="<TOKEN>" />`. You paste it into `index.html` `<head>`, deploy, then click verify.
    - **DNS TXT** — add a TXT record like `openbugbounty-verification=<TOKEN>` to your GoDaddy DNS for `b1n0.com`. Verify after propagation (~10-30 min).
 
-Once verified, your domain shows up at `https://www.openbugbounty.org/search/?search=b1n0.com` — the URL already linked in `/confianza` and `security.txt`.
+Once verified, your domain shows up at `https://www.openbugbounty.org/bugbounty/b1n0/` — the URL already linked in `/confianza` and `security.txt`.
 
 ### 3. disclose.io (already done — nothing to click)
 
