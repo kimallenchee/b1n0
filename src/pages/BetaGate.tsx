@@ -159,27 +159,6 @@ export function BetaGate({ onCleared }: BetaGateProps) {
           style={{ height: 36, width: 'auto', display: 'block' }}
         />
 
-        {/* Beta badge — small pill above the hero, signals exclusivity */}
-        <div
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 6,
-            padding: '5px 12px',
-            background: 'var(--b1n0-si-bg)',
-            color: 'var(--b1n0-si)',
-            border: '1px solid var(--b1n0-si)',
-            borderRadius: 999,
-            fontFamily: F,
-            fontSize: 11,
-            fontWeight: 700,
-            letterSpacing: 1.2,
-            textTransform: 'uppercase',
-          }}
-        >
-          Acceso anticipado
-        </div>
-
         {phase !== 'success' ? (
           <>
             {/* Hero */}
@@ -304,6 +283,9 @@ export function BetaGate({ onCleared }: BetaGateProps) {
               )}
             </form>
 
+            {/* Minimal skip — same visual weight as the legal-style
+                line it replaces, but it's a real link that drops the
+                user into /inicio without writing any beta_signups row. */}
             <p
               style={{
                 fontFamily: F,
@@ -311,10 +293,32 @@ export function BetaGate({ onCleared }: BetaGateProps) {
                 color: 'var(--b1n0-muted)',
                 margin: 0,
                 lineHeight: 1.6,
-                maxWidth: 320,
               }}
             >
-              Al entrar, aceptás recibir comunicaciones del beta de b1n0. Podés salirte cuando quieras.
+              ¿Solo querés echar un vistazo?{' '}
+              <button
+                type="button"
+                onClick={() => {
+                  // Mark beta as passed so they don't see this page on
+                  // subsequent visits, then navigate. No email captured.
+                  try { localStorage.setItem('b1n0-beta-passed', '1') } catch {}
+                  navigate('/inicio', { replace: true })
+                }}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  padding: 0,
+                  color: 'var(--b1n0-si)',
+                  fontFamily: F,
+                  fontSize: 11,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  textDecoration: 'underline',
+                  textUnderlineOffset: 2,
+                }}
+              >
+                Saltar al sitio
+              </button>
             </p>
           </>
         ) : (

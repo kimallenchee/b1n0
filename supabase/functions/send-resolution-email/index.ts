@@ -141,8 +141,11 @@ const COLORS = {
   border:    'rgba(255,255,255,0.08)',
   text1:     '#e2e4ed',
   muted:     '#8b8fa3',
-  si:        '#14b8a6',
-  siBg:      'rgba(20,184,166,0.14)',
+  // Brand green from src/index.css (--b1n0-si). NOT teal — the
+  // earlier teal #14b8a6 was a misremembered token and made everything
+  // look off-brand.
+  si:        '#06D47F',
+  siBg:      'rgba(6,212,127,0.14)',
   no:        '#f59e0b',
   noBg:      'rgba(245,158,11,0.12)',
 }

@@ -33,13 +33,20 @@ from reportlab.lib.colors import HexColor
 from pathlib import Path
 import datetime
 
-# ── Palette (mirrors b1n0 light-mode tokens) ─────────────────
-TEAL = HexColor("#14b8a6")         # primary accent
-INK = HexColor("#111827")          # body text
-MUTED = HexColor("#6b7280")        # secondary text
-BORDER = HexColor("#e5e7eb")       # hairlines + dividers
-AMBER = HexColor("#d97706")        # risk callout
-LIGHT_BG = HexColor("#f9fafb")     # callout backgrounds
+# ── Palette (mirrors b1n0 dark-mode tokens) ─────────────────
+# Hex values come from src/index.css (the dark-mode :root block).
+# Legacy variable names (INK / LIGHT_BG / AMBER) kept so the body of
+# the script doesn't have to be touched — only their *values* change.
+# INK is now the *light* text on a dark surface; LIGHT_BG is the
+# slightly lighter card surface tinted on top of the page bg.
+TEAL = HexColor("#06D47F")         # primary accent (--b1n0-si) — vibrant brand green, NOT teal
+INK = HexColor("#e2e4ed")          # body text on dark (--b1n0-text-1)
+MUTED = HexColor("#8b8fa3")        # secondary text (--b1n0-muted)
+BORDER = HexColor("#21242b")       # subtle border on dark
+AMBER = HexColor("#f59e0b")        # risk callout (--b1n0-no, amber not red)
+LIGHT_BG = HexColor("#161920")     # callout / card surface (--b1n0-card)
+PAGE_BG = HexColor("#090b10")      # page background (--b1n0-bg)
+WHITE = HexColor("#ffffff")        # cover-band-only text (white on teal)
 
 # ── Typography ────────────────────────────────────────────────
 FONT_REGULAR = "Helvetica"
@@ -52,6 +59,15 @@ MARGIN_X = 0.75 * inch
 MARGIN_TOP = 0.85 * inch
 MARGIN_BOTTOM = 0.85 * inch
 CONTENT_W = PAGE_W - 2 * MARGIN_X
+
+
+def draw_page_bg(c):
+    """Fill the entire page with the dark background. Must be called
+    FIRST in every page builder so all subsequent drawing lands on
+    top of the dark surface. PDF default canvas is white, so without
+    this every dark-text-color call would print invisible."""
+    c.setFillColor(PAGE_BG)
+    c.rect(0, 0, PAGE_W, PAGE_H, fill=1, stroke=0)
 
 
 def draw_page_header(c, page_label):
@@ -184,6 +200,7 @@ def callout_box(c, y, title, body, color=TEAL):
 
 # ── Page 1: Cover ─────────────────────────────────────────────
 def page_cover(c):
+    draw_page_bg(c)
     # Full teal band at the bottom for brand presence
     c.setFillColor(TEAL)
     c.rect(0, 0, PAGE_W, 1.6 * inch, fill=1, stroke=0)
@@ -261,6 +278,7 @@ def page_cover(c):
 
 # ── Content pages ─────────────────────────────────────────────
 def page_entidad_modelo(c):
+    draw_page_bg(c)
     draw_page_header(c, "Entidad · Modelo")
     y = PAGE_H - MARGIN_TOP
 
@@ -314,6 +332,7 @@ def page_entidad_modelo(c):
 
 
 def page_flujo(c):
+    draw_page_bg(c)
     draw_page_header(c, "Flujo de fondos")
     y = PAGE_H - MARGIN_TOP
     y = section_title(c, y, "Flujo de fondos")
@@ -392,6 +411,7 @@ def page_flujo(c):
 
 
 def page_seguridad(c):
+    draw_page_bg(c)
     draw_page_header(c, "Seguridad")
     y = PAGE_H - MARGIN_TOP
     y = section_title(c, y, "Seguridad")
@@ -441,6 +461,7 @@ def page_seguridad(c):
 
 
 def page_verificacion(c):
+    draw_page_bg(c)
     draw_page_header(c, "Verificación pública")
     y = PAGE_H - MARGIN_TOP
     y = section_title(c, y, "Verificá vos mismo")
@@ -487,6 +508,7 @@ def page_verificacion(c):
 
 
 def page_socios(c):
+    draw_page_bg(c)
     draw_page_header(c, "Socios técnicos")
     y = PAGE_H - MARGIN_TOP
     y = section_title(c, y, "Socios técnicos")
@@ -536,6 +558,7 @@ def page_socios(c):
 
 
 def page_privacidad_riesgo(c):
+    draw_page_bg(c)
     draw_page_header(c, "Privacidad · Riesgo")
     y = PAGE_H - MARGIN_TOP
     y = section_title(c, y, "Privacidad")
@@ -572,6 +595,7 @@ def page_privacidad_riesgo(c):
 
 
 def page_contacto(c):
+    draw_page_bg(c)
     draw_page_header(c, "Contacto")
     y = PAGE_H - MARGIN_TOP
     y = section_title(c, y, "Contacto")
