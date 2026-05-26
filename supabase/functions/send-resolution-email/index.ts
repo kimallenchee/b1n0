@@ -127,8 +127,8 @@ Deno.serve(async (req) => {
 //   Border        rgba(255,255,255,0.08)
 //   Text primary  #e2e4ed  (= --b1n0-text-1)
 //   Text muted    #8b8fa3  (= --b1n0-muted)
-//   Accent (SÍ)   #14b8a6  (= --b1n0-si)
-//   Accent bg     rgba(20,184,166,0.14)
+//   Accent (SÍ)   #06D47F  (= --b1n0-si)  vibrant brand green, NOT teal
+//   Accent bg     rgba(6,212,127,0.14)
 //   Loss/neutral  #f59e0b  (= --b1n0-no, amber — never red)
 //
 // Note: many email clients (Outlook desktop in particular) strip CSS
@@ -240,31 +240,72 @@ function renderEmail(b: ResolveEmailBody, appUrl: string, firstName: string) {
   }
 }
 
+/**
+ * Email shell — a true visual extension of the b1n0 site.
+ *
+ * Cosmetic decisions made to actually match the site (per Kim's
+ * 2026-05-26 feedback that emails were generic-looking):
+ *
+ *   1. Real b1n0 logo as an <img>, using the published white-on-dark
+ *      PNG (PNG not SVG — Gmail/Outlook strip SVG). Loaded from
+ *      www.b1n0.com so it benefits from the prod CDN.
+ *   2. Inter loaded via Google Fonts <link> for clients that support
+ *      it (Apple Mail, Gmail web, iOS Gmail). Outlook strips the link
+ *      and falls back to the system stack — still grotesque-ish.
+ *   3. Display font stack uses Inter at higher weight + tight tracking
+ *      to ape the site's display feel without needing a separate font.
+ *   4. Dark page bg + slightly lighter card surface, matches dark mode.
+ *   5. Brand-green accent everywhere a teal would have been —
+ *      #06D47F, NOT #14b8a6.
+ *
+ * Why no fancy background image / grain texture: those add weight,
+ * fail in dark-mode-aware clients, and inflate clipping risk on Gmail
+ * (the 102KB body cap is real).
+ */
 function shell({ title, accent, body }: { title: string; accent: string; body: string }): string {
+  const logoUrl = 'https://www.b1n0.com/brand/b1n0-logo-white.png'
+  const fontStack =
+    "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif"
   return `<!doctype html>
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <meta name="color-scheme" content="dark light">
-  <meta name="supported-color-schemes" content="dark light">
+  <meta name="color-scheme" content="dark only">
+  <meta name="supported-color-schemes" content="dark">
   <title>${escapeHtml(title)}</title>
+  <!-- Inter from Google Fonts. Outlook ignores this, Apple Mail + Gmail honor it. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* Belt-and-suspenders: anywhere the <link> works, we override the
+       inline font-family. Outlook will skip this and use inline styles. */
+    body, td, p, h1, h2, a, span { font-family: ${fontStack} !important; }
+    /* Suppress Apple Mail's iOS auto-link styling on phone numbers + dates. */
+    a[x-apple-data-detectors] { color: inherit !important; text-decoration: none !important; }
+  </style>
 </head>
-<body style="margin:0;padding:0;background:${COLORS.bg};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Helvetica,Arial,sans-serif;color:${COLORS.text1};">
-  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="padding:32px 16px;background:${COLORS.bg};">
+<body style="margin:0;padding:0;background:${COLORS.bg};font-family:${fontStack};color:${COLORS.text1};-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="padding:36px 16px;background:${COLORS.bg};">
     <tr><td align="center">
-      <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="540" style="max-width:540px;background:${COLORS.card};border-radius:14px;overflow:hidden;border:1px solid ${COLORS.border};">
-        <tr><td style="padding:28px 32px 8px;">
-          <p style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:${accent};text-transform:uppercase;margin:0;">b1n0</p>
+      <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="540" style="max-width:540px;background:${COLORS.card};border-radius:16px;overflow:hidden;border:1px solid ${COLORS.border};">
+        <!-- Brand row — actual b1n0 logo, not a text tag -->
+        <tr><td style="padding:28px 32px 4px;">
+          <img src="${logoUrl}" alt="b1n0" width="68" height="28" style="display:block;height:28px;width:auto;border:0;outline:0;text-decoration:none;">
+        </td></tr>
+        <!-- Section eyebrow (small green caps above the H1) -->
+        <tr><td style="padding:18px 32px 0;">
+          <p style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:${accent};text-transform:uppercase;margin:0;font-family:${fontStack};">b1n0</p>
         </td></tr>
         <tr><td style="padding:4px 32px 0;">
-          <h1 style="font-size:28px;font-weight:800;color:${COLORS.text1};margin:0 0 8px;letter-spacing:-0.7px;line-height:1.15;">${title}</h1>
+          <h1 style="font-size:30px;font-weight:800;color:${COLORS.text1};margin:0 0 8px;letter-spacing:-0.8px;line-height:1.12;font-family:${fontStack};">${title}</h1>
         </td></tr>
         <tr><td style="padding:14px 32px 32px;">
           ${body}
         </td></tr>
         <tr><td style="padding:18px 32px 24px;border-top:1px solid ${COLORS.border};">
-          <p style="font-size:11px;color:${COLORS.muted};margin:0;line-height:1.7;">
-            Tres33 SAS de CV · El Salvador · soporte@b1n0.com<br>
+          <p style="font-size:11px;color:${COLORS.muted};margin:0;line-height:1.7;font-family:${fontStack};">
+            Tres33 SAS de CV · El Salvador · <a href="mailto:soporte@b1n0.com" style="color:${COLORS.muted};text-decoration:underline;">soporte@b1n0.com</a><br>
             Recibís este correo porque participás en b1n0. Cambiá tus preferencias en tu perfil.
           </p>
         </td></tr>
@@ -275,10 +316,11 @@ function shell({ title, accent, body }: { title: string; accent: string; body: s
 </html>`
 }
 
+
 function cta(label: string, href: string): string {
-  // White text on the SÍ teal — same as the in-app CTA. Inline padding
-  // is heavy because Gmail strips outer margin-on-link styling.
-  return `<a href="${href}" style="display:inline-block;padding:13px 22px;background:${COLORS.si};color:#0a0c10;text-decoration:none;border-radius:999px;font-weight:700;font-size:14px;letter-spacing:0.2px;">${label}</a>`
+  // Brand-green pill, near-black text — same vibe as the in-app CTA.
+  // Inline everything because Outlook strips most cascading styles.
+  return `<a href="${href}" style="display:inline-block;padding:13px 22px;background:#06D47F;color:#0a0c10;text-decoration:none;border-radius:999px;font-weight:700;font-size:14px;letter-spacing:0.2px;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;">${label}</a>`
 }
 
 function escapeHtml(s: string): string {

@@ -230,8 +230,8 @@ export function TreasuryPanel() {
               width: '100%',
               padding: '10px 20px',
               borderRadius: 'var(--radius-lg)',
-              border: '1px solid rgba(20,184,166,0.3)',
-              background: sweeping ? 'var(--b1n0-surface)' : 'rgba(20,184,166,0.1)',
+              border: '1px solid rgba(6,212,127,0.3)',
+              background: sweeping ? 'var(--b1n0-surface)' : 'rgba(6,212,127,0.1)',
               color: 'var(--b1n0-si)',
               fontFamily: F,
               fontWeight: 600,
@@ -243,7 +243,7 @@ export function TreasuryPanel() {
             {sweeping ? 'Sincronizando...' : 'Sincronizar fees'}
           </button>
           {sweepResult && (
-            <div style={{ marginTop: '10px', padding: '10px', borderRadius: 'var(--radius-lg)', background: 'rgba(20,184,166,0.08)', border: '1px solid rgba(20,184,166,0.2)' }}>
+            <div style={{ marginTop: '10px', padding: '10px', borderRadius: 'var(--radius-lg)', background: 'rgba(6,212,127,0.08)', border: '1px solid rgba(6,212,127,0.2)' }}>
               <p style={{ fontFamily: F, fontSize: '11px', color: 'var(--b1n0-si)' }}>
                 {sweepResult.tx_count === 0
                   ? 'Todo sincronizado — no hay transacciones pendientes.'

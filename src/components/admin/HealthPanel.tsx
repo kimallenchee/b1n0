@@ -518,7 +518,7 @@ export function HealthPanel() {
             fontFamily: F,
             fontSize: '12px',
             color: 'var(--b1n0-text-1)',
-            background: 'rgba(20,184,166,0.08)',
+            background: 'rgba(6,212,127,0.08)',
             padding: '8px 12px',
             borderRadius: 'var(--radius-lg)',
             margin: 0,

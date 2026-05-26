@@ -109,7 +109,7 @@ function Step3Salida() {
       {/* Position card */}
       <rect x="30" y="30" width="260" height="140" rx="14" fill="var(--b1n0-surface)" stroke="var(--b1n0-border)" />
       {/* Side pill (SÍ) */}
-      <rect x="46" y="48" width="28" height="18" rx="9" fill="var(--b1n0-si-bg, rgba(20,184,166,0.15))" />
+      <rect x="46" y="48" width="28" height="18" rx="9" fill="var(--b1n0-si-bg, rgba(6,212,127,0.15))" />
       <text x="60" y="61" textAnchor="middle" fontFamily="var(--font-body)" fontSize="9" fontWeight="700" fill="var(--b1n0-si)">SÍ</text>
       {/* Event mini-title */}
       <text x="84" y="61" fontFamily="var(--font-display)" fontSize="11" fontWeight="700" fill="var(--b1n0-text-1)">El Papa pisa Centroamérica</text>
@@ -213,7 +213,7 @@ function Step4Listo() {
           zIndex: 1,
           // Subtle drop shadow tied to brand-green for a glow effect
           // that reads in both themes.
-          filter: 'drop-shadow(0 0 24px rgba(20, 184, 166, 0.35))',
+          filter: 'drop-shadow(0 0 24px rgba(6,212,127,0.35))',
         }}
       />
     </div>

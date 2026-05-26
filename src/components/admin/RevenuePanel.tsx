@@ -558,7 +558,7 @@ function RevenuePanel({ dateFrom, dateTo }: { dateFrom?: string; dateTo?: string
         </div>
 
         {/* Cut 4 — Resolution Skim */}
-        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '14px', borderLeft: '3px solid #14b8a6', minWidth: 0 }}>
+        <div style={{ background: 'var(--b1n0-card)', border: '1px solid var(--b1n0-border)', borderRadius: 'var(--radius-lg)', padding: '14px', borderLeft: '3px solid #06D47F', minWidth: 0 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
             <p style={{ fontFamily: F, fontSize: '9px', fontWeight: 700, color: 'var(--b1n0-si)', letterSpacing: '0.8px', textTransform: 'uppercase' }}>CUT 4 — RESOLUCIÓN</p>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '2px' }}>

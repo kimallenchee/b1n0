@@ -85,8 +85,8 @@ export function NewsCard({ article, onBridgeTap }: NewsCardProps) {
             style={{
               display: 'flex', alignItems: 'center', gap: '6px',
               padding: '8px 12px', borderRadius: 'var(--radius-lg)', marginTop: '8px',
-              border: '1px solid rgba(20,184,166,0.25)',
-              background: 'rgba(20,184,166,0.06)',
+              border: '1px solid rgba(6,212,127,0.25)',
+              background: 'rgba(6,212,127,0.06)',
               cursor: 'pointer', width: '100%', textAlign: 'left',
             }}
           >

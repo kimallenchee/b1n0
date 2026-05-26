@@ -622,7 +622,7 @@ function RelationshipCta({
   }
   // friends
   return (
-    <span style={{ ...baseBtn, background: 'var(--b1n0-si-bg, rgba(20,184,166,0.15))', color: 'var(--b1n0-si)', cursor: 'default' }}>
+    <span style={{ ...baseBtn, background: 'var(--b1n0-si-bg, rgba(6,212,127,0.15))', color: 'var(--b1n0-si)', cursor: 'default' }}>
       Amigos
     </span>
   )

@@ -208,7 +208,7 @@ function LlamadoCard({
   showAmount: boolean
 }) {
   const sideColor = item.side === 'no' ? 'var(--b1n0-no)' : 'var(--b1n0-si)'
-  const sideBg = item.side === 'no' ? 'var(--b1n0-no-bg, rgba(245,158,11,0.15))' : 'var(--b1n0-si-bg, rgba(20,184,166,0.15))'
+  const sideBg = item.side === 'no' ? 'var(--b1n0-no-bg, rgba(245,158,11,0.15))' : 'var(--b1n0-si-bg, rgba(6,212,127,0.15))'
 
   return (
     <Link
