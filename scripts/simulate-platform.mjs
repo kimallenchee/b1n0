@@ -167,7 +167,6 @@ async function main() {
   // 3. Run the buy/sell stream per event ──────────────────
   for (const event of events) {
     console.log(`\nEvent ${event.id.slice(0, 8)}…  (${event.question.slice(0, 50)})`)
-    const positionsHere = []  // [{ position_id, user_id, side, amount }]
 
     for (let i = 0; i < BUYS_PER_EVENT; i++) {
       const user = pick(users)
@@ -192,27 +191,51 @@ async function main() {
       stats.purchases_succeeded++
       stats.per_event[event.id].purchases++
       user.balance -= amount
-      if (data?.position_id) positionsHere.push({ position_id: data.position_id, user_id: user.id, side, amount })
 
-      // ~20% chance to sell a previously-acquired position right after
-      if (positionsHere.length > 1 && rand() < 0.20) {
-        const pos = pick(positionsHere)
-        stats.sells_attempted++
-        const { error: sErr } = await sb.rpc('admin_simulate_sell', { p_position_id: pos.position_id })
-        if (sErr) { logErr('sell', sErr, { position: pos.position_id }); }
-        else { stats.sells_succeeded++; stats.per_event[event.id].sells++ }
+      // ~20% chance to sell a previously-acquired position right after.
+      // We query positions directly because the purchase RPC's return
+      // shape doesn't include position_id reliably.
+      if (rand() < 0.20) {
+        const { data: candidates } = await sb
+          .from('positions')
+          .select('id, user_id')
+          .eq('event_id', event.id)
+          .eq('status', 'active')
+          .limit(20)
+        if (candidates?.length) {
+          const simUserIds = new Set(users.map(u => u.id))
+          const sellable = candidates.filter(c => simUserIds.has(c.user_id))
+          if (sellable.length) {
+            const pos = pick(sellable)
+            stats.sells_attempted++
+            const { error: sErr } = await sb.rpc('admin_simulate_sell', { p_position_id: pos.id })
+            if (sErr) { logErr('sell', sErr, { position: pos.id }); }
+            else { stats.sells_succeeded++; stats.per_event[event.id].sells++ }
+          }
+        }
       }
     }
 
-    // Forced sell pass to hit the SELLS_PER_EVENT target
+    // Forced sell pass to hit the SELLS_PER_EVENT target. Query
+    // positions table for active sim-owned positions on this event
+    // and sell a random subset.
     let extraSells = Math.max(0, SELLS_PER_EVENT - stats.per_event[event.id].sells)
-    while (extraSells > 0 && positionsHere.length > 0) {
-      const pos = positionsHere.splice(Math.floor(rand() * positionsHere.length), 1)[0]
-      stats.sells_attempted++
-      const { error: sErr } = await sb.rpc('admin_simulate_sell', { p_position_id: pos.position_id })
-      if (sErr) { logErr('sell-forced', sErr, { position: pos.position_id }); }
-      else { stats.sells_succeeded++; stats.per_event[event.id].sells++ }
-      extraSells--
+    if (extraSells > 0) {
+      const { data: activePositions } = await sb
+        .from('positions')
+        .select('id, user_id')
+        .eq('event_id', event.id)
+        .eq('status', 'active')
+      const simUserIds = new Set(users.map(u => u.id))
+      const sellable = (activePositions || []).filter(p => simUserIds.has(p.user_id))
+      while (extraSells > 0 && sellable.length > 0) {
+        const pos = sellable.splice(Math.floor(rand() * sellable.length), 1)[0]
+        stats.sells_attempted++
+        const { error: sErr } = await sb.rpc('admin_simulate_sell', { p_position_id: pos.id })
+        if (sErr) { logErr('sell-forced', sErr, { position: pos.id }); }
+        else { stats.sells_succeeded++; stats.per_event[event.id].sells++ }
+        extraSells--
+      }
     }
 
     console.log(`  buys: ${stats.per_event[event.id].purchases}/${BUYS_PER_EVENT}  sells: ${stats.per_event[event.id].sells}`)
@@ -221,7 +244,7 @@ async function main() {
     if (RESOLVE) {
       const winner = rand() < 0.5 ? 'yes' : 'no'
       stats.settles_attempted++
-      const { error: resErr } = await sb.rpc('settle_event', { p_event_id: event.id, p_result: winner })
+      const { error: resErr } = await sb.rpc('admin_simulate_settle', { p_event_id: event.id, p_result: winner })
       if (resErr) { logErr('settle', resErr, { event: event.id }); }
       else { stats.settles_succeeded++; console.log(`  settled as ${winner}`) }
     }
