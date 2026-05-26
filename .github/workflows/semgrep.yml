@@ -1,0 +1,50 @@
+# Semgrep — free OSS static-analysis security scanning.
+# Runs on every PR + weekly cron + manual dispatch.
+# Uses the community ruleset (p/security-audit + p/owasp-top-ten
+# + p/typescript) which covers the same class of findings GitHub
+# Advanced Security CodeQL would surface, without the $49/seat fee.
+#
+# Reports findings to the GitHub Security tab via SARIF upload.
+name: Semgrep
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  schedule:
+    # Mondays 06:00 UTC — keep a steady weekly baseline scan
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write   # required to upload SARIF
+  actions: read
+
+jobs:
+  semgrep:
+    name: Scan
+    runs-on: ubuntu-latest
+    container:
+      image: semgrep/semgrep
+    if: (github.actor != 'dependabot[bot]')
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Semgrep
+        run: |
+          semgrep ci \
+            --config "p/security-audit" \
+            --config "p/owasp-top-ten" \
+            --config "p/typescript" \
+            --config "p/react" \
+            --config "p/secrets" \
+            --sarif --output=semgrep.sarif || true
+
+      - name: Upload SARIF to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: semgrep.sarif
+          category: semgrep

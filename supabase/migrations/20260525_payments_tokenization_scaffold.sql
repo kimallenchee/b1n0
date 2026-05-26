@@ -339,4 +339,4 @@ CREATE TRIGGER event_tokens_set_updated_at
 -- ============================================================================
 -- End migration. Zero impact on existing code paths — all new columns are
 -- nullable, all new tables sit unused until the respective vendor goes live.
--- ====
+-- ============================================================================

@@ -1,0 +1,67 @@
+# Dependabot — automated dependency security updates.
+# https://docs.github.com/en/code-security/dependabot
+#
+# Free for private repos. Auto-opens PRs when a dependency has a
+# new version or a known CVE. Configured conservatively to avoid
+# PR storm — security patches are auto-merged-ish (you still
+# review), version bumps are grouped.
+
+version: 2
+updates:
+  # ── npm (frontend + edge-function shared deps) ────────────────
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:00"
+      timezone: "America/El_Salvador"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "security"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    groups:
+      # Group minor/patch bumps into one PR per ecosystem area
+      # so we don't drown in noise. Security patches still get
+      # their own dedicated PR.
+      react-stack:
+        patterns:
+          - "react"
+          - "react-*"
+          - "@types/react*"
+        update-types:
+          - "minor"
+          - "patch"
+      supabase-stack:
+        patterns:
+          - "@supabase/*"
+        update-types:
+          - "minor"
+          - "patch"
+      build-tooling:
+        patterns:
+          - "vite"
+          - "@vitejs/*"
+          - "typescript"
+          - "@types/*"
+          - "eslint*"
+          - "@typescript-eslint/*"
+          - "tailwindcss"
+          - "@tailwindcss/*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # ── GitHub Actions workflows ──────────────────────────────────
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    labels:
+      - "dependencies"
+      - "ci"
+    commit-message:
+      prefix: "ci"

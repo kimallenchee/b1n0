@@ -212,4 +212,9 @@ BEGIN
 END;
 $$;
 
-REVOKE ALL ON FUNCTION public.queue_event_resolution FR
+REVOKE ALL ON FUNCTION public.queue_event_resolution FROM public;
+GRANT EXECUTE ON FUNCTION public.queue_event_resolution TO service_role;
+
+-- ============================================================================
+-- End of tokenization hooks. All inert until tokenization_enabled flips.
+-- ============================================================================

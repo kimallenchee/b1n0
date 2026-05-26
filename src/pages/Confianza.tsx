@@ -183,8 +183,53 @@ const CONFIANZA_SECTIONS: DocPageSection[] = [
     ),
   },
   {
-    id: 'socios',
+    id: 'divulgacion',
     eyebrow: 'SECCIÓN 06',
+    title: 'Divulgación responsable',
+    children: (
+      <>
+        <DocParagraph>
+          Recibimos y atendemos reportes de seguridad de cualquier investigador externo. La política completa está en{' '}
+          <a href="/.well-known/security.txt" target="_blank" rel="noopener noreferrer" style={inlineLink}>
+            /.well-known/security.txt
+          </a>{' '}
+          (RFC 9116). Los compromisos clave:
+        </DocParagraph>
+        <DocBullets
+          items={[
+            <><strong>Acuso de recibo:</strong> dentro de 5 días hábiles después de tu correo a <a href="mailto:security@b1n0.com" style={inlineLink}>security@b1n0.com</a>.</>,
+            <><strong>Triaje y severidad preliminar:</strong> dentro de 10 días hábiles.</>,
+            <><strong>Reconocimiento:</strong> tu nombre o seudónimo aparece en <a href="#agradecimientos" style={inlineLink}>el agradecimiento público</a> a menos que pidas anonimato.</>,
+            <><strong>Sin acciones legales</strong> contra investigadores que actúen de buena fe dentro del alcance — esa es nuestra cláusula de safe-harbor.</>,
+          ]}
+        />
+        <DocParagraph>
+          <strong>Dentro del alcance:</strong> b1n0.com, el dominio apex, el proyecto Supabase (auth, RLS, RPCs, edge functions) y la PWA. <strong>Fuera del alcance:</strong> ingeniería social, ataques físicos, DoS volumétrico, bypass de rate-limit sin impacto demostrable, hallazgos de escáneres automáticos sin prueba de concepto.
+        </DocParagraph>
+        <DocParagraph>
+          También aceptamos reportes anónimos. Si querés un canal cifrado, podemos coordinarlo por PGP — escribinos primero a <a href="mailto:security@b1n0.com" style={inlineLink}>security@b1n0.com</a> y te enviamos la llave.
+        </DocParagraph>
+      </>
+    ),
+  },
+  {
+    id: 'agradecimientos',
+    eyebrow: 'SECCIÓN 07',
+    title: 'Agradecimientos',
+    children: (
+      <>
+        <DocParagraph>
+          Reconocimiento público a las personas que reportaron vulnerabilidades de manera responsable y nos ayudaron a hacer b1n0 más seguro:
+        </DocParagraph>
+        <DocCallout title="Esperando a vos" tone="info">
+          Todavía nadie en esta lista. Si encontrás algo y lo reportás bien, tu nombre (o seudónimo) va acá — y te llega mención en redes si querés.
+        </DocCallout>
+      </>
+    ),
+  },
+  {
+    id: 'socios',
+    eyebrow: 'SECCIÓN 08',
     title: 'Socios técnicos',
     children: (
       <>
@@ -205,7 +250,7 @@ const CONFIANZA_SECTIONS: DocPageSection[] = [
   },
   {
     id: 'privacidad',
-    eyebrow: 'SECCIÓN 07',
+    eyebrow: 'SECCIÓN 09',
     title: 'Privacidad',
     children: (
       <DocParagraph>
@@ -216,17 +261,17 @@ const CONFIANZA_SECTIONS: DocPageSection[] = [
   },
   {
     id: 'riesgo',
-    eyebrow: 'SECCIÓN 08',
+    eyebrow: 'SECCIÓN 10',
     title: 'Riesgo y responsabilidad del usuario',
     children: (
       <DocCallout title="Advertencia obligatoria" tone="warn">
-        Los votos implican riesgo de pérdida del capital. No hay retornos garantizados, no es una inversión, no es un instrumento financiero, no es una casa de apuestas. b1n0 es un juego de opinión social con dinero real. Cada participante es responsable de cumplir las leyes y obligaciones fiscales de su jurisdicción. El acceso es para mayores de 18 años.
+        Los votos implican riesgo de pérdida del capital. No hay retornos garantizados, no es una inversión, no es un instrumento financiero, no es una casa de apuestas. b1n0 es un mercado de opciones sobre eventos respaldado por capital de LPs — los cobros son fijos por contrato si tu lado gana, pero la pérdida del capital ingresado es real. Cada participante es responsable de cumplir las leyes y obligaciones fiscales de su jurisdicción. El acceso es para mayores de 18 años.
       </DocCallout>
     ),
   },
   {
     id: 'contacto',
-    eyebrow: 'SECCIÓN 09',
+    eyebrow: 'SECCIÓN 11',
     title: 'Contacto',
     children: (
       <DocBullets
