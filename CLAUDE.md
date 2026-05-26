@@ -131,6 +131,8 @@ See `docs/payments-architecture.md` for the full diagram and `docs/handoff-payme
 
 The current production deploy contains the following batch landed on 2026-05-26:
 
+- **End-to-end math validated via simulation harness.** 50 simulated users × 5 events × 144 purchases + 42 sells + 5 resolves, then 8 invariant checks all PASS. The full production code path (`execute_purchase` → `execute_sell` → `settle_event` from 20260505 with LP return + skim + audit log) reconciles to the cent. Migration `20260505_settle_event_lp_return.sql` MUST be applied to any new Supabase instance — it has the LP-capital-return + winner-cobro-credit + skim-to-treasury logic that older settle_event versions lack.
+
 - **Canonical positioning rewrite.** This file, `README.md`, `/confianza`, `/documentacion`, `index.html` `<meta>` tags, OG cards, Twitter cards and JSON-LD structured data are all on the "LP-backed fixed-payout event-options market" framing. The earlier "social opinion game / brands fund prize pools / ESPN+Instagram+group chat" framing has been swept everywhere.
 - **News feed dead code ripped.** `NewsCard.tsx`, `NewsArticle` type, the `news` table, `EventFeed` news interleave, `fetch-news` + `rewrite-news` edge functions, and locale strings are gone. Events-only feed.
 - **Drift sweep.** "Pool parimutuel" admin label → "Pool del mercado"; stale parimutuel comments → LP-backed fixed-payout; documentation.ts tone rules + section comments llamado → votos; teal `#14b8a6` → brand green `#06D47F` everywhere (emails, PDF, comments).
