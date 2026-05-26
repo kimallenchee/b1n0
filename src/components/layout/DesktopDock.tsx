@@ -13,6 +13,7 @@ import { useAuth } from '../../context/AuthContext'
 import { useNotifications } from '../../context/NotificationContext'
 import { useAuthModal } from '../../context/AuthModalContext'
 import { NotificationPopover } from './NotificationPopover'
+import { useTranslation } from 'react-i18next'
 
 /**
  * DesktopDock — floating, centered, bottom-anchored navigation pill.
@@ -46,6 +47,7 @@ export function DesktopDock() {
   const { profile, signOut, session } = useAuth()
   const { unreadCount } = useNotifications()
   const { openAuth } = useAuthModal()
+  const { t } = useTranslation()
   const [notifOpen, setNotifOpen] = useState(false)
 
   const isLoggedIn = !!session
@@ -59,7 +61,7 @@ export function DesktopDock() {
   return (
     <>
       <nav
-        aria-label="Navegación principal"
+        aria-label={t('nav.home')}
         className="b1n0-dock"
         style={{
           position: 'fixed',
@@ -89,8 +91,8 @@ export function DesktopDock() {
       >
         {/* Inicio */}
         <DockButton
-          ariaLabel="Inicio"
-          tooltip="Inicio"
+          ariaLabel={t('nav.home')}
+          tooltip={t('nav.home')}
           active={location.pathname === '/inicio'}
           onClick={() => navigate('/inicio')}
         >
@@ -99,8 +101,8 @@ export function DesktopDock() {
 
         {/* Historial */}
         <DockButton
-          ariaLabel="Historial"
-          tooltip="Historial"
+          ariaLabel={t('nav.history')}
+          tooltip={t('nav.history')}
           active={location.pathname === '/historial'}
           onClick={() => {
             if (!isLoggedIn) { openAuth(); return }
@@ -119,9 +121,9 @@ export function DesktopDock() {
             if (!isLoggedIn) { openAuth(); return }
             setNotifOpen((v) => !v)
           }}
-          aria-label={`Notificaciones${unreadCount > 0 ? ` (${unreadCount} sin leer)` : ''}`}
+          aria-label={t('topbar.notifications')}
           aria-expanded={notifOpen}
-          title="Notificaciones"
+          title={t('topbar.notifications')}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -187,8 +189,8 @@ export function DesktopDock() {
         {/* Admin — only when profile.isAdmin */}
         {profile?.isAdmin && (
           <DockButton
-            ariaLabel="Admin"
-            tooltip="Admin"
+            ariaLabel={t('nav.admin')}
+            tooltip={t('nav.admin')}
             active={isAdminPath}
             onClick={() => navigate('/admin')}
           >
@@ -200,8 +202,8 @@ export function DesktopDock() {
             of the dock. The avatar picture lives on the profile page itself
             where it has room to breathe. */}
         <DockButton
-          ariaLabel="Perfil"
-          tooltip={profile?.username ? `@${profile.username}` : 'Perfil'}
+          ariaLabel={t('nav.profile')}
+          tooltip={profile?.username ? `@${profile.username}` : t('nav.profile')}
           active={isPerfilPath}
           onClick={() => {
             if (!isLoggedIn) { openAuth(); return }
@@ -214,8 +216,8 @@ export function DesktopDock() {
         {/* Sign out / sign in — terminal action at the far edge */}
         {isLoggedIn ? (
           <DockButton
-            ariaLabel="Cerrar sesión"
-            tooltip="Cerrar sesión"
+            ariaLabel={t('auth.logOut')}
+            tooltip={t('auth.logOut')}
             active={false}
             onClick={signOut}
           >
@@ -223,8 +225,8 @@ export function DesktopDock() {
           </DockButton>
         ) : (
           <DockButton
-            ariaLabel="Iniciar sesión"
-            tooltip="Iniciar sesión"
+            ariaLabel={t('auth.logIn')}
+            tooltip={t('auth.logIn')}
             active={false}
             color="var(--b1n0-si)"
             onClick={() => openAuth('login')}
