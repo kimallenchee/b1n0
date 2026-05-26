@@ -88,18 +88,27 @@ SELECT p.id, p.event_id, p.side, p.status, em.result, em.status AS event_status
 -- resolution skim percentage.
 
 SELECT '── [6] Winning positions paid out as contracts × payout_if_win' AS section;
-WITH winners AS (
-  SELECT p.id, p.user_id, p.contracts, p.payout_if_win,
+-- Compare against NET payout (gross × (1 - skim_pct)), NOT gross.
+-- 20260505 settle_event credits winners net after the resolution skim;
+-- the skim portion is routed to the treasury via balance_ledger 'skim'.
+WITH skim_pct AS (
+  SELECT COALESCE(value, 5) / 100.0 AS pct
+    FROM public.platform_config WHERE key = 'resolution_skim_pct'
+),
+winners AS (
+  SELECT p.id, p.contracts, p.payout_if_win,
+         ROUND(p.payout_if_win * (1 - (SELECT pct FROM skim_pct)), 2)
+           AS expected_net,
          COALESCE(bl.amount, 0) AS cobro_credited
     FROM public.positions p
     LEFT JOIN public.balance_ledger bl
       ON bl.reference_id = p.id::text AND bl.type = 'win'
    WHERE p.status = 'won'
 )
-SELECT id, contracts, payout_if_win, cobro_credited,
-       ABS(payout_if_win - cobro_credited) AS drift
+SELECT id, contracts, payout_if_win, expected_net, cobro_credited,
+       ABS(expected_net - cobro_credited) AS drift
   FROM winners
- WHERE ABS(payout_if_win - cobro_credited) > 0.05
+ WHERE ABS(expected_net - cobro_credited) > 0.05
  LIMIT 10;
 -- Empty = PASS (drift > 5¢ on any winning payout is suspicious).
 
@@ -112,16 +121,18 @@ SELECT event_id, pool_total, pool_committed, yes_shares, no_shares
  LIMIT 10;
 -- Empty = PASS.
 
--- ── 8. platform_ledger entries reconcile with event count ──
--- Every settled event should have at least one platform_ledger
--- row recording the platform's margin take.
+-- ── 8. Every settled event records its platform margin take ──
+-- Note: 20260505 settle_event writes the skim to balance_ledger with
+-- type='skim' on the treasury user (reference_id = event_id), NOT to
+-- the legacy platform_ledger table. The check accepts EITHER.
 
-SELECT '── [8] Every settled event has a platform_ledger entry' AS section;
-SELECT em.event_id, em.status, em.result,
-       (SELECT COUNT(*) FROM public.platform_ledger pl WHERE pl.event_id = em.event_id) AS pl_rows
+SELECT '── [8] Every settled event has a platform-take record' AS section;
+SELECT em.event_id, em.status, em.result
   FROM public.event_markets em
  WHERE em.status = 'settled'
    AND NOT EXISTS (SELECT 1 FROM public.platform_ledger pl WHERE pl.event_id = em.event_id)
+   AND NOT EXISTS (SELECT 1 FROM public.balance_ledger bl
+                    WHERE bl.type = 'skim' AND bl.reference_id = em.event_id)
  LIMIT 10;
 -- Empty = PASS.
 
