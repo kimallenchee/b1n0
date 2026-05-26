@@ -100,7 +100,7 @@ BEGIN
 
   -- Bump the profile saldo cache (denormalized for fast UI reads).
   UPDATE public.profiles
-     SET saldo = COALESCE(saldo, 0) + p_net_amount
+     SET balance = COALESCE(balance, 0) + p_net_amount
    WHERE id = p_user_id;
 
   RETURN v_ledger_id;
@@ -191,7 +191,7 @@ BEGIN
    WHERE id = p_payment_tx_id;
 
   UPDATE public.profiles
-     SET saldo = COALESCE(saldo, 0) + p_net_amount
+     SET balance = COALESCE(balance, 0) + p_net_amount
    WHERE id = p_user_id;
 
   RETURN v_ledger_id;
@@ -289,7 +289,7 @@ BEGIN
 
   -- Update profile saldo cache.
   UPDATE public.profiles
-     SET saldo = COALESCE(saldo, 0) - p_amount
+     SET balance = COALESCE(balance, 0) - p_amount
    WHERE id = p_user_id;
 
   -- Track the destination as a crypto_destinations or payment_method
@@ -384,7 +384,7 @@ BEGIN
       p_payment_tx_id, 'fiat_fbo', now()
     );
     UPDATE public.profiles
-       SET saldo = COALESCE(saldo, 0) + v_tx.gross_amount
+       SET balance = COALESCE(balance, 0) + v_tx.gross_amount
      WHERE id = v_tx.user_id;
   END IF;
 

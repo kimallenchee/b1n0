@@ -27,7 +27,6 @@ import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useTour } from '../../context/TourContext'
 import { useTheme } from '../../context/ThemeContext'
 import { useTranslation } from 'react-i18next'
-import { setLanguage, getLanguage } from '../../i18n'
 import {
   XLogo,
   InstagramLogo,
@@ -59,31 +58,11 @@ export function Footer() {
   const location = useLocation()
   const { startTour } = useTour()
   const { resolved } = useTheme()
-  const { t, i18n } = useTranslation()
-  const currentLang = getLanguage()
+  const { t } = useTranslation()
 
   function openTour() {
     if (location.pathname !== '/inicio') navigate('/inicio')
     setTimeout(() => startTour(), 300)
-  }
-
-  // Toggle handler. Flips our react-i18next chrome strings (footer, nav,
-  // share modal, vote-confirmation). Page bodies (event questions, news,
-  // comments) stay in their original Spanish — Chrome/Safari/Edge users
-  // on English-locale browsers automatically get the native "Translate
-  // this page?" prompt because <html lang="es"> is correctly set.
-  //
-  // (We previously layered Google Translate Element on top of this for
-  // automatic body translation, but Google has effectively abandoned
-  // that widget for SPAs — the cookie-driven auto-translate path no
-  // longer fires reliably. Stripped 2026-05-25 in favor of letting the
-  // browser do what it does well natively.)
-  function pickLang(lang: 'es' | 'en') {
-    if (lang === currentLang) return
-    setLanguage(lang)
-    // Touch i18n directly to be doubly sure the change propagates even if
-    // some component holds a stale reference.
-    i18n.changeLanguage(lang)
   }
 
   return (
@@ -248,37 +227,17 @@ export function Footer() {
             {t('footer.copyright', { year: new Date().getFullYear() })}
           </p>
 
-          {/* Language toggle — segmented pill. Selected state inverts
-              (text-1 bg, bg text) per the b1n0 selected-state pattern
-              in CLAUDE.md. */}
-          <div
-            role="group"
-            aria-label={t('footer.language')}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              background: 'var(--b1n0-card)',
-              border: '1px solid var(--b1n0-border)',
-              borderRadius: 999,
-              padding: 3,
-              gap: 2,
-            }}
-          >
-            <LangButton
-              active={currentLang === 'es'}
-              onClick={() => pickLang('es')}
-              label="Español"
-            >
-              ES
-            </LangButton>
-            <LangButton
-              active={currentLang === 'en'}
-              onClick={() => pickLang('en')}
-              label="English"
-            >
-              EN
-            </LangButton>
-          </div>
+          {/* Language toggle removed for beta — b1n0 is Spanish-first
+              until we have proof of demand from non-Spanish users.
+              English-locale browser users get Chrome / Safari / Edge's
+              native "Translate this page?" prompt because <html lang="es">
+              is correctly set.
+
+              The i18n infrastructure (react-i18next, en.json, useTranslation
+              calls) is intentionally left in place. To re-enable the
+              toggle, restore this block and the helper code above. The
+              chrome that's already wired with t() calls will flip back
+              on instantly. */}
         </div>
       </div>
     </footer>
@@ -395,41 +354,3 @@ function SocialIcon({
   )
 }
 
-// ── Language pill button ─────────────────────────────────────
-function LangButton({
-  active,
-  onClick,
-  label,
-  children,
-}: {
-  active: boolean
-  onClick: () => void
-  label: string
-  children: React.ReactNode
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label={label}
-      aria-pressed={active}
-      style={{
-        appearance: 'none',
-        border: 'none',
-        background: active ? 'var(--b1n0-text-1)' : 'transparent',
-        color: active ? 'var(--b1n0-bg)' : 'var(--b1n0-muted)',
-        fontFamily: F_BODY,
-        fontSize: 11,
-        fontWeight: 700,
-        letterSpacing: 0.5,
-        padding: '4px 12px',
-        borderRadius: 999,
-        cursor: active ? 'default' : 'pointer',
-        transition: 'background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out)',
-        minWidth: 36,
-      }}
-    >
-      {children}
-    </button>
-  )
-}
