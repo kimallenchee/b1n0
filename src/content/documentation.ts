@@ -332,7 +332,7 @@ export const DOC_SECTIONS: DocSection[] = [
         items: [
           'Correo: soporte@b1n0.com',
           'Respondemos en menos de 24 horas hábiles.',
-          'Para temas urgentes con tu saldo o tu cuenta, escribí a soporte@b1n0.com y marcá el asunto con [URGENTE].',
+          'Para temas urgentes con tu saldo o tu cuenta, escribí a soporte@b1n0.com.',
           'Tres33 SAS de CV — oficina registrada: Final 83 Avenida Sur #403, segundo nivel, Colonia Escalón, San Salvador, El Salvador.',
           'Teléfono de la oficina registrada: +503 2264-0977.',
         ],
