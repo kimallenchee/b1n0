@@ -193,4 +193,5 @@ Registered office: Final 83 Avenida Sur #403, segundo nivel, Colonia Escalón, S
 
 ## License
 
-Proprietary. Copyright © 202
+Proprietary. Copyright © 2026 Tres33 SAS de CV. All rights reserved.
+See [`LICENSE`](./LICENSE).
