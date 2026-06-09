@@ -87,10 +87,13 @@ const CONFIANZA_SECTIONS: DocPageSection[] = [
     children: (
       <>
         <DocParagraph>
-          b1n0 es un mercado de opciones sobre eventos. Los usuarios toman posiciones (SÍ o NO) sobre preguntas binarias con fecha de resolución conocida. El precio de entrada refleja el consenso del mercado y se mueve en función de la oferta y la demanda.
+          b1n0 es un mercado de contratos de evento sobre el mundo real. Los usuarios toman posiciones (SÍ o NO) sobre preguntas binarias con fecha de resolución conocida. El precio lo determina un AMM que refleja la oferta y la demanda del mercado en tiempo real.
         </DocParagraph>
         <DocParagraph>
-          b1n0 opera un <em>mercado de cobro fijo respaldado por LPs</em>: tu cobro por contrato queda bloqueado al confirmar tu posición — $1 por contrato si tu lado gana. A diferencia de un parimutuel, los recién llegados no diluyen tu participación; el pool de LPs absorbe cualquier diferencia entre el pool y los pagos prometidos. La ventaja de entrar temprano viene del <strong>precio</strong>: cuanto antes leés bien el mercado, más contratos comprás con el mismo dólar. b1n0 no es una casa de apuestas, no es un casino y no ofrece servicios de inversión.
+          b1n0 opera un <em>mercado de cobro fijo respaldado por LPs</em>: tu cobro por contrato queda bloqueado al confirmar tu posición — $1 bruto por contrato si tu lado gana, neto $0.95 después de la comisión de resolución del 5%. A diferencia de un parimutuel, los recién llegados no diluyen tu participación; el pool de LPs absorbe cualquier diferencia entre el pool y los pagos prometidos. La ventaja de entrar temprano viene del <strong>precio</strong>: cuanto antes leés bien el mercado, más contratos comprás con el mismo dólar. b1n0 no es una casa de apuestas, no es un casino y no hay un bookmaker del otro lado.
+        </DocParagraph>
+        <DocParagraph>
+          Al tomar una posición, adquirís un contrato de evento cuyo cobro se representa de forma tokenizada. La emisión y custodia de esa representación operan bajo el marco de activos digitales de la Comisión Nacional de Activos Digitales (CNAD) de El Salvador, a través de un proveedor licenciado. Los fondos que respaldan los pagos se mantienen en cuentas segregadas.
         </DocParagraph>
         <DocParagraph>
           La estructura de comisiones, los límites por nivel de KYC y las reglas de resolución están documentadas en{' '}
@@ -273,7 +276,7 @@ const CONFIANZA_SECTIONS: DocPageSection[] = [
     title: 'Riesgo y responsabilidad del usuario',
     children: (
       <DocCallout title="Advertencia obligatoria" tone="warn">
-        Los votos implican riesgo de pérdida del capital. No hay retornos garantizados, no es una inversión, no es un instrumento financiero, no es una casa de apuestas. b1n0 es un mercado de opciones sobre eventos respaldado por capital de LPs — los cobros son fijos por contrato si tu lado gana, pero la pérdida del capital ingresado es real. Cada participante es responsable de cumplir las leyes y obligaciones fiscales de su jurisdicción. El acceso es para mayores de 18 años.
+        Tomar una posición implica riesgo de pérdida del capital. No hay retornos garantizados. b1n0 es un mercado de contratos de evento sobre activos digitales respaldado por capital de LPs; la tokenización de los contratos opera a través de un proveedor licenciado bajo el marco CNAD de El Salvador. Los cobros son fijos por contrato si tu lado gana — $1 bruto, $0.95 neto después de la comisión de resolución del 5% — pero la pérdida del capital ingresado es real. b1n0 no es una casa de apuestas, no es un casino y no constituye asesoría ni recomendación de inversión. Cada participante es responsable de cumplir las leyes y obligaciones fiscales de su jurisdicción. El acceso es para mayores de 18 años.
       </DocCallout>
     ),
   },
@@ -285,6 +288,7 @@ const CONFIANZA_SECTIONS: DocPageSection[] = [
       <DocBullets
         items={[
           <><strong>Soporte general:</strong> <a href="mailto:soporte@b1n0.com" style={inlineLink}>soporte@b1n0.com</a></>,
+          <><strong>Oficina registrada:</strong> Final 83 Avenida Sur #403, segundo nivel, Colonia Escalón, San Salvador, El Salvador · <a href="tel:+50322640977" style={inlineLink}>+503 2264-0977</a></>,
           <><strong>Seguridad / vulnerabilidades:</strong> <a href="mailto:security@b1n0.com" style={inlineLink}>security@b1n0.com</a></>,
           <><strong>Asuntos legales / licencias:</strong> <a href="mailto:legal@b1n0.com" style={inlineLink}>legal@b1n0.com</a></>,
           <><strong>Prensa / inversionistas:</strong> <a href="mailto:hola@b1n0.com" style={inlineLink}>hola@b1n0.com</a></>,
@@ -297,7 +301,8 @@ const CONFIANZA_SECTIONS: DocPageSection[] = [
 export function Confianza() {
   usePageMeta({
     title: 'Confianza · b1n0',
-    description: 'Cómo funciona b1n0: entidad, modelo, seguridad, socios y cómo reportar una vulnerabilidad.',
+    description: 'Cómo opera b1n0: entidad (Tres33 SAS de CV), modelo de cobro fijo respaldado por LPs, tokenización bajo el marco CNAD de El Salvador, seguridad, socios técnicos y divulgación responsable.',
+    path: '/confianza',
   })
 
   return (
@@ -306,7 +311,7 @@ export function Confianza() {
         pageEyebrow="CONFIANZA · TRUST"
         pageTitle="Cómo opera b1n0."
         intro="Esta página existe para que cualquier persona — usuario, inversionista, marca patrocinadora, regulador o investigador — pueda entender en cinco minutos quién está detrás de b1n0, cómo se mueve el dinero, qué medidas de seguridad operan y cómo reportar un problema."
-        lastUpdated="20 de mayo de 2026"
+        lastUpdated="9 de junio de 2026"
         sections={CONFIANZA_SECTIONS}
       />
       {/* PDF download — floating action button anchored bottom-right.
@@ -340,40 +345,4 @@ export function Confianza() {
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.borderColor = 'var(--b1n0-si)'
-          e.currentTarget.style.transform = 'translateY(-1px)'
-          e.currentTarget.style.boxShadow = '0 10px 28px rgba(0,0,0,0.4)'
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.borderColor = 'var(--b1n0-border)'
-          e.currentTarget.style.transform = 'translateY(0)'
-          e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.35)'
-        }}
-      >
-        <span
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: 24,
-            height: 24,
-            borderRadius: 999,
-            background: 'var(--b1n0-si-bg)',
-            color: 'var(--b1n0-si)',
-            fontSize: 14,
-            fontWeight: 700,
-            lineHeight: 1,
-          }}
-          aria-hidden
-        >
-          ↓
-        </span>
-        <span>Descargar PDF</span>
-        <span style={{ color: 'var(--b1n0-muted)', fontSize: 11, fontWeight: 500, marginLeft: 2 }}>
-          9 págs
-        </span>
-      </a>
-    </>
-  )
-}
-
-export default Confianza
+          e

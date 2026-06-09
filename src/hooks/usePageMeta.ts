@@ -35,30 +35,40 @@ export interface PageMeta {
    * shares show the event's question + current SÍ/NO split.
    */
   ogImage?: string
+  /**
+   * Canonical pathname (without origin) for this page, e.g. '/terminos'.
+   * Used to set og:url so each route has a distinct social preview URL —
+   * otherwise WhatsApp/Twitter show identical previews for every route.
+   */
+  path?: string
 }
 
+const ORIGIN = 'https://www.b1n0.com'
 const DEFAULT_TITLE = 'b1n0'
 const DEFAULT_DESCRIPTION =
-  'b1n0 — La plataforma de opinión donde demostrás que sabés más que todos. Hacé tu voto en fútbol, economía y cultura de Centroamérica.'
+  'b1n0 — Mercado de contratos de evento sobre el mundo real. Tomá tu posición SÍ o NO en fútbol, política, economía y cultura. Cobro fijo respaldado por LPs.'
 const DEFAULT_OG_IMAGE = '/og-image.png'
+const DEFAULT_OG_URL = ORIGIN
 
 function setMetaContent(selector: string, content: string) {
   const el = document.querySelector(selector)
   if (el) el.setAttribute('content', content)
 }
 
-export function usePageMeta({ title, description, ogImage }: PageMeta): void {
+export function usePageMeta({ title, description, ogImage, path }: PageMeta): void {
   useEffect(() => {
     const previousTitle = document.title
     document.title = title
 
     const desc = description ?? DEFAULT_DESCRIPTION
     const img = ogImage ?? DEFAULT_OG_IMAGE
+    const url = path ? `${ORIGIN}${path}` : DEFAULT_OG_URL
 
     setMetaContent('meta[name="description"]', desc)
     setMetaContent('meta[property="og:title"]', title)
     setMetaContent('meta[property="og:description"]', desc)
     setMetaContent('meta[property="og:image"]', img)
+    setMetaContent('meta[property="og:url"]', url)
     setMetaContent('meta[name="twitter:title"]', title)
     setMetaContent('meta[name="twitter:description"]', desc)
     setMetaContent('meta[name="twitter:image"]', img)
@@ -66,12 +76,4 @@ export function usePageMeta({ title, description, ogImage }: PageMeta): void {
     return () => {
       document.title = previousTitle || DEFAULT_TITLE
       setMetaContent('meta[name="description"]', DEFAULT_DESCRIPTION)
-      setMetaContent('meta[property="og:title"]', DEFAULT_TITLE)
-      setMetaContent('meta[property="og:description"]', DEFAULT_DESCRIPTION)
-      setMetaContent('meta[property="og:image"]', DEFAULT_OG_IMAGE)
-      setMetaContent('meta[name="twitter:title"]', DEFAULT_TITLE)
-      setMetaContent('meta[name="twitter:description"]', DEFAULT_DESCRIPTION)
-      setMetaContent('meta[name="twitter:image"]', DEFAULT_OG_IMAGE)
-    }
-  }, [title, description, ogImage])
-}
+      setMet

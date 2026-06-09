@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import { mockUser, mockPredictions } from '../data/mockEvents'
 import type { Event, UserPrediction } from '../types'
 import { supabase } from '../lib/supabase'
+import { logger } from '../lib/logger'
 import { useAuth } from './AuthContext'
 
 function calcCobro(amount: number, sidePercent: number): number {
@@ -317,7 +318,7 @@ export function VoteProvider({ children }: { children: ReactNode }) {
           p_potential_cobro: potentialCobro,
         })
         if (error) {
-          // TODO: Send to Sentry when integrated
+          logger.error('cast_vote RPC failed', { rpc: 'cast_vote', eventId, side, amount, error })
           // Rollback optimistic update
           if (prevVote) {
             setVotes((prev) => ({ ...prev, [eventId]: prevVote }))
@@ -379,7 +380,4 @@ export function VoteProvider({ children }: { children: ReactNode }) {
 }
 
 export function useVotes() {
-  const ctx = useContext(VoteContext)
-  if (!ctx) throw new Error('useVotes outside VoteProvider')
-  return ctx
-}
+  const ctx = useContext(Vote

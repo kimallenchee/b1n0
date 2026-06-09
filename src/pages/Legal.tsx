@@ -1,21 +1,23 @@
 /**
  * Legal shell pages — Terms of Service & Privacy Policy.
  *
- * v1 draft — substantive enough to pre-launch beta. Lawyer review
- * required before public launch and before real money flows. Sections
- * marked with [PENDIENTE] need explicit legal sign-off because they
- * involve jurisdiction-specific regulation (gambling, AML, FX) or
- * vendor-specific terms (PSP, KYC provider) that aren't selected yet.
+ * Content aligned with the unified rewrite brief (junio 2026): Lane B
+ * caracterización as contratos de evento sobre activos digitales bajo el
+ * marco CNAD de El Salvador, vía proveedor licenciado. Both prior
+ * placeholders (DECISIÓN LEGAL 4.2 foro / DECISIÓN LEGAL 4.3 definición
+ * del instrumento) están cerrados con redacción final. Lawyer + CNAD
+ * final sign-off required before public publication per the brief
+ * Section 8 aviso.
  *
  * Visual chrome (back link → header → TOC/accordion → footer) lives in
- * DocPageShell so these pages stay in lockstep with /documentacion and
- * /confianza. Update both "lastUpdated" dates when shipping changes.
+ * DocPageShell so these pages stay in lockstep with /documentacion y
+ * /confianza. Update LAST_UPDATED when shipping changes.
  */
 
 import { usePageMeta } from '../hooks/usePageMeta'
 import { DocPageShell, DocParagraph, type DocPageSection } from '../components/DocPageShell'
 
-const LAST_UPDATED = '30 de abril de 2026'
+const LAST_UPDATED = '9 de junio de 2026'
 
 // ── Terms content ──────────────────────────────────────────────────────
 const TERMS_SECTIONS: DocPageSection[] = [
@@ -34,9 +36,20 @@ const TERMS_SECTIONS: DocPageSection[] = [
     eyebrow: 'SECCIÓN 02',
     title: '2. Qué es b1n0',
     children: (
-      <DocParagraph>
-        b1n0 es una plataforma de opinión social donde proveedores de liquidez (LPs) financian pools de premios y los usuarios participan opinando sobre eventos del mundo real (deportes, política, economía, cultura). Los participantes ponen dinero respaldando una posición; al resolverse el evento, los que acertaron cobran una porción del pool proporcional a su entrada. b1n0 NO es una casa de apuestas, no es un casino, no es un instrumento financiero, y no ofrece servicios de inversión, asesoría financiera, ni intermediación de valores. b1n0 es un servicio de información y entretenimiento social.
-      </DocParagraph>
+      <>
+        <DocParagraph>
+          b1n0 es un mercado de contratos de evento sobre el mundo real (deportes, política, economía y cultura). Cada evento tiene dos lados, SÍ y NO, y vos tomás tu posición comprando contratos en el lado que refleje tu convicción. El precio de cada contrato lo determina un AMM que refleja la oferta y la demanda del mercado en tiempo real.
+        </DocParagraph>
+        <DocParagraph>
+          Cada contrato se liquida a un valor fijo de $1 si tu lado gana, y $0 si pierde. Tu cobro queda bloqueado al confirmar tu voto y no depende de cuánta gente entre después. Las posiciones están totalmente colateralizadas: por cada par de contratos SÍ y NO existe $1 que respalda el pago. Cuando el libro queda desbalanceado, los proveedores de liquidez (LPs) toman el lado faltante como contraparte, aportan liquidez y absorben la variación a cambio de comisiones. b1n0 no es un parimutuel: los recién llegados no diluyen tu participación, porque el capital de los LPs cubre la diferencia. Sobre el cobro de los ganadores, b1n0 retiene una comisión de resolución del 5% (un contrato ganador paga $1 bruto y $0.95 neto).
+        </DocParagraph>
+        <DocParagraph>
+          b1n0 ofrece contratos de evento sobre activos digitales; la tokenización de estos contratos opera a través de un proveedor licenciado bajo el marco regulatorio de la Comisión Nacional de Activos Digitales (CNAD) de El Salvador. b1n0 mismo no posee la licencia de CNAD: se apoya en el proveedor para la capa de cumplimiento de activos digitales. b1n0 no ofrece asesoría ni recomendaciones de inversión, y tomar una posición implica riesgo de pérdida de capital. b1n0 no es una casa de apuestas, no es un casino y no hay un bookmaker del otro lado.
+        </DocParagraph>
+        <DocParagraph>
+          Al tomar una posición, adquirís un contrato de evento cuyo cobro se representa de forma tokenizada. La emisión y custodia de esa representación operan bajo el marco de activos digitales de la Comisión Nacional de Activos Digitales (CNAD) de El Salvador, a través de un proveedor licenciado. Los fondos que respaldan los pagos se mantienen en cuentas segregadas.
+        </DocParagraph>
+      </>
     ),
   },
   {
@@ -75,7 +88,7 @@ const TERMS_SECTIONS: DocPageSection[] = [
     title: '6. Cómo funciona la plataforma',
     children: (
       <DocParagraph>
-        (a) Depositás fondos a tu saldo mediante los métodos de pago habilitados. (b) Elegís un evento y un lado (SÍ/NO o una opción específica) y el monto que querés poner. La plataforma muestra antes de confirmar: la comisión que cobramos, el precio del contrato (basado en un mercado automatizado, AMM), los contratos que recibís, y el cobro estimado si tu voto resulta correcto. (c) Cuando el evento se resuelve, si tu voto fue correcto, recibís el pago automáticamente menos un porcentaje de resolución (skim) que va a la tesorería de la plataforma. Si fue incorrecto, perdés tu entrada que queda en el pool para los ganadores. (d) También podés vender tu posición antes de la resolución a precio del mercado actual menos comisión de venta y spread.
+        (a) Depositás fondos a tu saldo mediante los métodos de pago habilitados. (b) Elegís un evento y un lado (SÍ/NO). Antes de confirmar, la plataforma te muestra: la comisión de compra, el precio del contrato (determinado por un AMM que refleja la oferta y la demanda del mercado en tiempo real), los contratos que recibís y el cobro estimado si tu lado resulta correcto. (c) Cuando el evento se resuelve, cada contrato del lado ganador se liquida a su valor fijo de $1, menos la comisión de resolución del 5% (cobro neto de $0.95 por contrato ganador). Si tu lado pierde, tu entrada pasa al pool que, junto con el capital de los proveedores de liquidez (LPs), financia ese pago fijo a los ganadores — no se reparte un pozo en proporción a lo que cada quien puso. (d) También podés vender tu posición antes de la resolución al precio del mercado actual menos la comisión de venta anticipada y el spread.
       </DocParagraph>
     ),
   },
@@ -85,7 +98,7 @@ const TERMS_SECTIONS: DocPageSection[] = [
     title: '7. Comisiones y tarifas',
     children: (
       <DocParagraph>
-        b1n0 cobra: (a) una comisión por transacción de compra (variable, entre 1% y 5% según condiciones del mercado, mostrada antes de confirmar); (b) un spread de mercado capturado por el AMM (entre 1% y 2% típicamente); (c) una comisión por venta anticipada del 2%; (d) un porcentaje de resolución del 5% sobre el cobro de los ganadores. Las tarifas se actualizan en la página de configuración de la plataforma y pueden cambiar con aviso previo de 30 días.
+        b1n0 cobra: (a) una comisión de compra (variable, entre 1% y 5% según condiciones del mercado, mostrada antes de confirmar); (b) un spread (margen) capturado por el AMM (entre 1% y 2% típicamente); (c) una comisión de venta anticipada del 2%; (d) una comisión de resolución del 5% sobre el cobro bruto del ganador (no sobre la ganancia). Las tarifas se actualizan en la página de configuración de la plataforma y pueden cambiar con aviso previo de 30 días.
       </DocParagraph>
     ),
   },
@@ -175,7 +188,7 @@ const TERMS_SECTIONS: DocPageSection[] = [
     title: '16. Resolución de disputas y ley aplicable',
     children: (
       <DocParagraph>
-        Estos Términos se rigen por las leyes de la República de Guatemala. Cualquier controversia derivada de o relacionada con estos términos se intentará resolver primero mediante negociación de buena fe entre las partes durante 30 días. Si no se llega a un acuerdo, la disputa se someterá a arbitraje conforme a las reglas del Centro de Arbitraje y Conciliación de la Cámara de Comercio de Guatemala (CRECIG), con sede en la Ciudad de Guatemala. El arbitraje se llevará en español. La decisión del árbitro será final y vinculante.
+        Estos Términos se rigen por las leyes de la República de El Salvador. Toda controversia que no se resuelva mediante negociación de buena fe dentro de 30 días se resolverá de forma definitiva mediante arbitraje con sede en El Salvador, conducido en español y administrado por el centro de arbitraje reconocido en El Salvador que b1n0 designe conforme a la legislación salvadoreña vigente. El laudo arbitral será final y vinculante para las partes.
       </DocParagraph>
     ),
   },
@@ -195,7 +208,7 @@ const TERMS_SECTIONS: DocPageSection[] = [
     title: '18. Contacto',
     children: (
       <DocParagraph>
-        Para preguntas sobre estos Términos y Condiciones: soporte@b1n0.com. Para reportes de seguridad o vulnerabilidades: security@b1n0.com. Para asuntos legales: legal@b1n0.com.
+        Para preguntas sobre estos Términos y Condiciones: soporte@b1n0.com. Para reportes de seguridad o vulnerabilidades: security@b1n0.com. Para asuntos legales: legal@b1n0.com. Oficina registrada de Tres33 SAS de CV: Final 83 Avenida Sur #403, segundo nivel, Colonia Escalón, San Salvador, El Salvador. Teléfono de la oficina registrada: +503 2264-0977.
       </DocParagraph>
     ),
   },
@@ -209,7 +222,7 @@ const PRIVACY_SECTIONS: DocPageSection[] = [
     title: '1. Quiénes somos',
     children: (
       <DocParagraph>
-        b1n0 es la plataforma de opinión social descrita en nuestros Términos y Condiciones. En esta política, &quot;b1n0&quot;, &quot;nosotros&quot;, o &quot;la plataforma&quot; se refieren a la entidad operadora de b1n0.com. Esta política explica qué información recopilamos, por qué, cómo la usamos, con quién la compartimos, y qué derechos tenés sobre ella. Aplica a todos los usuarios de la plataforma.
+        b1n0 es el mercado de contratos de evento descrito en nuestros Términos y Condiciones, operado por Tres33 SAS de CV (registrada en la República de El Salvador) bajo el marco regulatorio CNAD a través de un proveedor licenciado. En esta política, &quot;b1n0&quot;, &quot;nosotros&quot;, o &quot;la plataforma&quot; se refieren a la entidad operadora de b1n0.com. Esta política explica qué información recopilamos, por qué, cómo la usamos, con quién la compartimos, y qué derechos tenés sobre ella. Aplica a todos los usuarios de la plataforma.
       </DocParagraph>
     ),
   },
@@ -329,52 +342,4 @@ const PRIVACY_SECTIONS: DocPageSection[] = [
     title: '13. Cambios a esta política',
     children: (
       <DocParagraph>
-        Podemos actualizar esta Política de Privacidad. Cuando los cambios sean significativos, te notificaremos por correo electrónico o mediante un aviso destacado en la plataforma al menos 30 días antes de que los cambios entren en vigor. La fecha de &quot;Última actualización&quot; al inicio de esta página indica cuándo fue revisada por última vez. El uso continuado de la plataforma después de la fecha de entrada en vigor de los cambios constituye aceptación de la política actualizada.
-      </DocParagraph>
-    ),
-  },
-  {
-    id: 'contacto',
-    eyebrow: 'SECCIÓN 14',
-    title: '14. Contacto',
-    children: (
-      <DocParagraph>
-        Para preguntas, ejercer tus derechos, o reportar inquietudes sobre privacidad: soporte@b1n0.com. Para asuntos generales de soporte: soporte@b1n0.com. Para reportes de seguridad: security@b1n0.com.
-      </DocParagraph>
-    ),
-  },
-]
-
-// ── Pages ──────────────────────────────────────────────────────────────
-
-export function TermsPage() {
-  usePageMeta({
-    title: 'Términos · b1n0',
-    description: 'Términos y Condiciones de uso de b1n0 — la plataforma de opinión patrocinada.',
-  })
-  return (
-    <DocPageShell
-      pageEyebrow="TÉRMINOS Y CONDICIONES"
-      pageTitle="Términos y Condiciones."
-      intro="Las reglas del juego — qué es b1n0, qué no es, qué podés y no podés hacer, cómo manejamos depósitos, retiros, disputas y propiedad intelectual. Sin letra chica."
-      lastUpdated={LAST_UPDATED}
-      sections={TERMS_SECTIONS}
-    />
-  )
-}
-
-export function PrivacyPage() {
-  usePageMeta({
-    title: 'Privacidad · b1n0',
-    description: 'Política de Privacidad de b1n0 — cómo manejamos tus datos.',
-  })
-  return (
-    <DocPageShell
-      pageEyebrow="POLÍTICA DE PRIVACIDAD"
-      pageTitle="Política de Privacidad."
-      intro="Qué datos recopilamos, por qué, con quién los compartimos, dónde se guardan, cuánto tiempo, y cómo podés ejercer tus derechos sobre ellos."
-      lastUpdated={LAST_UPDATED}
-      sections={PRIVACY_SECTIONS}
-    />
-  )
-}
+        Podemos actualizar esta Política de Privacidad. Cuando los cambios sean significativos, te notificaremos por correo electr

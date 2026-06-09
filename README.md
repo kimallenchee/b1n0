@@ -187,10 +187,10 @@ Report a security issue: [security@b1n0.com](mailto:security@b1n0.com)
 General support: [soporte@b1n0.com](mailto:soporte@b1n0.com)
 Press / partners: [hola@b1n0.com](mailto:hola@b1n0.com)
 Legal: [legal@b1n0.com](mailto:legal@b1n0.com)
+Registered office: Final 83 Avenida Sur #403, segundo nivel, Colonia Escalón, San Salvador, El Salvador · [+503 2264-0977](tel:+50322640977)
 
 ---
 
 ## License
 
-Proprietary. Copyright © 2026 Tres33 SAS de CV. All rights reserved.
-See [`LICENSE`](./LICENSE).
+Proprietary. Copyright © 202

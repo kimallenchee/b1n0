@@ -210,7 +210,8 @@ function TableOfContents({ active }: { active: string }) {
 export function Documentacion() {
   usePageMeta({
     title: 'Documentación · b1n0',
-    description: 'Cómo funciona b1n0: contratos de eventos, comisiones, LPs, KYC, custodia. Todo lo que necesitás saber.',
+    description: 'Cómo funciona b1n0: contratos de evento, AMM, LPs, comisiones, KYC, custodia y resolución. Mercado regulado bajo el marco CNAD de El Salvador.',
+    path: '/documentacion',
   })
 
   const navigate = useNavigate()
@@ -304,10 +305,4 @@ export function Documentacion() {
           </div>
         )}
 
-      </div>
-      <Footer />
-    </div>
-  )
-}
-
-export default Documentacion
+      </d
