@@ -345,4 +345,40 @@ export function Confianza() {
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.borderColor = 'var(--b1n0-si)'
-          e
+          e.currentTarget.style.transform = 'translateY(-1px)'
+          e.currentTarget.style.boxShadow = '0 10px 28px rgba(0,0,0,0.4)'
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.borderColor = 'var(--b1n0-border)'
+          e.currentTarget.style.transform = 'translateY(0)'
+          e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.35)'
+        }}
+      >
+        <span
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 24,
+            height: 24,
+            borderRadius: 999,
+            background: 'var(--b1n0-si-bg)',
+            color: 'var(--b1n0-si)',
+            fontSize: 14,
+            fontWeight: 700,
+            lineHeight: 1,
+          }}
+          aria-hidden
+        >
+          ↓
+        </span>
+        <span>Descargar PDF</span>
+        <span style={{ color: 'var(--b1n0-muted)', fontSize: 11, fontWeight: 500, marginLeft: 2 }}>
+          9 págs
+        </span>
+      </a>
+    </>
+  )
+}
+
+export default Confianza

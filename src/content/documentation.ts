@@ -317,4 +317,32 @@ export const DOC_SECTIONS: DocSection[] = [
 
   // ────────────────────────────────────────────────────────────────
   // 10. Contacto y soporte
-  // ────────────────�
+  // ────────────────────────────────────────────────────────────────
+  {
+    id: 'contacto',
+    eyebrow: '10',
+    title: 'Contacto y soporte',
+    blocks: [
+      {
+        kind: 'paragraph',
+        text: '¿Algo no anda? ¿Tenés una pregunta que no encontraste acá? Escribinos.',
+      },
+      {
+        kind: 'bullets',
+        items: [
+          'Correo: soporte@b1n0.com',
+          'Respondemos en menos de 24 horas hábiles.',
+          'Para temas urgentes con tu saldo o tu cuenta, escribí a soporte@b1n0.com y marcá el asunto con [URGENTE].',
+          'Tres33 SAS de CV — oficina registrada: Final 83 Avenida Sur #403, segundo nivel, Colonia Escalón, San Salvador, El Salvador.',
+          'Teléfono de la oficina registrada: +503 2264-0977.',
+        ],
+      },
+      {
+        kind: 'callout',
+        tone: 'info',
+        title: '¿Buscás convertirte en LP o partner?',
+        body: 'Si querés respaldar pools con capital, integrar b1n0 con tu medio de comunicación, o hablar de una colaboración comercial, escribinos a kim@b1n0.com directamente.',
+      },
+    ],
+  },
+]

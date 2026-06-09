@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 
 /**
  * usePageMeta — sets <title>, <meta name="description">, and the
- * og:title / og:description / twitter:title / twitter:description
+ * og:title / og:description / og:url / twitter:title / twitter:description
  * tags on mount. Restores them to the previous values on unmount.
  *
  * b1n0 is a single-page React app, so a static <title> in index.html
@@ -15,6 +15,7 @@ import { useEffect } from 'react'
  *     usePageMeta({
  *       title: 'Inicio · b1n0',
  *       description: 'Las preguntas del momento — fútbol, política, economía.',
+ *       path: '/inicio',
  *     })
  *     return …
  *   }
@@ -76,4 +77,13 @@ export function usePageMeta({ title, description, ogImage, path }: PageMeta): vo
     return () => {
       document.title = previousTitle || DEFAULT_TITLE
       setMetaContent('meta[name="description"]', DEFAULT_DESCRIPTION)
-      setMet
+      setMetaContent('meta[property="og:title"]', DEFAULT_TITLE)
+      setMetaContent('meta[property="og:description"]', DEFAULT_DESCRIPTION)
+      setMetaContent('meta[property="og:image"]', DEFAULT_OG_IMAGE)
+      setMetaContent('meta[property="og:url"]', DEFAULT_OG_URL)
+      setMetaContent('meta[name="twitter:title"]', DEFAULT_TITLE)
+      setMetaContent('meta[name="twitter:description"]', DEFAULT_DESCRIPTION)
+      setMetaContent('meta[name="twitter:image"]', DEFAULT_OG_IMAGE)
+    }
+  }, [title, description, ogImage, path])
+}

@@ -305,4 +305,10 @@ export function Documentacion() {
           </div>
         )}
 
-      </d
+      </div>
+      <Footer />
+    </div>
+  )
+}
+
+export default Documentacion

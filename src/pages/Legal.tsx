@@ -342,4 +342,54 @@ const PRIVACY_SECTIONS: DocPageSection[] = [
     title: '13. Cambios a esta política',
     children: (
       <DocParagraph>
-        Podemos actualizar esta Política de Privacidad. Cuando los cambios sean significativos, te notificaremos por correo electr
+        Podemos actualizar esta Política de Privacidad. Cuando los cambios sean significativos, te notificaremos por correo electrónico o mediante un aviso destacado en la plataforma al menos 30 días antes de que los cambios entren en vigor. La fecha de &quot;Última actualización&quot; al inicio de esta página indica cuándo fue revisada por última vez. El uso continuado de la plataforma después de la fecha de entrada en vigor de los cambios constituye aceptación de la política actualizada.
+      </DocParagraph>
+    ),
+  },
+  {
+    id: 'contacto',
+    eyebrow: 'SECCIÓN 14',
+    title: '14. Contacto',
+    children: (
+      <DocParagraph>
+        Para preguntas, ejercer tus derechos, o reportar inquietudes sobre privacidad: soporte@b1n0.com. Para asuntos generales de soporte: soporte@b1n0.com. Para reportes de seguridad: security@b1n0.com. Oficina registrada de Tres33 SAS de CV: Final 83 Avenida Sur #403, segundo nivel, Colonia Escalón, San Salvador, El Salvador. Teléfono de la oficina registrada: +503 2264-0977.
+      </DocParagraph>
+    ),
+  },
+]
+
+// ── Pages ──────────────────────────────────────────────────────────────
+
+export function TermsPage() {
+  usePageMeta({
+    title: 'Términos · b1n0',
+    description: 'Términos y Condiciones de uso de b1n0 — mercado de contratos de evento sobre activos digitales operado por Tres33 SAS de CV bajo el marco regulatorio CNAD de El Salvador.',
+    path: '/terminos',
+  })
+  return (
+    <DocPageShell
+      pageEyebrow="TÉRMINOS Y CONDICIONES"
+      pageTitle="Términos y Condiciones."
+      intro="Las reglas del mercado — qué es b1n0, qué no es, qué podés y no podés hacer, cómo manejamos depósitos, retiros, disputas y propiedad intelectual. Sin letra chica."
+      lastUpdated={LAST_UPDATED}
+      sections={TERMS_SECTIONS}
+    />
+  )
+}
+
+export function PrivacyPage() {
+  usePageMeta({
+    title: 'Privacidad · b1n0',
+    description: 'Política de Privacidad de b1n0 — qué datos recopilamos, cómo los usamos, con quién los compartimos, dónde se guardan y cómo ejercer tus derechos.',
+    path: '/privacidad',
+  })
+  return (
+    <DocPageShell
+      pageEyebrow="POLÍTICA DE PRIVACIDAD"
+      pageTitle="Política de Privacidad."
+      intro="Qué datos recopilamos, por qué, con quién los compartimos, dónde se guardan, cuánto tiempo, y cómo podés ejercer tus derechos sobre ellos."
+      lastUpdated={LAST_UPDATED}
+      sections={PRIVACY_SECTIONS}
+    />
+  )
+}

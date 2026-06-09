@@ -380,4 +380,7 @@ export function VoteProvider({ children }: { children: ReactNode }) {
 }
 
 export function useVotes() {
-  const ctx = useContext(Vote
+  const ctx = useContext(VoteContext)
+  if (!ctx) throw new Error('useVotes outside VoteProvider')
+  return ctx
+}
